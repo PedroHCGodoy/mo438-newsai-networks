@@ -1,0 +1,88 @@
+[
+  {
+    "cell_type": "markdown",
+    "metadata": {},
+    "source": [
+      "## 22. Extração de relações: entradas e contrato\n",
+      "\n",
+      "A extração recebe o texto e as menções originais de cada notícia. Os identificadores de entidades resolvidas serão aplicados posteriormente. A fila contém somente publicações anteriores a 2026 selecionadas no planejamento. A ordem é ano, data, fonte e identificador.\n",
+      "\n",
+      "O prompt `TEST_D12_T13_L04_R15` tem suas instruções fixas verificadas por SHA-256. O conjunto de menções, o texto, o provedor e os parâmetros integram a identidade de cada requisição.\n",
+      "\n",
+      "Selecione explicitamente o provedor: `google` utiliza `GEMINI_API_KEY`; `deepinfra` utiliza `DEEPINFRA_API_KEY`. Ambos são lidos exclusivamente do `.env` local durante a execução habilitada. Não há troca automática de provedor. `KEY_NAME` é apenas o apelido exibido.\n"
+    ]
+  },
+  {
+    "cell_type": "code",
+    "metadata": {},
+    "execution_count": null,
+    "outputs": [],
+    "source": [
+      "from pathlib import Path\n",
+      "from re_execucao import carregar_entradas, executar, exportar\n",
+      "\n",
+      "PROJETO_RE = Path.cwd()  # Pasta que contém este notebook.\n",
+      "PROVEDOR_RE = 'google'\n",
+      "EXECUTAR_RE = False\n",
+      "LIMITE_RE = 1\n",
+      "TRABALHADORES_RE = 1\n",
+      "TIMEOUT_RE = 360\n",
+      "\n",
+      "entradas_re = carregar_entradas(PROJETO_RE)\n",
+      "print(f\"Entradas conferidas: {len(entradas_re['queue']):,} notícias anteriores a 2026.\")\n",
+      "print(entradas_re['queue'].groupby('re_processing_type').size().to_string())\n"
+    ]
+  },
+  {
+    "cell_type": "markdown",
+    "metadata": {},
+    "source": [
+      "## 23. Execução em lotes e retomada\n",
+      "\n",
+      "Com `EXECUTAR_RE=False`, a célula abaixo apenas monta uma prévia local e não lê a chave. Com `True`, o limite conta chamadas novas, incluindo tentativas encerradas com erro. Após a validação do primeiro envio, ajuste gradualmente o tamanho do lote e a concorrência.\n",
+      "\n",
+      "Repita a execução para avançar pelas notícias ainda não tentadas. `SUCCESS_ZERO` é uma resposta válida sem relações. `PARTIAL`, `INVALID_RESPONSE`, `HTTP_ERROR` e `UNCERTAIN` ficam registrados para inspeção, sem reenvio automático. Respostas recebidas e salvas antes de uma interrupção são recuperadas sem nova chamada. Um timeout não confirma se houve cobrança no provedor.\n",
+      "\n",
+      "Respostas inválidas isoladas não encerram o lote. Erros de configuração, autenticação, pagamento e quota pausam novos envios; três falhas consecutivas de transporte/HTTP também pausam. Requisições já em curso ainda podem terminar. O checkpoint só admite uma execução ativa por vez.\n"
+    ]
+  },
+  {
+    "cell_type": "code",
+    "metadata": {},
+    "execution_count": null,
+    "outputs": [],
+    "source": [
+      "resultado_lote_re = executar(\n",
+      "    entradas_re,\n",
+      "    executar_api=EXECUTAR_RE,\n",
+      "    limite=LIMITE_RE,\n",
+      "    trabalhadores=TRABALHADORES_RE,\n",
+      "    provider=PROVEDOR_RE,\n",
+      "    timeout=TIMEOUT_RE,\n",
+      ")\n",
+      "resultado_lote_re\n"
+    ]
+  },
+  {
+    "cell_type": "markdown",
+    "metadata": {},
+    "source": [
+      "## 24. Cobertura, exportação e verificações\n",
+      "\n",
+      "As tabelas distinguem o estado da extração e a disponibilidade do NER. `PARTIAL` no NER significa cobertura de menções incompleta, mesmo quando a chamada de RE termina com sucesso. Relações de respostas de RE parciais são marcadas como provisórias. Nenhuma expansão transitiva, resolução de entidades ou agregação de pesos ocorre nesta etapa.\n",
+      "\n",
+      "O pacote de verificação contém estados, validações e respostas da API. O `.env`, o banco local, os prompts e os textos integrais de entrada não são incluídos. As próprias respostas do modelo podem conter trechos da notícia.\n",
+      "\n"
+    ]
+  },
+  {
+    "cell_type": "code",
+    "metadata": {},
+    "execution_count": null,
+    "outputs": [],
+    "source": [
+      "pacote_re = exportar(entradas_re)\n",
+      "print(pacote_re)\n"
+    ]
+  }
+]
