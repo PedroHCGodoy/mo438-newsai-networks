@@ -1,0 +1,636 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9233b3eaf47a03bc41b1ee266c59d18d4efe29173df0d8218b4b8d4978bd5795
+
+TEXTO:
+Especialistas respondem perguntas do público do Seminário Desafios do Ensino Superior
+
+As mesas de debates do Seminário Desafios do Ensino Superior, promovido pela Folha no dia 26 de setembro, suscitaram uma série de questões da plateia sobre os temas que estiveram em pauta no evento.
+As perguntas do público que não foram contempladas durante o seminário por conta do curto espaço de tempo foram respondidas posteriormente pelos especialistas que participaram das discussões.
+O evento, que teve patrocínio da Unip, abordou o financiamento do ensino superior público, os mecanismos de inclusão de alunos de baixa renda no sistema e os rankings universitários.
+Veja as respostas abaixo.
+Em exames pós formatura para médicos, muitos alunos obtêm notas baixas, mesmo vindo de universidades públicas. Não seria um perigo à sociedade ter profissionais de saúde formados por EAD (ensino a distância)?
+Janguiê Diniz, presidente do grupo Ser Educacional e da Abmes (Associação Brasileira de Mantenedoras de Ensino Superior) - Nada impede que as disciplinas teóricas, inclusive de medicina, sejam realizadas via EAD. Hoje, inclusive, já se faz cirurgias por videoconferência. O EAD não é mais uma tendência de futuro. É o segmento de educação que mais cresce – seja pela flexibilidade do estudante em acessar as aulas em qualquer lugar ou local, seja pela acessibilidade de poder estudar nas melhores instituições do país através de tecnologia de ponta.
+Não é mais produtivo fazer o crédito direto para o aluno e ele escolher onde estudar?
+Janguiê Diniz - Como o Fies é um programa de financiamento, nenhuma instituição particular é obrigada a participar dele. O que precisamos ponderar é que ele é um programa que promove inclusão educacional e que, como consequência, temos a melhoria socioeconômica da população, com melhores oportunidades de emprego. A avaliação de um crédito direto é, sim, uma opção para manter o programa e continuar o crescimento dos dados. Mas, para isso, é preciso mais parcerias com as instituições financeiras.
+O sr. acredita que pode haver um problema de seleção no Fies já que há uma quantidade tão grande de vagas (700 mil)?
+Janguiê Diniz - Em 2018, o MEC só ofereceu 100 mil vagas do Fies social, as outras 200 mil são financiamentos bancários, como outros quaisquer. E dessas 100 mil vagas, apenas 50 mil foram preenchidas. Ademais, com as mudanças das regras – inclusão de fiador, aumento da renda familiar necessária, entre outras –, aliadas ao período de crise econômica que o Brasil tem enfrentado, o número de vagas ociosas tem sido muito alto. Isso tem levado à decadência do Fies, um programa de suma importância para a inclusão educacional dos estudantes na faixa etária do nível superior.
+As instituições de ensino superior privadas foram beneficiadas pela expansão do Fies entre 2010 e 2014. Por outro lado, 50% dos alunos financistas estão inadimplentes e devem R$ 10 bilhões, segundo o FNDE. Qual é o modelo correto de financiamento?
+Janguiê Diniz - Pela Constituição Federal é dever do Estado prover a educação do seu povo. Qualquer país do mundo, para sair de um estágio de subdesenvolvimento para desenvolvimento, só através da educação, da básica à superior. E é muito mais barato o governo financiar vagas nas instituições privadas via bolsas como o Prouni ou financiamento como o FIES. Mesmo que haja inadimplência, como o programa é social, vale a pena para o governo e para o país, pois é muito mais barato que um aluno de uma instituição pública.
+O sr. pode esclarecer de onde vêm os percentuais complementares do MIT (Massachusetts Institute of Technology)? Se 10% são mensalidades, 5% são empresas, de onde vem o resto?
+Marcelo Knobel, reitor da Unicamp (Universidade Estadual de Campinas) - As receitas do MIT provêm de diversas fontes: anuidades pagas por alunos de graduação, pós-graduação (tuition) e outros cursos (non-degree programs); financiamentos públicos e privados para pesquisa; doações e heranças; rendimentos de aplicações financeiras; taxas e serviços; empresas auxiliares etc.
+Estudo de autoria das pesquisadoras Elisabeth Reynolds, do MIT, e Fernanda de Negri, do Ipea, mostra que os financiamentos para pesquisa representam a maior parte das receitas da universidade americana.
+Em 2016, só o Lincoln Labs, laboratório pertencente ao Ministério da Defesa dos Estados Unidos e gerenciado pelo MIT, recebeu US$ 956 milhões do governo federal. Esse valor corresponde a 28% das receitas do MIT naquele ano, que totalizaram US$ 2,47 bilhões.
+Os financiamentos destinados à pesquisa "no campus" – ou seja, em outras unidades do MIT fora o Lincoln Labs – somaram US$ 701,4 milhões, valor que equivale a quase 21% das receitas totais da instituição. Já as anuidades renderam US$ 340 milhões ao MIT, isto é, apenas 10% do total de recursos arrecadados em 2016.
+Esse estudo serviu de base para um artigo que escrevi que ressalta a importância do financiamento público para universidades como o MIT e a Unicamp, que, além de oferecer ensino da mais alta qualidade, desenvolvem pesquisas de ponta que podem resultar em inúmeros benefícios para a sociedade com um todo.
+É justo comparar o orçamento das universidades públicas com as privadas, sendo que essas últimas não investem em pesquisa?
+Marcelo Knobel - Não se pode comparar os orçamentos das universidades de pesquisa do Brasil, que, em sua maioria, são federais ou estaduais, com os de instituições focadas exclusivamente em ensino, sejam ela públicas ou privadas.
+Universidades de pesquisa como a Unicamp têm orçamentos muito maiores do que os de faculdades que só oferecem cursos de graduação – e não poderia ser diferente. Afinal, seus professores e pesquisadores não se restringem a atividades de ensino. Eles também realizam pesquisas na fronteira do conhecimento, para o que necessitam ter acesso a instalações, equipamentos e insumos condizentes com o que há de mais moderno no mundo, e prestam serviços especializados à população, sobretudo na área da saúde. Tudo isso custa caro, mas o retorno dado à sociedade compensa o valor do investimento.
+Sem os recursos humanos altamente qualificados que saem de universidades como a Unicamp, sem as tecnologias desenvolvidas nos laboratórios dessas instituições e sem os serviços que elas prestam à sociedade, o Brasil nunca teria alcançado o nível de desenvolvimento em que se encontra atualmente.
+A questão agora é impulsionar o país para níveis ainda mais elevados, o que só será possível com a contribuição de universidades públicas fortes e valorizadas.
+Além disso, como é no caso da Unicamp, muitas universidades públicas também são responsáveis por hospitais e outros serviços assistenciais para a sociedade, que devem ser somados aos custos gerais da universidade. Na Unicamp, por exemplo, os nossos cinco hospitais atendem toda a macrorregião de Campinas, sendo a única área de saúde pública de alta complexidade para uma população de cerca de 6 milhões de pessoas.
+Como aumentar a inclusão na pós-graduação?
+Marcelo Knobel - A universidade pública tem de ser um espaço de inclusão que reflita a diversidade existente em nossa sociedade. A diversidade deve estar presente em todos os níveis de ensino, não apenas entre os alunos, mas também entre os professores e funcionários. Na Unicamp, algumas unidades já adotaram o sistema de cotas para a pós-graduação. É o caso, por exemplo, da Faculdade de Educação. Mas a inclusão na pós-graduação só aumentará de fato à medida que mais negros, mais indígenas, mais estudantes oriundos de escolas públicas ingressarem na universidade e conseguirem concluir seus estudos de graduação.
+Como funcionaria a seleção de estudantes que fariam esse financiamento de longo prazo contingente à renda, no qual apenas os egressos que tivessem condições arcariam com os custos do ensino público?
+Paulo Meyer Nascimento, pesquisador do Ipea (Instituto de Pesquisa Econômica Aplicada) - Os critérios de seleção seriam definidos a partir das escolhas feitas pelos gestores públicos se essa política viesse de fato a ser implementada. Ressalto que minhas pesquisas sobre o tema apenas simulam os pagamentos contingentes à renda entre pessoas com nível superior e discutem possibilidades para a implementação desse sistema no Brasil.
+Não há um encaminhamento do governo federal para que financiamentos contingentes à renda futura sejam efetivamente introduzidos no país; por enquanto é só uma recomendação de política a partir de pesquisas que vêm sendo feitas.
+Há aplicações parciais desse modelo de financiamento em alguns países (Japão, Coreia do Sul, África do Sul, Hungria). Nos países onde existe política de financiamento estudantil de larga escala (Austrália, Inglaterra e Nova Zelândia), o estudante tem o direito, ao se matricular em um curso superior de uma universidade pública, de optar por financiar o custo do curso dessa forma (na Inglaterra há também a opção de receber um recurso mensal para despesas cotidianas, que entra no valor do financiamento). O governo então paga à universidade o valor preestabelecido para a anuidade do curso e cobra posteriormente da pessoa, depois da fase de estudos, via desconto em folha e ajuste anual do imposto de renda.
+Alternativamente, no Brasil poderia ser pensado um sistema em que as universidades públicas continuassem recebendo os mesmo repasses feitos pelo governo (federal ou estadual, a depender se é uma universidade federal ou estadual) e as contribuições financeiras dos egressos viriam como uma complementação orçamentária. Para que a contribuição do egresso chegasse efetivamente à universidade onde estudou, seria desejável a institucionalização de fundos patrimoniais (há projetos de lei em trâmite no Congresso Nacional para criá-los).
+Já no caso das instituições privadas, um modelo assim exigiria critérios cuidadosos de elegibilidade das participantes e de compartilhamento de risco entre governo e as instituições de ensino. Exigiria, ademais, novas reformas no Fies, que atualmente envolve o e-social para cálculo e cobrança de parcela da renda do trabalho para pagamentos de dívidas estudantis, mas que ainda não tem todas as características essenciais de um financiamento contingente à renda propriamente dito, principalmente por exigir pagamento mínimo.
+Seria decerto mais difícil adotar tão cedo um modelo universal de financiamento contingente à renda para estudantes de instituições privadas, pois a necessidade de recursos do orçamento público seria maior, mas é possível melhorar o Fies para torná-lo efetivamente contingente à renda e paulatinamente expandir sua escala.
+O ensino a distância pode contribuir ou prejudicar o avanço das universidades brasileiras?
+Paulo Meyer Nascimento - Do meu ponto de vista, ferramentas online são indispensáveis para dar maior escala ao ensino superior. Como qualquer ferramenta, seu uso pode ser bom ou ruim, mas não vejo por que seria um entrave ao avanço das universidades brasileiras. Pelo contrário, podem e muito contribuir para melhorar a qualidade do ensino e para democratizá-lo. Não é à toa que as melhores universidades do mundo fazem crescente uso de ferramentas online, inclusive de maneira integrada a componentes presenciais de ensino.
+Poderia comentar a renúncia fiscal que acontece com o desconto das despesas de educação na declaração do imposto de renda? O Estado não está subsidiando a preparação dos que têm mais renda para entrar na universidade pública?
+Sergio Firpo, professor titular da Cátedra Instituto Unibanco no Insper - Concordo. Despesas tributárias (renúncia fiscal) para os mais ricos poderem investir privadamente em educação, quando há a alternativa oferecida pelo setor público, parece ser outra forma de alocar recursos públicos para quem menos precisa.
+Com a crise, vemos engenheiros dirigindo para a Uber. Como incentivar os jovens, diante desse cenário, a fazer universidade?
+Daniel Castanho, presidente do grupo Ânima Educação - É realmente indiscutível que estamos passando por uma crise econômica, de você se formar, almejando uma carreira e, no meio do caminho, ter que direcionar para outra. Esse é um problema sistêmico que o Brasil está enfrentando.
+Entretanto, uma pessoa se formar numa determinada carreira e atuar em outra não será algo fora da realidade: hoje, entre 40% a 50% que se formam são freelancers, então veremos muitas pessoas se formando em carreiras e, porventura, atuando em outras, como um “empreendedor de si mesmo”. E o Uber é uma das ferramentas que facilita isso.
+Bom, mas aí a pessoa pode pensar: “não me formei para trabalhar no Uber”. E eu respondo: tudo bem. Mas ele como engenheiro pode ampliar isso, de repente, até contratar alguém, montar uma rede de prestação de serviços como um Uber, algo nesta linha, e desenvolver o espírito empreendedor.
+Independentemente disso, existe uma outra questão que percebo é que as pessoas pensam numa carreira, buscando uma ascensão e retorno financeiro, por acreditar que se você for um dentista ou um engenheiro terá uma carreira promissora, ao invés de trabalhar em algo que tenha mais a ver com seu perfil. Costumo dizer que as pessoas têm que buscar o seu “ikigai”, que é uma expressão japonesa que, traduzido ao pé da letra, significa “razão de ser”.
+Na verdade, a expressão é a confluência entre o que você gosta, o que você faz bem, o que o mundo precisa, e o que as pessoas pagam para ter. E quem sabe esta seja a grande responsabilidade da universidade, contribuir para que você descubra o seu “ikigai”. Se você trabalha com o seu "ikigai", você maximiza o seu potencial e aí, com certeza, você fará algo que gosta, que agrega valor e que as pessoas pagam por isso, independentemente da carreira que você se formou.
+Eu acho que as universidades têm que mudar e parar de formar pessoas iguais, parar de ter o foco na padronização e construir algo que possa ser personalizado. Para fazer isso em grande escala, a saída é a personalização em massa, o que acredito que é o grande desafio das universidades atualmente.
+Em 1977, como universitária, ensinei em colégios da rede pública, em matérias afins. O sr. acha que um programa assim daria certo hoje, com algumas adaptações?
+Daniel Castanho - Eu gosto e sou um grande defensor desta ideia, por diversos motivos: acredito que as pessoas que recebem algum tipo incentivo do governo, seja bolsa ou para estudar em escola pública, ou por meio do Prouni estudar em universidade privada, deveria “devolver” este benefício para a sociedade de alguma maneira.
+Uma das opções que vejo é a de trabalhar em escolas. Se o aluno não pode/não quer/não gosta de dar aulas, que ele, então, capacite os professores. Algo como engenheiros capacitando professores de matemática, de física, de química. Pessoal da área de saúde capacitando em biologia e assim por diante.
+Acredito que esta seria uma excelente política: você devolve para a sociedade o benefício que recebeu. O financiamento estudantil poderia ser pago também, em partes, de outras maneiras: dando aula, capacitando professores, ajudando um aluno do ensino público que tem dificuldades de aprender, atuando como um professor particular para eles.
+Imagino também que, quando um aluno de uma carreira como engenharia, por exemplo, começa a dar aula, desperta nele um desejo, um altruísmo, uma realização em relação ao outro, empatia, e acredito que muitos deles vão se apaixonar pela área docente, e teríamos um nível elevado de professores.
+No último governo, o orçamento do Prouni foi reduzido. É possível voltar a aumentar esse orçamento com o congelamento de gastos decretado?
+Daniel Castanho - Na realidade, o que foi diminuído foi o Fies e não o Prouni. O Fies foi estruturado como um financiamento com um subsídio muito alto, aberto para todos, inclusive para muitos que nem precisavam. Na minha opinião, o Fies deveria ter sido restrito a pessoas que realmente precisavam. Também é preciso mudar um pouco as regras: não adianta você emprestar o dinheiro, o estudante faz uma faculdade ruim e, no final, ele sai do mesmo jeito que entrou, e ainda com a dívida que não conseguirá pagar.
+No meu ponto de vista, o financiamento deveria ser para o bom aluno, para ele estudar bem. É possível sim redesenhar o Fies dentro de um modelo sustentável, o que o atual governo até tentou fazer, mas as burocracias e as regras ficaram tão rígidas que ficou muito difícil ter acesso.
+Cresce o número de casos de depressão, ansiedade e suicídio entre jovens universitários. Há muita pressão, o que atinge a saúde mental dos estudantes. O que as faculdades privadas oferecem nesse sentido?
+Hermes Ferreira Figueiredo, presidente do Semesp (sindicato das mantenedoras) e do grupo Cruzeiro do Sul Educacional - Sem dúvida esse é um problema da sociedade moderna e que, consequentemente, não exclui as instituições de ensino superior de sofrerem com os reflexos dessa pressão sofrida pelos jovens.
+Diante dessa realidade, as instituições de ensino superior (IES) privadas têm discutido cada vez mais como enfrentar esses problemas, buscando o debate constante nos seus meios acadêmicos. Além disso, as IES implantaram uma série de ações para minimizar os efeitos e oferecer apoio aos jovens, como acompanhamento psicológico permanente do estudante, monitoramento das redes sociais, atendimento médico emergencial em todas as unidades e um olhar mais atento ao indivíduo, entre outras ações.
+Como pensar as sociedades do futuro sem o estímulo na formação em humanas?
+Hermes Ferreira Figueiredo - Não há como não reconhecer os efeitos gerados pela revolução industrial 4.0 que, conforme o relatório sobre o mercado de trabalho do Fórum Econômico Mundial, deverá provocar o fechamento de 75 milhões de empregos por causa da automação, mas deverá propiciar o surgimento de 133 milhões de novas vagas em outras áreas.
+Por outro lado, há consenso no meio acadêmico que, com a escalada da tecnologia, não se pode negligenciar o estudo das ciências humanas, mas sim há necessidade de aprofundamento nessas áreas. A inteligência artificial, a robotização e a automação impõem a necessidade de se colocar o ser humano e a sociedade no centro das transformações.
+A expansão de acesso ao ensino superior fez o acesso chegar para cotistas, bolsistas e financiados. Contudo, a qualidade do ensino não é mensurada nas privadas. De quem é a responsabilidade?
+Hermes Ferreira Figueiredo - Não é verdade que a qualidade não é mensurada nas instituições privadas. As IES se submetem à Lei do Sinaes (Sistema Nacional de Avaliação da Educação Superior), que desde 2004 estabelece a avaliação nacional do ensino superior.
+As IES são submetidas a uma série de avaliações e só podem oferecer ensino superior quando obtêm conceitos satisfatórios. As IES são avaliadas in loco por avaliadores designados pelo Ministério da Educação para os atos de credenciamento e recredenciamento institucional, autorização e reconhecimento de cursos.
+As avaliações in loco, institucional e de cursos, são realizadas com base nos instrumentos elaborados pelo próprio Ministério da Educação.
+As instituições são periodicamente avaliadas por comissões próprias, pelo Exame Nacional de Desempenho de Estudantes (Enade), pelos indicadores Conceito Preliminar de Curso (CPC) e Índice Geral de Cursos (IGC), divulgados anualmente.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0ea03cbfef63ee60c3e6894ea392abfd7a00dfe6455b670f0c00bdb5205adbe1",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a5ba8c1ea8950a436ff152cb3c847dd675dea1bea05a12c072f82c060eb9d5e",
+    "mention_text": "Unip",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cf70f31b7c3a416a2ae86f56466ca30ee4e1ea6de42037978f9416fbdcb0f6c",
+    "mention_text": "Janguiê Diniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb36d6a10b13c16c9277917264f69000a825aed67f85b770f7f021bcd762e04e",
+    "mention_text": "Ser Educacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4004d2432f23f7bfdcf524564d98b2ec7fcd8e6febb41d2445e89a538e3a761",
+    "mention_text": "Abmes (Associação Brasileira de Mantenedoras de Ensino Superior)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3701d35c3735ed9d66854e9ea4c1d1a753e2c11fe049e8033ae9dbbfd5a7c2c",
+    "mention_text": "Janguiê Diniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "420b0e90c0d9f4dfda578856fbaa862fa91617fadcbdd6811e198e4851493856",
+    "mention_text": "Janguiê Diniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e7f8a0dd5703358022b1ff07fc44d83e76055a64df9f6e075ce631fd01f0be7",
+    "mention_text": "MEC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3e89468e8ee6750ebd6bf063d9abb1e4b230c278be4f9434942fa7df6cfec27",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "50fc6992cd09e9473bf8719e587f6ce0c80be08efaab133b9e50b5f4662ab223",
+    "mention_text": "FNDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3c776d1f96194c954d7350107bdec58dd37e1ddad92c1f8f8e6a0ce35630471",
+    "mention_text": "Janguiê Diniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "897de706cd18abe52cbfafe70efcee99a8144c4dd8598acd9e56f517ae6490de",
+    "mention_text": "MIT (Massachusetts Institute of Technology)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3343cdf1944848218eb2770ef857fce995c8433088a57fb5c0888b96c7f619c1",
+    "mention_text": "Marcelo Knobel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47583470e5730973cf163374b554ff5c551608cab2921e1d252eb7e37876aa52",
+    "mention_text": "Unicamp (Universidade Estadual de Campinas)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cad1b8abaf82d6ac305c0e1670df859ecf495cd06f2c365b63fb4039e6bdfec2",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a65269474332d30f35027ab1d493e4f5896c1720b4a3738146451ecdf6f9a387",
+    "mention_text": "Elisabeth Reynolds",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8abf099841f94a557d7ae449283031576bb811b921930dcfaace28cb3725ceb8",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0cfa72cec8c20f663be777187e40574084867daf4c4e82a27099f8ce6f6e6de",
+    "mention_text": "Fernanda de Negri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a1b5bb7e609ddc3e94a98f45a43ffe3ce03288fd5c522f9a662f30199700305",
+    "mention_text": "Ipea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a0399c4b6985efc91bdb5209f3a3ebcb74911ff6ca715e831bec2a85a97a8fa",
+    "mention_text": "Lincoln Labs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92c90a68836faa50910106f82af95f731ff71bb0bec0e7717d2400d0ae0a0de5",
+    "mention_text": "Ministério da Defesa dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06f1d7da507975261a8b1f586374ecf3382a330d74a55cec8af21af5e19743a1",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35c3f7857f3e660a21bbe0bbd5bb26213f8f4be011fa93265f5216d6d8e0568b",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d29b3c9c96753175cb0a73f59c3af1fb11f1ac7aaee92d454c1afd462934eea1",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2fa4c33664b69dabe3e6bae3752a9744e921789a6293d399b04c3323bac4ab1",
+    "mention_text": "Lincoln Labs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "040ba7838e26ede317385495bc6a6571227362c10d8c3ac749d19634a638e7b6",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c6614284f68a02ae45e36182d741657132b1e2be90b81ffff50369f68588862",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97345c51102e2b63c208e579472fdc4578f72da51e8a09ecfc44c758a14ce853",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffd6f1963cf02ba4f52c2478564ba280b3a5237b5e7d35d8f59596c6bc073f87",
+    "mention_text": "Marcelo Knobel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51e438c3b1f3a2f05af8401e7002ea38df3d94f048a849fbdd2e6a783669d860",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff9e6af37778b748a5d08c8d1e9c6603f0b7cff299f78246b6883b127387b6d7",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "763c768a4f1b96b21dc482f52f50c686691cd4815337395499cd5269edd84b75",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95df5c066b010e9a010c29ad2b3c26c89c096b9c72aa8dcb5be222ac2719a1c6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54477e2e65b00a29316ef0c2f69341202365c18950d71e81421f2fade159b2f1",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "265dd1a6cfd24242f1ea9a8f0cd9fd070c3cc6701042f05650004f8eafcc819a",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db75cb8011a98332de8831fa8468aaf90a150c0919fb16cccca973bbf60784b5",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7b6b9a9f1b23c62741b0cf2c30c8973851bd8cf3438e0ca996d3a4a6d58b1f4",
+    "mention_text": "Marcelo Knobel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcd19d1ba8e4f10e0256ddbc977e371e9de12c2f50f98c4880527d2745eeda45",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2da3f1809b80f0fccdc45328539dd6a929ac81e39eb81a5c30bf3f2c9d2a56e2",
+    "mention_text": "Faculdade de Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00afd00bb3a938b64e3c3980233f193c68f1ef1e0f018229642322fce43fec83",
+    "mention_text": "Paulo Meyer Nascimento",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98a37747a6c54a9049b487ed291d7b8758038bbd0725e6b44aec27c89eb4b3e5",
+    "mention_text": "Ipea (Instituto de Pesquisa Econômica Aplicada)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "def875184e0a4e60528f335ff20be656e17b18926980f3e86c1d557fa81237ab",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f27412efc79ba0bfc13484bb5fabd061e723ad12b35fc069b633a4cf25d9563",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7adc6a567befd30e3a29e9399f6d96edc40b018ad75948a0cfec12ad5e1ec91e",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "db3e7f7790f49dc5348e747793d1538a1721e27913c8ee4bc3c8732dd7444672",
+    "mention_text": "África do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0080d090a267272de4998b95f2c697d6b920efceb674d193ede9e1ee30e759d4",
+    "mention_text": "Hungria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "729b5674a6e39136b5e04abbb8ef9cfb61600246dbbb4d8dbd91f2c8d489f904",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75d289912cfdc15d75fb19fd2a539ce68de9dfdd0c4674c0af7df06130ecb388",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9884c904aab2244449a3965ad7a90f2fe9e8f458d2d3ef4072e2cf8293206f89",
+    "mention_text": "Nova Zelândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "431c64c4975afb04a0b8ecaf5494e2280e20bad2605c97e9682f15c410d9feb0",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f9483f0b0e255463754356863449048ea3c5c7a91d5b47abb369d2d710ea9f4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d179a1a087c708e8def057d8304851c5fdda31a24f8a5fa7abf694fc973b010b",
+    "mention_text": "Congresso Nacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6849598974079096191b831c6db5e4361fd2d2573d46b0a4d00437bf77c9ddc4",
+    "mention_text": "Paulo Meyer Nascimento",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "452bed8dfa024bf004f7f026dfe51ed2ec7e7a6dc8cc45a80d01ca11c0b5b829",
+    "mention_text": "Sergio Firpo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1f758351bd45581b24748c811828d9b9996a2265b97819fe239ecb973e1aa75",
+    "mention_text": "Instituto Unibanco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "388616b445c92732cd56a288b8398f982d00fbb5aefe2c97f62b3994f09c91a0",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6b2d14a2455223f43ef5c76764f14b65b22d47df1dfdcccb2cd0287526f4d83",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48a2cab50465b00c7974eca372339ebc6bf776696dcebdca59a0083f83c03904",
+    "mention_text": "Daniel Castanho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bddb0da6a1dd4a362a6e1d91a25d80efb993b4dec59f1166b69f237203e73c58",
+    "mention_text": "Ânima Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd90e4c8861a5f52160bda901796e3d777fe6516de242f14f039a439882c1211",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ac3b37f80b3c5d5e840289c152709efd57b33dca94fd148de72b9b62726691f",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "60b98d235734c438455b1d50cbc06fc97205edc75d6dd40d839c755662520124",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d4c3c04f81eae8653930116aa84f5b9335e7c31d483c049cf51d6f281509ce6",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2bb38e2252545a71648e70dc821973c2e9e4bd4c0eddea19c39dece1ed1cac13",
+    "mention_text": "Daniel Castanho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e660c56cd395cdac454448b28751151b27554c53320f0c19649f3cfe93cd867",
+    "mention_text": "Daniel Castanho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1666ead1a8571191a2410c1d26025a004d30864df14f8aba9de3ff610dfe03da",
+    "mention_text": "Hermes Ferreira Figueiredo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83d25e2dfe5b0b7f113c3609ad211fb1637df9318c16376fd39ceebf1118f776",
+    "mention_text": "Semesp (sindicato das mantenedoras)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b66c2f7d2ea33110ac337b4c2f02da589220e2ddcffbbc310f1a70ec76b10d0",
+    "mention_text": "Cruzeiro do Sul Educacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9465dbaef6c18b64fe02f7d4b14edcba7c8cb47d4f073254b80b6f1ab9248f7c",
+    "mention_text": "IES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1238031664429e2f7ef52db9de5a5a273bddcc5e67a5d64b2628052a6146066b",
+    "mention_text": "IES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9ab54b2bfb127ead667a712cad274f424988cdf4ed4e19028a6750e43b9629d",
+    "mention_text": "Hermes Ferreira Figueiredo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "27c8cb4342c6eb5e04dc9cdb05df9ea53822eec2f857b9ef8b56f6aee94cf5f1",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3a2e9bb61f432e573f3324949dc654e08bfa2f36ad2d54a513f959cb5ee29b9",
+    "mention_text": "Hermes Ferreira Figueiredo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "232f7f7cd7547ede0f464e3f9f0ed451ed9baf087d2ccfbb07858e5e7d8b983d",
+    "mention_text": "IES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "735b58107b19e6bbe33a6969b58daad83496f5ad669adc41c41e869797a89043",
+    "mention_text": "IES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7bb1cfb1d1cf396557cbafea968e281ae8b22e5346c6ba93e8e61e5345ba39e",
+    "mention_text": "IES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65383b609aba586c41a27ee9c61d35ec51ee4c150289719467ea20bb5f575005",
+    "mention_text": "Ministério da Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7fc6522e0288ead12d6f5d3c810888e3362e26cf655e6bdf755dd246fd8edc3",
+    "mention_text": "Ministério da Educação",
+    "categoria": "ORGANIZACAO"
+  }
+]

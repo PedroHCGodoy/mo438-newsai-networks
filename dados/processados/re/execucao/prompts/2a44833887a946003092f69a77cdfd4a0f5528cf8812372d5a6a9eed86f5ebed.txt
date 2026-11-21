@@ -1,0 +1,467 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d1df15908a6c76f49322df326a83fb77740863e1d769b1350a4d58e3d960c1ef
+
+TEXTO:
+Aos cem, IBM dá lições de longevidade
+
+LLOYD MILLER
+Por STEVE LOHR
+Aos cem anos, a IBM parece incrivelmente ágil. As tecnologias para o consumidor recebem grande atenção hoje em dia, mas a IBM prosperou vendendo para empresas e governos. Os lucros são altos, sua carteira de produtos e serviços parece robusta, suas ações estão perto do recorde. Seu valor de mercado ultrapassou o do Google neste ano. Mas, no início dos anos 1990, a sobrevivência da IBM estava em jogo. Ela quase ficou sem dinheiro. Seu negócio de grandes computadores empresariais (mainframes) sofreu forte pressão da tecnologia de computadores pessoais de baixo custo.
+"A IBM enfrentou o desafio que as grandes companhias enfrentam mais cedo ou mais tarde -elas dominam, elas perdem e, depois, se recriam ou não", diz George F. Colony, principal executivo da Forrester Research, uma empresa de pesquisa de mercado e tecnologia.
+A IBM foi além do mainframe e construiu uma empresa cada vez mais baseada em software e serviços. E a companhia tem lições para dar às outras.
+Evoluir além do sucesso passado é uma tarefa desafiadora para todas as empresas. Mas esse problema se amplia na área tecnológica, onde as empresas podem subir rapidamente e dominar um mercado, até que uma mudança tecnológica abra a porta para uma nova geração de dínamos corporativos.
+Esse é o teste que Microsoft, Google e Apple enfrentam. Então, que visões mais amplas podem ser tiradas da experiência da IBM?
+Uma mensagem central, segundo especialistas da indústria: não se afaste do seu passado. Construa sobre ele. Os tijolos cruciais, eles dizem, são capacidades, tecnologias e ativos de marketing que podem ser transferidos ou modificados para buscar novas oportunidades.
+Os principais recursos da IBM incluem um forte e duradouro relacionamento com os clientes, profundas capacidades científicas e de pesquisa e um leque ímpar de capacidades técnicas em hardware, software e serviços.
+É a tecnologia ao redor do mainframe que recompensa a IBM hoje. O hardware de mainframe isoladamente representa menos de 4% de suas receitas. Mas, quando se incluem software, armazenamento e contratos de serviços ligados a grandes computadores, o número sobe para 25% -e até 45% do lucro operacional, na estimativa de A. M. Sacconaghi, analista da Sanford C. Bernstein & Company, uma empresa de administração de riqueza global.
+A IBM reenfocou seus laboratórios de pesquisa e sua força de vendas em serviços e software. Desde a organização de projetos de redes inteligentes para empresas de serviços públicos a sistemas de administração de tráfego para cidades, a IBM atua como uma empreiteira cujas perícias abrangem pesquisa, software, hardware e serviços. Esses projetos se baseiam em seu legado de amplas capacidades técnicas e profundo conhecimento em campos como energia, transporte e serviços de saúde.
+Diferentemente da IBM no início dos anos 90, a Microsoft não é uma empresa em crise. Ela está crescendo e é imensamente lucrativa. Ela alimentou novos negócios além de seu lucrativo baluarte em software de computadores pessoais, o sistema operacional Windows e seus programas Office.
+Hoje, a divisão de software para servidores da Microsoft é confortavelmente rentável, com faturamento anual de US$ 16 bilhões.
+Seu outro negócio volumoso é o console de videogame Xbox, com franquia de software e jogos on-line. Essa divisão é um negócio de US$ 8 bilhões anuais.
+Mas o problema da Microsoft a longo prazo é que grande parte (mais de 80%) do seu lucro operacional ainda vem de sua franquia de software para PCs, que manteve o preço da ação da companhia estagnado durante anos. E a companhia está atrasada em novos mercados de rápido crescimento em pesquisa e publicidade on-line, assim como software para smartphones e tablets. Alguns grandes investidores estão inquietos -e um deles, David Einhorn, o administrador de fundos hedge, pediu publicamente em maio que o executivo-chefe da Microsoft fosse substituído.
+A Microsoft tem profunda perícia técnica e de pesquisa. O Kinect, seu dispositivo adicional ao console de jogos Xbox, sugere promessas. Ele reconhece rostos, gestos e voz.
+O Kinect (que custa US$ 150) é para jogos, mas computadores pessoais capazes de ver, ouvir e responder seriam um avanço, levando a inteligência artificial para a corrente dominante.
+O Google tem a cultura de engenharia mais pura entre os grandes da tecnologia. E os ativos mais valorizados da empresa são cérebros e dados. "O Google tem tudo a ver com informação -pesquisar, descobrir e compartilhar informação da maneira mais inteligente", diz Peter Sondergaard, vice-presidente sênior da firma de pesquisas tecnológicas Gartner.
+O Google se considera uma fábrica de inteligência artificial. Seus programadores garimpam repositórios de dados na web para entregar resultados de pesquisa mais inteligentes e anúncios mais dirigidos. O Google também está avançando pelo reino do software para dispositivos, já que as buscas em equipamentos móveis estão aumentando. Mas a medida poderá colocá-lo em uma posição de força para moldar o futuro dos dispositivos móveis, que estão eclipsando os PCs na computação. Pelo menos em smartphones, o Google está se saindo bem. O Android, que distribui de graça, tornou-se rapidamente o líder em sistemas operacionais de smartphones, com 36% do mercado.
+A Apple, enquanto isso, é inigualável na aplicação dos seus principais ativos aos novos mercados. Suas capacidades típicas são a operação intuitiva do seu software e o design inspirado do seu hardware.
+Mas as máquinas da Apple ainda são poucas comparadas às que rodam o sistema Windows, da Microsoft. O sucesso da Apple ocorreu ao levar suas capacidades além dos PCs, com novos projetos em mercados que ela redefiniu ou criou: tocadores de mídia digital (iPod), smartphones (iPhone) e computadores tablet (iPad).
+Mas os projetos de produtos notáveis da Apple serão imitados e sofrerão a pressão dos preços, assim como ocorreu com o mainframe da IBM, prevê Michael A. Cusumano, professor da Escola Sloan de Administração, do Instituto de Tecnologia de Massachusetts (MIT, na sigla em inglês). A Apple, ele sugere, pode construir um grande negócio ao redor do serviço iCloud, de armazenamento on-line e sincronização.
+A história da IBM encerra uma lição de advertência: o perigo da demora. David B. Yoffie, da Escola de Administração de Harvard, lembra que, em 1990, executivos da IBM falaram sobre a necessidade de libertar a empresa de sua dependência dos mainframes e mudar para software e serviços.
+A IBM só seguiu essa estratégia depois que a companhia estava em perigo, ele comenta. "É realmente difícil mudar uma empresa quando ela está indo bem e não enfrenta uma crise", disse Yoffie.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "585630817e666fcb1e6a523ec2295befdae693d6c3911f564bdd63fefd005147",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f3fee821f5d50948a9259190a1c83924b9c9e93ba43b5c1d99a98cf6807c8b5",
+    "mention_text": "LLOYD MILLER",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b48e1067b95253962f93c3a2f4eb6c2635fc4d7ace9bbd46f5fbf77eb709af1",
+    "mention_text": "STEVE LOHR",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf932402128edc7e0cd51edf9fc0d7a1c65559ddbc70acf6a408f6def4bc8a91",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b09240cccd4572f9063453b307e149c2680a269701015cbf09a8414bfdb703c1",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b81059006ca1d98892b16817ab784527e75abcc2e7b444290000888634fb725c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d8c61bfe9c1d62cf230a32a4ad8111948f3b8487988d464b1b53fbbad1987f3",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d26ba308d1c348c8c2494686eb8c42d59351d803880f708b617250f7108ec80",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d925fa6e1f7a9cf76598e75de8f9d0323c82200a9e32f2b94c501689bfbe9e77",
+    "mention_text": "George F. Colony",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5944dc17f2969f2e2f2c7630a15749164d0f5a03d2ae79154bd4a155a1a7138f",
+    "mention_text": "Forrester Research",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0403da08912cb715499387ee7032ad537267829fc787f36ed94cbfbf001f0871",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1cb105598ad636eddd1650b664cf4e4966a894514794770c4e547e0858d7e1c9",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13d031b044a1e930f9ef87c6e2aad0d67bf102a1d489ee375c17e437977c2c4b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "774bc422f6a8a36d2c6e9147e19e2564abc7867e82bd9772590ab99990d6bb61",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f314bd6f576d8658b93d68c68b3482c8b8a7e19c4d4635c4b9f5003303d79bf0",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc9031429a39bca6d09d17cfcf2ea8d1a469173dd91bb7e07bba16bbad238bf7",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4af3be634de020fdbf0c2ce5886b1527b471a05b09002647b8e312ab897a51c",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9822f9a2cb13297118d4877b564365aa846f01e581461aec9f868c0ddb1cb07",
+    "mention_text": "A. M. Sacconaghi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91ef3312ab3e817a56ba9e75bb2e972f03554df05a5902bdf66e86efeb1a34f9",
+    "mention_text": "Sanford C. Bernstein & Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebe9822a4f31edbf6f67aefe9743e57feda7f2988a55f2fb135f2c802a5341e7",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78e15bd48f68450607f1529b340b42a2ba27829d6563de327763d9e89367be9a",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c67df39b86a5025bcd65f90a06d3a785f6e4e2db839b7d4deafa79c5356073d",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07b702df3070d2431f7ab193fd806300a824b3a2d903a398080e95edb9df23bb",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5daa09bb2eed6642b51c03bbed9543f5a81d97a2c4518416c5a701e76b24a2f8",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f7d26b9380f857dd859da5b28125b88ae277b751bcc44d03b961294ad8ec5d5",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb80986367a8003b07a156bda89c0db59f0d3e35d818fb194069aad9fd2cce2b",
+    "mention_text": "David Einhorn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18eb203d009a95e01a17bac300535a496cdd5c944aec3d3058d49cf5ed1406cf",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1fc381b9528c3e59966a134796b3ecbcbb6bc45386a18fcd3134356a0d78a96",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7995679d95279e8783503be4babc56de524e10a07f277c739200acccce9ba28",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "418689860d64a7a0e9fff6b40e17412dd6f5ce3977c2b8ca62042e0a62910c17",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "588067a5d714745f3439d4a54924b876d37b0c1539113df9bf03cbb60e9cf94d",
+    "mention_text": "Peter Sondergaard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b15014d17788596742f9c92029bad6476e90766513389ecc97663c2391502b1e",
+    "mention_text": "Gartner",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "042daea8fc04663747e65a7cc1f06aa3d27639a36985ce39c3434044833ccb61",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a243680bb820cfb830c34755291b5d45dcec92d380ed30e8daad9c75c2d18f0",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bddbbfcc351b7c1f13693f210f3fd9e4be6e1092d3b22d096c2b34884242acee",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2521df65603c44528e3245503ff7ca16f8525ae6925ba578d40d9638ad9fc6d",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eda263d5822aaaeca6a555573ece9c8579f1fb0cff05ca9169064f729cf4ee64",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3fee75714c0e0409f53f813bc39f66e377c9dba482681f948a47e13c350718ee",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fad8578fafa6a62962b6334c75206658c197c21623de399c6eb0f45109e8252",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e318b18bd159a25656f8cfd6f2a24581f148d67599a37682fc7eaa804dd66698",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99817b6eb27af7cded72cc5218dc97a1af87b732a6a811de554901c68976b5bd",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5977871aeced6ee4f48e8f8b15ac299f22b9b4ff8087ffa583eb92d0c9cb08b9",
+    "mention_text": "Michael A. Cusumano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7008da9134f0181c4aeca6ce8970ef0bd121bba62f88055775951fe22c70290",
+    "mention_text": "Escola Sloan de Administração",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "705e83eaa004064c4b5546cdc26ce440408f03754825eb0f1cb8676cfc762e6b",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0edace6715fcbff11dc71e59515cc23fc74016cf9a4db4d67fe3535a29b7aa62",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21247a18969ceb0ad03e836957b759a8582ac7254c8198d614b8f1d445278671",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c189506e8901b51d729abb01fdeec4dbafb29ceb9c130be3b5e0478273ae46f",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea50e34ab094dec4d84cf541f9893fc8774b066a3f110646d7600962dff3f64c",
+    "mention_text": "David B. Yoffie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc6dc174f8afc329638da6b015dc4b61fc05ce980ee8396548227536d0695157",
+    "mention_text": "Escola de Administração de Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18140fe54b2abd372f4942c5a043a9a92fa11a595015e75c258a3c8b843b8b34",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2e7a88a4715f2004f4ccb1fd275eafe27f639a9b7c84029a259b0c32ddb7ae1",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f36b06bb32ce578b65d936ba7ce4f907c1d9380252c45711939e80ac19f6ceef",
+    "mention_text": "Yoffie",
+    "categoria": "PESSOA"
+  }
+]

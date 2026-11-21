@@ -1,0 +1,798 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 41db410d158ee95313cb92ceb110dd957efec98902170d510c7b203c1a210c73
+
+TEXTO:
+Carrefour e Extra empatam e Mercado Livre vence pela 3ª vez
+
+“As pessoas têm comprado de maneiras diferentes. A jornada de compra está mais fluida; a rotina, no celular; o cliente, empoderado; e as referências, pipocando.” Eis um resumo dos desafios atuais dos varejistas, segundo Maurício Morgado, coordenador do Centro de Excelência de Varejo da FGV-EAESP (Escola de Administração de Empresas de São Paulo da FGV).
+Jornada de compra é o caminho que o consumidor percorre desde quando descobre que quer algo até bater o martelo e adquirir, de fato, determinado produto. Para as marcas, pode significar transformar um desconhecido em cliente e, depois, em seu promotor. “Destacam-se aquelas que conseguem estar presentes e exercer influência nos momentos de decisão”, explica Morgado.
+Duas delas, Extra e Carrefour, são Top of Mind Supermercado. Nas 22 edições em que a categoria foi pesquisada pelo Datafolha, ao menos uma delas venceu. Nesta edição, empataram pela décima vez.
+O Extra atingiu 7% de lembrança e o Carrefour, 6%. No critério de desempate do levantamento, o “awareness”, cada uma recebeu 18% das citações. Extra pertence ao GPA (Grupo Pão de Açúcar), que, de acordo com a Sociedade Brasileira de Varejo e Consumo, é líder do varejo brasileiro —faturou R$ 84,12 bilhões no ano passado. Já o Carrefour é a maior empresa varejista do país, com faturamento de R$ 56,34 bilhões em 2018. O diretor-executivo do Extra, Marcelo Bazzali, e a diretora de marketing do Carrefour Brasil, Silvana Balbo, costumam usar uma mesma expressão: “transformação digital”. Ele, quando fala em “aliada essencial”. Ela, em “pilar estratégico”. “O Extra aprimora relações de consumo para cada vez mais fidelizar os clientes e fazer parte de sua rotina, onde estiverem”, diz Bazzali. “O Carrefour oferece as soluções para que o cliente encontre tudo o que precisa na hora mais conveniente”, afirma Silvana. A varejista brasileira de 30 anos possui 440 unidades espalhadas pelo país. A rede francesa, no Brasil desde 1975, tem 673 lojas. No ano passado, ambas lançaram novos formatos. Menores que os supermercados, Mercado Extra e Carrefour Market apostam em itens frescos e soluções práticas para o dia a dia.
+Agressivos calendários promocionais (vem aí Black Friday e Natal) e linha própria de produtos também são estratégicos. É a tecnologia, porém, que as move. Fortes no ecommerce, elas têm aplicativos atrelados a programas de fidelidade. Clube Extra (12 milhões) e Meu Carrefour (15 milhões) somam 27 milhões de usuários cadastrados.
+Ao estudar com profundidade as jornadas de compra dessa base, as duas redes conseguem oferecer experiências personalizadas ao consumidor. Em abril, o Extra anunciou sua primeira loja multicanal, o Extra Hiper Itaim Bibi, na capital paulista. Nela, reúne suas inovações para tornar a compra mais rápida e prática. Novidade é a plataforma de encomenda e entrega James Delivery. O app inclui os produtos da nova unidade, além de restaurantes e farmácias. O Carrefour quintuplicou suas vendas no ecommerce no segundo trimestre deste o ano frente ao mesmo período de 2018. Atualmente, tem 28 pontos de retirada de compras, além de uma parceria com o app de delivery Rappi.
+No primeiro semestre, lançou a Carina, sua inteligência artificial, que interage por WhatsApp e deve chegar a 2 milhões de atendimentos ainda neste ano. Extra se destaca principalmente entre os moradores da região Sudeste, onde obteve 12% das menções, e o Carrefour, na faixa de renda familiar mensal que vai de 5 a 10 salários mínimos (12%).
+Nada de disputa dura nesta categoria: em 14 edições, 14 títulos da Casas Bahia.
+Neste ano, a rede foi citada por 29% dos entrevistados, seu menor índice desde 2015. O vice, Magazine Luiza (11%), subiu seis pontos desde 2016, mas a distância da campeã permanece confortável. Em junho, Michael Klein, filho do fundador, reassumiu a empresa, que ficou uma década com o GPA.
+O herdeiro chamou reforços. Entre eles, Ilca Sierra , que deixou o Magazine Luiza após dez anos. Ela assumiu a diretoria de marketing e comunicação multicanal da Via Varejo, que administra a Casas Bahia e também o Pontofrio.
+Fundada em 1957 , a empresa foi a primeira do ramo a oferecer crédito facilitado —“quando ninguém fazia isso”, ressalta a executiva. “A rede sempre mostrou habilidade em entender os hábitos de compra dos mais diversos públicos, em especial dos menos favorecidos”, completa. Foi com eles que a marca consolidou seu carnê.
+Atualmente, o produto tem cerca de 5 milhões de usuários. É pensando neles, principalmente, que a Via Varejo anunciou neste ano que pretende ter seu próprio banco digital —a fintech se chama BanQi. Via aplicativo, ele já está disponível para celulares Android, com serviços limitados. Pagar o carnê é um deles, claro.
+O melhor índice da Casas Bahia ocorre no Sudeste, onde alcançou 46% de lembrança, performance que fez a marca vencer também o Top Destaques Regionais .
+Dez vendas são fechadas a cada segundo no Mercado Livre. Maior da América Latina, o marketplace argentino que tem no Brasil seu principal mercado está completando duas décadas de história.
+E pode agregar à festa o tricampeonato na categoria Site de Compras , há três anos pesquisada pelo Instituto Datafolha. Desta vez, obteve 27% das menções, um salto de dez pontos percentuais em relação a 2017. O melhor índice se dá entre os jovens, 42%. “São o alvo da nossa comunicação”, comemora Danielle Crahim, gerente de marketing do Mercado Livre no Brasil.
+Neste ano, a marca mudou seu posicionamento e adotou o slogan “O melhor está chegando”. A ideia é passar uma mensagem positiva sobre o futuro e, ao mesmo tempo, remeter ao produto aguardado.
+Segundo Danielle, o momento é de ampliar a comunicação para além das ações sazonais e “protagonizar pautas que envolvem valores importantes para a marca, como sustentabilidade e diversidade”. Ambos os temas ganharam atenção especial em 2019, com seções exclusivas lançadas: Produtos Sustentáveis e Moda sem Gênero.
+Com 280 milhões de usuários e 19 milhões de vendedores, o Mercado Livre oferece 200 milhões de ofertas simultâneas, em 1.460 categorias de produtos. Após três anos, voltou a veicular campanha na TV. Em junho, com “Namoradores de Produtos”, abordou receios da primeira compra online para falar de seu programa Compra Garantida.
+A empresa também atua em outras frentes de negócios, que vão do Mercado Envios, seu serviço de entregas, ao Mercado Pago, fintech do grupo que já tem uma carteira ativa de 4,5 milhões de pagadores.
+A categoria estreia no Top of Mind fazendo de Bic a marca com o maior percentual alcançado entre todas as citadas na pesquisa deste ano: 83%.
+Nas classes A e B, a campeã atinge impressionantes 94% de lembrança; entre os mais instruídos, chega a 95% das menções.
+Nascida em 1945, a marca francesa está presente em 160 países e lançou em 1950 a sua versão da caneta esferográfica. O nome vem da esfera situada em sua ponta. No ato da escrita, a tinta é transferida de modo uniforme quando ela rola sobre a superfície. Repare bem: é uma bolinha minúscula feita de carboneto de tungstênio, material quatro vezes mais resistente que o aço.
+Também é fácil entender como esse objeto um dia representou um salto na escrita, por meio do design e da inovação.
+Exemplos: aquele furinho que existe no corpo da caneta serve para igualar a pressão atmosférica do interior da carga com a pressão de fora, evitando que o cartucho de tinta estoure; o corpo é hexagonal para que não saia rolando e caia da mesa; a tampa é furada para permitir a passagem de ar no caso de o usuário a engolir por acidente. Por ano, 2 bilhões de canetas Bic são vendidas no mundo, cerca de 15% delas no Brasil, seu segundo maior mercado global. Os EUA lideram.
+“Por meio de seu portfólio, a marca tem acompanhado as pessoas em todas as fases de seu aprendizado: nos primeiros anos de vida, como parte do processo cognitivo, passando pela adolescência, período em que ocorre a transição do aprendizado, até chegar à vida adulta”, diz o diretor de marketing da Bic no Brasil, Rodrigo Iasi. Em 2002, a caneta Bic entrou para a coleção permanente do MoMA (Museu de Arte Moderna) de Nova York, no Departamento de Arquitetura e Design.
+Ela está completando 50 anos e, pela 12ª vez em 12 edições, é a vencedora da categoria. Com 32% de lembrança geral, a Suvinil obteve seu melhor índice na região Sudeste (46%). Sua história começa antes, em 1961, com a Super, fabricante de tintas automotivas que decidiu apostar no segmento imobiliário. O foco eram produtos à base de látex sintético, o popular vinil.
+Em 1969, o “Su” da empresa juntou-se ao apelido da tinta, dando origem à Suvinil. No mesmo ano, ela foi incorporada pela alemã Basf.
+A reformulação geral, de identidade e posicionamento, pela qual a marca passou em 2018 ainda está fresquinha. Bem como a ideia de se aproximar do público.
+“Mais próxima, a marca estimula o consumidor a transformar suas histórias por meio da tinta”, resume a diretora de marketing da Suvinil, Juliana Hosken.
+Para isso, alinhou seus produtos aos diferentes estilos de vida, necessidades e motivações. Em maio, levou ao mercado a Suvinil Criativa, para quem quer praticidade e custo-benefício e valoriza artes, cores. São mais de 1.700 cores e embalagens ilustradas pelo artista Speto. Em busca de inovação, foi lançado em junho o Suvinil Fora da Lata, projeto para acelerar startups. A tecnologia faz parte ainda das ativações da marca. Desde outubro, nas lojas da Leroy Merlin e da Telhanorte na marginal Tietê, em São Paulo, ela ajuda o cliente na escolha da cor, por meio de ferramenta de realidade virtual. “Temos investido muito no digital e no ponto de venda, com grande foco em tornar a jornada de pintura inspiradora e descomplicada”, conta Juliana.
+Pessoas e suas histórias também inspiraram a Deca em sua principal campanha de 2019, para a nova linha de cubas de cozinha. A coleção marca a entrada definitiva da empresa de 72 anos nesta categoria .
+“Já estávamos presentes com metais e cubas em louças, mas agregamos as cubas em inox”, explica a gerente de marketing Fernanda Dayan. Veiculada em mídias digitais e de massa, a campanha tem como mote “A história que faltava na sua cozinha”. O filme coloca o cômodo como o verdadeiro centro da casa, o palco de encontros e boas histórias, enquanto destaca os atributos de sua linha de produtos.
+“Quando falamos em inovação, nossa maior preocupação é com design e tecnologia”, diz a executiva.
+Há 26 anos, a Deca tem parceria com a Casacor, umas das principais mostras de arquitetura, design de interiores e paisagismo do mundo. Na edição paulistana deste ano, apresentou o Deca Lab. O projeto do arquiteto Ricardo Bello Dias remetia a uma nave e propunha reflexão sobre sustentabilidade e tecnologia em favor do bem-estar.
+A depender do que aponta o Datafolha , as ações da Deca vêm se mostrando acertadas. Integrante do Top of Mind há quatro edições, a categoria Louças e Metais Sanitários jamais teve outra vencedora. Neste ano, a Deca recebeu 15% das menções, com melhores desempenhos entre os que têm renda familiar mensal de 5 a 10 salários mínimos (27%), nas classes A e B (24%), entre os mais ricos (23%) e os mais instruídos (23%).
+Pela quarta vez em quatro anos, a Ypê conquista a liderança no segmento. Nesta pesquisa, foi citada por praticamente metade (47%) dos entrevistados.
+Para a gerente de marketing da categoria pia da Ypê, Rafaela Bonchristian, “o lava-louças da marca oferece ótima relação custo-benefício e, por isso, tornou-se o número um no coração dos brasileiros”.
+Curiosamente, os detergentes Ypê eram os mais caros quando a reportagem comparou seus preços aos dos concorrentes nos sites de Extra e Carrefour.
+Por que o consumidor considera pagar mais para adquirir o produto em que realmente confia? Atenção à sustentabilidade, no caso em questão, talvez seja um fator determinante. No Top of Mind, a marca já venceu a categoria especial Meio Ambiente 13 vezes .
+A Ypê atribui o sucesso de seu lava-louças ao grande volume de investimentos que destina à tecnologia. É ela a responsável por gerar benefícios como eficiência na limpeza, rendimento e economia, de acordo com a fabricante.
+A marca se destaca na faixa de 16 a 34 anos (58%) e na região Sudeste (57%).
+A categoria tem uma tricampeã: Veja, que recebeu 39% das menções nesta edição da Folha Top of Mind . Seus melhores desempenhos ocorrem entre os brasileiros mais instruídos (55%) e no estrato que tem renda familiar mensal de 5 a 10 salários mínimos (52%). Segundo a diretora de marketing, Mayra Palacios, a marca inova para oferecer à limpeza da casa mais praticidade. “Uma das características mais valorizadas pelos brasileiros com nossos produtos.”
+No ano em que completa meio século de vida, Veja lançou campanha nacional em TVs aberta e paga, peças digitais, ações com influenciadores e filme no YouTube para anunciar dois lançamentos: Veja Arome Sense, com fragrâncias aromaterápicas, e Veja Power Fusion, que promete uma limpeza "superior”.
+Segundo Mayra, eficiência também conta muito, uma vez que reservar tempo para limpeza não é exatamente prioridade na vida da maioria.
+“Outra tendência é que, cada vez mais, as pessoas deixam de ter auxílio de funcionários domésticos e acabam fazendo a faxina por conta própria”, observa.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f7e97241085d6341ed059ce215c8f5fef80de58fff3228253d620334b0be3a45",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c20bc01c25108ef85a6436021c3ee979a5716bdf16ac706c198783e2fbc815f",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cef8708819c5d168f70b915c2cb227263490951d2d9de420a81f7f8f4f39e413",
+    "mention_text": "Mercado Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e3a07ef59a43678d3aeb77c9922def124b3d93e0b6f5cbb5be97fb6697a9756",
+    "mention_text": "Maurício Morgado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a93439c982d3dd23e2561d48712f3b0a445a8e9a6aef515b528267ed572c0702",
+    "mention_text": "Centro de Excelência de Varejo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13f7eb8dfe9afc18e97c85135237364cb1845f38676dc5976f3608cb8a55a640",
+    "mention_text": "FGV-EAESP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92797878609b3bb46ebd379a02c233a640a0c31e5241532ce00be9f353fa4787",
+    "mention_text": "Escola de Administração de Empresas de São Paulo da FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad39b48e1f5bbc6be89d47b2806099b57c1f0c7a6140e8ceac4109578f6e9e00",
+    "mention_text": "Morgado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1245e2ce7f45274f2e0bcf10806375e0217a841bfd57108ab803c7b5fc46d3e0",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c254dcb2e3ac7b13647e6c216c70cd09a4283258e2e927e7891a77d06e9a20a7",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e9ddc24e1381c06d6d3e0c2e673a44cd203fa461aac51c4dc9fce95fc2257986",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7b87ac0ef4a1df1453f4d1cde8ee5603d0829f63181ae56c1ac4647a5325177",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4b3e80217973e3a8663650a8b8d6333ddddd5ab47dfa27c051f690dc50220f6",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51cba46a6b1ff1d948dd8b95a3473e95832b48bada26e117271d1d6aed9f1375",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b0754b592f881bcd94771fc98a00ac26eb9b1f9b01126530ebf30978906d595",
+    "mention_text": "GPA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8b423655b35195f19611ad558e1fe6596fa44e5d10cb40a18c9ab996b346ef8",
+    "mention_text": "Grupo Pão de Açúcar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb8f89b31b3c1901a8aa24f90b4ed7fc428599f549544460c1d0218614a471d3",
+    "mention_text": "Sociedade Brasileira de Varejo e Consumo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "158b250954ab6921614a83f4f8cfd886ec1688390ee3cb54be9e19fffd3214f8",
+    "mention_text": "brasileiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01b9e07e4a94306dd55f20a5d39e8f157cd63f204c6e21ebeef06df26fdde779",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5ba6b03d9aea5417cf90d6c79250dce639247d990bf5c3396252c311f106fa3",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4743237f402d80aaecf7a1a14029a5c54001151135c33e9ebac2fbaac0b685cf",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87019842ebb29b9e220a3a068a7e157c9bbf20281cc25c075e25b68869a632fe",
+    "mention_text": "Marcelo Bazzali",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdbc617b81fbd32154fc2813b35d02c8a76295e4fa4edd341d6cecfd34e270ba",
+    "mention_text": "Carrefour Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b8fc7b5fc1d137f3bc09cb167aae65f99337a47047ebdc534cb407f0c7c316d",
+    "mention_text": "Silvana Balbo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7e3d770e31b5878b959c8d4480b16fecc715013be7f4a9e034f167db0f29882",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5daa2b9ff09e03bb8ca18dd7b8898395a0900e859c2736c75eca6b38d769dd2d",
+    "mention_text": "Bazzali",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd5bd00f6542cd11782e55510661e393ecdd12235037eb712fe1928268d7a44d",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66069350f1ce7845d203bf1c8d5a244cb3f2b88aa491d710cef60ec3de2c858c",
+    "mention_text": "Silvana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "602f840dc6a098bed6bd98f9c7bba2fe8533c24c8be71ff778103a7adf5da28f",
+    "mention_text": "brasileira",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fdf0070ea2cd798ed3adb19508a706025224f31a8c86c69859d87cc59665a27a",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8c04150bedc035ed9de7149599c85af0941d7baae45db31181ff8717b443e7f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4b1dcdc53c1449e29abd1f7f17574e69900ca3e461c0442e5fd317b941b267da",
+    "mention_text": "Mercado Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7992bcacdb649f0bf1e91f303a4110592f0ade06abbb62a693ecc925bd13e05d",
+    "mention_text": "Carrefour Market",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a71e2a7795858810e8285e384e5a017b7b63ea72db45aefc279eca17e7eb541",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4433e1d3f6164352de5915531cba68db099746d6463dc4dc04b29c55c914f3a",
+    "mention_text": "Extra Hiper Itaim Bibi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52d5cc9b957270521b6734749e31fb06275bc0153cb93bbd875209025b47ba1d",
+    "mention_text": "capital paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a476e8a611f44c83d1f8f197125a6744eae15a8ebc4edaba325920a83f71ade2",
+    "mention_text": "James Delivery",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00777d8a91cb264653e3b4f872c787ecad0e89ad2b3bc32696136bd451e2aacd",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed0b28120c08c4db67f22d644730f736a8a0bee4120388fefd8bd760558aad64",
+    "mention_text": "Rappi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5f43cf31272ce2b2fb94bcdb720a336dbf91dab700686ae06bf17e9e958651b",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ac800f8d34b139e11fc07fc2ae2b37166024e633ed8b12ba21683931427488f",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b0ef38abccf453943dfc7d165c4270e62932d2ef9cd4592178f429e083351e37",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "afafe5c196e9706bf4c5096347993e43593db60792039168dfc33e0159d6b1a0",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1fb2a8c71a506baf355b3ff161fd9f4a5c0db92be3b958bdc79b5966bd0889f",
+    "mention_text": "Casas Bahia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "225eaf2a4fc8aed3e65a35e121351e8d200cdc2f05562511f69cbb6d9e745a8e",
+    "mention_text": "Magazine Luiza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b115968fdb948449889c5b0957a5c185293c414a82359a34946f776fbd1ce759",
+    "mention_text": "Michael Klein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cccbd4470d141d207de8e3253f3362cfb9e3db92c4f6267d6172843cf7ebe11a",
+    "mention_text": "GPA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9d721cd71177a6ce8f63d286d476b3eed0e94ca3ba0ceef5fe1617c57971b32",
+    "mention_text": "Ilca Sierra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d59fe3b0efb73a7adc637a05e01701258eb32634aa396604c863e4e21549ff4",
+    "mention_text": "Magazine Luiza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9dfa9604f69eca7170bc3bba88de3547d24e5ae5eec71241fa2f076fc4f35b96",
+    "mention_text": "Via Varejo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b4298e689b772828ec07060b5fbe83c3d36277e96ad5afde051a864f01b9f887",
+    "mention_text": "Pontofrio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "003cbec664da20d363a8bfdf679e30d94202f2f61fe87ebc8cdf71d14e7c077f",
+    "mention_text": "Via Varejo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8abdc294cc11d494d62c34a34b2dc127e66308bd0b8a754d3f11ce4951277a20",
+    "mention_text": "BanQi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52f0fb6250795b812687d9a30c77c539907fdf9cc0846a2f8a9463d48713c716",
+    "mention_text": "Casas Bahia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "960048263b3a1354c868f1d7f256b387ed30edd49126fa0d453eec078375ad14",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a50012c05e8278f0c4a1e472755f14c02c5499600ee6880fd1625a87910fd18",
+    "mention_text": "Mercado Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f26ba944514be87d8deacbe4cfa032d93a041e7c85fd6eea6530e5254765e975",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9e1b3fbec3a8285cb481f05b16962b899ab8d41f234f7b973154d4a6dc353d11",
+    "mention_text": "Instituto Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43444b4d6bd560037ec404b192cd5678dc808b3f2cf10221adbe16e9121434bd",
+    "mention_text": "Danielle Crahim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "720dc0a95eb98b1cd30cc6ba7644e44cd582e9b2cf6acde4e648aae62f458df0",
+    "mention_text": "Mercado Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f60b36becfaa602f5a234668d6ac2b7cc8dfd96b3665f47e92a39ea0cd4610e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e53d4758fa72c35c100c017ae14a0c68923457efabd2a37bc8c29f09544ff065",
+    "mention_text": "Danielle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ec276bd8b53f43062cc307259f42ce0cab30940821d60ec0df7f4024f5dc788",
+    "mention_text": "Mercado Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e1bf3b459054edb14f1a235953a35c65cd92e90711a347c5668cff62528111d",
+    "mention_text": "Mercado Envios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6062da5773519f6c43d112e5e25241cd1d0922d2a1c0847dfebf998d27048fa0",
+    "mention_text": "Mercado Pago",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "446d99e301c376cdbb9d55b6ed203bc6c934ea639c3a609185ee5073ba4659b6",
+    "mention_text": "Bic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93bd226265b9fc79220547c6406f34b9817a96febe368b99ec30076f616a2caf",
+    "mention_text": "160 países",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47f21b3540bcc8b88122ff0e78a21323a3445617cc3b0e98483e8ffb58afb61b",
+    "mention_text": "Bic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0eaf4bf891b241f5e540933229fee926b61bdcef68537c42b7ceacea6078e5fb",
+    "mention_text": "mundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "696c882b84c9e2dc056764a97efccc1ac4afc02721861389ebc675daf60310af",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e5905f1a27a747c26a78db7f0386d0ee0598967a521a9646f253bd40ccb5c5ac",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09ce0f712c26290ef23dd7471a691fdaea550db2d4656dbc81ee40e98240b511",
+    "mention_text": "Bic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73c3a2d5b8b084800d089ef8bd7648e69193537659b955976f76b93e6f64a57d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f861d4facce59aece17951164380539a0ffb3ac2f46651a091e7b11a2d74290b",
+    "mention_text": "Rodrigo Iasi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45e34817f0cea3f37bc17d4048e880656ac518c18e9257560ec22f4534725bc0",
+    "mention_text": "Bic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3051b0686d4c9f096a697ead6062cb2b1a974ee8122a378cddeb3dc35fe4be90",
+    "mention_text": "MoMA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4def2fc0487ade2982ab613015adc4369c9aba13a3a8bb16ff61081dafa3afd9",
+    "mention_text": "Museu de Arte Moderna",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01cd54605f7fe3b0cca3f9b25497f83e7a1e4a199a69bf52f507e6afef55fbea",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0aac6f839a3eae76530d28c4b6e5ef5a37ca2329020b241c2725190bcf450b45",
+    "mention_text": "Departamento de Arquitetura e Design",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5c537308d971418644966f0cac77a090f680530a58005bf5631030a80596b1a",
+    "mention_text": "Suvinil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1ea2eb83c1b4b1027f3482e249bf79a5a55fde3fe448b6b65e3e0bc60654181",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "59418ce09223cccf963d8a40a04b187a588f1c0deb05c241e68909e08e75f000",
+    "mention_text": "Super",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13436a2351c2a373b185387843b3f2dadbbf2c3889ca169fd5b795d087312788",
+    "mention_text": "Suvinil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0766f9415044ef4b89bc1838e0a0c87fcaf4184b8ad9bf7956b23855b01ddde5",
+    "mention_text": "Basf",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ecf027c4af6aa71f3a81d9f94b03694accafc51a59fa3cc15eecafa62d1f3271",
+    "mention_text": "Suvinil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8117d85a5aab49f9d546607b52dd7b6ec7cf301c4b678c94582874e57cbe9f97",
+    "mention_text": "Juliana Hosken",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f711270674193983b9e041f6f57c5d0dd034f85bea7d7829f090fb84e845b1dd",
+    "mention_text": "Speto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0209ef9ec80612833dfdec8c76b7349e4df15ef68a857a355d1ce51adfdbe4c6",
+    "mention_text": "Leroy Merlin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd54c2f87d62479d76d538bd98007aec36f745c76cf3f7ddb38184d3b11e076c",
+    "mention_text": "Telhanorte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4aeec9731603e29073850c3a7c144bdb8f430b160705fb3fee5dcae3dae994b5",
+    "mention_text": "marginal Tietê",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "354c7b701b13c50a3c2c43ce0016b552148a35421c0ed093d46339d556c5b0c2",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d2ad67142db72deb93dd1434089bd4eb6910bc7f3ff228f73a7d75af6d92c52",
+    "mention_text": "Juliana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8bb85f9724abecb878b37c86136841850168a53cbf4d7e8adfbb9b0c5342041",
+    "mention_text": "Deca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4aaef424dc923ce7ced45a255e8c793ffeb6ebca43e0e65ed9f2bea30d0d8e0",
+    "mention_text": "Fernanda Dayan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1e5f364e142154d1c75d00709ef92cd996c3b33e5cc01df77ad41475d74ecd0",
+    "mention_text": "Deca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b8f92adcb2eb10847617e8c96c2d1bf612015e1405f7e1e75a6dec3de4101d9",
+    "mention_text": "Casacor",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59c9b08b4f53ead7a97afeeaad2adcb92ecca40bc3782c0668a0ca7a9b16a525",
+    "mention_text": "mundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc7db7310d3094fcd65f02f894fa6065a4378aca111767c2198a0c1b9c2c3d0b",
+    "mention_text": "Ricardo Bello Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b53c4800ed046b40c8013396eaccc40dc428b48f30e9e2c77816144294dbfc18",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28e81b90dfd8961ba9858aaabe509d4e9993e2c81f8b4d131b3bca43e79e2c20",
+    "mention_text": "Deca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "181925e7a278375332ad57a1fcbbe2f91792c0b3d4b9053edf2fdd203dc12373",
+    "mention_text": "Deca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9d031f2a26398bb441404d2589fbec9450790e0767abceb9666393c7b12c433",
+    "mention_text": "Ypê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd347a962aff0cfa162e598e261acd5b2fca35be45eee2540f29fff4b3b2e08f",
+    "mention_text": "Ypê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6feb74eeb0c2f1cdd6999896b6906c50291ca35bb3594abac75975e820b9e274",
+    "mention_text": "Rafaela Bonchristian",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfd7f106b6e9668410724370f4ca6cf1ff50910df3276a5d8dad4e21171ff8cf",
+    "mention_text": "Ypê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35855be136422add3e5f8bf1103ac2d262579a612c3a587e05dc5b4e12b1f038",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81b24542ca487ceb95b6141899e8159584d429ba67252435391975953ccf1ca3",
+    "mention_text": "Carrefour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c778596fdd55ef56266e001e8e3e037b85b3f2a630f03d5f8473f10135878f39",
+    "mention_text": "Ypê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ac90bf80f76d6418e7edd58179eabe9492dcd3f84b578734f21db7da99ce194",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fabbcd5b7a091dcf9cd48b375dcaf752c5f3d31edc892b7a9e491f7fb0fe3a96",
+    "mention_text": "Veja",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "341d0b393c5c369abaf2e90a255d0bc9eca3a8df2d72797c1cd928e7ed774d0b",
+    "mention_text": "Mayra Palacios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c68a2f60774e4607d15cb375b192dffa56eaa45540dde664446c8ce03bd73e0f",
+    "mention_text": "Veja",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c0957ba142a96c0043e1363f9f29d1bcd5fbfe0ea5a2c999770ac7871772609",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04d62c6383f84528f580ec84b30cd1593c53356f4b4977a265e52ecd786ba81f",
+    "mention_text": "Mayra",
+    "categoria": "PESSOA"
+  }
+]

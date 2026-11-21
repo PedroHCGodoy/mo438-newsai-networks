@@ -1,0 +1,447 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 442232664eb3506b947638645e4d4f2347263a7b2650256517e23dbbe0485a5b
+
+TEXTO:
+Marcelo Odebrecht anexa novos documentos a processo relacionado a filho de Lula
+
+Marcelo Odebrecht anexou novos e-mails ao processo sobre a relação da empreiteira com Luís Claudio Lula da Silva, o filho caçula do ex-presidente Lula . O conteúdo dos documentos reforça o que já foi delatado.
+Em sua colaboração, o ex-executivo da empreiteira Alexandrino Alencar afirmou que Lula pediu ajuda para Luís Cláudio iniciar a carreira empresarial. Segundo ele, a empreiteira pagou um orientador para ajudá-lo a colocar de pé a empresa Touchdown Promoções e Eventos Esportivos, que organizava um campeonato de futebol americano.
+A Odebrecht teria contratado também a empresa Concept para trabalhar no marketing da liga de futebol americano que o filho do ex-presidente queria criar no Brasil.
+A defesa de Luís Claudio apresentou recibos que mostram que ele pagou pela contratação da Concept, o que esvaziaria as declarações do executivo.
+O presidente eleito, Jair Bolsonaro, comentou com parlamentares numa reunião na semana passada que “ agora vão começar a bater nos meus filhos ”, segundo um dos presentes.
+A afirmação, feita dois dias antes da revelação de que um ex-assessor do deputado Flávio Bolsonaro (PSL-RJ) movimentou R$ 1,2 milhão de forma atípica, foi interpretada posteriormente como uma tentativa de “vacina” diante do que explodiria pouco depois.
+A Prefeitura de São Paulo receberá um freezer e quatro remessas de 28 caixas de sorvetes doados pela Unilever.
+A empresa é dona das marcas Kibon e Ben & Jerry’s.
+Segundo a gestão municipal paulistana, os produtos serão fornecidos ao longo de um ano e abastecerão a copa do gabinete do prefeito “para que possam ser oferecidos também a autoridades e visitas”. A doação foi publicada no Diário Oficial do município.
+"Minha relação com a Ilustrada começa no início dos anos 1980, década que marca uma virada em sua identidade. Havia ali uma turma que buscava, quase aos socos, uma renovação do jornalismo cultural, jovens a fim de briga. Hoje, amadurecida, ainda guarda traços desse caráter adolescente, quase sempre pertinente e bem-vindo. Vida longa à Ilustrada!"
+Cerca de um milhão de pessoas já interagiram com a ferramenta de inteligência artificial sobre segurança online, fruto da parceria do Unicef e do Facebook . Jovens a partir de 13 anos interagem no Messenger durante pelo menos 48 horas com a personagem fictícia Fabi —que descobre que seu ex-namorado vazou um vídeo íntimo dos dois.
+E uma pesquisa realizada com 238 mil pessoas mostra que dos adolescentes que chegaram até o fim da experiência com a Fabi, apenas 40% declararam que sabiam como se proteger de violência online e cyberbullying antes de conversar com a ferramenta. Esse percentual cresceu para 90% depois da troca de mensagens.
+Durante o diálogo com o robô, são discutidas formas de lidar com situações de vazamento de imagens íntimas. Os participantes também têm acesso a formas efetivas de buscar ajuda em situações de violência online.
+A atriz e dramaturga Grace Passô irá apresentar a performance inédita “Grão da Imagem”, na qual ela é acompanhada do músico Barulhista, na 22ª Mostra de Cinema de Tiradentes. O festival ocorre de 18 a 26 de janeiro.
+A artista Lucia Laguna vai doar a obra “Paisagem nº 114” para o acervo do Masp. A pintura foi criada especialmente para a mostra individual que ela inaugura no museu no dia 14 de dezembro, “Lucia Laguna: Vizinhança”.
+A Orquestra Acadêmica Mozarteum Brasileiro recebeu 316 inscrições de músicos bolsistas para participar da temporada 2019 —em 2017, o grupo teve 237 inscritos.
+Do total, 73 foram selecionados para incorporar o corpo artístico do conjunto musical no ano que vem, que contará ainda com 17 músicos profissionais.
+Mais
+A Tucca realizou o jantar beneficente “Chefs pela Cura” na Casa Jereissati, em SP, na quinta (6). O presidente e a vice-presidente da entidade, Sidnei e Claudia Epelman, o presidente do Itaúsa, Alfredo Setubal, e sua mulher, Rose, e o jurista Modesto Carvalhosa e sua mulher, Claudia, compareceram, assim como a empresária Beatriz Monteiro de Carvalho. Os chefs Oscar Bosch e Paulo Shin assinaram o menu da noite.
+O escritório de advocacia Benício faz na segunda (10) a sua festa de fim de ano.
+A Oficina Cultural Oswald de Andrade recebe a Jornada Olga Kos .
+Será lançado na segunda (10) o livro “ 70 Anos da Declaração Universal dos Direitos Humanos ”.
+O shopping Pátio Higienópolis recebe corais até quinta (13).
+com BRUNA NARCIZO , BRUNO B. SORAGGI e VICTORIA AZEVEDO
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a0e5c171de024d9420c02df41591cd9c1c5e290d1e02ab5c42c90daed9ce98a0",
+    "mention_text": "Marcelo Odebrecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0281bd2c4898479e1e56e99a02e10bfdd12ff4a9f17d98222f587beca53fe359",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e492ed87efaeac9efc5410dd2f23ba61c7b673005584297ab5a041d0d8834dca",
+    "mention_text": "Marcelo Odebrecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad825df6bf11e9df09878bcfa52e33e36c243ba363a7c526d7a56bb833b9a6f4",
+    "mention_text": "Luís Claudio Lula da Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5258a0e1e9cb2e96bb19bb1406bb0c02d83fa316f414b71ee1d842d0d19a7dbd",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9aadceac1abcd07c382f5067d8c31d328bc477c71fdab81bb94bbdf28185d2a6",
+    "mention_text": "Alexandrino Alencar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1774610c28ef536509ff2c6ee2520396b95adfef75ba5ec9247778a4a95fe948",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a068c7c49d040adb248bd38e8530146995c24b8882806b3b13c925274b05e499",
+    "mention_text": "Luís Cláudio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbd57eeb4c7ab1e9ebdfd61c290e9ac5629cef284d0f033ae290e5baf19242ba",
+    "mention_text": "Touchdown Promoções e Eventos Esportivos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa32ada4a7b78ed5814034869a4ee73db8f6fea9264a728c13e09175cb8e4070",
+    "mention_text": "Odebrecht",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f538d8df7e9dc2212d6e0c8eee7738a504fb0d6c54ed6bc3753a25715c2f343",
+    "mention_text": "Concept",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2dfe0332f295c940f7bdaac695689c2b53cd2e72579dfdb4566769b10e38e54",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "340ebf72d0a9ed9ac8caea72ce229ced8efdb50b57edf966f9e7d4bf657dc752",
+    "mention_text": "Luís Claudio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6aec9333d5fccd5b2650007fa48c581de555ef237288f2130130674ac6254e4f",
+    "mention_text": "Concept",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02a1fee946425c90a1191ff61fc7f0cfbed52445ad8cfe4be750001a931d45af",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b1235719d94695255b9a29ad972dfbbf3229c4983dd4c78ffe3aff0bab8620f",
+    "mention_text": "Flávio Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e42e806ed96189f63df1fbe1275d4b4201e388a8db159e0eb6fb81c33e9cb47",
+    "mention_text": "PSL-RJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b002343514c41def4cc6ac77beaa00c1f57be49af60ccfd7a94ee6bb677279c",
+    "mention_text": "Prefeitura de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85adc3d89a9223e1e86a724bed42acb15fb221f17ae071dad2f29da21f0542fa",
+    "mention_text": "Unilever",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "483d5a40b24f21534dc972275d07aff3271e6bb52d0639ca0bc5e5b3c00ccee8",
+    "mention_text": "Kibon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c16bdce48fe6f457463ceb6345494e9ea67d99823f69e12cc08a4602d2796ae2",
+    "mention_text": "Ben & Jerry’s",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "302fec792161d5fdefa4ef0f8adfd4201ae7d49950bfd8f3f9cd2740fc2565c1",
+    "mention_text": "Unicef",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a401f756dd1ad560692252b0e415c2de07a12f9f4e066807231ca2dc50101c81",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e602eb456b1397c986409a935452659a3d0571682aa749751b719c66b8a42647",
+    "mention_text": "Fabi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a13698957b2f71bc36aae47602020853d3626ae7b38786df38d2a3f52c431a68",
+    "mention_text": "Fabi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90248711441c8b090564fcd4d53d8660c5231743fb387b0dea3fdb2a2a0d19a2",
+    "mention_text": "Grace Passô",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "423e52f6414211f5da48472b508e70ccecfb3f7b79444ed888aa404d861331e7",
+    "mention_text": "Barulhista",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "262c631d7f037440beb8b093b2107bd6655e11f544d99df001652ec1cfb9dbdc",
+    "mention_text": "Lucia Laguna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61fa215399c367b1ae21bb3adca0c0770bbff1a4a56760fb9b936573a22ec800",
+    "mention_text": "Masp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bd4e832ded06da7650c8dfe5f72672d7a50f1ac43205ae79d7749efcbdf88c8",
+    "mention_text": "Orquestra Acadêmica Mozarteum Brasileiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5709a624054749ee342c86a6f20dd141c30addb3934b4698f5dc72395f9c02a",
+    "mention_text": "Tucca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ac5b19488bd5883334359bdef32a7487f14fae4b321c3f173542f273cd277d8",
+    "mention_text": "Casa Jereissati",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "465d65d1d1f5d1a8b5850c20ef7bbc68544290b0d45e08e1e148c23cc61bfb14",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ba1a5fc7eec8e925acc52c9c8083e85ad6644c9cb58847f73132472f0c38dee3",
+    "mention_text": "Claudia Epelman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfd60cec372018cadea8a71abdec36622824fc8f0f0492262a06ae8220e20ade",
+    "mention_text": "Itaúsa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "744b298ef3683bd99dbde4c2b813754ad4cc3aab27a4843bde9f7f6b842874ec",
+    "mention_text": "Alfredo Setubal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ea23a22bb56050a38382db5db29ebbc71d4a830db27e0b6b1fce7726374ccff",
+    "mention_text": "Rose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e0439536c317122dc6ca501a24749e839c3768cf31f4cae524d0d90a8ca5897",
+    "mention_text": "Modesto Carvalhosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f6c92831ce0dc93449bcd28792b0b5fc9259ca8a858b2bbb72530a0f9228b3b",
+    "mention_text": "Claudia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0e4ad60b2d367884b3a50685d2861f087effd753710ebaa96737f9aa47d9368",
+    "mention_text": "Beatriz Monteiro de Carvalho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80fb637db8122f75b60e435bcf7ebb72832c13d53a854483a850f882628eda2e",
+    "mention_text": "Oscar Bosch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbdee23c3813c48b2c4c7dbc24598dcc1c1c8d472c3dbed4dee2452a630877ae",
+    "mention_text": "Paulo Shin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "154aab59b85cfa592b449421d94898bd5579b5f5f61e1b4dfc7e1d972dfb35c8",
+    "mention_text": "Benício",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "695ab1adbdde557b647ba143837827ee4e7d149aceebf677f6bebc0c1663853a",
+    "mention_text": "Oficina Cultural Oswald de Andrade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6e455d9d173d93908a4cf41d680c4ecb3e6739e5a9cb747eea4c0a3d67ac8ae",
+    "mention_text": "Pátio Higienópolis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "693681feb271eb20d88053ce28526cc621ad346f774fb454b81b2a0de5bb1da1",
+    "mention_text": "BRUNA NARCIZO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8902fc39b2c8d0090a3032534f6a64f1d3483c397b8e2e6fe651ec0d92a36604",
+    "mention_text": "BRUNO B. SORAGGI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0515dde5aa0652f76270499e1138399e82a6f2aba74bb045a8919b23207e64c",
+    "mention_text": "VICTORIA AZEVEDO",
+    "categoria": "PESSOA"
+  }
+]

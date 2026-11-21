@@ -1,0 +1,574 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2b0c60271086f08d831df88c51ffe5bd2361f31acb389e5b54dde70710425d48
+
+TEXTO:
+Robôs e 'big data': as armas do marketing político para as eleições de 2018
+
+A disputa política por influência digital vem ganhando escala no Brasil desde as eleições de 2014 e já prepara terreno para a batalha do próximo ano.
+O arsenal virá de empresas como a Stilingue, que varre a internet com um software de inteligência artificial capaz de ler textos em português —já usado para fazer previsões sobre as votações no Congresso—, e da Cambridge Analytica, a polêmica consultoria que trabalhou na campanha de Donald Trump e que desembarca no Brasil neste ano.
+Companhias como essas processam toneladas de informação que vêm da rede e de bancos de dados para, por exemplo, mapear os perfis de eleitores. A prática é uma estratégia antiga dos marqueteiros, que sabem que a recepção de conteúdo pelos seres humanos é seletiva —pessoas com orientação progressista dificilmente dão atenção a discursos autoritários, por exemplo— e que, por isso, precisam adaptar o discurso de seus candidatos para elevar seu alcance e, em última instância, conseguir votos.
+A diferença é que agora é possível ir além da divisão demográfica e ideológica, da direita e esquerda, e agrupar os brasileiros usando como critérios seus sentimentos —medos, desejos e ambições.
+APRENDENDO PORTUGUÊS
+Batizado de "War Room", o software da Stilingue vem sendo construído há quatro anos através do que a ciência da computação chama de "processamento de linguagem natural". Em Ouro Preto (MG), o time de 35 desenvolvedores alimenta o computador com textos em português para ensiná-lo a entender e interpretar a língua, identificando padrões comuns.
+Com a tecnologia, eles monitoram redes sociais —Facebook, Twitter, Instagram—, influenciadores e fazem análise do que é publicado na imprensa. Para a política, as aplicações dessa vigilância robotizada vão desde gestão de imagem do candidato (a ferramenta consegue inclusive fazer reconhecimento facial para identificar memes, que à priori não são capturados nas leituras textuais) a psicometria —a análise de personalidade dos eleitores, útil na formulação do discurso político—, e ao chamado "community management".
+Neste último caso, como o programa consegue identificar aqueles que são a favor e contra determinado tema, os candidatos teriam chance de fazer um "corpo a corpo" virtual para tentar, por exemplo, convencer os indecisos.
+A empresa tem dois clientes pré-candidatos a cargos do Executivo, que contrataram o "pacote completo", conta seu presidente, Rodrigo Helcer, sem dar maiores detalhes. Com formação na área de administração, o paulistano é sócio de dois mineiros com experiência em computação.
+"A inteligência artificial permite que a gente automatize um trabalho que antes era bastante operacional em uma escala muito maior. A mudança é comparável com a invenção do microscópio, que permitiu a descoberta de um mundo completamente novo, que antes era invisível", ele afirma.
+Esse tipo de tecnologia vem sendo usada em diversos países - e campanhas políticas - há alguns anos, mas o número de softwares capazes de ler em português, segundo Helcer, ainda é pequeno.
+A empresa conta com 50 funcionários em Ouro Preto e dez em São Paulo, cidade que concentra as atividades administrativas. Além da equipe robusta de desenvolvedores, a companhia tem uma relação próxima com polos tecnológicos como o da Universidade de São Paulo (USP), do campus da USP em São Carlos, da PUC do Rio Grande do Sul, da Universidade Federal de Minas Gerais (UFMG) e da Universidade Federal de Lavras.
+MONITOR DO CONGRESSO
+Um dos serviços já prestados aos clientes, que vão da indústria de bens de consumo às assessorias de comunicação, é o monitoramento do Congresso. O acompanhamento diário das atividades virtuais dos 513 deputados federais tem função, por exemplo, de prever resultados de votações na Câmara.
+Exemplo recente nesse sentido foi a tramitação da reforma da Previdência na Comissão Especial da Casa. A análise feita a partir da interpretação de entrevistas e manifestações nas redes sociais dos 37 membros acertou o resultado com erro de dois votos.
+Reportagem veiculada um dia antes em um jornal de São Paulo, diz Helcer, baseada nas declarações dadas pelos próprios parlamentares aos repórteres por telefone e por e-mail, errou quatro votos.
+BRASILEIROS EM 12 VERSÕES
+Colocar os eleitores no divã é uma das especialidades da Cambridge Analytica. Com escritórios em Londres, Washington, Nova York e, mais recentemente, México, Malásia e Brasil, a empresa de 'big data' por trás da campanha de Donald Trump à Casa Branca no ano passado tem entre os investidores o bilionário Robert Mercer, que apoiou a candidatura do republicano.
+A parceria com a brasileira A Ponte Estratégia foi anunciada em março e tem como foco a transferência e a "tropicalização" da metodologia de segmentação psicográfica, que traça o perfil psicológico dos eleitores, diz o marqueteiro André Torretta, à frente da empresa, rebatizada de CA-Ponte.
+Esse tipo de análise, ele explica, é diferente do perfil demográfico, que divide os indivíduos por classe social ou grau de instrução, por exemplo, e do perfil ideológico, que posiciona os eleitores no espectro de direita a esquerda.
+Trata-se de saber do que as pessoas têm medo, o que as inspira, quais temas rejeitam e quais apoiam para adaptar a mensagem do candidato ao público - estratégia usada por Trump no ano passado.
+"O cara pode ser um medroso de direita ou um medroso de esquerda. Com qualquer um desses dois eu vou poder conversar sobre armamento, por exemplo, sobre controle de fronteira", explica Torretta, que espera dividir os brasileiros entre seis e 12 perfis.
+Questionado sobre seus clientes, ele diz apenas que, "como empresário, vai onde o dinheiro está". "Em 2018 vamos ter umas 60 boas campanhas para governo de Estado e cinco ou sete para presidente."
+ZAP
+O marqueteiro prefere Facebook e Twitter como fontes de informação sobre os eleitores a usá-los como plataformas de comunicação, meios para fazer a mensagem chegar a quem a campanha quer influenciar. A razão disso é, em parte, a própria legislação eleitoral brasileira, que impede que os candidatos paguem por exposição nas redes sociais. "Você é muito mais receptivo que ativo".
+Assim, o meio alternativo à TV e ao rádio nas eleições de 2018, ele afirma, será o WhatsApp . "Ele é a grande rede social no Brasil".
+Para a cientista política Luciana Veiga, da Universidade Federal do Estado do Rio de Janeiro (Unirio), o WhatsApp é uma plataforma mais eficiente do que as demais redes para falar aos indecisos, por exemplo. Em sua avaliação, ele passa a sensação de que é mais privado, mais "leve" e de ser um espaço em que se pode compartilhar conteúdo sem necessariamente se posicionar.
+"As pessoas buscam estabilidade nas emoções. Muita gente se distancia das redes porque não está disposta a brigar. Os eleitores mais neutros acabam não sendo atingidos pelo Facebook, por exemplo", avalia a professora.
+POLUIÇÃO VIRTUAL
+A atmosfera mais pesada que frequentemente paira sobre as redes sociais é criada muitas vezes de forma proposital, com o objetivo de manipular opinião, dizem especialistas da área.
+Eles alertam, por exemplo, para a disseminação silenciosa dos social bots, perfis controlados por inteligência artificial que se manifestam politicamente e interagem com seres humanos nas redes.
+"Muitos são criados para gerar a impressão de que todo mundo fala sobre determinado tópico", diz o professor do curso de ciência da computação da UFMG Fabricio Benevenuto, que alerta para o uso desse tipo de instrumento para espalhar notícias falsas.
+Em 2013, seu grupo de pesquisa criou 120 contas-robôs no Facebook e no Twitter. Uma fração pequena foi bloqueada e alguns ganharam destaque a ponto de bater celebridades como Justin Bieber em medidores de influência como o Twitalyzer.
+"Nossa preocupação é prover cada vez mais transparência, monitorar o espaço online", diz ele, que está atualmente no Instituto Max Planck, na Alemanha. Benevenuto é também consultor da Stilingue, onde desenvolve o núcleo dedicado a detectar e filtrar os bots - que, segundo ele, já foram usados nas eleições de 2014 e de 2016.
+Outra zona cinzenta e que também vem protagonizando polêmicas em eleições pelo mundo, diz o pesquisador da Universidade de Washington Daniel Arnaudo, é a coleta, compra e venda de dados pessoais na internet. Na falta de uma lei que regulamente essa prática, muitas empresas negociam informações de usuários que não fazem ideia, quando aceitam seus termos e condições, de que sua privacidade poderia ser compartilhada com outras empresas.
+"Existem as informações públicas, que estão nas redes sociais, e tem esse lado 'escuro'", diz o americano, que estuda as leis de cibersegurança brasileiras. A proteção de dados pessoais é tema do Projeto de Lei (PL) 5.276, que está parado na Câmara.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "634a4537b5565579dce83348dd0364f7abfd113dc276753eec4ec3abc8375310",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9949b168659a2300709bac816a8b7a15acc140e9b82923832d94f29bb6dd1ba3",
+    "mention_text": "Stilingue",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66817a385c2d53cbc0e4df50a9e31a35c6df21e588231f0dec5ba321a535d7be",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b452aab81993ea444f4b7e006776caaff047c001fa00b06dd633f1191703a251",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cc305776ee934c080ac19e2488e8d6ab77db2f1f032ab553695a6ad8c3f801e",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0fed2c2e7db8ef0459334db02c0932dd689eeeef16c01202fb1650ace8a6babb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b812c17e3d373e1038cceaa8ca52e2dc2235b38ebe8c2ffea817b3fa7e18694",
+    "mention_text": "brasileiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a0afefb704d71b08714d7b93a75eeb5db4abbdbbc2f850e7708e303047769e5",
+    "mention_text": "Stilingue",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e59929a4cb12e1132b0c6033e09305c6067a170bcfba900509ebac383a984e9",
+    "mention_text": "Ouro Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43847a2f7f9807c683d046d86d1107672665adebc91207ce28c1075c4cbea418",
+    "mention_text": "MG",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "583842c6b23ec943681989532b601648200cdf88f30ba534871fbbc79b20e12b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d0774e5cdb5399732b1d99faca3254c6205cd1cc113d44c8f921aee6bfa176f",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed5e61b0b0fa7c1fea5b501637f03d0987d12032f3e5fc38b555de2f49b9a77a",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "072c0de8f0ebbe1861d2271c8f4824c50362537ec7b0cd39953d36ff19ea16e5",
+    "mention_text": "Executivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1eccbf32f1316abfff14befe3f2882042f9f9a7aa05218f004acb98688fac690",
+    "mention_text": "Rodrigo Helcer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f5321e31c612862900d6bb1fa15c5bb085b1873adfda59469d38a0bb684383b",
+    "mention_text": "paulistano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "256f5419a5a6deade62be5aabe6d65995ebdcb56cfca5cdd61e8338d7db8e8cf",
+    "mention_text": "mineiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58703d51035f5738d9feddc1a0b0d5bab65e9dd3a05c3b472219f315911d7b12",
+    "mention_text": "Helcer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f3545e97a762b0c039c46edaff0601adc7ca9ac5a1767862d52496543cf2a51",
+    "mention_text": "Ouro Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d74697c9cf0c453ff9bc04f5fc78949afb32272aba04dd6bdbee52986f55543",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f3006a883e71d0ee3aa4d6237bf2eaed41ed3efb1d3b18e5dcbe607aac68934",
+    "mention_text": "Universidade de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ecd9b424299f61bc51010e7275b471dbd2f7de6b237a1e0c9409744e64b332d",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e4f18d499f05cb13bd6a3367b4bf6d7e93df95055964a591f3ea5c156e9978c",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c66ccec342323c81469b3864765d1a2c16749a9e8d60ca455e90e9fcf48e36d0",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e3832420f05e02eb1df59297eb2cc499004f95d88edccb8ca9482b6a3b263f7",
+    "mention_text": "PUC do Rio Grande do Sul",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb2034488b4c3a8538aab0caaf53b73d4b41ac5303a511d52486ccc92f47fa6a",
+    "mention_text": "Universidade Federal de Minas Gerais",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9e37318d9dc0699db545bfad23238ecd22e7ac53389ee8f0158c2ca7b7fbb2a",
+    "mention_text": "UFMG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0566852595968274b80b6db2d85d8c6bc40999fe77a34182299ff826cc3a113d",
+    "mention_text": "Universidade Federal de Lavras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "605c49a0d1c89e1781c767fe0d2a000a98b59a3586f614aeb7ba30afa1d0cd28",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6fb90099aa91b55d13d06c0e102d98d6917827ee71d0569feda2fd7cc63b7363",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae06595bd7707bfc7b7053c8995b79769d3818e6e1ff3d1bb8b8ab1c2cc74393",
+    "mention_text": "Comissão Especial da Casa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48f8a8a3f00280f2fd816649c3c31198fcfd103bfedbf574cc8814387005f689",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6930151535ab21c4238f9a2db6793e407179faa9923d27d9bf34ae092e71660f",
+    "mention_text": "Helcer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfc316ff7e698c1bd85121ac7a8f53a542acf5e8ede2d0ad78a00f6427ef2b6c",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17fa53621e92e89f5ecbdccb4712d548f2a67db927ded05cd4ea17b8d6525c9a",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "309d885acd88307368e25d01752aac0d86c5412aab2679a815f9304c0dead206",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2417996d4a3783249abc55c76b69c2b906508f405252bbcc17efbaa59abec058",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9edb7dd5dc2fc9cd951047fb945eb5c2b0b78e7d47c26302e67763c1a8bb6d3c",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86528c0bc58d25ff0504734c12fb1c5daabab5ae6c3eda87eefd730b33dc3b31",
+    "mention_text": "Malásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b0af3a4685e56e45f0a2d44bb40c6db86c0d9993452dc0b485bab2fba510a6e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1002d444da131b852fd2d7ba3fc39bc6ff2ed86a307ff5d4ee8bc415c7812706",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e321fc6874bdc1ac76c57e2928043de9c44a4539f19953fea5bf50cebcdf993",
+    "mention_text": "Casa Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28cbc8b0bf23eedc3ee027eec8c4a07a916e767fabcf8beee0cc585ea2daea3d",
+    "mention_text": "Robert Mercer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b958a2b22e14a0d35af4acc29922d079def5456371863a587f2b99df5417ceee",
+    "mention_text": "A Ponte Estratégia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cafd3689e44cd74d8fdf09ce69fce7ba53394152d814f1020d290ded54c271d4",
+    "mention_text": "André Torretta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8746a261649c0096f8d1f7794ad6062b092cfb2c8f9a65cfeac3f6b3041721ad",
+    "mention_text": "CA-Ponte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7a7d05d74cebaa77053d56ffa57cb66643741d134de94bf98f3a40d7a6cde0e",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb71aa0dc1040c07a472814b0ad9ca52dbbfabc04f5a77da085adaba6e93d785",
+    "mention_text": "Torretta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4fef0f4debb427aba952c4fc801da8e041696604b53f866aa1b4fa2a0557583f",
+    "mention_text": "brasileiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38554af16641d966ed82b1553e8390b7112dd8db775810123273a29dcf36040f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bcf89f12768ebcc064ef7e83d397a200aa0922c030786912181dd75a84d3b51f",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3978a39cdd78ec2a461bb94c150dbc0baa5c33212165e44b8b324774758b29ba",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "460bff09c56a036283b4ddb4605f753d9485cb9606744697dd1714d07fa092e5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "da9a0003fecfea4d93af59fddc6c47a602ceb5b3958ed3a982d45ca495b6e0a9",
+    "mention_text": "Luciana Veiga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46793ae5316bb92fbc25e6d516cfe98423f9e846519dfe2a0981c47c23264017",
+    "mention_text": "Universidade Federal do Estado do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5852ee65f7e2131127deec3d8861a1e3539ca99ed3ae075de51f50c7c3faf31f",
+    "mention_text": "Unirio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02397bac138a822e7ac4f9b977312da0bce12b254358647406b25f1c49b1b06f",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97f95b23494539989434f68f37a21ed58e7d25b7dbdfcdb617f6a66b7afe78a6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eec7948090309d35f6e4772f5de095f9e2b45ce45643a038c8f148edc5bd9761",
+    "mention_text": "UFMG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "077e6771b696495585b3751eba621176ce11caebde32480c64a0b69c1603e72c",
+    "mention_text": "Fabricio Benevenuto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c2afdc6549076472a003719304f6513b09f24d43b12178d7a600f16579ad57d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0178dabf18927cd01405e6de8c6bb46e26f78c720f8bdcb4a71973dc3878f399",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b092d5d39c4b062f704029ee059e56fef0a8f6b5ef80c8f33421359503c1b768",
+    "mention_text": "Justin Bieber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2068b3af700ae7b081f86dc71ad969e9d8a94da2f773f3cd168f6367f0d68ac6",
+    "mention_text": "Instituto Max Planck",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eebe4b72bbddad19ed2a0a52c103654352939e2a49354162caa96ce5bfb98687",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e9e8c819f593a5f880a8d8de43fa6b24da1c0d14205ca3382bbc502fbf3fe59",
+    "mention_text": "Benevenuto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "754106d05b2254b8f7a1e8946378c217fc4620e08109769384ea808bcd9d8e9a",
+    "mention_text": "Stilingue",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0ae48c72e93213c59123148c3aa49c06a4d1a3dcf10f47006332c203f12dbfa",
+    "mention_text": "Universidade de Washington",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27b9adb906650d753bb37ab19c0e075ac19dc4a46181499465c898c83f4b2875",
+    "mention_text": "Daniel Arnaudo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d22c863dc871e9f487581e88bc1e737d5bfac81a4a042380fbf735b7e31765d9",
+    "mention_text": "americano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40a9b08caf16d1e718b50b41a7cf12b8466ae964d96e56727144e55103797c4f",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  }
+]

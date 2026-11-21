@@ -1,0 +1,358 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 135eaa05a17a82ea82fa44f5f9287d36e92817c42de5b98d8dff922a1bb5a93d
+
+TEXTO:
+China aceita acordo para reduzir tarifas sobre automóveis dos EUA
+
+A China concordou em reduzir as tarifas sobre automóveis importados dos Estados Unidos a 15%, durante uma conversa telefônica com representantes do governo americano cujo objetivo era tentar resolver a disputa comercial que fervilha entre as duas maiores potências econômicas do planeta, disse uma pessoa informada sobre o assunto.
+O primeiro-ministro assistente chinês Liu He informou ao secretário do Tesouro, Steven Mnuchin, e ao líder do governo americano para assuntos comerciais, Robert Lighthizer, sobre a decisão em um telefonema na noite de segunda-feira (10).​
+A escolha reativou as negociações comerciais entre os dois países. Não estava claro quando a mudança entraria em vigor, mas Washington está pressionando Pequim por concessões o mais cedo possível.
+A China elevou suas tarifas sobre os automóveis americanos, como parte da campanha de retaliação pelas tarifas que os Estados Unidos impuseram meses atrás. Os líderes dos dois países, o presidente Trump e o presidente Xi Jinping, se reuniram durante uma recente conferência multilateral em Buenos Aires e chegaram a um acordo quanto a uma trégua de 90 dias, para negociar sobre as fricções comerciais.
+Os três funcionários de primeiro escalão discutiram compras de produtos agrícolas pela China e mudanças nas políticas econômicas fundamentais chinesas, durante a conversa telefônica, disseram outras pessoas informadas sobre a conversa, que não forneceram detalhes adicionais.
+Como parte da trégua comercial que Trump e Xi negociaram, as autoridades chinesas também estão estudando mudanças no plano Made in China 2025, uma política industrial liderada pelo Estado cujo objetivo é permitir que companhias chinesas dominem diversos setores, como a inteligência artificial e a robótica, disseram pessoas informadas sobre o assunto.
+A política é um dos pontos focais das queixas dos Estados Unidos de que Pequim promove práticas comerciais desleais, que colocam empresas estrangeiras em desvantagem diante de empresas chinesas.
+O Ministério do Comércio da China anunciou em um breve comunicado que a conversa - realizada na noite de segunda-feira nos Estados Unidos e na manhã da terça-feira na China - tinha por objetivo "levar adiante os próximos passos do cronograma e mapa de rota" das negociações. Liu planeja viajar a Washington depois do Ano Novo, disseram pessoas informadas sobre o assunto.
+Na manhã de terça-feira, o presidente Trump tuitou que "conversações muito produtivas" estavam acontecendo com a China. "Podem esperar alguns anúncios importantes".
+Assessores de Trump disseram que o presidente às vezes faz tuites positivos sobre as negociações com a China para tentar estimular o mercado de ações. Operações futuras indicam que a Bolsa de Valores de Nova York abrirá forte. Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d84fbc11303889d55ee1788599088f151f9b19cdddbd9004b483c5f6b6cb234f",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3a9fe5396bc0aa68c9f7af79d5391ed86a3aa41bb1ab6143fe0a8a185421c14e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04399882299ac3aa20c4ce7d79b52c1704c031f3893eccb5376c30875037866c",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "353d49e8086f54a04bcd310680717e8f619dd482f6b9bda06c1952e9de5ed2e1",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "297f2504daccd9e1b67e02c45bb6eb0d4438302f0f24388d05f9185118da6409",
+    "mention_text": "governo americano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "952ba1cfb7dce9ae7d0c4aed690d7b64f87daee17de7a2cfa13805f72df49db8",
+    "mention_text": "Liu He",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9267da11ab3d27aaad0e9ca9b706422762a352db964bcb8dcc03d577a65aaf30",
+    "mention_text": "Tesouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b3756358e16f18dee09beeb81887164e8435b5ccadba084279953b7bcbcfb2f",
+    "mention_text": "Steven Mnuchin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34b64e3b3e86b0d44103a21126aa3a758b2b7433e015ba081bb2f64fd39f2dd8",
+    "mention_text": "governo americano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38968b2d848fc4f4fd7f211ebc3e3a73899457d72dfbe097ccd7892a6a0bfd89",
+    "mention_text": "Robert Lighthizer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63639ea039b3edd558f8bc1a3e95dbbb22bf2692c025365db4acd271a0c95e59",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8008eb18a890f8445b32b24761ba9363199aebb6cfba4575b3f889af1a7bdf0",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a3a6166ae8ad4da594d9234d3ffc6fc36dee852c959026f59a19034a7b65f9e4",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2130d90d28a603e0823ff43e3b95dea5187155f6157ccf2687b2c1ab1edd6daa",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ddeb09eff9ae897ccae2a5cc9c03f8ffb28fad20b55c21cd585fc89f074ad547",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e6ec2dd46148518a2efd86502e111d4e272dc1f56e0f31647312e241a5e9057",
+    "mention_text": "Xi Jinping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ba0bc75b1792be5f02cb02db6aa4c06b888cec658e23d510889d6b9b1ace340",
+    "mention_text": "Buenos Aires",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "370240065dc3a3c00815f5ae89e8d04784facca05683efe62ee9764d218c4be0",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6dbc1888d9c29aa98aa56d4c1ff6811060680c7af2c42baac3dcd8318b95704d",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f555f8e4e3ce81e039e8b2620a28496a7de128187edd86141e34391ec403d6b",
+    "mention_text": "Xi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e62f3097ff82c18e0b70ef73a842533ddd5884e922956e7cd4150b0d2a2a0b7",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "733ddbfc537d21b8e8e4ffc040afeec10a2c73e25f421e0806ee24bddbd8bc2e",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5e9db1fba509eb5f72c23b57a1e86b75bdb91fd1b3103b48c60455855dd5253",
+    "mention_text": "Ministério do Comércio da China",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ca750ba6b44050949b12b8f4353edd4db4813ffc391221fb0d96aef977f2af6",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b46b655d3d9dffbc0a3ff60508f203ea366845d63f1f89c08997128c5b2659e",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e8a25ecfb46e8877fc5a9ce518f6c2ca0658fbd6f39937a53ac28d625881c1e",
+    "mention_text": "Liu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94826528f34863b0c27bb66fb3a135b9c44bfe6777441187aff43d60ea87163b",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b12782a90b4ba9849ea48d15ee54e3835bd124053b3303b58e68fcb6c69de78f",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "606e3178af44e2894066abb8512ef09783682613e3bafc48403cc7bdfddf0fca",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2d8640a90790e7645f4044ae2358091d0eed70acc3e3c7b6baf1ef95cfe05b4c",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62224c9b0d1590115b244637d194adbc0a8dd1f39104f95dc98ba93a1bdd2ef1",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f7fc9202d838486d7d5abc669784919a692ebc43291f58c5f73f41f93d5216e",
+    "mention_text": "Bolsa de Valores de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95324776d09859d7e62599e550ea69e7d666001a5546d65518742bab5e337ad5",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

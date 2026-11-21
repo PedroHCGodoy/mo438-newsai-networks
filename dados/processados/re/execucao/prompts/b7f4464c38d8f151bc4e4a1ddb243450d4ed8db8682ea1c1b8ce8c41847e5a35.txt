@@ -1,0 +1,399 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 4604b60b6c34620ee17c79b1743ba24c39308c84797ced0d5ac244b65d0e76d3
+
+TEXTO:
+Sites vendem amigos, seguidores e "curtidas" nas redes sociais
+
+Há diversos serviços na web que permitem a usuários de redes sociais comprar bots, abreviação de "robots" (robôs), o que faz com que celebridades pareçam mais populares e até mesmo possibilita aos compradores influenciar agendas políticas.
+Quem diz que "dinheiro não compra amigos" parece não ter visitado a internet nos últimos tempos.
+Na semana passada, adquiri 4.000 novos seguidores no Twitter por US$ 5. Pelo mesmo valor, comprei 4.000 amigos no Facebook, e por alguns dólares a mais cerca de metade deles curtiu uma foto que postei.
+Se eu estivesse disposto a desembolsar US$ 3.700, poderia ter adquirido 1 milhão –sim, 1 milhão– de novos amigos no Instagram.
+E por mais US$ 40, 10 mil destes novos amigos teriam curtido uma das fotos de crepúsculos que postei.
+Retuítes. Favoritos. Comentários. Curtidas. Visitas –pode escolher: tudo isso está à venda em sites como o Swenzy, Fiverr e outros.
+Muitos de meus novos amigos vivem fora dos Estados Unidos, em sua maioria em Índia, Bangladesh, Romênia e Rússia, e eles não são exatamente humanos. São bots, um tipo de software, mas foram criados para se comportar como se fossem pessoas em sites de mídia social.
+QUASE REAIS
+Os bots existem há anos e costumava ser fácil distingui-los. As fotos que usavam para seus avatares eram genéricas (muitas vezes de mulheres sensuais), os nomes eram gerados por computador (como Jens934107) e as coisas que compartilhavam eram lixo puro (em geral links para sites pornográficos).
+Mas os bots atuais têm nomes que soam reais, para camuflar melhor as suas atividades. Seguem horários humanos, suspendendo suas atividades durante a madrugada e as retomando pela manhã. Compartilham fotos, riem das piadas alheias e até se envolvem em conversas uns com os outros. E eles existem aos milhões.
+Esses cidadãos imaginários da web têm poder surpreendente, conferindo mais popularidade a celebridades e aspirantes a essa condição, e fazendo com que companhias pareçam mais queridas do que são de fato; eles influenciam a opinião pública sobre cultura e sobre produtos, e em alguns casos influenciam agendas políticas.
+Os bots muitas vezes divulgam hashtags –placas on-line indicando o caminho de uma determinada discussão– sobre pontos de vista opostos aos que seus controladores defendem, para tentar confundir as pessoas ou redirecionar discussões.
+Durante a eleição presidencial mexicana de 2012, o PRI (Partido Revolucionário Institucional) foi acusado de usar milhares de bots a fim de soterrar as mensagens dos partidos a que se opunha no Twitter e no Facebook.
+Diz-se que o PRI usou truques, distorcendo e alterando a linguagem de discussões o suficiente para confundir as pessoas quanto ao que exatamente os partidos adversários estavam dizendo.
+Um homem com quem conversei e só se identificou como "Simon Z" opera a Swenzy, que ele diz ter sede nos Estados Unidos. A empresa vende seguidores, curtidas, downloads, visitas e comentários em redes sociais.
+Ele diz que sua companhia usa inteligência artificial e outras manobras digitais com o objetivo de escapar aos caçadores de bots dos grandes grupos de internet como Google, Facebook e Twitter, que dedicam muito esforço a tentar eliminá-los de seus sites. Às vezes esses esforços funcionam –ao menos por algum tempo.
+Antes da oferta pública inicial de ações do Twitter, a empresa eliminou milhões de bots do serviço.
+Ao longo dos anos, o Google reduziu em centenas de milhões a contagem de visitas a determinados vídeos, por atribuí-las a bots.
+Simon Z diz que hoje opera 100 mil robôs muito avançados, ativos em diversas redes, entre as quais YouTube, Facebook, Twitter, Vine, Instagram e SoundCloud.
+Quando os compradores encomendam bots em grande volume, ele diz que pode recorrer a "fornecedores clandestinos", que operam exércitos de bots ainda maiores.
+Não é ilegal ser dono de um bot, ou criá-lo. A legalidade dependerá de como as pessoas utilizem o recurso. O uso dado a eles muitas vezes contraria as normas dos sites de redes sociais. falsos motoristas
+Por enquanto, os bots são enganosos de modo simples, iludindo outras pessoas a imaginar que alguém seja popular, ou defendendo uma causa. Mas à medida que a sofisticação dos bots crescer, diz Wesson, eles podem se tornar mais perigosos.
+Em março, dois estudantes do Technion (Instituto de Tecnologia de Israel), programaram um enxame de bots que causou um falso congestionamento de trânsito no Waze, um software de navegação criado no país e controlado hoje pelo Google.
+O projeto, uma demonstração para um trabalho acadêmico, era tão sofisticado que os estudantes conseguiram criar robôs que imitavam celulares Android, acessando falsos sinais de GPS, e operados por falsos seres humanos que dirigiam falsos carros.
+O Waze acreditou que os bots estavam na rua, e começou a redirecionar tráfego a outras vias. Assim, cuidado com os amigos bots que você fizer. Se o bot em questão tiver um ponto de vista político diferente, ele pode se voltar contra você. Ou tentar fazê-lo perder o caminho.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e7346ccb5b29bb48f168233fa2f29665bdcd32ec24149d0264c2920fc0af1c78",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11511838cef36ba557deaf789ae7945cbab3f76d8340bcd181deb439fd037331",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef336eb67b738272b9e7c1e2be6e1a6dcb48a4496751dd591e44b64099f39458",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5b687c5f57b53d6790aebac66f7ded608fc0b668445d717a82c1d841f6ba0a9",
+    "mention_text": "Swenzy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce46f6b8e7695c291e64cb9d652a84fc1a0e1e9b9833d85d6ec3ef25eedee77b",
+    "mention_text": "Fiverr",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "936397878dddcb99f35de32c686f989a5a21224b629aaf0123088ac258217553",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4b00354004a3efb5fa6d09c5d46c4273669686711af7df0980863220f1966a4d",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d110d81ef884c9dfce06dcf797556db93fca92b4a81c83ad9346ffa4b1ce5931",
+    "mention_text": "Bangladesh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8286d659ac107aebed23547762355aba7c37af549b9ea68b418f05c7e8c478d5",
+    "mention_text": "Romênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d48002293188ebaf1b487b590db3d0c7c4496b7730fc4ddd4f57eded6ab01146",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2474c19cbbced2ca83655b0178a9ffad1232ed9cab084fd6853a5d1ee2393401",
+    "mention_text": "PRI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26e58ee4290af5679c2b1d37e2d4df719cdb16d119aeda2aecfccaecbf8dc332",
+    "mention_text": "Partido Revolucionário Institucional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b2c956accd2415d5ef3e2649485ac6892c5897e4feb91179497162cc6e0ce560",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40e30a2888c8e62c3cf0aaa30e3593f56cff7bec756a73396b3dd6c56e889039",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d294fc386558b2265f150a0a80c4df6db145e912715efe9b591bd6c502dc9aeb",
+    "mention_text": "PRI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "404df59dd8ae30e0ad81c61bade21552523c21ef0097ab28d17b27b53b6aa1a5",
+    "mention_text": "Simon Z",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af3c77c4d6c3f2a4761281201ca18363f18f6445095f70fd9a88be474f4e49a5",
+    "mention_text": "Swenzy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92a2dc54db4496964cc68e38345ad455506291c8a841cdb72a021ddb3e3592c7",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0ad1a0e57a796d653fd0a97cd78f5b016f33aa7cc29cbcab7aa75ee2bdde5f4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6068f5b1b1893b450f0aaf33338a82039bdb16f3278c7496ca1f3d9774912192",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89d56846f14af1d19073c2e3e817652721567243e4f1f47e8c83e6d1a70544a5",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4250c581035cee81010927723b1dbb457c58745affe1571ab610535052e0d76c",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1834503baa54c85289cc52f2689b3777a592b5dc0b8b3cfca85fd797c0a60a20",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "608032fa5e878944017018241e2ae85912f259bebb7754fbd4c4f6f578c86089",
+    "mention_text": "Simon Z",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4b288d40896e9dd1c7e49bf4bf480a7be6f35969f1fecaeea0248be808b3491",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d087a037a5bc1be644a33175becb2d602a0ddb15b63cf100be9685694b7b7f0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d612e29c1a8cc5bf7127ca7045b215e4205a1e4bd13d1d60780c5001b0048758",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cab6695c141f6fea5e9ffaab85ba9bd3fed197e887e1d35c780b957e3b3f22a9",
+    "mention_text": "Vine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "952dba4b05b8a0fc59fee8642c779fb40d54a4ee2dc3330ed40c74fe4a86e0bc",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3062bada0693aa26a58890d03030a98d61334ac04c5f0309b17eda5b410f59b1",
+    "mention_text": "SoundCloud",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1c18436a5cdda16b8618c95dd8898e8af556e9d4df196bef767096c58c32f3f",
+    "mention_text": "Wesson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fdc9910bb7a15189fc22e0901be7381c11fef4546f5b9b1a307330a8aabf05a7",
+    "mention_text": "Technion",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58ba80b84e4bf347dd7bf72877ec2a4937b43b488f34dba52cb085daa0989b45",
+    "mention_text": "Instituto de Tecnologia de Israel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2b62c7696f44b6fca6d3e574cd63aafa20b0f4d897f6993eb8e177abc9d50cd",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b7c193a134f2d182f4a0c852bb28505f9cf578c1ebf2a4711cbe73932543a47",
+    "mention_text": "Waze",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4eefc1c480ee64ee12817fb43b2f41f52f19bbd6c0bfaf32c809989a86ab8364",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c308379ec0b6d6f95b95234cca93c3ab16926a2e1d34978edd8516e611fc2f6",
+    "mention_text": "Waze",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4182045e0a002885e73d7bde8ea7d117e81cc29d4117239cd6db47ed887457c8",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

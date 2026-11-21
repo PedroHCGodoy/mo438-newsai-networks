@@ -1,0 +1,442 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e8f22379a510043ef5f3c52ad3e7389ac36eaf38c0fde0df19e99f26f42b9ec6
+
+TEXTO:
+Domínio ilimitado da natureza
+
+LAYMERT GARCIA DOS SANTOS
+ESPECIAL PARA A FOLHA
+Raras são as oportunidades de o leitor brasileiro encontrar, em sua própria língua, textos de alta qualidade sobre filosofia e sociologia da tecnologia. Por isso mesmo, merece ser anunciada a publicação do livro de Hermínio Martins, esse erudito e profundo conhecedor do tema, professor do St. Antony's College, de Oxford (Inglaterra).
+Trata-se de quatro ensaios de interesse para o cientista social e, mais ainda, para aqueles que já perceberam ou intuíram a centralidade inescapável da tecnologia nas grandes questões (econômicas, sociais, políticas, ambientais, culturais e estéticas) da civilização contemporânea.
+O espaço reduzido não me permite falar dos quatro estudos; por isso, limito-me a comentar os dois últimos, e a registrar os dois primeiros -uma instigante crítica das "revoluções científicas" de Thomas Khun e seu tão festejado conceito de "mudança de paradigma"; uma refinada análise sobre o modo como o tempo tem sido pensado pela sociologia, leitura imprescindível para os modernos e os pós-modernos que se confrontam com o problema do chamado fim da grande narrativa histórica em nossas sociedades.
+"Hegel, Texas", o ensaio que dá título ao livro ("Hegel, Texas e Outros Ensaios de Teoria Social", Edições Século 21, 256 págs.), é um fascinante mapeamento do modo como está se dando a evolução tecnológica: se esta realmente concretiza o pressuposto moderno de que os artefatos técnicos representam extensões do homem e do corpo humano, ou se, muito ao contrário, em vez de um "somatismo tecnológico", verifica-se um "gnosticismo técnico-científico".
+Esta última tendência havia sido identificada por Victor Ferkiss em 1980, mas agora Martins já pode considerá-la predominante. Como se sabe, o gnosticismo é esse horror religioso e orgânico ao natural, ao corpo, esse sentimento de que a materialidade é inimiga do espírito. O gnosticismo técnico-científico é, portanto, o casamento das realizações, projetos e aspirações tecnológicos com os sonhos gnósticos de se transcender radicalmente a condição humana.
+Nesse sentido, seu objetivo é promover a desmaterialização... até que, como escreve Bernal, "a própria consciência pode acabar ou desaparecer numa humanidade que se tornou completamente eterealizada, tornando-se em massas de átomos no espaço, comunicando por radiações e, talvez, em última análise, resolvendo-se a si mesma inteiramente em luz". É a tecnofania transformando-se em fotofania, diz Martins, antecipando o suicídio coletivo dos adeptos do Heaven's Gate, esses especialistas em software que "deixaram o invólucro" de seus corpos, e embarcaram na cauda do cometa Hale-Bopp...
+O gnosticismo tecnológico, argumenta Martins, se expressa tanto nas tecnologias reprodutivas e na biotecnologia quanto no campo da inteligência artificial. No primeiro caso, trata-se de "criar" a vida ou de desnaturá-la, desarticulando e rearticulando os organismos e os corpos, mecanizando os seres e miserabilizando a natureza; no segundo, trata-se de desqualificar o organismo humano, de depurá-lo e superá-lo. No primeiro caso, visa-se à reprodução artificial (que agora já pode ser assexuada: o clone) ou à construção de híbridos biomecânicos (seres transgênicos, biochips, biorreatores...); no segundo, à construção de mentes mais poderosas e velozes do que o cérebro, agora já reduzido a mero "fleshware". Em ambos, evidentemente, está em questão a supremacia do impulso tecnológico sobre o élan vital, isto é, de uma dinâmica abstrata sobre uma dinâmica concreta.
+Para Martins, tal supremacia desmente os filósofos da tecnologia que, de Bergson a Gehlen, pensavam que a vida permaneceria opaca ao entendimento analítico-reditivo e, consequentemente, manteria a sua integridade ontológica. E esse é o mérito maior de seu ensaio: alertar o leitor para as incertezas imensas abertas pelo gnosticismo técnico-científico ao instaurar a era do "clean", da informação, da passagem para um mundo desmaterializado.
+Em "Tecnologia, Modernidade e Política", Martins continua interrogando o impulso tecnológico do Ocidente ao "domínio da natureza". Mas, em vez de explorar suas conexões com o cristianismo, vai, à maneira de Weber, analisar duas tradições "ideais e típicas" do pensamento social dos séculos 19 e 20: "A prometéica (particularmente acentuada depois da Revolução Francesa) e a fáustica (que culmina na obra do mais proeminente filósofo contemporâneo da técnica, Heidegger)".
+Resumidamente, pode-se dizer que a tradição prometéica coloca o domínio técnico da natureza a serviço do homem, à emancipação da espécie e à melhoria das classes desfavorecidas; por sua vez, a tradição fáustica tenta refutar as teses da primeira, seja endossando, seja procurando superar o niilismo tecnológico, condição pela qual a técnica não serve nenhum objetivo humano para além da sua própria expressão.
+O humanismo prometéico é fundamentalmente francês. Seu ponto de partida é a teodicéia de Rousseau e tem como expoentes Saint-Simon, Cournot, Bergson, Marx e Engels, Fedorov, Comte, Proudhon. Para essa linhagem de pensadores, a sociedade humana pretende dominar a natureza, mas tal pretensão tem limites -Martins parece sugerir que nenhum pensamento expressa isso melhor do que o "transracionalismo" de Cournot: "Aqueles que, tal como Cournot, defendem uma visão prometéica da técnica (...) não estavam pois comprometidos (...) nem com o ideal do conhecimento científico total, como na visão laplaceana, nem com um projeto de domínio tecnológico universal da natureza (...) Cournot (...), ao mesmo tempo que mantinha sua fé na razão e na ciência, afirmava que um certo número de questões fundamentais da filosofia natural (especialmente as respeitantes aos "mistérios", tal como ele lhes chamava, da origem da vida e da evolução biológica) estavam fora do alcance da racionalidade científica e que as nossas opções em tais matérias deveriam ser guiadas pelos 'instintos da alma' ".
+Ao longo das páginas, fica claro, então, por que o humanismo prometéico conserva a sacralidade da vida humana e desemboca numa visão liberadora da tecnologia, uma vez que esta não só está a serviço do aperfeiçoamento da humanidade como mantém-se sob seu estrito controle.
+Ao humanismo prometéico francês se contrapõe o anti-humanismo fáustico alemão. O ponto de partida é Spengler, seguido por Jünger, Scheler, Heidegger e, em sua vertente de esquerda, a Escola de Frankfurt. Para o pensamento fáustico, a dominação da natureza não é fruto de um projeto racional e soberano do homem ocidental; aqui, como escreve Martins, o que está na raiz da técnica moderna é a vontade, a "vontade de poder", que, em última análise, não passa de "vontade de vontade". Assim, em vez de referir a tecnologia à razão, Heidegger dirá que "a essência da técnica não é nada de técnico", mostrando que esta é apenas a completude da metafísica producionista ocidental, levando Martins a dizer que, "de uma maneira ou de outra, os teóricos fáusticos da técnica consideram a técnica como destino".
+Ora, se o domínio da natureza é agora identificado com a vontade de vontade, o impulso tecnológico não encontra mais limites. Com extrema propriedade, Martins então lembra Scheler, que via uma afinidade eletiva entre a técnica fáustica -o impulso para a apropriação ilimitada da natureza- e o capitalismo -o impulso para a acumulação ilimitada de capital.
+As conclusões do ensaio não poderiam ser mais inquietantes: a afinidade entre a técnica fáustica e o capitalismo parecem incluir, no projeto de domínio ilimitado da natureza, a transformação da própria natureza humana. Martins abre portanto a porta para a discussão sobre as relações entre biotecnologia e totalitarismo.
+Onde encomendar:
+"Hegel, Texas" pode ser pedido à Livraria Portugal (r. Genebra, 165, tel. 011/604-1748, SP).
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "dc87592add1b5460630b39ac695429f20e5707771b344377936b297da1844af9",
+    "mention_text": "LAYMERT GARCIA DOS SANTOS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6357588b410d448a00bd277515b3a2429e651680f29a88502292d5330e611fe",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7ad6f0258a387ec578d703189e16fc39d5901a9f9ea26a9f35384d67f98befea",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2a4d8f3a343ef16b8a3b0f6c7387b405772f11df944c7e8aae5c2e2c8ffb9c1",
+    "mention_text": "Hermínio Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be39497fd18a9af7d3ea2feefd13817594d4875d935318b5c4511b38258e1368",
+    "mention_text": "St. Antony's College",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dfb424eefbe91dea4d9d9c7fbc472d9981130a42bb92a8f38f9a289c301e7e00",
+    "mention_text": "Oxford",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c37d3a1174652858669a28c14f5fe9de7cefe25cecdc60d2d115333e45f7a694",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3edc8e071942bbe2848a54536fcae52f8ae10b2caa8316ee5fccab6ab9935ba9",
+    "mention_text": "Thomas Khun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ac245a06f8654e7e94594bf6fcd8d2ba428f1a1b7f4347a2ec90504ab6b333f",
+    "mention_text": "Edições Século 21",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68d8e11d7db764d591511df4e453a7e34e7e3d9a514ee7cfa483f9317b407a46",
+    "mention_text": "Victor Ferkiss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "149c1f7d4c7bd81a15ee3a67817f0a51edde643c0b95b3f4c58f44d89879241a",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ab9a1e92b439fc54a4e9dcdf95e26d7823ddbd59f6e5b6672f5fc90910c636d",
+    "mention_text": "Bernal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b359f4c089b13c57e1ef5f9e32de4dbde223fb199c0b343e6515322312e5770b",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "825afa998d5660e7586fef81377fc1c4072dcc8d1ca0eaccc81f850c5565da97",
+    "mention_text": "Heaven's Gate",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5032d506e47f0c84c4c589bd0490f0b605f74c7bd5883f12c3949728bbca12c",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3ea2d598dfaddb8af07864a1296ce9f741418ba8165d78003a606ae7e69cb30",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbe1202b1acfefa72573c1b18d06404826be3b23c12da351ccaaa67e4781cf1a",
+    "mention_text": "Bergson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "435e18b34dfd09088ddc99c17613feeef4f4ff84e110431f2f9365dda8741c17",
+    "mention_text": "Gehlen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "323a3f5d1cae37709340754121b8818ffdb245625764583640a1ad4c0eb30af3",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d121f5df0c93ccd6c52850f658088c087aab6f40754555f656ce52c8b6aa326",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "72f5e5a20db4ecc4643b8539751f765ed3a180696ece40e76f61d40342555b7b",
+    "mention_text": "Weber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "091dbfe9ed021b40e1ca64ae022fede5de61a5833ba2450b4f75183fe2ad6571",
+    "mention_text": "Heidegger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd5f3bb8d28d4b35d2ec229a942cc69a2705d84e2bfd96fe782250ba53d23c5a",
+    "mention_text": "Rousseau",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d16d8688690d7cd73e02e6a738cbf0a4b9178fecbcd77d451c1e46392a359efd",
+    "mention_text": "Saint-Simon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "781d60198c3ea9102d8ab140dc508787f55c9b8f53a8d349b3c8b2398fa78387",
+    "mention_text": "Cournot",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c1f338dd5e9b9fa2219050fadd8d3bc7ea94bc533c299f4604b1a051e52a7c7b",
+    "mention_text": "Bergson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c47bf0c27898be09eed02f4ff4b87388735126311cfc95625c80234b601bb6d4",
+    "mention_text": "Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de9bd0cec4bfcc0be75708890fe5f9f2ee214f0c54db1e623298e4bbced64bcd",
+    "mention_text": "Engels",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "27760006264ee3c1449098e8ed4d8a11b416225b0ced461d872eae90fbedc823",
+    "mention_text": "Fedorov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a1aa9e6b741aee13e7640b9c3a71cea9cc69649878e373509969d3a5f73656a",
+    "mention_text": "Comte",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf7fdf11bca822ae9f17091678535774e3c5c36f70b245b9fd2db92b45f900d7",
+    "mention_text": "Proudhon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec2c841bc1a924e0fc0961ce24a765fe20f741a669c82a1a7051166095fb0005",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31d5585b3a72f9b8d21a26bd31f3b412a03e49077a391cc1991066da4bdce77c",
+    "mention_text": "Cournot",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c897c805c1d5c2831806275c9e427f48126bba7224284f99ca1f21299baec11",
+    "mention_text": "Cournot",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3367c27ec2cd26f68ea296bf3915662f3edda8dcbd7e05855da400d38f6e0048",
+    "mention_text": "Cournot",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "738e9b5234aa8754b51961a45f9bfe3960a114d488ef7d0b23f230e73eb82a6a",
+    "mention_text": "Spengler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18351e2799a9119c3f58b432d2e45dbc065065cbf8a298b8ce2f34a907d9cb9f",
+    "mention_text": "Jünger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "41a3f75a24cbb330971759ebecb8e4ffe12e941095ed493f2f8eefb7022ae808",
+    "mention_text": "Scheler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "983b2d103d3082cc73f80bc61546658d4ea2e24f483143617084211fa37d3760",
+    "mention_text": "Heidegger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9deac51fe204dfabf71ec2963eebcf14a6e5707769d463cd9883586d08872fc9",
+    "mention_text": "Escola de Frankfurt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7db00ccedade81813bde7f696176b6d6ebe93c5f3ed0b67d5c0a75bfeab8f32a",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "466583c6c0d0290e1e81c46b3ba22a0d86520e436b53acedef3adc2c3fa0b73c",
+    "mention_text": "Heidegger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb21b43cd5fbb9037179f0ccb51ffc3f3677acbabcad3d33401a87441333c8ca",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99f1394a1a95cb97490dfe6a5a2f2da4ad00900bbaa289cdefe053f892cccb37",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f441baa909a0dc8de718bf99e4bf004237e111034d541bd18064bdc531f31b7",
+    "mention_text": "Scheler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "743297af9eda4fce86f7db3c7274bf6f538a2d2d3fb0d2113af1513f0c6eb758",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdb58acd03574bc012bb0f1c26baa6deb6a9c73fb7e6e1e27f5c99fa3f6c2fcb",
+    "mention_text": "Livraria Portugal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e6c06058b2e4872115dfe6efa7d6005b2d280b45dc93484eb864c24e0c49a5d",
+    "mention_text": "Genebra",
+    "categoria": "LOCAL"
+  }
+]

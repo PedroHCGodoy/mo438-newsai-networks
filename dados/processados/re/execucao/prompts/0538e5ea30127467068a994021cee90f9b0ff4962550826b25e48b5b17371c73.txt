@@ -1,0 +1,401 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 249e122940914b8e751504df09d0ff7c19063cdb4c5ee58152fd441ab5695329
+
+TEXTO:
+Autor holandês defende a utopia do dinheiro para todos
+
+Se não mudarmos a relação que temos com o trabalho e o dinheiro, os arqueólogos do futuro ficarão espantados ao estudar nossa civilização, diz o historiador holandês Rutger Bregman, 30.
+Quem, nos próximos séculos, tentar entender como nosso mundo funcionava vai se deparar com uma religião estranha que fazia bilhões de pessoas se trancarem em cubículos por horas fingindo fazer algo importante, enquanto escreviam relatórios que ninguém iria ler e enviavam emails para quem não gostavam, diz ele à Folha durante visita ao Brasil para lançar o livro "Utopia para Realistas".
+Sua solução para esse e outros males de nosso tempo é largamente discutida em sua obra: dar dinheiro de graça para todos, ou seja, um programa de renda mínima universal.
+Entre as razões que aponta para que a ideia vire realidade, além de desobrigar pessoas a trabalharem com o que não querem, está a defesa de que distribuir dinheiro diminui a criminalidade, melhora a saúde da população e permite a todos investir em si mesmos.
+Um grande desafio para conseguir isso é o valor moral associado ao trabalho e o medo de que, dando o mínimo para sobreviver, as pessoas se tornariam preguiçosas.
+A crença de Bregman vai no sentido oposto, em vez de não nos dedicarmos a nada, partiríamos em busca daquilo que realmente importa para nós.
+"Precisamos de liberdade para fazer escolhas. A renda mínima será como 'venture capital' [investimento para startups] para o povo, dará a todos a oportunidade de tomar riscos. Isso vai gerar uma onda de empreendedorismo", diz.
+No livro, Bregman cita uma série de exemplos de como moradores de rua, índios e populações em regiões vulneráveis se desenvolveram ao passar a receber dinheiro sem que fosse pedido nada em troca. Para ele, quanto menos burocracia e exigências, melhor.
+Bregman diz ver com admiração o Bolsa Família: "O programa poderia ser expandido para os ricos e a classe média, para que se tornasse um direito de todos os cidadãos, não um favor", afirma.
+O tema da renda mínima universal vem ganhando força no Vale do Silício, principal polo tecnológico dos Estados Unidos, conforme avançam sistemas de produção baseados em inteligência artificial e automação e aumenta o temor de que eles irão eliminar uma série de postos de trabalho.
+Porém Bregman diz que esse não deve ser o principal fator para que se conclua que necessitamos de um salário mínimo para todos. "Você não pode menosprezar a capacidade do capitalismo de gerar novos trabalhos inúteis", diz.
+A categoria, que ganha um capítulo no livro, para Bregman inclui trabalhos que, segundo ele, movimentam dinheiro de um lado para o outro, sem gerar nada de útil para a sociedade. A crítica ácida vai para atividades como investimentos no mercado financeiro, áreas jurídicas de corporações e publicidade.
+Ele conta que decidiu escrever sobre novas metas para a humanidade por sua percepção de que, como beneficiária de muitas conquistas do passado, sua geração na Europa têm dificuldade para encontrar novos objetivos.
+No livro, Bregman não se preocupa muito em explicar questões práticas, do tipo por onde começar, quanto cada um deveria receber e quais seriam os efeitos disso na economia.
+"Todas as grandes conquistas da civilização, como o fim da escravidão, o voto universal, os direitos das mulheres, foram utopias em algum momento. Intelectuais e escritores devem ser irrealistas, porque, no fim, são essas pessoas que estarão certas."
+Mesmo com o risco de que as ideias mais radicais do autor não passem de sonhos irrealizáveis, vale a pena conhecê-las e ver como são expostas em estilo envolvente. O livro lembra que, apesar do pessimismo atual, muito foi conquistado e vale a pena imaginar novas metas com ousadia.
+Mais
+Veja livros que se destacaram na semana
+TEORIA E ANÁLISE
+1º/1º Scrum , Jeff Sutherland, ed. LeYa, R$ 34,90 2º/4º Gestão do Amanhã , Sandro Magaldi e José Salibi Neto, ed. Gente, R$ 49 3º/3º Rápido e Devagar , Daniel Kahneman, ed. Objetiva,  R$ 62,90 4º/2º A Startup Enxuta , Eric Ries, ed. LeYa, R$ 39,90 5º/5º O Livro da Economia , vários autores, ed. Globo, R$ 59,90
+prática e pessoas
+1º/1º A Sutil Arte de Ligar o F*da-se , Mark Manson, Intrínseca, R$ 29,90 2º/2º O Poder da Autorresponsabilidade , Paulo Vieira, ed. Gente, R$ 19,90 3º/3º Seja Foda! , Caio Carneiro, ed. Buzz, R$ 39,90 4º/4º Me Poupe! , Nathalia Arcuri, ed. Sextante, R$ 29,90, 5º/5º Pai Rico, Pai Pobre , Robert T. Kiyosaki e Sharon L. Lechter, ed. Alta Books, R$ 79,90
+Lista feita com amostra informada pelas livrarias Curitiba, Fnac, da Folha, Saraiva e Argumento; os preços são referências do mercado e podem variar; semana de 8/4 a 14/4; entre parênteses, a posição na semana anterior
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "74e2f0fb600fe6e9423ad37558f35f2ced5771f26657d574a13a59253d242e88",
+    "mention_text": "Rutger Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1e9c7c91863c28d1bb01e2b6a5cf159f80ad2809c31ec4e35052f2fd2251e23",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3ac2185ff185dbd9ac5fe865ddefc52c6852b5e1598a2cfc10fba605e03fccb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "098e4f88f13d65cb922756623773940b6468756a55cc9656dd3d64a992aa9e4c",
+    "mention_text": "Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b08962c72c1d2efe57866f46ef591fbc4e8e2fe7c10472f46f7316a2e7360b6",
+    "mention_text": "Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9442c124f45a2dc2d36c384a9fe4ae821017b3acbe11f46be51e17e2e9e674d5",
+    "mention_text": "Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b89e141811aaf97ace7ae2d5b6441f174909b1239b80aef90a73a51c540f2489",
+    "mention_text": "Bolsa Família",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df05c036f920ba4d2ca0f300d973e8e752ee925a2d4ade71af6f59b3251cbae0",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c7d806bff7b89aebfbb62e20c546078b3d10ab5c40c9c59fe851d800427e11e",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa1a5cd12f7daee86c3e69afd2e6a2beb3209101d2f4317237bafc32388e79aa",
+    "mention_text": "Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b4fab4dd925f371ffc7619f369d47e387aaebe631d33ab59641b9e0928d0951",
+    "mention_text": "Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d09888f052a9aed4dfb33d36740f8ff6c0dd5baac15f9328def15c7acf58845c",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c9db545c9d7b69c841d57da7d7057c9b3a8b50d2467c9dc126988b587a332850",
+    "mention_text": "Bregman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a32be9d5c67d2c580c8cf38fa59321e73bd1b3d166436cf1ad608879e847c13b",
+    "mention_text": "Jeff Sutherland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "565aa2001f984b3d897d8f676cfd2785e887c16620b1cdfccd6545170d0faa3c",
+    "mention_text": "LeYa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ee81d4f93d2782fd6476c5c35f99f62eab383bdf209287c49d1fb887aa5e589",
+    "mention_text": "Sandro Magaldi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be82377561781a6a70a39b0b9253f8d5812b3a026af4b5275e15494ec4cdf1a9",
+    "mention_text": "José Salibi Neto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d6ebcae79e40f55f280817566e2e040790e62b00671bd07d725db5cc1d2feea",
+    "mention_text": "Gente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2be1caacd70b0f6cb010c78ccd164e11e9be3aed89c6ed95d9f90457c2457ce7",
+    "mention_text": "Daniel Kahneman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dee3ef6ec4eb6a84932552ab2fbdaf15d6c76860d40c01cdef9042220a2c6ae7",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "414aeb4be2039eae042b8ad4b78644ccfbe514d0d91260a37795e9527c3d4616",
+    "mention_text": "Eric Ries",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da727d246f502a55b3e853b898dd5c216a42b072bc95fc1007616c661b3d63af",
+    "mention_text": "LeYa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "414841e95aeaa4334f4ced47246154f9781e97a856fc2d4194086bc1c1774f3a",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46aa6e89514209845f1a30fddd77abed38eab6b64b8a423d44173f93e27ae1d6",
+    "mention_text": "Mark Manson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26b2be7bd86622a839376f70bf97a9bf02f92d2d7a17a563910e305db7dfaa69",
+    "mention_text": "Intrínseca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c46248e2b790ca56ea882fa574e33f54e0ce91905e434fef13a828f2fbc3bbb3",
+    "mention_text": "Paulo Vieira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "203d03e5ab3040f1a45d8e00d33ec81b473796b2457bc631a84124a8c5ef1bf8",
+    "mention_text": "Gente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d73740577885b8d7f4a5440294424c50e53e46967cd6ca94573025cc312a93f3",
+    "mention_text": "Caio Carneiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ddac42b24827ff48922f4e946560da541bdfa061e7a01beb8826b497d16731ac",
+    "mention_text": "Buzz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb7dd9498c53dec5e49c9fcf4792718a95464c8932187463833a72aa04e0da81",
+    "mention_text": "Nathalia Arcuri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9229fe3645da76cd36f6b89f8ac6c3730ddc3e53744cb3572c35d570524eedab",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95fa3d5ec2d5275c22b5f59a3b7ea71af928939461da633cd46781fb85e92b33",
+    "mention_text": "Robert T. Kiyosaki",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da10debac7dbaaec049bdf1e22efd0a0918ef99b255022e4aa6af291623e306b",
+    "mention_text": "Sharon L. Lechter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d64ba30ca9dd8a309128edd24ec2279bb222e8bda7ec0066fe12a666eab10b10",
+    "mention_text": "Alta Books",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2553e711816eae45cafe8b424205db73b4fc626ce0896c506978ecb36933794d",
+    "mention_text": "Curitiba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5ddf3b211ada31332875c25af9347ef47578bd3e1d627815347d90ee6072fb8",
+    "mention_text": "Fnac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d47b32771f7f98f8a38e19b6f2ab3e7151698b2b4a7d584bab2ce92efeb027c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "080ee951a093c97bf8dfa4431c93231716fd212c3ae129b674ef4702172340a1",
+    "mention_text": "Saraiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d110ccba0d2c29384ec9721d7e70912a13ed7126e9c9e6bc9f1dee94eb34131",
+    "mention_text": "Argumento",
+    "categoria": "ORGANIZACAO"
+  }
+]

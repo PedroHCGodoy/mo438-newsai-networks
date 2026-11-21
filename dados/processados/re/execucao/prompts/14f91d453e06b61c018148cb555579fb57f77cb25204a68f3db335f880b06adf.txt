@@ -1,0 +1,354 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ee830cc3b972ea54559f42df64057e58efcb2d3825088aabec8a4cf1e4a0ea36
+
+TEXTO:
+'Vingadores' 2 estreia com 141 minutos de ação ininterrupta e muito humor
+
+"Vingadores: Era de Ultron" não é apenas o melhor filme para fãs de super-heróis de quadrinhos feito até hoje. É um filme de ação e aventura impecável, até para quem não abre um gibi há décadas.
+Quem é consumidor de HQ terá um prazer a mais na sessão, acompanhando a vingança do autômato Ultron contra seu criador, Tony Stark, e a humanidade. É um vilão surgido nos gibis em 1968.
+O filme tem muitas piadas –Thor é o campeão–, algumas só entendidas por fãs, e um ou outro detalhe engraçado que apenas os verdadeiros maníacos vão captar.
+Mas o segundo longa dos Vingadores, novamente dirigido por Joss Whedon, é mais didático que o anterior.
+Rapidamente, sem abdicar de cenas de ação ininterrupta, um "quem é quem" da equipe fica desenhado.
+O time traz dois fortões, Thor (Chris Hemsworth), o deus nórdico honrado e destemido, e Hulk (Mark Ruffalo), um rastro verde de destruição a cada vez que Bruce Banner surta com alguma coisa.
+Uma dupla cerebral tem Capitão América (Chris Evans), herói da Segunda Guerra e líder natural da turma, e Homem de Ferro (Robert Downey Jr.), que o mundo sabe que é o cientista milionário Tony Stark com a armadura que ele mesmo criou.
+Resta a dupla fracote, com Gavião Arqueiro (Jeremy Renner), que nunca erra os disparos, e Viúva Negra (Scarlett Johansson), agente secreta.
+Ela tem uma função primordial no grupo, que é despertar e adormecer Hulk na mente de Banner.
+Quando o verdão está furioso, ele só volta à forma de Banner com uma canção de ninar da Viúva Negra. Sim, é "A Bela e a Fera" dos heróis.
+SEM FÔLEGO
+O sexteto começa o filme atacando uma base da organização terrorista Hydra, numa sequência de tirar o fôlego. Na verdade, o público terá pouco tempo para respirar.
+Na tentativa de criar um programa de computador para proteger o mundo, baseado em inteligência artificial, Stark inventa Ultron. A criatura se volta contra o criador.
+Os heróis enfrentarão centenas de robôs criados por Ultron e o próprio supervilão, que acomoda seu cérebro virtual em corpos metálicos.
+No meio disso, o ótimo roteiro encontra espaço para que o casal de gêmeos mutantes Pietro e Wanda entre para o grupo (nos gibis ganham os nomes de Mercúrio e Feiticeira Escarlate) e para Ultron criar o Visão, androide que se torna Vingador.
+Não vale contar mais. Equilibrado entre ação e humor, "Vingadores: Era de Ultron" crava definitivamente os super-heróis como um gênero cinematográfico.
+AS ORIGENS
+Os Vingadores foram criados em 1963. O número um da revista saiu em setembro. Mas seus integrantes já tinham aparecido antes nos gibis da Marvel. Criados por Stan Lee e pelo desenhista Jack Kirby, foram lançados com alguns meses de intervalo, nesta ordem: Homem-Formiga, Hulk e Thor, em 1962, Homem de Ferro e Vespa, em 1963.
+No número 2 da revista, o Homem-Formiga passaria a ser o Gigante. No número 4, em 1964, o Capitão América entrou para a equipe. Era um herói de gibis dos anos 1940 repaginado por Lee e Kirby.
+A ideia para formar um grupo de heróis veio da editora rival da Marvel, a DC Comics, que lançara com sucesso, em 1960, a Liga da Justiça, que reunia Batman, Super-Homem, Mulher Maravilha e Flash, entre outros.
+VINGADORES - ERA DE ULTRON DIREÇÃO: JOSS WHEDON ELENCO: ROBERT DOWNEY JR., CHRIS EVANS, CHRIS HEMSWORTH, SCARLETT JOHANSSON, MARK RUFFALO PRODUÇÃO: EUA, 2015, 10 ANOS QUANDO estreia nesta quinta (23)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d611d204780c3051316677f8123d8500357db26878a76fdd67208cfefaa80450",
+    "mention_text": "Tony Stark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07e14e162baa68d35e0119aefc681dc5229f6ac89c3cff2476ffea31a9a6e015",
+    "mention_text": "Joss Whedon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f52ea5f163d4d0f376f025ccfdf4a09c3e678890afe454b0404302105444193e",
+    "mention_text": "Chris Hemsworth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47a9c7c083762019b739746c2fcc7abcd90e21ed834683d0fa18cb2b52d474af",
+    "mention_text": "Mark Ruffalo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e35d1c5621f770c857fdd584e2d79c7aa2759bafaa1b98444e41f49f20e55e6",
+    "mention_text": "Bruce Banner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "140e78e59ede20222719fa7f847e7a63b9b0784eec0b1ed11c2602d7c61dd4bb",
+    "mention_text": "Chris Evans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c9c766cc7c5aa98f1daf83e0b5966914ee05155c6297319b47473cb1e4ae530",
+    "mention_text": "Robert Downey Jr.",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "174f7895023c872eed91a2f3b5efd91c67bf82c42222a531bb5bd65fd4cb5561",
+    "mention_text": "Tony Stark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "848f607461031222c3ccf67781402593863763f1d1b19028c26be6a49b1f73d0",
+    "mention_text": "Jeremy Renner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29edfe3f0dbd53a42cd51eb55a1677ac6db7bebe6f0e77a4c2ae49ce194be66c",
+    "mention_text": "Scarlett Johansson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e244f63e9746a5fbf85b02452232ed8bfef81bb26558b004b45f120f382467c7",
+    "mention_text": "Banner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9182950c9b46f0fd3bbfb8e9338571f4860919ae98ad47a3d96d1a1fde4cadc9",
+    "mention_text": "Banner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b9f5c6b3ccfa31d81bf40f31949b3dc1ab3afcfe4ca2a5aea952bef4dfebb74",
+    "mention_text": "Hydra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09acb6165f7a9d6087ce37ecead60eac691f7cc9c4daaae66cdc69e399d0775e",
+    "mention_text": "Stark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65e484f3d2d2fa96f50111910ce1fd85bf9d50da9e26e33d32e8dcfe14cec9b8",
+    "mention_text": "Vingadores",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4d94ebfc678f8dfde966a3310dec9ad87a5febc78159b1e7c823023dce399fb",
+    "mention_text": "Marvel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fea4b36143dbe6753e487ae3687fe59e129bbdfbf63fa9ec3407bc9bc001edc",
+    "mention_text": "Stan Lee",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43bec747256dd8f9cb0e92997dd7d046430f00154e303947e88bebc3bb44daae",
+    "mention_text": "Jack Kirby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "072c972e1f2c578372419a023a38a8e2e741cd5607f96bc4b79091c6b597ccdf",
+    "mention_text": "Lee",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ed2515aeaee246733500880c4ef8eda352d71626c8fe355454b1b9973a69a93",
+    "mention_text": "Kirby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdad4cd9fe89af7bd84774bc8841a41df43077e17abd8a44c334586c4da21d6d",
+    "mention_text": "Marvel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef1e6139991d305e8d03298f8ba944d6cfbd27aa1ec2cb8488daa148c17234e8",
+    "mention_text": "DC Comics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd241eee01f178f83e8fb90064de4d93063044bf0425fe67b1ef90f3e4283881",
+    "mention_text": "Liga da Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd8a1c2f490324702c187b79d9f135ed2af4c05c9bc0f33f3fedf4a0877c4c22",
+    "mention_text": "JOSS WHEDON",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "453eb1a8e2117e1242dbdaefd47f2aba701ca02e4b115fa576a31ff7a31f11f5",
+    "mention_text": "ROBERT DOWNEY JR.",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "03752a075ebc30ada9c195ead8f020814f413b63a0bd8569b0fff30121637e1b",
+    "mention_text": "CHRIS EVANS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "034375a762228e3eaeda35734cb846074e3d4ccc371ebfc4294105219f7dcf37",
+    "mention_text": "CHRIS HEMSWORTH",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f25b2390a00a174bf15b8c66fb762e0fa9e325c919dd578dc5279bcf8c494077",
+    "mention_text": "SCARLETT JOHANSSON",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca5996a4238716c57c6f432ed67d760e8fa07174a6dc39b3e5492aebd1168029",
+    "mention_text": "MARK RUFFALO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a30e2d6331f7462ecd5e2e1684909dd4200956d6c3d8262a768f335bc1e9c6fa",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  }
+]

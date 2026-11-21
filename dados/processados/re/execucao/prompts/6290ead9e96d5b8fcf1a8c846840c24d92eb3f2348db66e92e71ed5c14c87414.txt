@@ -1,0 +1,320 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 17be356e146ed6daf9d1f46df04f699e887dcc49d69751a3ed2ad0b71a8eaa4b
+
+TEXTO:
+Saiba como os teóricos interpretam o processo
+
+DO CONSELHO EDITORIAL
+O que é, afinal das contas, globalização? Como em qualquer assunto em que entre a questão econômica, essa pergunta vai encontrar 11 respostas diferentes, se forem consultados 10 economistas.
+A explicação talvez mais didática está no teorema do economista Eduardo Gianetti da Fonseca:
+"O fenômeno da globalização resulta da conjunção de três forças poderosas:
+1) a terceira revolução tecnológica (tecnologias ligadas à busca, processamento, difusão e transmissão de informações; inteligência artificial; engenharia genética);
+2) a formação de áreas de livre comércio e blocos econômicos integrados (como o Mercosul, a União Européia e o Nafta);
+3) a crescente interligação e interdependência dos mercados físicos e financeiros, em escala planetária".
+Discorda o jornal francês "Le Monde", em recente dossiê sobre a "mundialização", como os franceses insistem em chamar a globalização.
+Lembra, primeiro, que "o comércio entre nações é velho como o mundo, os transportes intercontinentais rápidos existem há vários decênios, as empresas multinacionais prosperam já faz meio século, os movimentos de capitais não são uma invenção dos anos 90, assim como a televisão, os satélites, a informática".
+O que "Le Monde" chama de "novidade" é "a desaparição do único grande sistema que concorria com o capitalismo liberal em escala planetária, ou seja, o comunismo soviético".
+Aí, sim, fecha-se o ciclo, porque o fim do comunismo permite globalizar de fato o capitalismo, com todas as implicações decorrentes: aumento no fluxo de comércio, de informações e de expansão das empresas multinacionais para mercados antes fechados.
+Tudo somado, tem-se que a "a mundialização é bem mais que uma fase suplementar no processo de internacionalização do capital industrial em curso desde faz mais de um século", como escreve, para este caderno, o especialista francês François Chesnais.
+Chesnais prefere ao que chama "termo vago" ("mundialização") definir esse fenômeno como "regime mundializado de dominação financeira".
+Tem certa razão: a globalização ainda é, acima de tudo, um fenômeno financeiro.
+A crise das bolsas é uma prova: a um simples toque de computador, bilhões de dólares se evaporam em Hong Kong e reaparecem em Nova York, por exemplo.
+Mas é preciso bem mais do que isso para tirar uma fábrica da Alemanha e instalá-la no Brasil, por exemplo.
+É por tudo isso que o especialista britânico Anthony McGrew (Universidade Aberta do Reino Unido) lista três tendências nos analistas da globalização, a saber:
+1) os "hiperglobalizantes", os que acham que a globalização define "uma nova época" na história da humanidade, em que "as tradicionais nações-Estado tornaram-se não-naturais, até mesmo unidades de negócio impossíveis em uma economia global". É o caso do japonês Kenichi Ohmae;
+2) os céticos. São os que entendem que os fluxos atuais de comércio, investimento e mão-de-obra não são superiores aos do século passado;
+3) os "transformalistas". Têm uma visão intermediária. Admitem que os processos contemporâneos de globalização não têm precedentes, mas acham que resta um papel para os governos nessa história, desde que se adaptem a um mundo em que já não há uma distinção clara entre assuntos domésticos e internacionais.
+Apontam, ainda, um novo padrão de inclusão e exclusão social na economia globalizada.
+Até os nômades
+No fundo, acaba sendo indiferente qual o rótulo que se prefira. As mudanças provocadas pela globalização não poupam nem sequer os personagens em tese mais independentes.
+Tome-se o caso dos beduínos da Arábia Saudita. São nômades, o que, por definição, quer dizer independentes, isolados do mundo. Fazem seu próprio estilo de vida, imutável há séculos.
+Era imutável.
+O custo de sustentar seus camelos, meio de transporte e de vida para todos eles, no trabalho de pastoreio, tornou-se insuportável. E já não conseguem enfrentar a concorrência oferecida pelas ovelhas importadas (à razão de 12 milhões ao ano) de lugares tão distantes como o Uruguai ou a Nova Zelândia.
+Se os nômades puderam produzir um símbolo, Lawrence da Arábia, como emblema do mundo pré-globalização, o mundo contemporâneo é, ao contrário, uma cacofonia de símbolos facilmente reconhecíveis, em qualquer lugar em que se esteja, da Coca-Cola à Toyota, da Nike ao McDonald's.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4ee168ed05fc7ac85c5180fa11410a37efe50531c8b3792becf0c5e172055ec6",
+    "mention_text": "DO CONSELHO EDITORIAL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ea8ed4dd1f222c82afe9f6238c4d02fd01209dec9af33f81e70c71ce930ec85",
+    "mention_text": "Eduardo Gianetti da Fonseca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b0ddcb2d7c83f25d1040be988ab0f4f2cfa57e8a5b8585c344d149ad3dcf9f5",
+    "mention_text": "Mercosul",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14a946c6ccc4bbfeed1c37038a6a0e85ecbb9c443f704b836e4731be5d9401aa",
+    "mention_text": "União Européia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a702fb90e5848ef68b5f2625df4b582dd636eed9bedadf8fb224e37583905eb4",
+    "mention_text": "Nafta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f14f0d1c166c055a0369e8fbd646972df746c4206c5277d5d6b426e77537558",
+    "mention_text": "François Chesnais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccf38a12edea8ba5d9c038f7661e8bde9e5356cfda4b067a324fdd738e1bdafc",
+    "mention_text": "Chesnais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db9bf8819e33e860896e3ccdbc5baeefb0858a13069fa9a094b11f309aeaccf6",
+    "mention_text": "Hong Kong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a0bc8461f20e9495789078c4b460edb9cab5f8ba9243c7905bcf5a9b5addf2c",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c13234f7c44bba96095764145ddc38af70eebcb0d9ee241a8ec6e8376b719e45",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "734e67f7d8bfc6954dc1fa96cf6f20e335c7b5e580cdc6bcafda7dfc709ea249",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f2e4e46fe031d975feecf568e2aec4de4ee5c9ad976e10184097d185790f9da",
+    "mention_text": "Anthony McGrew",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05cbb8d10e5ce606f777a92beca74bdbef4ead383917e8216b22deb28078d9fb",
+    "mention_text": "Universidade Aberta do Reino Unido",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a05233aa8fa1caf49628da4220f04f700b278d819e06b2bdfbd3880c3b11d63f",
+    "mention_text": "Kenichi Ohmae",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59ed2b0109796d2e23bf629ceb99d3a25146ffdb5179ba321707b7ca80382b04",
+    "mention_text": "Arábia Saudita",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6019aa2fa770ead784b229eaf6dcda87966070edd3aa9e4643f4073da3192030",
+    "mention_text": "Uruguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cabb5f322f24674a1ac60715f87ccbfff3e75b11de88ccd17d6c1024ae17f97b",
+    "mention_text": "Nova Zelândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "753e886325788a032106efebc5eef452ca2e6bd1f5210cd8cd9b555dc849ebf9",
+    "mention_text": "Lawrence da Arábia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a07c61b26b5014d8be4f3d679b215ffafc1762351f7e7fc26502f037ad05fe9",
+    "mention_text": "Coca-Cola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95e995d0f30af65165cb9b2d4cc7ce95cef013ec22dfae502eb0ff104b9251cb",
+    "mention_text": "Toyota",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9688cc126ea599c2beabf589a0fa87ee1f66618c04e751c394c87dbbaf2239f2",
+    "mention_text": "Nike",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbbb7334bad8a89212ac4c2216f020959288d67f84c7f3ecd568510f0a679a8b",
+    "mention_text": "McDonald's",
+    "categoria": "ORGANIZACAO"
+  }
+]

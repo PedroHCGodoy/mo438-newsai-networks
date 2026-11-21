@@ -1,0 +1,1084 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ae6980cf45a83c795013a21aeaafe2aa74f391eeba55c1c5406408c27db0be6d
+
+TEXTO:
+Brasil paga agora por omissão do governo, diz editora da 'Economist'
+
+A editora-chefe da revista britânica "The Economist", Zanny Minton Beddoes, 48, é categórica em dizer que o melhor para o Brasil, no momento, é um governo com credibilidade, efetivo e funcional e que seja capaz de colocar de pé uma série de reformas que considera essenciais para tirar o país da recessão.
+Para ela, a presidente Dilma Rousseff perdeu as condições de governar e, por isso, deve deixar o cargo.
+Ela se diz cética em relação ao impeachment pelo fato de, como a revista registrou em editorial, parte do Congresso estar contaminado com denúncias e sob investigação.
+Para ela, Dilma e toda a classe política decepcionaram o Brasil, e o melhor a fazer é convocar eleições gerais.
+Beddoes, contudo, diz que cabe apenas ao Brasil escolher, entre as opções disponíveis, a melhor delas para colocar o país nos trilhos e recuperar indicadores econômicos.
+"O Brasil tem muitos pontos fortes, um enorme potencial. Quando um grande programa de reforma começar a ser feito, uma reforma genuína, você poderá ver um revés rápido."
+Ela admite que a explosão das commodities e do acesso ao crédito no Brasil foi equivocadamente confundido com uma melhora estrutural da economia, apesar de destacar que muitos avanços foram conquistados no país nos últimos anos.
+Há pouco mais de um ano no comando da revista, ela tem como meta aumentar o número de assinantes. Para isso, tem investido pesado em mídias sociais –inclusive com conteúdo específico– e campanhas ousadas como, por exemplo, oferecer sorvete com insetos nas ruas de Londres.
+Também lançou uma revista bimestral e mais convencional, a "1843", com mais fotos e reportagens mais leves, que já conta com meio milhão de assinantes.
+Tanto "The Economist" quanto Beddoes são liberais declaradas, ao estilo britânico –mais à direita no espectro político, a favor da livre competição e dos direitos individuais– e defensores do jornalismo opinativo e analítico.
+Ainda assim, ela afirma que não apenas acredita que o Estado tem um papel a cumprir como vê nos programas de transferência de renda, como o Bolsa Família, uma forma efetiva "de reduzir desigualdade de renda, de melhorar desenvolvimento e indicadores educacionais e sociais".
+Beddoes recebeu a Folha na sua sala em Londres, onde, além do mural com as principais capas da revista, tem também a primeira edição do parisiense "Charlie Hebdo" depois do atentado ao jornal e as fotos dos dois filhos num porta-retratos e, na parede, a de James Wilson, fundador da revista "The Economist".
+Na sede da revista, onde não há uma Redação, mas salas individuais para os jornalistas, ela falou também sobre a China, da possibilidade de a vitória de Mauricio Macri na Argentina ser um termômetro de mudanças mais à direita na América Latina e de como o populismo "está vivo e vai bem" no hemisfério Norte.
+★
+Folha - Anos atrás, a "Economist" publicou uma capa com o Cristo Redentor ascendendo, indo para o alto e avante. Quatro anos depois, em 2013, o mesmo Cristo despencava em direção ao chão. Foram previsões equivocadas ou a "Economist" os economistas e o mercado superestimaram o Brasil?
+Zanny Minton Beddoes - O Brasil desperdiçou oportunidades. O boom das commodities e o rápido crescimento da China deram grandes oportunidades de exportação ao Brasil. A explosão das commodities com a explosão do crédito foram confundidas com uma transformação estrutural da economia brasileira.
+O que realmente estava acontecendo era um boom tradicional. Temo que o governo brasileiro foi condescendente em relação à necessidade de enfrentar dificuldades de um Estado ineficiente, que precisa de regulação e sofre com corrupção.
+Por um momento, o Brasil estava florescendo. As pessoas entenderam isso de forma equivocada. Encararam como uma melhora sólida na economia brasileira quando na verdade era um boom das commodities e do acesso ao crédito.
+Naquela época não havia nenhum sinal disso?
+Falar isso agora é fácil. Mas havia coisas que estavam mudando e melhorando. A melhora da renda, a redução da desigualdade, melhora na educação em especial para os mais pobres, o Bolsa Família... Houve melhoras muito reais no Brasil, mas acho que isso, associado ao bom das commodities e do acesso ao crédito, fez todo o mundo olhar o Brasil lá dentro e aqui fora com óculos com lentes rosa. Nós apenas reparamos no que havia de positivo.
+O governo brasileiro tem muita responsabilidade nisso. O governo sabia e sabe que havia um monte de reforma a ser feita. Mas é difícil fazer reformas quando a situação é boa. Agora o Brasil está pagando o preço não apenas pelas reformas que não foram feitas mas por muitos erros na economia.
+O que pode ser feito agora para corrigir o cenário e quanto tempo vai levar para o Brasil estar apto a atrair investidores num nível desejável novamente?
+O Brasil precisa de um governo efetivo e funcional. Nós escrevemos num editorial algumas semanas atrás dizendo que a presidente precisava renunciar. O Brasil precisa encontrar um jeito de ter um governo eficiente. Do lado econômico, há uma longa lista de reformas a serem feitas.
+A situação fiscal é insustentável, mas ainda mais importante é atacar as causas da instabilidade fiscal e de uma economia ineficiente. Reforma dos gastos públicos que são definidos pela Constituição, reforma tributária, reforma da Previdência. Há muito o que fazer.
+É possível?
+É. Eu acho que dá para ser feito, não é impossível. O Brasil é um desses países em que agora temos o oposto da euforia de antes. Há um pessimismo profundo, nenhum grande investimento e o calor das commodities já passou.
+Mas o Brasil tem muitos pontos fortes. Tem um setor agrícola fantástico, um enorme potencial. Acho que, quando um grande programa de reforma começar a ser feito, uma reforma genuína, você poderá ver um revés rápido. A economia está numa recessão muito profunda, a pior em muito tempo.
+De fato é uma recessão, mas a inflação está crescendo...
+Então, é por isso que, quando houver um governo com credibilidade para fazer uma reforma e que vai agir de fato, as coisas vão melhorar rápido. Vai ser rápido porque tem muito potencial de investimento no Brasil. Muito da dor já passou.
+Como você disse, "The Economist" sugeriu que a presidente Dilma deveria renunciar. Mas, semanas depois, a revista apoiou declaradamente eleições gerais. Por que manter a presidente, que ainda não foi indiciada ou denunciada, não é uma possibilidade?
+Você leu o editorial. Nele, o argumento que fazemos é que, depois que ela decidiu indicar o seu antecessor [o ex-presidente Luiz Inácio Lula da Silva] para ser chefe da Casa Civil, obviamente cruzou a linha em termos de legitimidade. Por sermos céticos em relação ao impeachment, achamos que é melhor para ela renunciar.
+Como disse, o Brasil precisa de um governo efetivo e funcional. Se você olha em retrospecto todo o drama, do que o Brasil precisa? Precisa de um governo que seja capaz de colocar de pé reformas necessárias para sair desse buraco econômico. Isso é o melhor para o Brasil.
+O problema é quem seria a melhor opção para fazer isso...
+Está certa. É muito difícil. Mas é verdade que agora temos uma situação em que não há nenhum foco nas coisas que realmente precisam ser feitas para recuperar a economia.
+O ex-ministro da Justiça e atual advogado-geral da União, José Eduardo Cardozo, disse que o impeachment seria o que pior poderia acontecer ao Brasil porque é um sinal de fragilidade, de insegurança jurídica, e isso afastaria investidores. Você concorda?
+O que os investidores querem é um governo que consiga governar e implementar reformas que o Brasil precisa. Eu não vou escolher entre as opções disponíveis qual deve ser a melhor para atingir isso. Isso é uma pergunta para o Brasil e os políticos brasileiros.
+O que está muito claro é que, para o país e a economia florescerem, é preciso de um governo que tenha capacidade de governar.
+Agora o Cristo pede socorro na capa da "Economist". Na sua opinião, convocar uma eleição geral é o melhor jeito de o Brasil ajudar a si mesmo? Acha que somente sob nova administração no Congresso e no Executivo será possível fazer as reformas que o país precisa pra sair da recessão?
+Nossa capa desta semana tem o Cristo Redentor com uma placa de SOS e título é "A grande traição". Não foi só a presidente Dilma Rousseff, toda a classe política decepcionou o Brasil. Por isso o melhor jeito de seguir em frente é uma fazer uma nova eleição.
+Como a gente escreveu no nosso editorial, "um novo presidente poderia ter um mandato para tocar reformas que deixaram de ser feitas pelos governos durante décadas.
+Os eleitores também merecem uma chance de se livrar de todo o Congresso infestado de corrupção. Somente novos líderes e novos legisladores podem realizar as reformas fundamentais de que o Brasil precisa, em especial uma reforma do sistema político propenso a corrupção e uma da despesa pública descontrolada, o que empurra para cima os gastos públicos e atrapalha o crescimento".
+Mudando de assunto: Você trabalhou para o governo da Polônia e para o FMI com países em desenvolvimento. Você acha que o chamado "capitalismo de Estado" já se provou pouco eficiente para garantir crescimento econômico sustentável?
+É uma pergunta interessante em relação aos países nos quais grandes setores da economia são subordinados ao Estado. Em geral, nos países em desenvolvimento, empresas estatais não se mostraram as mais eficientes nem a melhor forma de garantir crescimento sustentável. É um consenso que atingimos nas últimas décadas.
+Não é o caso de apenas vender as propriedades estatais, mas é como conseguir um regime regulatório correto, assegurar competição e garantir transparência. Depende do setor e do país, mas, de uma forma geral, eu acho que a lição dos últimos anos é que o Estado tende a não ser terrivelmente bom em administrar empreendimentos e empresas.
+Esse debate surgiu alguns anos atrás, quando a China aparentemente ia muito bem. Diziam que a China provou que o capitalismo de Estado é um caso de sucesso, as empresas estavam indo muito bem... mas, agora, não parece ser exatamente assim.
+Você ficará surpresa comigo dizendo que acreditamos que o Estado tenha um papel porque a "Economist" defende o mercado livre e a liberdade de expressão. Somos liberais e eu genuinamente acredito que a competição entre o mercado livre é melhor base para atingir uma sociedade próspera.
+O Brasil investiu muito no comércio Sul-Sul, com a América do Sul, África e, claro, China. Por causa disso, o governo brasileiro culpa a atual situação da China por boa parte dos problemas econômicos que enfrenta hoje. Qual o papel da China hoje? Ela está de fato mais voltada para o consumo interno?
+A China é extremamente importante para a economia mundial. É a segunda maior economia, e o crescimento dela, particularmente desde os anos 2000, tem sido um dos maiores se não o maior em impacto na economia mundial.
+É verdade que a demanda chinesa foi responsável por uma grande parte da história das commodities. É verdade que o Brasil e outros países exportadores de commodities se beneficiaram significativamente durante o boom e têm sido afetados com os preços em queda. A China gerou um grande impacto em outras manufaturas, no fluxo do comércio, no mercado de trabalho. De forma geral, é uma história extraordinária do ponto de vista da taxa de crescimento, da redução da pobreza. Trazer a China para a economia global é uma mudança enorme. É parte da explicação para o surgimento do mundo emergente.
+Você mencionou o comércio Sul-Sul que, há dez anos, era apenas um pequeno nicho. Agora é uma parte muito importante da economia global, é impressionante. Como se transformou um ator importante, a China precisa assumir algumas responsabilidades. Está atualmente sentindo o peso do que isso significa. No ano passado, percebemos que ela tem muitos problemas domésticos.
+Por muitos anos, muitas pessoas viam os burocratas chineses como brilhantes e pessoas que faziam tudo certo. É difícil fazer o que eles estão tentando fazer e não está claro se estão fazendo bem. Há choques vindo da China, há um claro foco na economia doméstica. Mas acho não acredito no jogo de culpar o outro.
+É uma saída mais fácil para escapar...
+Não acho que é saudável tampouco adequado. Não foi correto, por exemplo, quando os executores de políticas públicas do Brasil falaram da guerra cambial. Não acho que esse seja um jeito útil de pensar política econômica internacional. É tentador, mas não leva a boas políticas.
+Há uma deterioração dos programas de transferência de renda e de políticas sociais de inclusão como garantidores de apoio político e de estabilidade na América Latina? Vemos Mauricio Macri presidente na Argentina, o Peru dividido entre a filha de Alberto Fujimori e um ex-ministro da Fazenda... vê uma onda mais à direita chegando?
+Acho que você está misturando duas coisas. Uma pergunta é se programas de transferência de renda são um jeito efetivo de reduzir desigualdade de renda, de melhorar desenvolvimento, renda e educadores sociais. Uma segunda pergunta seria qual a conclusão sobre a vitória de Macri, sobre o que está acontecendo na Venezuela e o que está acontecendo em outros lugares. Acho que são coisas diferentes na medida em que, por exemplo, na Argentina foi uma reação de anos de um governo irresponsável, anos de populismo clássico.
+Programas de transferência de renda feitos de uma forma responsável são uma parte importante de uma agenda antipobreza. E, se você olha para o número de países que agora têm esse tipo de programa, é enorme. Há dificuldades, há dúvidas sobre o custo, sobre eficiência, sobre os alvos certos, mas, de forma geral, é um ótimo programa de desenvolvimento. Separaria as duas coisas.
+Os governos populistas estão enfraquecidos...
+Mas, se você olhar nos Estados Unidos, na Europa, o populismo está crescendo. O caso da América Latina é interessante. Em que grau a Argentina é um termômetro para o que pode acontecer na região é uma pergunta interessante a ser feita.
+Se você é como eu ou como "Economist", que acredita em livre mercado, abertura e internacionalização, basicamente em liberalismo econômico, é uma mudança bem-vinda para o desenvolvimento na Argentina.
+Se você olhar no hemisfério Norte, o debate nos EUA com Donald Trump, o debate sobre a saída do Reino Unido da União Europeia, eu diria que o populismo está vivo e vai bem.
+De fato parece que se está redescobrindo o populismo aqui. Num outro espectro, há o Podemos na Espanha...
+A pergunta a ser feita é: "Por que há, de repente, esse crescimento significativo desse movimento?". E, se você é como nós, também perguntaria o que pode ser feito para controlá-lo.
+Você tem uma resposta?
+Eu acho que o porquê é muito interessante, dado o fato de que há tipos similares de populismo dos dois lados do Atlântico. O populismo da direita, com isolamento, xenofobia e protecionismo, e o populismo da esquerda no qual as pessoas dizem odiar bancos e os ricos. Os dois estão presentes nos dois lados do Atlântico, o que nos faz pensar que é um fenômeno mais amplo do que uma especificidade de um certo país.
+Historiadores vão passar um bom tempo pensando sobre o que está acontecendo agora. Há duas coisas acontecendo. No momento logo após a crise econômica de 2008, quando se esperava por uma reação populista, não aconteceu porque todo o mundo estava assustado e prevendo que as coisas iam desmoronar.
+Agora, há uma sensação de que as coisas voltaram ao normal e não há mais aquele temor enorme. Interpretamos mal os problemas da crise em muitos países desenvolvidos.
+Muito rapidamente o foco da politica fiscal mirou a austeridade e a necessidade de reduzir deficit, cortar gastos, manter o deficit público sob controle. Porque a economia estava muito fraca, o apoio foi quase exclusivo feito por bancos centrais. O resultado foi uma demanda fraca e aumento do preço dos ativos. Isso reforçou a desigualdade de renda que já estava crescendo por causa da inovação tecnológica e do sentimento na população de que todo o ganho dessa recuperação foi para os mais ricos.
+Um problema foi o foco exagerado na política econômica, e não na política pública. A segunda coisa é que havia dois choques simultâneos: um era a crise econômica e o outro essa revolução tecnológica, com uma virada em direção à inteligência artificial, automação, computador móvel. Isso foi destrutivo para muitas empresas, que reduziram postos de trabalho e encolheram.
+Nos últimos oito anos, houve um foco exagerado na austeridade e atenção insuficiente nas mudanças mais sociais, a serem feitas na educação... Subestimaram as consequências políticas e os desafios políticos. Imigração tem beneficiado os países e é importante. O Reino Unido se beneficiou enormemente com as pessoas que vêm da União Europeia. Os Estados Unidos se beneficiaram da imigração legal e ilegal. Mas há muita gente se sentido insegura e isso foi subestimado.
+As pessoas estão com raiva porque a vida delas não está melhorando tanto quanto a vida das elites, que na visão delas são os verdadeiros beneficiários dessas políticas econômicas.
+Você falou como a revolução tecnológica afetou muitas empresas e o jornalismo, como modelo de negócio, parece ser um desses segmentos que tem sofrido com as mudanças...
+Você tem razão, é uma das indústrias que mais sentiram. Nesta semana [passada] o "Daily Mail" está considerando comprar o Yahoo!, o "Independent" está fechando. O modelo tradicional de jornalismo que é oferecer conteúdo custeado por anúncio publicitário está sendo radicalmente derrotado.
+Como funciona no caso da revista? Qual o peso dos anúncios, assinaturas e dos outros negócios como a Unidade de Inteligência e os seminários que vocês organizam nos rendimentos da "Economist"?
+As assinaturas são, de longe, a nossa maior fonte de renda. Nós somos muito sortudos se comparado com os outros. Somos basicamente um modelo de assinatura. Para nós, aumentar as assinaturas é a chave.
+Anúncio publicitário é como a cobertura do bolo, é importante, é bom ter e certamente a transformação no mundo publicitário nos afetou. Mas somos sortudos por não ser uma ameaça a nossa existência como é para outras publicações. Na verdade, não são todas as áreas da publicidade que estão se transformando.
+Nós acabamos de lançar a 1843, uma revista bimestral cultural que vai para quase meio milhão de assinantes. Em parte, é porque eu acredito que queremos oferecer um retrato global de outras culturas. Há um gap enorme no mercado. Se você olha nela, há muito espaço para publicidade. De forma geral, estou muito satisfeita que somos um veículo que se fundamenta em assinaturas.
+Como vocês conseguem convencer pessoas a pagar por informação num mundo em que há tanto conteúdo de graça? E mais: a "Economist" se comporta como uma revista global e isso pode ser traiçoeiro porque, às vezes, vocês podem não capturar todos os detalhes e as peculiaridades de um determinado país ou de uma história.
+Isso é verdade. Quando eu penso em quem são nossos leitores, penso no que chamo dos curiosos globais. Os curiosos globais são definidos pela perspectiva, não pela cidadania, profissão, gênero, idade ou localização. São pessoas que estão interessadas no mundo ao redor deles, interessados para além das fronteiras, interessados no futuro e despostos a serem desafiados e a descobrir sobre novas ideias. São liberais sociais.
+Fizemos um gráfico psicológico, um estudo da personalidade e valores. Fizemos uma pesquisa para identificar esse grupo, quantas pessoas podem ser definidas por essas características individuais. Por meio de uma estimativa mais ampla, calculamos que esse grupo soma 132 milhões de pessoas no mundo. São pessoas que se enquadram nessa descrição mais ampla. Se ajustarmos para os que falam inglês, o número é de aproximadamente 72 milhões de pessoas.
+Nós temos uma circulação de 1,5 milhão. Há um número infinitamente maior de pessoas que são potencialmente o tipo de pessoa que pode se interessar por nossa revista. É apoiada nesses dados que estou confiante de que se as pessoas souberam sobre nós e se tiverem acesso ao nosso conteúdo, talvez eles queiram ser assinantes.
+E como fazer isso?
+Essa é parte da lógica ligada ao grande esforço que temos feito desde o ano passado em relação às mídias sociais. Se você percebeu, intensificamos. Tínhamos uma pessoa e agora temos nove. Estamos tentando mandar nossa mensagem. Há links para os artigos, mas também conteúdo próprio e posts sobre quem somos.
+Temos um total de 35 milhões de seguidores nas mídias sociais, sendo 15 milhões no Twitter, 7,5 milhões de curtidas no Facebook. Estamos no Linkedin, no Line que é um serviço de mensagem asiático mais forte no Japão, estamos no Google+, no Instagram. Temos um grupo que foi montado no último ano, que é provavelmente mais jovem que eu, que é ótimo e que capturou o que é a "Economist". Eles tuítam, publicam vídeos no Facebook e pensam na melhor forma de usar as redes sociais.
+Para mim, é uma ferramenta incrivelmente poderosa. Se você está nos lendo no Brasil, é assinante e nos segue no Twiter, você pode acessar os textos de forma muito mais rápida. É também um megafone para os que não são assinantes. Eles podem ver as coisas, achar interessante e virar um assinante.
+As mídias sociais podem nos ajudar a atingir uma fração desse enorme novo grupo de pessoas que estamos buscando. Elas são uma das grandes fontes de cliques para chegar ao website e uma das mais poderosas formas de conseguir novos assinantes. É uma forma muito importante de como atingimos as pessoas.
+A meta é aumentar o número de assinantes...
+Para a gente prosperar, tem que ser por meio de assinaturas, vai ser por meio de assinaturas, não tenho dúvida. Estou muito confiante em que, se tivermos o melhor tipo de jornalismo para essas pessoas curiosas, que os faça querer pagar... porque você está certa, há muito conteúdo lá fora. Em uma área de enorme quantidade de conteúdo com qualidade variável, ter uma fonte confiável de informação, que faz jornalismo de alto nível, te ajuda entender o mundo.
+Ficou mais valioso ser uma fonte que ajuda o mundo fazer sentido hoje e que ajuda entender o mundo de amanhã, com informações que você não encontrar em lugar nenhum. A gente só vai ser bem-sucedido se a gente produzir o melhor jornalismo possível. Nosso principal trabalho é produzir esse jornalismo.
+Eu uso muito a palavra "mindstretching" [alongamento mental] para definir o tipo de jornalismo que a "Economist" faz. Não é apenas para você descobrir o que está acontecendo no resto do mundo, mas para você dizer: "Nossa, eu não tinha pensado nisso, não tinha visto as coisas dessa forma".
+Quando alguém que não está no Brasil e lê um texto sobre o Brasil, essa pessoa deve pensar: "Eu realmente estou entendendo o que está acontecendo". É um jornalismo de alto nível e é um privilégio absoluto. É o que meus colegas aqui fazem. E essa é uma parte do trabalho que eu faço. O que precisa ser feito é garantir que esse jornalismo seja colocado diante dos nossos assinantes e de potenciais assinantes. E é aí que a estratégia digital entra e, particularmente, a estratégia para as mídias sociais.
+Vocês também têm investido em campanhas mais convencionais, nas ruas. Vi ofertas de 12 revistas por £ 1 cada uma, com direito a café quente, caderneta de anotação em troca de assinaturas...
+Também fizemos um marketing experimental, oferecemos sorvetes com insetos comestíveis dentro.
+A "Economist" se define como libertária?
+Não, não. Somos liberais. É uma diferença muito importante. Nunca foi libertária.
+Mas é um liberalismo bem diferente do norte-americano...
+O liberalismo inglês, que vem de John Stuart Mill, é muito diferente do liberalismo americano. Eu morei 20 anos nos Estados Unidos, experimentei essa diferença. O liberal americano é alguém de centro-esquerda. Então, Hilary Clinton é liberal, Barack Obama é liberal. Isso no contexto americano.
+Nos Estados Unidos, o oposto dos liberais são os conservadores. Republicanos são conservadores, e os liberais estão à esquerda. Na Inglaterra, a definição do liberalismo tradicional, do século 19, se dá pela crença no mercado livre e nas liberdades individuais. É basicamente a crença na liberdade e na escolha individual.
+Libertário é basicamente Estado mínimo, sem governo, e o extremo é o Estado que provem polícia e nada mais. Não somos libertários, somos liberais. Há papéis que o governo tem que ter, há áreas que são importantes para o governo atuar na busca pela liberdade individual.
+Você acha que é importante ter essa posição escancarada? No Brasil, veículos de comunicação nem sempre escolhem ou assumem um lado.
+A gente tem um lado, e tenho muito orgulho disso. Fomos fundados em 1843 por esse senhor que está naquele quadro, James Wilson, para lutar por livre-comércio e contra o protecionismo. Éramos um jornal com orgulho de ser liberal em 1843 e ainda temos muito orgulho de sermos um jornal liberal ainda hoje.
+Não somos como muitos jornais, porque somos o que meu antecessor chamava de "jornal de visão". Como você sabe, não separamos opinião de reportagem. Temos editoriais, com nossa opinião direta toda semana, mas tem muita opinião nas nossas análises. O que tentamos fazer é ter as análises mais rigorosas, baseadas em fatos e mensuradas para, a partir delas, tirarmos conclusões. Tiramos conclusões baseados no nosso ponto de vista, que é liberal.
+Vê algum problema em serem confundidos ou em serem vistos como porta-vozes do mercado?
+Se por porta-voz do mercado, você se refere a... vou colocar de uma forma que os latinos-americanos dizem: neoliberais por reflexo... não é apropriado.
+Em 2012, eu escrevi uma reportagem especial sobre desigualdade. Foi capa e tinha como chamada "progressismo verdadeiro". Tinha uma seção inteira sobre o Brasil. Era principalmente sobre o Brasil, apesar de ser sobre a redução da desigualdade na América Latina.
+Eu argumento que desigualdade é um problema real, e os liberais precisam entender que é um problema. A sociedade precisa combater a desigualdade porque ela é ruim para o crescimento e reduz oportunidades. E acho que essa ideia de que os neoliberais não ligam para desigualdade é errada. Eu abordei, do ponto de vista liberal, porque e como é necessário o mercado liberal deve reduzir a desigualdade. É simplista e errado dizer que a "Economist" é apenas pró-mercado e antigoverno em tudo.
+Sim, somos pró-mercado, pró-liberdade individual, mas isso não significa que não existe um papel a ser cumprido pelo governo. Tudo, de reforma tributária a reforma regulatória... na mesma semana em que tivemos Dilma na capa do Brasil, mostramos na capa da edição dos EUA como o lucro persistente de certas companhias americanas mostra que há competição insuficiente no mercado. Foi muito pró-competição e antiempresas que dominam o mercado. Isso mostra o que somos.
+Falando sobre como o governo deve regular o mercado, o caso dos Panamá Papers mostrou uma nova forma de fazer jornalismo. Acha que, assim como foi feito um pool de jornais para investigar a história, também há a necessidade de uma investida internacional para tratar do tema?
+Na última semana [retrasada], publicamos que os Panamá Papers mostram que há muito a fazer, em especial em duas áreas. Uma é a exigência de transparência uma vez que empresas offshore protegem outras empresas. A outra é garantir que essas firmas que facilitam lavagem de dinheiro e outros atos ilegais deveriam ser culpadas e punidas. Você está certa, estamos no meio de um frenesi. Aqui os políticos estão discutindo quanto eles pagam de Imposto de Renda, mas o que é mais importante, num mundo globalizado, é garantir que não haja uma enorme evasão fiscal. Isso já vem sendo tratado pela OCDE [Organização para a Cooperação e Desenvolvimento Econômico].
+Há algum progresso em tributar corporações e cobrir as lacunas que permitem a evasão. Mas há mais a ser feito. É uma área em que é necessária cooperação internacional. Acho que o caso do Panamá Papers vai impulsionar isso.
+Na prática, ninguém gosta de pagar muito imposto e não é necessariamente ilegal remeter dinheiro para o exterior...
+Exato, e é muito importante distinguir a redução legal de pagamentos de impostos, o que é perfeitamente legítimo, e lavagem de dinheiro roubado, o que claramente não é legítimo. Há um perigo nos dois lados. Há um perigo de que você faça muito pouco para resolver o problema verdadeiro, mas há também o risco de exagerar e criminalizar tudo.
+Eu falava outro dia com um amigo que trabalha para um banco francês em Londres e ele dizia que está cada vez mais difícil garantir investimentos muito rentáveis. Bancos e investidores estão buscando soluções criativas e isso significa soluções cada vez mais arriscadas. Comércio tradicional e títulos parecem não mais ser tão lucrativos. Você concorda?
+Sou uma jornalista, não uma investidora. [Risos]. Estamos num ambiente de inflação baixa, crescimento baixo. Nesse cenário, é muito difícil gerar taxas sustentáveis de juros. Bancos, em particular, em razão das regulações e das exigências perfeitamente compreensíveis feitas depois da crise de 2008 para que os investimentos fossem menos arriscados, estão tendo retornos menores.
+Uma indústria inteira que estava acostumada a conseguir taxas de retorno muito mais altas, não estão conseguindo. Tem uma grande transformação acontecendo dentro do setor financeiro.
+Para terminar, você é a primeira mulher a comandar a "Economist". Em que sua administração é diferente? Pretende levantar a bandeira do feminismo aqui?
+Tem que perguntar meus colegas quão diferente é. A primeira coisa que fiz foi me livrar da palavra Sir na carta ao leitor na primeira semana. Pensei que "Madam" era antiquado. Estranha-me quantas pessoas me perguntam isso e quanta atenção o fato de eu ser mulher chamou. Isso me fez perceber quanto ainda temos que avançar.
+Eu ficarei satisfeita quando chegarmos a um nível em que ninguém vai fazer essa pergunta às minhas sucessoras. Isso será um sinal verdadeiro de onde temos que chegar. Sim, há muito a ser feito pelo papel das mulheres no mercado de trabalho, mas estou esperando ansiosa pelo dia em que o fato de uma mulher ganhar um cargo de destaque não for mais notícia.
+*
+RAIO-X Zanny Minton Beddoes, 48
+Cargo Editora-chefe da "Economist" desde 2015
+Carreira > Assessorou a abertura econômica da Polônia nos anos 1990 > Passou dois anos como economista do FMI > Começou na "Economist" como repórter de mercados emergentes em 1994 e foi promovida a editora da revista dois anos depois
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7fd028cc10ec160d38e412f5b4498d9cf4694559875124396dc43dbc0b5ae7dd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2cef8514ba5a5a2bdaed16edf2ab8298c600099b587cad6818b50a0a2bd409e",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86f38b7229297baa790830a93191a6b5d39a26f1db95d03259857c1ad5b606d8",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2991e94f588e89be12ccb9de606a3a60a01c6c10136ef695c1a645d1cd8d01d",
+    "mention_text": "Zanny Minton Beddoes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8210931a28097f40b097d41f31112a169d02e5ba5b9edf5aae891b5677cc350b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d789488c5ab1c688b89c99f38ecf2c07ebb0263301747e4a1490b379de6a48d6",
+    "mention_text": "Dilma Rousseff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8be9e3f709a55a367a44b4274411d10ad22c1fb0070a9dd4bee1ec1d96004c36",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a746726f79ecd08cd8ec74e7a8347b83d6a62fd1aaf428127bd79f683f9252c",
+    "mention_text": "Dilma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e59c462d5ba40e6bb044600a124f921e190cdd3c660646990050f481f6e608a0",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4853c6b7b062cdfc22a276a9060a9d98a1b9b07567147bcca5da52427d7d9705",
+    "mention_text": "Beddoes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "628d7407135400bce6b14912755e09b7f731c9a98e6959571d1cd689ffa10aac",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a71de227d4cbcad15c41d5ab129d1db2bc613bde2250f1d222074b6ec671c0f5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4168f1e539718c07921e6580187c01a2615ce37bed67be57cdcbf20e7d03d72",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d2869a887a6f2229db74f76d5ae850f8f25ca15814a1567c3342d4669a89f29",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69b6b6af06dc03696b60ed586dd4aff204c94c4c5f7cd948052f9e9f52a3ea70",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4b4597294c369ba20bef59a0de390323408726829648aab6eca789075e54aae",
+    "mention_text": "Beddoes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ffdd2104afa7631074b7258efba64c3e2a6544b8eaa1643fc077a6ec5816b91d",
+    "mention_text": "Estado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dcd2a7e64103204acbac3171a6c17b30e7500318feff746e3a0a27229a2bbfa0",
+    "mention_text": "Bolsa Família",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f49eaeeaf6d06362adac339c6193b5b762f171217a7623554767fc6ec1eed77",
+    "mention_text": "Beddoes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "225bb0e279802b3b4f1f29ff19eefd346a41ba010a47fc34380b6c31d8dcc97b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a604fbbf1e95b1b05922f5902544c4c6b04ca6475b62b3c6e2f5593f3024f5c9",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d6f2420657c7bc015d9595a2ec8647accd58ccf25ae9654cde82aa3567674cdb",
+    "mention_text": "James Wilson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad97c83eff69d5b6e27a8284cc49e57c181b48cea679cb35c5ea2a0fdbcb563a",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "063da7908848773c124c38e0196fe771ac697a175f645ad876aa76bd3981004e",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d303fb8923d52086eff1c675eb93bd4c376d22105dda2b14a86b94c1fea50740",
+    "mention_text": "Mauricio Macri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "812160675275121e3732bff644f6d561f083a09b1c116a7ee636b9d0e9310af2",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d734c667fd92118c1b6d42206e48f647d2c4f0dadb592f93061b01f0664ec45",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "478360dd8b2a99aa38155006eeea8517d3d45044c2e0cc99e3217671185dc028",
+    "mention_text": "hemisfério Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a73dd8ad1f11f848f038e2f79684d6067c292f46c047b0c7b1d4804d816c462",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10754b811ac18340bcdadcb43d97b1e707b9cfdd306795b65ea481c4544bff4a",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e704061c86146871473c16870e3271bad2cb3afbb778a1939002aedd83509de3",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f41710db828be18c7293260dccd1f9f8050c3c855712f276163fd08770878e56",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6addaa824a6af1c05505e2b3c9d62c02b8d9d879851188c765c4f7f1078d1181",
+    "mention_text": "Zanny Minton Beddoes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa7d9246ecf06ac3eb00481dbe754f3f866607373a64423494fd2a3af8f4a0ce",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "862593408d9d425b47716070b6e8bde2a9a90024b73eb87d911fd4d09e597252",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8e54550d067716256873ab35b83f7a6eec16fa1250e2ac28b58f328f0aafc15c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be6faf2f2691a0104dfc6da88216803923f432357eec72ef63cc4953ec1f992f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b0e49292ffc4858c5beab5209b375ab4b1e31c1a067f32693fb4f7d67c8d18c",
+    "mention_text": "Bolsa Família",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58e2c95b66ca304594c70a79a0e23b1a24e8a597dcf48d737644355999ac6f7d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "160256193984be9e232839619d791c1801accc0cabaa7e9cbcc78dd7d2b4c9d4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6aec8732e3b2deb8a8327c9346ae9496f54ffc229ce88cf0e476d96fc488432e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd70a8b89e5b3017798ffc6cf5b2471a457d21c9b23b203c662bf981ccda237a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "450549ce652da0d237ebf295e9dad1f0263bd3acb56745dc8fd595a6c74833c5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e3144172973a13a7e24242e3ffc2f94050c0d7348a5d0354220856bd108dac0",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ccf9a9a64b745a65ce7a88289196f303c38c2212ca62976a45447534368ab68",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "981132d602264af22379846ecabe97478eed625eb5555877c00db8921e5e3225",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a38f3cae47e6b01058e32743298f921c34bd8482cc4b98b02251d500c505de64",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acb95547dc4679e686aa8020a0680de9273a94b37434ac4f6d7826d5143a0b2d",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd593c267d59c9975c76cca5a1e50704dacf6abb45d73d2a2f119d55d09124ed",
+    "mention_text": "Dilma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b374c1ed971749f39940967c3668b914feaf6cc48c5d7561ec82948b751f6566",
+    "mention_text": "Luiz Inácio Lula da Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b11cf9713e57a51182b9b126af4d56fc43592913a6150c53cec9d32a11cff087",
+    "mention_text": "Casa Civil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc134c9e6dd82e74758b86e43d350296dcf1effa0e1fa16ed93cbdbbf5f03eaf",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b213e66593e76dac323fcd23ba9d1a9a0d52c89ddc9bb2fc0bfd011c3c0f449c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "99cb07d2cbdbcb70953f28760d0c481901bd9e87219fa7da63a0c11b1573838f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae3fd7cce4a9c718dba94e4824fb6df8181b491027415ef77eebf324f711add4",
+    "mention_text": "José Eduardo Cardozo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5fc1d5d68bd3e0e6c768fc85d81c9397c6c4eb25370a7ba4103963d977563462",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1fb31eb97f2d9f4678f0bb543f78eff59928cb522ee8990b1f99b9dc7db85582",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e4e30bba360907cef3ad4c81286086cba1827fdf7140ed9eb98cb0e90294939",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47117ed89ef719d43d3ede069d597a5983c5d217f9cbb77704558c44a72c6470",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b046f41212030e1d40a3035560f59e85d6afd85dcb8637ac961461d0e1c12f13",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a8a1bb73510db77306900abd2635d9b29c2327ab10dd16050fb6ef76af16897",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51d93065f8c82080e0c032db6389cb6718b90f140b5765b8e830bd2571bff835",
+    "mention_text": "Executivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bf0945213018de7de7b1722579f258d03b891f664a535ceef5525771c1608a2",
+    "mention_text": "Dilma Rousseff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45715678b021ebb0d935332acb730a5d2e6d9995fe4b4ea488c4dde74b9b4902",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75be98935e64a318f1a403f16123796e801d5ae8d7a587522fed3555c4071750",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb9505695ebc8fd1c85c66854bf8145d18b7ffb96e6e51b3113180fe61deebef",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86469c89c199d99f3bb03d1d98e80626d8b7932a3db8d4d5c6a208cf61584607",
+    "mention_text": "Polônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d6dd7c49b74465a4c4de377265801b4108d1197e26d60746609909cd3e063f18",
+    "mention_text": "FMI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce9c0554bdf38e9aee0195f703704089bc078afbeef330d536011fccba498b26",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb48a056a50162a732ab0014ce618b3acc8c07457e88b61156e050697fa99be7",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d49d18bc5e3849f9778e10bf2bac3839b8f7ca9e502815711a3ec4c89184db5a",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58f5134092c63c9c00e81aeb0a6aafce971a90f9cd53ecb523856370d9ffa83d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ec992f109c2068c4cc0e2aeabf4a481eabe198a81765e9734b16cd614fb6307",
+    "mention_text": "Sul-Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e075778b3d3a4819bc3114c86f2ecebe5b6ea3d70b63b82119ecbbe1e671dec4",
+    "mention_text": "América do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0435d47a84797e7a3b3bcfb06dbfbdc619bc41a341c542cb37c8bf9c3026f107",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c02a21211c76fe3bc092de1c655836b82c23d6b25f1cab1fbcb4f10549cfcfbf",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ed23c9e3e3c36580107555e5bd61c55c2645cf2075c81c9bda3a5637ac14996",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d06d1c6ba8fa32bbcd24fb6eabeae8898d3bf61537e0a34623ef267a59539472",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30d4a3e8ff97b372304d4fd5959007fc6d93ac24b909948aadef9bee0bbc180a",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7f830eb1440bca87d0ad571ef9d90c17e0c93d701327d893aa2310282b583ded",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee531a1aa317228f8abe7535b7250ae709d194995b98a9cad14c3b81184fc206",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "355e54c151fb95db736bfe82b0a9e93d5dbb86f66128fb89ebbaf85867153eeb",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17304b11617bb78bb483170704aed1e9b9e16306f6eaecbb5515d5466272fdf2",
+    "mention_text": "Sul-Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e12aea328f2447e9d80cb01b9b6335668f6d012039190b97b43528f021c9b3eb",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e420908c8535ed43d84dee6186a03dbcb9fa1d9182ea706a6aeb56bdc51df473",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8624d923c488088b1c371010b5e84725273d64cd5570dd2189853f6b0cd407ce",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b6b3343d4ab79a42b863c1f6d2e4184179a59f2ff7ae02d5566d7f24b5a6c41",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07ffe87857e05c58c7440f4ac206febb0f98762caf8d0853df156be5965a2d9e",
+    "mention_text": "Mauricio Macri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c05be56421238eefcf2badcb620b80c851f7795c41e9813c5ef033cf4b63847",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27c860f7f7f9ce4dd079cad198ee0cf4ec323e394a293ca73854783f1b5173ac",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "176e26ed0b98c41588377729121ce8e7e41ecc76d5ab42bafb6ae770d57e7542",
+    "mention_text": "Alberto Fujimori",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d152938a0372590ffe221ea89604ee911e35d2249064093377373cd36dff533c",
+    "mention_text": "Macri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3374804003a120a1c6b5f85ed07af3c1910a3cb6b9328007654f3e0e5df51e3",
+    "mention_text": "Venezuela",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e10e91f6c335e9bfd61b6a6b603d8b8580b482714a54f89d5ba43a898e551ad7",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1ccb0477b656c81726ab242e5aad9e460d4343f3b72af813ac3ed8b3494a4a9",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "99bc561c1d408022e4e20174587271139a59bdf2737c682a611e4227a465184c",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e8abed87fb23cf8e04de225dffb0bf8591bf675178eba79ba0030599902303d",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "caa5191d47ab0fd7bfc1a67d750337afecd5a64ff1a1b5e7fbb2eaeb13e4bc31",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b6cc095923ad153cb635744d02eadf84faa1e9e221008e408413716e00bb8ccf",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "161b805def4144e7b342fa61e9ec311e91e26057151c26dbb6065e7be69b567a",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3496fe93c0098fb009e31da0ab5f84995928ba385242305e773e91d5c18b150a",
+    "mention_text": "hemisfério Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31af59f4dd25a3864d646cb00b1d4393a7454ffbe0b3dbbbb01b3a4ad1f3ab44",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a626c2dd9d29cdfe16bca1300a32b760f18138578a58476795ada6eaf3545cef",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "207d07050699ebfb751cc470c3dbecbc452c77ff3953c7a44991ccecc7e3f903",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9dfff357d23648c21275f5d7aefe9ee42107d0deb62c72a6919867f5c81b949e",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6d2d04b44fd909b96c11fc2979ef1c56e7df22d24e3c300e4ffca0a3064dafd",
+    "mention_text": "Podemos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e169f029d5826a8e7053a8615825fd3996c19fafc1e4d9f7b010fd0a022332f5",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27142c3165f764c2fe5e09639777b3e57c94415fc3138f0ccc0880844b734dbc",
+    "mention_text": "Atlântico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0018fe98710548f74e87c2521d86912050631da9bdfdab00dfe5b22607e630f6",
+    "mention_text": "Atlântico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3de923e84bc2214bc55483fe7f4328fd571a78a207631467270b4233a83991a3",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e95c6aeca56692968ddb9f35802ac49cdec25e037b72b9e70b508040b92b28a7",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "801ef0b0e027954d7e6daf478d8a3fd87bb256a46b03afe777a009e4c5fcceb4",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3901b10ebd412f16c24f331df5adc283fa3849e3659becca462197b8313dcac",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06d899dadc770352aadcfc5d3e981a11ce73c6e20584ed930dfd0cf7efbd70c9",
+    "mention_text": "Unidade de Inteligência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4dae2f71bbf4825ea3d4acc0f747dd1b514be0fc6a403f188e7b0c67cbd91cbe",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7cba8c6da96cd33bb98fbffcf912f15b30c126d015ce5e505a6f3d862322469",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7d0d0c81a425388e4c72f1a1c94a3ffd52963379c1a9afe617a399d686cb63a",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ab1f7dc0dd8dda3d37ed0b9d517de73294b28013fc2357fe276035f02756852",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ee10beefd05f1bfd935719993cc7b4a02f236347f3e1e680c298d76aa720471",
+    "mention_text": "Linkedin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f93d4a53f6dca639b0fd501d819a5e1d3ae7122c6e1931c4d989e6ee7e848c8a",
+    "mention_text": "Line",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7420be0712dc39ff2b1d7aed6848ae6b3922cbf6d6c644aaa5fac825a7da1ea8",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8cbefdbcb8a5908d27c377e9cf68097a0c98bf63f733b5e3b66d22bccdcb2885",
+    "mention_text": "Google+",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e5a1e1fd10af9c4c8b5fe0576198580409d277d028dc2bbb403d2877b260c92",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "849cf8a61637e7fd2d95b7ea3329bb858e0107ca36c82c520df270dbdc19b4cc",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c6b7ac3e3e6ebdffd0c512b504317d879cd54081c2d4a18ef8db75fef81201a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "881a9bcd71cbded117816277057e11f8f45d74441e184013f712f7a64977643d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1af4e15ef2729f427a67640abcfe87a95c88e665adbbf377cc002a622958a9e1",
+    "mention_text": "Twiter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4af28f7ddf3483c520f062103ba7bdc7ac2fa3b4615f65b7f9d8ecfb5feae9b6",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6acb8e19363471260ab4e0705b9360eb751446a8836ff977ff5bea135027f1a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b4dd7afdaa9f2c6a35b7e854a3f13ef6db6fa44ddf5f9b69ab39e416e54eebbc",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "80e43548fce5f68735a8f1f1611ae338330b86d3be1333ac31767af9c337a1cd",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2738a0edc4affbefcba671f5edf28e0897e0fe25b33d68c6530cf0e5f6598ecd",
+    "mention_text": "John Stuart Mill",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "297f7cd4db5c4973cfd229735943bcc376ed1d2feb6753a3dd7ad0f9c4186cbf",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8cf220c0279d34b893601b13bfd16f20349d39467ed7cad2a56b4e48b272a9ff",
+    "mention_text": "Hilary Clinton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9be981ebffd235ae6ec84a50a134c440140fe2cc42280957505f8cb1366f8bcd",
+    "mention_text": "Barack Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d05bdd6f6a7629fe055e5af1e35af88c9c7d87dab42925747a94393c90a2ca2",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "023a59c2864bf20858f0f4c2245da1b19adafbd6da0cf48e4f11cf09b30ca8f8",
+    "mention_text": "Republicanos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c038f6894992f8375e990d95a35237abef62e185ed0da05dea356426702633eb",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff30b74b9a9ab634a1a4f3ad518d32a9764ad81603c9adadd8df33338e29f589",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c995eb811bb4b76e975440cbb42a7b5a5cc52ad6221e3b3f13ade2e0553fc38e",
+    "mention_text": "James Wilson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2460866f2eec08bf718ece4bdb74592d5ef119948245e3f759029e78a2953aeb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c474cbe02fd464defd0fc193138018c5df97b2085822dfc647ce5b7df435d426",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2fe88d4f7f74f4a0eba1524e196343925d26f95236f32c4fe2da04c9e43edc03",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44b90fb1ccea0437c2c707098b817beea7facd2c1ff2612d3cc214e7f2fb1631",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8543ec78ec7ccd8df13d1ddb97aaea831bafdf1b2780b15065e2e4fe93bc7158",
+    "mention_text": "Dilma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1fc27cc88c228d8584b57abdd8267157080e29fbd2982be36d8b74ae5671c2cb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acba910705abec0e91d62113291200e37d2e2b23de7b6c33c1103ba08a91f9c6",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "db5b55f950b3d2316b0a67a0d2734c33f8de0d6be74bcdd89812af56c062ec0a",
+    "mention_text": "OCDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e228ba427a29a731db582046484ddf0a02943aa349c23257eeed169a49ea83d1",
+    "mention_text": "Organização para a Cooperação e Desenvolvimento Econômico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5ebb7ccb3e44888fbba78421e7c3426cd4cd9b1a14d6eceacd3281f1827590d",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5643a72f5317131042feda2aafb0f203da0bfe97f4bd347476f6da92cb92c994",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c412f55c7621cf9e2334e3751c3a4daf64526d73297f53841eac4c784e89e8a",
+    "mention_text": "Zanny Minton Beddoes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e239a1d76b77c36237da6865bcb111cef193c6bcd1174e7e5712a7c80cba21f",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6fa66134cbe2797c03cd19bc4901c29f61a5588856cfff9b771816efd980e891",
+    "mention_text": "Polônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "241b1bc7f1ae5d2dd402dd5aa42466632ef63624a7152aabd0867cbfb1994a16",
+    "mention_text": "FMI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ecaf9cac8c183f1e184cb23b7a197398cb78abc876e836214e2655e77a8c70ef",
+    "mention_text": "Economist",
+    "categoria": "ORGANIZACAO"
+  }
+]

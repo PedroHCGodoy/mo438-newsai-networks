@@ -1,0 +1,367 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: eacfd14b02150b59ac8eefd60a667ed7f2a2ffd55f4b88d0e2e9d3682ac086a4
+
+TEXTO:
+A inteligência artificial que aprendeu a jogar 'Magic: The Gathering'
+
+"Magic: the Gathering" é um fenômeno complexo da nerdice: é parte Senhor dos Aneis, parte xadrez. Em tempos melhores, quando eu era só um moleque olhudo com um punhado de cartas, o jogo era bastante casual - longe, bem longe de ser a indústria que movimenta 250 milhões de dólares por ano nos dias de hoje.
+Em 2015, o game é sinônimo de negócios e uma baita subcultura, que agora conta com sua própria inteligência artificial capaz de gerar milhares de novas cartas ao coletar dados das antigas.
+Reed Morgan Milewicz, programador pesquisador de ciências da computação, foi primeira pessoa a ter ensinado uma máquina a jogar Magic. Ele impressionou populares fóruns da internet quando postou os resultados de um experimento que ensinaria uma fraca inteligência artificial a gerar cartas do joguinho.
+Milewicz compartilhou uma série de "cartas" bizarras que seu programa havia criado. Todas tinham fantásticos nomes ("Shring o Artista, "Cetro de Mided Hied Parira") e habilidades nunca antes vistas ("fundirdevolta"). Os jogadores devoraram os resultados .
+Milewicz é estudante de PhD no Departamento de Ciências da Computação e Informação da Universidade do Alabama em Birmingham, nos Estados Unidos, onde trabalha no laboratório iProgress. Ele esbarrou em um artigo escrito por um de seus colegas, Andrej Karpathy , que estuda aprendizado de máquinas em Stanford.
+Karpathy estava mexendo com redes neurais profundas e recorrentes - um modelo de aprendizado estatístico para máquinas que emula as redes neurais de cérebros de animais - para que "lessem" livros, "aprendessem" seu estilo e assim criassem seus textos.
+Milewicz quis fazer o mesmo com o Magic. Logo, botou a rede neural pra devorar um banco de dados com todas as cartas de Magic existentes até o momento .
+Para saber mais sobre o projeto, atravessei uma onda estonteante de nostalgia e um breve processo de cadastro no fórum MTG Salvation onde Milewicz havia postado sobre sua criação sob o avatar Talcos. Seria a primeira e provavelmente única entrevista que eu faria sob o codinome " bigbrianthebold .
+"Jogo Magic há um bom tempo", disse Milewicz durante uma de nossas conversas. "Comecei a jogar quando estava na 1ª série e tem sido um passatempo meu desde então."
+O cara é fã mesmo. E bem mais que isso. (Para propósitos de compreensão deste texto devo mencionar aqui alguns dos elementos básicos de Magic: existem cinco cores que os jogadores podem usar para montar seus decks - branco, azul, verde, vermelho preto. Jogadores usam "magias" e "criaturas" de diferentes tipos, como os "Tritões".
+O objetivo do jogo é montar um exército ou causar danos o suficiente com magias para acabar com os pontos de vida do adversário. Entendeu? Não? Então leia mais aqui e volte, ok?)
+"Tenho interesse na engenharia reversa de regras de sistemas complexos", disse. "É exatamente o que fazemos com o criador de cartas de Magic. As cartas são produtos de uma série de regras; algumas delas do próprio jogo (criaturas que tem força e resistência), outras criativas (o que torna as cartas brancas diferentes das azuis?)." Essas regras nunca deixaram de se expandir. Há pouco tentei jogar Magic com meus vizinhos e mal reconheci o jogo.
+"Para conseguir gerar novas cartas de Magic", disse Milewicz, "a rede neural recorrente tem que fazer a engenharia reversa de todas essas regras, o que pode fazer muito bem, mesmo sem qualquer conhecimento prévio do game ou de inglês ou de qualquer coisa. Todo seu conhecimento deriva meramente do estudo de frequências das sequências de símbolos - nada além disso. É um conceito poderoso que exploro em minha pesquisa".
+Aqui a carta que ele diz ser uma de suas cartas novas favoritas:
+Korvo Escorregochocante
+U
+Criatura - Dragão
+Pesoteio, Muntanhizzmo
+Tromple, Mointainspalk
+4/2
+Para qualquer um familiarizado com Magic - e já me entreguei aqui - ficará claro que esta é uma carta ridícula em todos os sentidos. É ridiculamente poderosa e suas habilidades não estão lá muito bem definidas (a ideia da IA era emular Pisoteio e Montanhismo, duas habilidades que as criaturas do jogo geralmente tem). Mas, além da ortografia péssima, todos os outros detalhes estão certinhos; poderia ser uma carta do jogo. Não quebra nenhuma regra.
+Ao passo em que Milewicz continuava a treinar o programa, ele aprendia mais e mais sobre o universo das cartas de Magic e como a mecânica do jogo funciona. As cartas começaram a ficar cada vez mais "realistas", ou seja, mais próximas daquilo que você encontraria ao abrir um pacote de cartas. Ela estava aprendendo.
+"O que estamos fazendo é alimentar uma rede neural com textos, um caractere após o outro, e a treinando para prever que caracteres virão em seguida. Eu digo 'C r i a t u r' e ela prevê o 'a'; e se eu digo 'Saque duas' ela deveria prever 'cartas'.
+É uma rede profunda e extensa, de diversas camadas, de memória de curto prazo, ou seja, é composta de diversas unidades de rede capazes de armazenarem e esquecerem condicionalmente as informações recebidas", explica Milewics. Isso explica como a rede vai ficando "mais esperta". Algumas das cartas criadas por ela mal podem ser distinguidas das verdadeiras. E o programador planeja levar o programa ainda mais adiante.
+"A rede pode lembrar o que viu antes e suas previsões, ou seja, pode fazer previsões mais robustas no futuro", disse. "Por exemplo, ela viu a palavra 'Tritão' no título de uma carta e, depois, quando chegar a hora de prever a cor da carta, ela poderá prever azul já que Tritões em geral são azuis.
+Assim, ao longo do tempo, a inteligência artificial aprende as 'regras' que regem as cartas de Magic. Cartas pretas fazem isso, brancas aquilo. Cartas de criaturas fazem isso, de terreno."
+Como se espera de uma inteligência artificial, tudo funciona com muita rapidez. Agora mesmo, de acordo com a Gamepedia , existem 13.651 cartas de Magic no conjunto oficial e Milewicz seria capaz de dobrar essa contagem com alguns cliques. "Claro que existem tantas cartas que não tenho como mostrar para todos (posso gerar milhões de cartas por vez, e todas são fascinantes ao seu modo)", escreveu.
+Sentindo uma bizarra tensão e uma nostalgia de distantes dias de verão em que passava em meio à cartas na cozinha, fiz a Milewicz a inevitável pergunta: quanto tempo até uma inteligência artificial criar as cartas de Magic para nós?
+"Depende de como você vê observa a coisa", disse. "Se você fala dos status das cartas, sua disposição em conjuntos, com todos os testes e balanceamentos necessários, seria viável em um futuro próximo."
+A Wizards of the Coast, empresa que lança as cartas, de propriedade da Hasbro, não parece muito preocupada. "Muita gente me pergunta sobre a inteligência artifical que cria cartas", disse o designer-chefe da de Magic, Mark Rosewater, no Tumblr . "Não dei uma olhada ainda, mas minhas fontes me dizem que ainda não ficarei desempregado."
+Dada a frequência com que a WotC lança expansões lucrativas, é difícil não levar em conta a possibilidade de que o aprendizado de máquinas algum dia poderia auxiliar ou acelerar tal processo. Criar o jogo se traduz em muito trabalho, muitos testes, muitos textos e muita arte. E se uma máquina pudesse partir pro que interessa?
+"Mas não é por isso que as pessoas jogam Magic, no final das contas", afirma Milewicz. "Elas jogariam o jogo se cada carta fosse um papel sem nada só com uns números rabiscados? Não. Jogos como Magic são populares porque são veículos de uma narrativa. O jogo transforma seus jogadores em um aventureiro, viajando por locais exóticos e encontrando monstros mágicos."
+Trata-se de um pensamento comum quando falamos que a inteligência artificial auxilia empreitadas humanas: as máquinas podem muito bem escrever textos simples sobre terremotos e placares esportivos, claro - mas precisamos de humanos para dar alma à parada . Pelo menos por enquanto.
+Tradução THIAGO "ÍNDIO" SILVA
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2cd1903590aa7797043d47a748f24fd8855935687dafd02e3f2d9d77dd00c0dc",
+    "mention_text": "Reed Morgan Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "694767a01de9265789bd57cf39431278b4ad3f2c54e619584c9b6d8714d34f46",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74144fd8d4591066a3ee5c52d0cc2af5da0c8dff194e8f0aa157543ef829ffcd",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56bd0037b3cd523484f612837abe297d2cf1215a2eafb75c4bd67834fdc1174f",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c5a694fff613ce85f20ce0de152d29bcd4d79dd608745ff034b653b2dd51607",
+    "mention_text": "Departamento de Ciências da Computação e Informação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4fcf2b424fabfa4363e163a0373c501b97e2dfaf844f728d7b1fb12292dc2c4",
+    "mention_text": "Universidade do Alabama em Birmingham",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad9d3abb8408206a29f2dd69c248fd06111c1e6d880d8105f5b06a34980111ab",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "681f0752946de5d0ac3ef3fc00a7a77f548bf2de3a93a277ecc3db84440daf40",
+    "mention_text": "iProgress",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "878ef8630c9b84bf631429a734cfe4ebdd87fbe5dc05009adcbfa4c84e2f3878",
+    "mention_text": "Andrej Karpathy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccf4c437c6ca8fa6596b8a13537e8461ad8f568c5dc70eca0d4721ee37ed3f35",
+    "mention_text": "Stanford",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "847406e42c3aeb27ba8087f3f289a90906abf9c474062ec16fc5024e252a11c0",
+    "mention_text": "Karpathy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47089b64f3d431d57ed7eba58a213081355f2df274209625d8002779ebb980f2",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f0a0acebd64a0cad5f559323ddcf2b95d4517a3edb97f5e608cf17129b7a5a7",
+    "mention_text": "MTG Salvation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c437e3406fb50ff20f81f9480b6ca29dd9aecc3103c31748f5926876d8b44ab",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71dc03f3290e9af3ad31ff7aae417fc38f04c43951957da9f2a5faea3739f995",
+    "mention_text": "Talcos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a661eab97d2d10e0dc49187601fce200ba681e89718b02f855a8e37c0404855",
+    "mention_text": "bigbrianthebold",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6192241ef66a5f1a3d60df197c4fe8a05692b876d8677d27a073a888546173a0",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff8ab0c5933951fa9a96de5dc0651cb11d5d18c15bf2b011a971fe7122a60dad",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97a47e737f99b0b9f64fdcf905a6476f97e75846e58e4b6ed7e2d7ad87dda492",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9975e9a33a7c6253d108a9655944f9117f59b7ec710df48ab1f7166e8975d9ce",
+    "mention_text": "Milewics",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23296bf1c57c639da3f8a18e90379b09701bccebff5feecf152a7d1998ae2e05",
+    "mention_text": "Gamepedia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cdd594af7cbc9f9459e2989df027949b8e3be86be87fc2675b1508980c4b2e6",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d35d909788fa17874698ff190898cdfcb1f618c2d7d7b444f124957f27fde1fe",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98dec2a5f9a0436ee0b43c6bbddc8c28968e6704890282c235e30e09efc71bbb",
+    "mention_text": "Wizards of the Coast",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05b8ffe74326ddfed2cf3c61ba9f1695a6b71210221c4c1903bc6129e448d010",
+    "mention_text": "Hasbro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59b2ee772c727169937a74b268f2021bc5af652d71e0750f2448528b07816f5c",
+    "mention_text": "Mark Rosewater",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e571e8d77cba119956ff209c84fbec24b22dca794371cb402900bf7ae21a8bd0",
+    "mention_text": "Tumblr",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5cfd50776b354d553b6a3f1f973a8bdf07d8fde8d86409a79dac67a1ad0a828d",
+    "mention_text": "WotC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c37c0652a1bb53ec5c76ea6987910db0d6c0d94d9e8eda8d6ae41daf76fcf74",
+    "mention_text": "Milewicz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f6978c8300ae5eba0b5b875b5afb0f6e7b759229672090bfc7cd345c9384d98",
+    "mention_text": "THIAGO \"ÍNDIO\" SILVA",
+    "categoria": "PESSOA"
+  }
+]

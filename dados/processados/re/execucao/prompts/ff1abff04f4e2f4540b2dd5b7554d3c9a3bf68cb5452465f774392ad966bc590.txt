@@ -1,0 +1,430 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 39faae57eaeec349f5f6eead7c438f2f084355299fed0059a130963363ab4af0
+
+TEXTO:
+Espero que Neymar deixe de lado os chiliques e brilhe intensamente
+
+Escrevi, domingo (29), baseado em reportagens publicadas por vários jornalistas, que estava decepcionado com Tite e com Edu Gaspar por darem privilégio aos familiares de Neymar , únicos entre os dos jogadores hospedados no hotel da seleção brasileira , em Sochi, na Rússia.
+Tite me esclareceu que uma ala do hotel estava ocupada exclusivamente pela seleção e que ele e Edu Gaspar não sabiam quem eram os hóspedes das outras duas alas.
+Deduzo que a presença somente dos familiares de Neymar em outra ala do hotel, o que é um fato, foi um privilégio dado pelos dirigentes da CBF, já que todos os outros familiares ficaram juntos em outro hotel reservado pela entidade.
+Tite assistiu ao belíssimo jogo, no meio de semana, pela Copa do Brasil , entre Grêmio e Flamengo em Porto Alegre. Paquetá atuou muito bem. Ele e Arthur, já no Barcelona, provavelmente serão convocados.
+Se o técnico do Barcelona formar um trio no meio-campo, como o time jogou durante longo tempo, Arthur tem boas chances de ser titular, no lugar de Iniesta, ao lado de Busquets e Rakitic. Coutinho jogaria no trio de ataque, com Suárez e Messi.
+Se o Barcelona atuar com dois volantes e um meia de cada lado, como fez na maior parte da última temporada, Arthur deverá ser reserva de Busquets e Rakitic, com Coutinho, pela esquerda, e Dembélé ou Malcom, pela direita.
+Há uma enorme curiosidade, em todo o mundo, sobre qual será o comportamento de Neymar, dentro de campo, na seleção brasileira e no PSG.
+Tenho muita esperança que ele, para recuperar o prestígio, deixe de lado os chiliques e brilhe intensamente, mais até do que antes.
+Porém, começou mal a fase de recuperação. Foi um desastre a união da propaganda comercial com o texto lido por ele, para tentar explicar o que ocorreu na Copa do Mundo de 2018. Neymar parecia um robô, um roteiro sem alma.
+Todos os seres humanos, de todas as épocas, especialmente as celebridades, vivem um conflito entre o criador e a criatura, entre o que desejam e o que é possível.
+Algumas celebridades convivem bem com essa dualidade, como Cristiano Ronaldo .
+Outros ficam perdidos, sem rumo, sem saber o que querem, o que são.
+Há ainda os que tentam separar o público do privado, o ídolo do cidadão, como Messi .
+Existem também os que são tão célebres, que, naturalmente, sem perceber, sem planejar, a criatura engole, anula o criador. Pelé é Pelé e ponto final.
+Neymar, além de suas particularidades, de seu jeito de ser, mistura da genética com o ambiente, é um produto de um novo mundo, o da internet, das redes sociais.
+As novas celebridades e até presidentes de países preferem não falar, não responder as perguntas. Publicam na internet o que querem, o que lhes interessa.
+No futuro, haverá um novo homem, com uma inteligência artificial. Isso não é mais ficção, é realidade.
+Esse novo ser achará estranho o mundo em que vivemos hoje, assim como ficamos espantados com nossos antepassados, assim como as crianças e os adolescentes de hoje não entendem como era possível viver sem WhatsApp.
+Eu ainda sobrevivo. Não sei até quando.
+O novo homem será contraditório como o atual?
+Fernando Pessoa, para tentar conviver com os muitos que havia dentro dele, criou 127 heterônimos, todos com identidade e vida própria.
+Alguns ficaram famosos, como Álvaro de Campos: "Que sei eu do que serei, eu que não sei o que sou? Sou o que penso? Mas penso ser tantas coisas".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b5cdeb622e9e87e6e52b43309199f022a25b793f628d33fd2d51b0906dcc9eee",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "081f06cfd7d84a84c6ab361aeb78f23bce6aca246d3d7ec2c08c67b58ba1cd04",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e6ec24d1e10949d1f95a7fa537361dae9eabb49f03628ee887b5daff4b6475d",
+    "mention_text": "Edu Gaspar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d2267580af28f32cb257d6482504281ee7e43f57af666cff582be2e4863b1cd",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5fef23a0a4e14a9276e31ee46bee59f5d7118d8522cf1c319e4466b429e4fa20",
+    "mention_text": "seleção brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "125a811e2fcfd3ca6747ffae7341e6d5b6211fec2c395d1534997671c8007c5d",
+    "mention_text": "Sochi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb4bd4079041e0e75899dd10e509bc8e1f94cb8e353668c11839bbd9902e604e",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c552844802501d5eeffef36dc0ecf26e27b8e535944d1e24c3111a153d07cff",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "499548e669571d7347c4fb8e0413da2831a64831e2476167796e2843517ced45",
+    "mention_text": "seleção",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "306cc2339b839c907a803e5584cf74e4d03c8771fa6bc89abd6c3da1ee384788",
+    "mention_text": "Edu Gaspar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e70d218f80047a6f72e1377e29b1b3ee394138d823faaf0646fa3bb3bec386a",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c377742be7b8e317fe63151587ea7768e5ef505a552164e3d4a856cdfc5b1710",
+    "mention_text": "CBF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "500b95ffecb112fd86f11a967f245e7365ca77eef392b68134b58b12d6621f1f",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb0981286fab099426e315ca132a7b97212df72e85df9f429ea604655dff2876",
+    "mention_text": "Grêmio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "523e68eeea80b517e6f5537a53ed97348eb358a059f92c6aedc99061fc66c827",
+    "mention_text": "Flamengo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d1b1736cec7eb2dc8e29fc5572932f0a92177b9bb0355d43960d734e9d6b96e",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f21bc5363b2c3d7106dca0e58d3d80c3bc644b6e16f20231a82b0ec4ad6fbde9",
+    "mention_text": "Paquetá",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "103970c9bb35ae15edd77762faa732d2c535592bfc3945d169986245ef225b49",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9a8d26b53cb5b04bb52e44d82cb473b81b2df4180d8e95d2faaf6f4f33201c7",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77a032d77e99198711bd05043e4be166c40a02db0d4d43be199e17e45ce9bac8",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfad848e4dc447199e27ae8537ea23a46f0c150d3ada26a6f317e14acf18179c",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ddfcfbdf8221a13a29e13f358211b8ab9ef30fbe2997bb857ff34bf5a4cee21",
+    "mention_text": "Iniesta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "309244d7f7de6d635c48e0b75d78fb76ff4af768663f1cc28b2b858577595efb",
+    "mention_text": "Busquets",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e8f2df65cae31dfc0644b01629cfb5006bc61ff0bfd34015b1c34ae4a41a12c",
+    "mention_text": "Rakitic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "319fac68e5388c38399fa2b6cd15a4e96f6fbb0e0e50f30ecc4a36d4753a9e18",
+    "mention_text": "Coutinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ae6271af2bc2af8f180342f6ba03e75374ee65addda4d8e66cb00ebeb4fd8df",
+    "mention_text": "Suárez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34b967e44e93eede34dd1010b7ea0a3c88137d82f381f9c50ac7379db488d4a0",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "24d41e510d025e4f41327c5edd946f2187586a23db53245e600e25980ab53d78",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "833f39530b56eb43e889aba07423feb2718640d5e1fc56cda56f595e83cd53f2",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4fed077c5c3f39f7a7efe765461da0c58b996008947b5f3a5e70567f25d825a",
+    "mention_text": "Busquets",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da3eee5c53d16df70a78b0dc6d45e6f0d393491482c38e9dc26c8dc5cce72192",
+    "mention_text": "Rakitic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f252b91708e1b86b27e480db8f5790da1e1fc76db406bef58ceb078448c8f31a",
+    "mention_text": "Coutinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9996731aa798c95264d114113ac179c1375b3ba90a3ac1c615a0716071a15a22",
+    "mention_text": "Dembélé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afd88c09ae79a28bbe3e4582e65b40c8b90578a78dc03f077fc5397d303b8d2c",
+    "mention_text": "Malcom",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "789512f5ff7316f95ca7dde8c2dcf24802460140d32297bb8ddd526620656eb1",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7782fdb73af3fed7aa60c3bd2cdb68a9a28b380721443587630b15fb29bbe154",
+    "mention_text": "seleção brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a2139497b3b4a749228bccf7664dc3095a544029594d50d16fc94c37c2d4a04",
+    "mention_text": "PSG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f52ac2adc8a053912052fb0df5ed507d77c72ba30272a143cd6903629782243d",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "607beb973aaa9222bc3046e56c7deb2c3bc4b80e65fb0816c9d366c1bf5f141c",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c1abfdcbac8c82e43597deb33f12dc6d25af1187e166c5445f08022fa4b11b2",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fcd65071dd04beb96b1b12876ea1a8173a4bdb7d2a8caade57f78eba7fb1d659",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e133a754012a64db6649e0a5d25746c1b098d4e6b086f8a7c714045b2f80fd38",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "361abd59af0a5d4bd7314f311b77989ab635c23b655ceb4ba4a4868de3057681",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8efebce47a07ae0a2b7f0184a993b949f0a4a4ccb5606ff8ef493eb78609e008",
+    "mention_text": "Fernando Pessoa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b42e1f73c550c9e27809ecd9e67887a85cef4d6a49d36eef32dbabd9b373788",
+    "mention_text": "Álvaro de Campos",
+    "categoria": "PESSOA"
+  }
+]

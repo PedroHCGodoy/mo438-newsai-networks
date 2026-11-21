@@ -1,0 +1,351 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 51ac4bca5b3f0bf4fb086c3c86d9c82cf2958f458cd4d20c055b2e304d758ef1
+
+TEXTO:
+As mulheres que a tecnologia esqueceu
+
+Enquanto passavam o verão de 2007 em Aspen, Colorado, Walter Isaacson e sua mulher, Cathy, ficaram insistindo com sua filha para que concluísse seu trabalho obrigatório para a faculdade. Finalmente, depois de muita insistência de seus pais, Betsy Isaacson trancou-se em seu quarto até sair com um texto de duas páginas pronto.
+"Parabéns, Betsy", Isaacson se recorda de ter dito. "Você escreveu sobre o quê?". "Ada Lovelace", foi a resposta. Seguiu-se um silêncio longo e incômodo. Isaacson, que estava começando a escrever uma biografia de Steve Jobs, não se lembrava de quem era Lovelace.
+"Ela é uma das mulheres que foram excluídas da história da computação", sua filha respondeu. Embora algumas pessoas do mundo da tecnologia já tenham ouvido falar dela, Lovelace, que viveu de 1815 a 1852, é quase desconhecida.
+O fato de pessoas frequentemente serem deletadas da história de empresas de alta tecnologia não é segredo. Essa prática é tão comum no Vale do Silício que é conhecida como "o mito da criação". Mas algo que talvez surpreenda é o número de mulheres que exerceram papéis cruciais mas foram esquecidas. Esse é um dos temas centrais do novo livro de Isaacson, "The Innovators: How a Group of Hackers, Geniuses, and Geeks Created the Digital Revolution" ("Os Inovadores - Uma Biografia da Revolução Digital", Companhia das Letras).
+O livro poderia ter sido intitulado "Os Colaboradores". Cada capítulo reforça a premissa fundamental que Isaacson fez a partir de 15 anos de pesquisas: que cada inovação tecnológica, quer tenha sido o código de programação, os transístores, os computadores pessoais ou a internet, foi construída por grupos de pessoas (que, na maioria dos casos, se inspiraram em ideias passadas). Mas, enquanto vários dos homens envolvidos viraram celebridades, a maioria das mulheres foi esquecida.
+O papel de Ada Lovelace na tecnologia, por exemplo, é tão fundamental que sua história forma os capítulos inicial e final do livro. Matemática e escritora inglesa, ela escreveu o primeiro algoritmo de computador, propôs a ideia de que as humanidades e a tecnologia devem conviver e idealizou o conceito da inteligência artificial.
+"Ada Lovelace definiu a era digital", disse Isaacson em entrevista recente sobre seu livro.
+Lovelace foi praticamente ignorada também em seu próprio tempo. Em 1843, quando suas anotações seminais sobre computação foram apresentadas ao "Scientific Memoirs", um periódico científico inglês da época, os editores recuaram e disseram a um colega dela, Charles Babbage, que ele, "como convém a um homem", deveria assinar o texto no lugar de Lovelace.
+A exclusão das mulheres reforçou estereótipos sobre mulheres e tecnologia e, na América, pode ter levado as mulheres a desinteressar-se pelo assunto. Em 1985, 37% dos diplomas universitários em ciência da computação foram conquistados por mulheres. Em 2010 esse número tinha caído pela metade, para 18%. Hoje apenas 0,4% das primeiranistas universitárias dizem que querem estudar ciência da computação como disciplina principal.
+Essa tendência é visível nas grandes empresas do setor. Na Google, 83% dos engenheiros são homens. Dos 36 executivos e gerentes de mais alto escalão da empresa, apenas três são mulheres. Oitenta por cento da força de trabalho tecnológica da Apple é formada por homens. E 85% dos profissionais de tecnologia do Facebook são homens, também.
+"Os estereótipos têm um efeito de autorreforço, porque nós, como seres humanos, esperamos ver o que nos é familiar", comentou Sheryl Sandberg, executiva operacional-chefe do Facebook. Para ela, é imperativo desmentir o mito de que as mulheres não se interessam por tecnologia.
+Reshma Saujani, do grupo Girls Who Code (meninas que escrevem código), que quer eliminar o abismo de gênero, concorda. "Se as mulheres tivessem sido mais mencionadas e tivessem mais destaque na computação, tanto nos livros de história quanto na escola, não faltariam programadoras mulheres, como acontece hoje", disse.
+Walter Isaacson escreve que parte do problema está no modo como o mito da criação visa converter indivíduos, e não o grupo, em heróis.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1f5307c2d72c3fa7c70bb1de7f5588c150d26189ed115cad261a563afd5cc6fd",
+    "mention_text": "Aspen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d01d90b1df18882a59a01867c1107673d95e1249fcabe0caa60b0723c07a449",
+    "mention_text": "Colorado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75ae9acf2997485acb267bb4e9464afc995d1e8300d8a857b8fd857e236b4db6",
+    "mention_text": "Walter Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8db9038fd0598a05bf9b1f880f087965886d6a122497cc924a91598f69f245c",
+    "mention_text": "Cathy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33c7d8da2e3e9c7e0e61664d9ea78de69a135d2838abcdf4a3af956584e6e69e",
+    "mention_text": "Betsy Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7020f85952a347a211de26b677b4bc5a89d0cf60722ab9520e72708a0a305f91",
+    "mention_text": "Betsy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c9b5eb29af24c9e628cca690ca736bb78ec163294d2cfbc9562aacb02588c9a",
+    "mention_text": "Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "172a7d2f32502aea12d8f05aeebc2bf21da14728fc485500dd376bfacf65954d",
+    "mention_text": "Ada Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f4c3503b8bf0c6c4c675a4bc9c70170a3663cf014b5d938b4459991718557dd",
+    "mention_text": "Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c42d3a0955b1aecb0da01c8d694fde626ac52c40a0e6ba2520ef7eb3c0f8f1d",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb47865779ca9c79627e0de1f521685ad1d219f7c2818dee55175ad2f1b23c8e",
+    "mention_text": "Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1546411f6dce18f1dce572f9c7ee38d96a40d1040225da8e5b2ee451296c1e5",
+    "mention_text": "Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b0c1295c91836334d6da178d9b6c40e650ee76b1cf2bd61d2ef6ef9d3514e09",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1eb3c4f46a69a5ff9fe55e5f8e06e93e3fe963f26155775e8b1d6d9d7256332f",
+    "mention_text": "Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6cfc521f328f29cb395c7fa3544f3418007dc5dd73e5f5e32e3c9707267049c",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "305e421ecf6d3af7449c77e10f97fbaa3705e6a2fb15612038184179763392f7",
+    "mention_text": "Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25b211c562da488c05389df29be077c94f5432cd2b75b793baf61e1c007ad088",
+    "mention_text": "Ada Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3af5b4bdb93136942e5bf36b350f5af5b91cfdea736adc19515d0c1944b410b9",
+    "mention_text": "Ada Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e87152e5705b6e346716f4200c3c61381bcc8175de0b7369a8ebb598f14abf8",
+    "mention_text": "Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "903687ae9b58b7cf93b1705d399933c1d8156c686cb60b888a2596c9769e3730",
+    "mention_text": "Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18cef59042dc63ffa5f08b42c46bc12bf7a8a01159259cb1215274c7fc6fa010",
+    "mention_text": "Charles Babbage",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e44f1b4751f03ae97da917753132006ffa4d1a1ec591d4d293b3a72dc1f64681",
+    "mention_text": "Lovelace",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c00fd398f3913d171d4ffb08e19acef2d2aa363625ffcf849813d4ad24f1d75",
+    "mention_text": "América",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f480597f5c2b615541385dc4aa377e1671e7a9c24385c365602c2b7935a7a840",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4a049f9c1c148dc7b85802509641e013c2c8115af2f2c33da807fa923a5e8bc",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fef623aed4c3c790791a1e0af2c9e52baabb2f42d1028dd9c801026cfbb7148",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "876eadd55da742fe9d6e4078953b4a0de96588f2a1ddfd4b56091fb802b62c03",
+    "mention_text": "Sheryl Sandberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "930bd2f1e04802e7e00a9aa27e5a26a978111fdf2bdc712ccfa17b7d37171e1e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "acfd04c12a21a01b2956f68e9d32e4a9cef13b234a67b73e68896d5275566d61",
+    "mention_text": "Reshma Saujani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a39fa2412134b908501fd84f30b9b2e041bb6bfcecec741015b23d46180e3235",
+    "mention_text": "Girls Who Code",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b8850b55e9f33719d14435468efd3bd475e2f716a1a82ee5a0fe9e62fba1ea32",
+    "mention_text": "Walter Isaacson",
+    "categoria": "PESSOA"
+  }
+]

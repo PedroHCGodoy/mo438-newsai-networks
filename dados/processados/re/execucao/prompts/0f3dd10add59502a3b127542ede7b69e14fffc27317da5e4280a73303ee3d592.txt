@@ -1,0 +1,605 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6021de1d53980a04796e105f215b467afcb130e703ce9445c53c575ad126785a
+
+TEXTO:
+Alunos querem que a escola reflita a vida real, diz brasileira jurada de prêmio da Unesco
+
+A brasileira Lucia Dellagnelo ajudou a escolher dois entre 143 projetos de tecnologia na educação que foram vencedores da mais recente edição do Prêmio Unesco, organismo da ONU para educação e cultura. As iniciativas, praticadas na Índia e no Marrocos, receberão prêmio de US$ 25 mil.
+Doutora e Mestre em Educação pela Universidade de Harvard, Dellagnelo foi secretária de Desenvolvimento Econômico Sustentável em Santa Catarina de 2013 a 2015 e hoje é diretora-presidente da ONG Centro de Inovação para a Educação Brasileira (Cieb).
+Na premiação da Unesco, ela foi presidente do júri e representante da América Latina. Em entrevista à BBC Brasil em São Paulo, Dellagnelo conta o que viu de mais inovador, entre tantas propostas mundo afora, para tornar a educação mais igualitária, contemporânea e qualificada usando a tecnologia. E opina sobre onde o Brasil vai bem e onde precisa melhorar.
+Leia os principais trechos da entrevista:
+BBC Brasil - Quais foram os critérios para escolher os projetos premiados em Paris?
+Lucia Dellagnelo - Muitas pesquisas mostram que, para a tecnologia ter um impacto positivo na educação, é importante que seja trabalhada pelo menos em quatro dimensões: visão clara do objetivo, "para que e como vou usar a tecnologia"; competência dos professores e gestores no uso daquela tecnologia; qualidade dos conteúdos e recursos educacionais digitais desenvolvidos; e infraestrutura. Procuramos avaliar quais projetos realmente contemplavam isso, mas também consideramos se aquela política educacional era abrangente e de longo prazo.
+BBC Brasil - O que seria esse longo prazo?
+Dellagnelo - Por exemplo, um dos premiados, o Marrocos, tem uma política baseada nesses quatro pilares há mais de 15 anos. O país vem gradativamente implementando um plano chamado Genie, que sobreviveu a trocas políticas e de gestão. Se não for a longo prazo, é difícil correlacionar o uso de tecnologia com o impacto na qualidade. Não é pelo fato de usar um aplicativo ou uma plataforma adaptativa num ano que no seguinte serão vistas melhorias.
+BBC Brasil - O projeto da Índia também tinha esse perfil?
+Dellagnelo - A Índia tem um problema muito sério: a evasão no que seriam os nossos fundamental 2 e ensino médio. O jovem faz a escola primária, aprende a ler e escrever, e depois tem muita dificuldade em seguir adiante não só por problemas econômicos, mas também porque, em vilas muito pequenas e distantes dos grandes centros, não existe oferta de ensino médio. Não há quem dê aula de física e química nesses lugares, por exemplo.
+Por meio de videoaulas à distância, e usando uma parceria com a (universidade americana) MIT no desenvolvimento de tecnologia e laboratórios virtuais, conseguiram baixar o índice de evasão de jovens oferecendo um conteúdo de muita qualidade. O projeto, chamado CLIx, é de um instituto, em parceria com governos locais.
+BBC Brasil - O prêmio valorizou a inovação também? Videoaulas são usadas já há algum tempo em outros lugares.
+Dellagnelo - A função maior do prêmio é dar visibilidade a projetos que estão acontecendo e mostrar que, às vezes, uma tecnologia pode não ser uma grande inovação num país e ser em outro. Para uma população isolada, que não tem nem luz elétrica, que precisa usar gerador para acessar a internet, o impacto da videoaula é muito diferente.
+Tem um projeto chinês, de que gostei muito também, em que um professor da capital, identificado como muito capaz, dava aulas interativas às vezes para 300 crianças espalhadas em vários lugares do país. Ao mesmo tempo, formava o professor dessa vila, que estava lá assistindo.
+Sim, a videoaula não é uma tecnologia revolucionária - existe isso no Amazonas, inclusive -, mas tivemos que usar essa relatividade na votação: a tecnologia proposta resolve algo que não estaria sendo resolvido se não existisse?
+Para mim, fica claro que tem solucionado um problema real, que é o acesso a professores qualificados. Porque o prêmio também tem esse viés: toda criança e jovem do mundo, independentemente do país, da cultura e da língua que fala, tem direito à educação de qualidade. Como a gente faz a tecnologia trabalhar a favor desse direito? (...) Tentamos mostrar políticas mais amplas de uso de tecnologia que foram incorporadas, de certa maneira, pelo poder público - nacional, estadual ou local -, fazendo uma mudança sistêmica.
+BBC Brasil - Projetos brasileiros também concorreram?
+Dellagnelo - Sim, mas eles não ficaram entre os 25 finalistas. Acho que uma das razões é o fato de serem voltados a grupos muito específicos. Um era de educação ambiental que usava tecnologia, porém estava muito pautado por visitas presenciais. Um outro, de uma professora de acessibilidade, focava na tecnologia para pessoas com deficiência auditiva.
+BBC Brasil - Você foi jurada representando a América Latina. Qual a situação do Brasil no continente em termos de tecnologia educacional?
+Dellagnelo - Tem países que estão melhores do que a gente nesse quesito, como Uruguai, Chile e Costa Rica. O Uruguai adotou o projeto Plan Ceibal, cujo lema é "um computador por aluno". É um país superpequeno, de 3,5 milhões de habitantes, parece muito mais fácil fazer isso. Mas esse mesmo projeto, que conta com cento e poucos funcionários, também cuida de toda a tecnologia educacional: compra, distribui e faz manutenção de computadores, além de capacitar professores e fazer parcerias.
+O país tinha, por exemplo, um grande problema com professores de inglês na área rural. Fizeram um convênio com o Reino Unido e todas as aulas de inglês são dadas a partir de Londres, com o professor também ali, aprendendo.
+BBC Brasil - A experiência chilena é parecida?
+Dellagnelo - Lá houve um desenvolvimento diferente. O centro de inovação em educação se chama Enlaces e era uma rede de universidades que fazia pesquisa e experiências em tecnologia educacional. Depois de alguns anos, ele foi incorporado pelo Ministério da Educação como um departamento que só cuida disso. Na Costa Rica, é uma fundação sem fins lucrativos que também recebe a atribuição do governo de cuidar de toda a tecnologia educacional, treinar os professores, comprar computadores e tal.
+BBC Brasil - Onde o Brasil está pecando?
+Dellagnelo - Não temos essa incorporação em larga escala da tecnologia nas escolas brasileiras. Oferecemos soluções tecnológicas de vanguarda, as empresas brasileiras não deixam nada a desejar nesse ponto, mas temos iniciativas isoladas no dia a dia escolar. Por quê?
+Entre outros motivos, a nossa infraestrutura não é a melhor e o nosso professor não sabe incluir a tecnologia na prática pedagógica dele. Um dos diferenciais do projeto marroquino premiado foi a criação, em parceria com a Coreia do Sul, de centros de formação profissional para professores em várias regiões. O Brasil está precisando disso.
+BBC Brasil - Para implementar políticas públicas, são necessários bons gestores. Como estamos nessa categoria?
+Dellagnelo - Temos excelentes gestores públicos. O problema é que a gestão pública é confundida com a política. Quando há troca de governo, às vezes um excelente gestor vai para um cargo totalmente secundário para dar lugar a um afilhado político. Então há uma desvalorização contínua. Mas fico bastante impressionada quando vou a Brasília e encontro jovens comprometidos e bem formados eticamente. Acho que está surgindo uma nova geração. Se conseguissem diminuir a ingerência política...
+BBC Brasil - Professores jovens têm mais facilidade para implementar a tecnologia na sala de aula?
+Dellagnelo - Se faz diferença a geração digital do professor? Não necessariamente. Não é pelo fato de usar constantemente a tecnologia na sua vida que um professor jovem vai saber ensinar com tecnologia. Não está correlacionado diretamente com a idade, e sim com se formar para fazer isso.
+BBC Brasil - Mas uma aula, hoje, pode ser atraente se o professor usar somente lousa e pincel atômico?
+Dellagnelo - Há ótimos professores que não usam muito a tecnologia, mas o que não se pode continuar fazendo é dar aquela aula tradicional na qual o professor transmite o conhecimento e acha que seus alunos estão passivamente absorvendo o conteúdo. Os nativos digitais têm um spam de atenção muito curto. Fala-se em 10 a 15 minutos. Se o professor ficar falando uma hora, eles focarão apenas 25% desse tempo no que ele falou.
+Hoje, o que se defende é a aprendizagem ativa, na qual o estudante tem de botar a mão na massa, experimentar, tentar resolver um problema real com aquela informação, com aquele conhecimento, para realmente poder aprender. E tem a questão da contemporaneidade. Os alunos querem que a escola reflita minimamente o que é a vida fora dela, uma vida permeada por tecnologia.
+BBC Brasil - É preciso recorrer ao que há de mais moderno para cativar a atenção deles?
+Dellagnelo - Não é necessário nada muito sofisticado. Fui dar uma palestra no Espírito Santo faz alguns dias e lá havia uma professora de uma escola do interior do Estado que usa um aplicativo gratuito chamado Remind. Essa professora monta a sala dela na plataforma, inclui todos os alunos, cujos e-mails estão cadastrados, e planeja a aula com uma sugestão de leitura. Como praticamente todos os estudantes têm celular, vai fazendo perguntas via smartphone: "Gente, só pra ver se leram mesmo, qual o nome do cara que fez tal coisa?". Pega as respostas, mas não precisa ficar corrigindo uma a uma. O próprio aplicativo diz quantos e quais acertaram.
+Aí ela organiza a sala pelos grupos de alunos que sabe que já aprenderam esse conteúdo e para quem ela pode dar uma nova tarefa, e por aqueles que precisam de uma atenção especial. Ou seja, usando um aplicativo gratuito, sem uma infraestrutura do outro mundo, está fazendo uma revolução na educação.
+BBC Brasil - Essa interação poderia acontecer apenas no plano virtual?
+Dellagnelo - Parece um paradoxo, mas, quanto mais a gente usa a tecnologia, mais a gente valoriza na educação os momentos presenciais. Mas esses momentos presenciais não são apenas transmissão de conhecimento. São reflexão, atividades práticas, colaboração entre os estudantes.
+BBC Brasil - E dá para ter só tecnologia, sem professor?
+Dellagnelo - Não. Essa é uma coisa que as pesquisas estão mostrando. Três relatórios publicados no final do ano passado mostram que é muito importante colocar a tecnologia na mão do professor, e não direto e somente no colo dos alunos. Entre todas as variáveis, talvez a qualidade do professor e da prática pedagógica dele seja a variável mais forte para associar o nível de aprendizagem da criança e do jovem ao mundo tecnológico. Alguém precisa ensinar a eles as implicações e o funcionamento daquela ferramenta.
+BBC Brasil - O aluno precisa entender de algoritmo?
+Dellagnelo - A Base Nacional Comum Curricular (documento recém-aprovado pelo Ministério da Educação, com as diretrizes básicas de o que deve ser ensinado nas escolas do país) tem uma competência geral que fala em "utilizar tecnologias de forma crítica, significativa, reflexiva e ética nas diversas práticas do cotidiano, incluindo as escolares, para se comunicar".
+O Cieb insistiu que "utilizar" não é suficiente. Tem de compreender e também criar tecnologias. O aluno hoje precisa saber minimamente como programar e entender a lógica da programação. Não é que todo muito vai virar programador, mas o aluno tem de entender o algoritmo por trás de um Facebook, de um Google, para compreender como a tecnologia está recomendando coisas que ele acha mágicas: "Ah, como ele sabia que eu queria comprar isso?" Ao entrar na internet, está se deixando rastro. Esse rastro esta sendo cada vez mais explorado por empresas para o marketing, por exemplo.
+BBC Brasil - Inteligência Artificial é um conceito acessível?
+Dellagnelo - Sim, o aluno precisa entender o que é Inteligência Artificial, compreender como é alimentada - alguém forneceu aquele dado, às vezes sua própria pegada digital, seu comportamento nas redes sociais. Parece um ambiente neutro. Como eu não vejo um interlocutor na minha frente, posso falar qualquer coisa e a qualquer hora. A pegada digital, a reputação digital são valores que os professores precisam ensinar para os alunos. Tem que ensinar também a usar as redes sociais para fazer mobilizações, para fazer sua voz ser ouvida.
+BBC Brasil - Alguns youtubers brasileiros têm cerca de 20 milhões de seguidores entre crianças e jovens. Qual é a melhor estratégia em sala de aula para lidar com a influência deles?
+Dellagnelo - A função do professor é ouvir o que esse youtuber está transmitindo e dizer, se for o caso, "vamos aprofundar, vamos discutir isso aqui". A tecnologia permite mais equidade - alunos de diferentes regiões conseguem receber a mesma educação - e contemporaneidade. Mas é o professor quem precisa fazer essa ponte. É papel dele ajudar os alunos a entender esse mundo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2e02180e0a736331788da38f0574b7941892c2720b241a3c18114e163587df52",
+    "mention_text": "Unesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "423b1aaea383ba663f7dccee4b2709b7e6bbde71ecb953c67d7bd08390a86218",
+    "mention_text": "Lucia Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82f72e3f640d53f439f7bf98b99d3d8852720a533c0b18132847c3ba96bd05c7",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa18ff91cbe0d4e6dd08b8157e41d1372b9990b0810ed66500fa4624d32100b9",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fec463d68d492ec7aefe81b882478b8b7a06d0ac2b12a5b545144906a984ca4d",
+    "mention_text": "Marrocos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d7349cce9a987885fae22ec20170bd0b7365d4114947c3f1c68e930eb7a5bf6e",
+    "mention_text": "Universidade de Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e63428edd1e7d291719d63e790a1b4a7fb9838dbd0b3df4e211ea8aae74c3eba",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99c9f0e6ec7bbe12e19e39cae7d637fe0fb5b93cb5273c22542d6fa7e0789bc7",
+    "mention_text": "Santa Catarina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "22d0fe4e07876aca60625873d24dfccc6a42dd4a9e0a2ed2711308b204aade7b",
+    "mention_text": "ONG Centro de Inovação para a Educação Brasileira (Cieb)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1407e219b851bf85a69c6f2d779b8ea068442f8d86bd68c819123e0e0fa6ae86",
+    "mention_text": "Unesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20b9ea03f4c4f841b4b2c96a5d2358434b82946a6f1bed4331e0b1a35eb70ed0",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89ef971ddbc12b42c8159d3b3c80f957b951ada6da4b2fadd4202703b64437c9",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f078c6ae2e15813c2cf31564cd1ade662f6486088224563242cae9adadba744a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1154dc5ffd220810c8b52f00189445b5062e2fd7088b9f6a1f34dc33a84f6e65",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "956a1eeac927bc0d0461de951d75c96e728c3ccd10afb9edac1ff2e63a904aaa",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "806e1cae74bfe3fa784774088c116c6f8be517fd12a14932c62ce2a67cee9bda",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ccbe9a40deff9ddc77aa11d57b166a9fa8bbf66b5ffbb4e244761b097afaaef",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2d2e72a05f90a0ec77cd4cdc944d632e84b86e75661426cfb1a53b8048250319",
+    "mention_text": "Lucia Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "510b69b5bff714cfc99e67d8723e4e0e4ee81b855470fbe1313dfa23b6a7e009",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9929cc77c26c20b1ddbd23ff587bcca06969aeb37af8db3d75c4b4eb1f27414e",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b973474d8d438e7c127bb546f1e366b372c2123e02237bbe5aa0efe360c2ebe",
+    "mention_text": "Marrocos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "938aede6e80ac10d22c0fcb742b37e9648fcaf285c34585c267c0d3761eeccbe",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb631151d8eca3ae97dbf5a2a6a9f5235224a2541896a37eb8536291a2330045",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79ddeef8a0a6252ea08a203c0201b46336db8ff7cacb845f64e526536a2eef17",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a377c96e7de3ba4c19c5aead41da2b09f19c694c660eb0c0900d535069e0d70d",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5558ca1d02a90da221a2586fc285bb137c22ddf0724740315684ef8fa20342b",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1ca8e3198255f87867ff3145e7612930b6683bbdeb7f0288df05e4221cdbde5",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbe26ec98bc4380e8c8e4b72211123e83d2a6576e38bcedbb840755fb3172067",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06414098decf030fd0d4644211d66c5a2292e2affa5f4ee6eb8b86f1b1ef62fc",
+    "mention_text": "Amazonas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4d04c83c70ab4281ca8f49389d407aa8648256ac68fcc88481c48e33f89d11f2",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48d3f2916b19c4d93b81efa5e31b6eb9bf1a5a6bd275632cab80a3011cfb4a3a",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58fc0420875d03384ce06049c5c28a64db89076690a09727c9e96acb40bd9ffe",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33223a155470ef9697a90159e62ef5ff7a8761e44a979023d9b8bed0eacee6b0",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f97607b91bcab6f54d1f0c0f015f4dcf2d4da976c454a5549c136943755de6ad",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "782bdb1ac3651610009333e688584d48069cd9b73f7ad32609029d2a9e47cbca",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "151c64e469fb5b2504434160c0789b5fa6f6a2c9422d43c0d42e935345c2d15f",
+    "mention_text": "Uruguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c155fca1908f423e5ff2505a7ce5cdd7d595e81b8c895fbfbad8d943acab4dd9",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e70d859ac551f85fdc6d1f871542f325f169bc4f8b30c0bc048c6c0bb2d5bd8",
+    "mention_text": "Costa Rica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e9a9550b6fa4fa7510d001b77176349284ba0fb96afa78de3dd53f8dd351219",
+    "mention_text": "Uruguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07ed72d9f1227afb6c73d847ed1d0352ee05a33a649d67504f57611dde94129e",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c856e39a5bd5c602154cb17537010ef13bc060c589855ea152a64bcb29eb5a4a",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "623866bd8669fd73cbe02af4ff03b58d210b72ba08ebc0366bf53ec8bdb46c9b",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2dc5911e394c357b33cfb82589d959304a2e4b64e0565280f0c08c24c250fbca",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "840a645b8f25edb529bedcbcf5e6730f0c4b200d07965fc46989801d89d48723",
+    "mention_text": "Enlaces",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48f17c3de235234c32ae985d1747e7f6638f7dcd2e457e4342065a250e7794e8",
+    "mention_text": "Ministério da Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e0576912e94bcc3d36754465d0e4cbec2e17bee20c92e535a74d26d608df34d",
+    "mention_text": "Costa Rica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10f8a03f30c14733893de1bcb055a99e76994ac5eb432b091b6ab56a25e14cb0",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c74d0e1e4323008fbc093438cddb40800129d7781959c6319206684f2ca0836",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eeb95da88170b20e999460b1d4f6a1938879808e56a94a18b16b658ca2dfe2b8",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6b8b1e15bcd34ea8b12f7dd7471866d70fdd8d79f40ca1e61d8c21f15690396",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c131c82921f71d9dfda0da81180170a2165bc36088a06987ab735904c3f397be",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2e64b7711baae41d3412d1674ff7e9ca661860b011bcc7d7803accc25809527",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ab5e22c7a87ef005dabe1c7dfdff1dae4a139a143622309a6c5ee0c2f373fa9",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0e5581a6ced312939e9f0c95d94caaea3d18a27bd382496d3413ab1daf5740e",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c7e4d53720a9b230eeb071ac6c4e9563f627a7b5f07af7d485a0aa5ed1d6297a",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7d0b5c2ba66a2439e054533ac1d393102eb335a12f57525c4104ec48d251421",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "621d1aae6c7ed87ca4524aea8251452f4983e53e7490d3762d2ab9e54a4b9153",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ceac96a9d959b7ac80e4741b1344c2d985e3d2ff92c2eae7a9eb11eb4694ddc",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "850e2b708819cf8b42abf9f0d5ae13bcf78c5ebb04b9679280ba11571c7c3105",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3dd238abdb8e2183498eed135327ed4d46901aba180d670129e185fdfeb6f610",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4398dfd06ec647270e1f4cc10d9a76cf1616ea55bc8f3239e39ed585b5a1c2e2",
+    "mention_text": "Espírito Santo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94e2d2d8a5a950cf07d63831331d72aeee49170f910f372a450024b959f2fae2",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7e4011b306431207f0c1e5fe591b1c359d6851c9e2d392a2248a9d433fbe5cc",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e71a24d22108d2d66c720f053d37826bf45f2387c378bb69fca4db96ba4e60be",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a3ca851beccc5cafa57d982e986326aa56c168c04c0cd35de630a68d19922a0",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2f07531aec2a1f771667699b03ae6df70a630ceddc15ca24a993879c4510d3d",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6542de7940b85590196f83d0efcbdb3b1b796d84c03e44dea81fe727af145ab",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "101be6aa3c13e11778f9eb89cada8ce5a9514bd0552bf8d82620ae3f1aeeffeb",
+    "mention_text": "Ministério da Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a8e7009f40d6436c3a85e040b6f56d0437ca206f806571ea8cb8c82185ce2ee",
+    "mention_text": "Cieb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f3de4079dc7a8f6fa978535de3b49770eff597194be479a909be883e807de80",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a3471ef46be0d1ba7bb25765fe19fb8012f629c80700f8f9958502b9c1ba8132",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7f49667b5fbe9374abfa2b5f047fab1b3cb727c61b53a482efe9e1340ea6aaa",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f294eb982ab191d76a86776a1fd4462ec011d38c146ec0feea8fa794eb91959f",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29b5d050d1cccd6da1eb4bb21767e2d9b4e1b14887da71e649378b69d51775ad",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "757032c4d9c4f873559b008cd886da01d6c1a5eb2c4b391afd81c6d6bdced0e8",
+    "mention_text": "Dellagnelo",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,784 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: eee91110a4f15cf51530b5f731e70e270111ce3c637171c216e0bb9dfea39542
+
+TEXTO:
+Escritores e cartunistas imaginam o país e o mundo daqui a dez anos
+
+O fim das senhas ou a valorização da privacidade? A concretização das distopias do seriado 'Black Mirror' ou uma viagem até Tóquio em 50 minutos? Brasil sob ditadura? Mulheres no poder? Em seu décimo aniversário, a Serafina convocou escritores e cartunistas para imaginar o país e o mundo daqui a dez anos. O resultado, como você vai ver, não podia ser mais diversificado...
+*
+Sem senhas nem costureiras por Marcelo Coelho
+Penso antes nas coisas que vão desaparecer do que nas que irão surgir. Água mineral em garrafas de plástico. Chaves e fechaduras. Senhas. Fios, tomadas, carregadores: acredito que a luz solar possa dar conta.
+Pichações, bullying, assédio sexual haverão de diminuir, com câmeras dentro de salas de aula e em toda parte. Cadeias irão aumentar, a menos que a punição por banimento eletrônico e tratamento químico se generalize.
+Numeração de roupas e sapatos. Nunca funcionou perfeitamente, aliás. Com biometria e impressão em 3-D, sua roupa chega sem ajustes.
+Costureiras, motoristas de táxi, funcionários de caixa, balconistas: os empregos no setor de serviços conhecerão o mesmo declínio experimentado no mundo industrial. Sobrarão os entregadores, não acredito que de bicicletas.
+Difícil imaginar o desaparecimento das forças armadas tradicionais em tão curto prazo. Mas a guerra eletrônica (penso em hackers causando de apagões a acidentes nucleares) avançará.
+O triunfo final da ciência sobre a religião dependerá, mais e mais, da China.
+-
+Marcelo Coelho é mestre em sociologia pela USP e membro do Conselho Editorial da Folha
+*
+Melhor é impossível por João Pereira Coutinho
+Quando somos jovens, dez anos são muitos anos. Ainda me lembro: teria uns 20 e a ideia de ter 30 era, simultaneamente, remota e assustadora. Quando cheguei aos 30, os 40 já eram menos remotos mas mais assustadores. Sobretudo porque o tempo passava mais rápido e eu ainda me lembrava de ter chegado aos 20 na semana anterior.
+Hoje, com 40 e mais uns trocos (41, pronto, quase 42), olho para os 50 (para os 51, pronto, quase 52) e sei que lá estarei amanhã de manhã. Meio século de vida: não é possível. A festa só começou.
+E depois, com o meu incurável narcisismo, vou desbobinando as enciclopédias masoquistas em contagem decrescente: Mozart morreu aos 35; Charlie Parker aos 34; Keats aos 26. E eu? Que fiz eu aos 50?
+Os amigos entram em cena: Saramago despontou para a literatura aos 60! Ainda tens dez anos! É isso que gosto nos meus amigos: o talento para a mentira piedosa. Eles é que merecem o Nobel.
+Lamento, Serafina: não sei como será o mundo daqui a uma década. Imagino que o cenário será outro -carros sem motorista; um robô em cada casa; Viagra na pasta de dentes. Mas se o passado ensina alguma coisa é que nós, humanos, continuaremos a ser o mesmo caos patético de sempre. Inseguros, invejosos, assustados. Mas também capazes de amar, sonhar e criar.
+Quando penso no mundo futuro, não é no mundo que eu penso. É no meu mundo. Na minha tribo. Os meus amores, os meus amigos. E até os meus inimigos, sem os quais a vida perderia qualquer encanto. Se eu e eles estivermos por cá quando eu chegar aos 50 anos (ok, desisto: 52), garanto ao leitor que melhor é impossível.
+-
+João Pereira Coutinho é doutor em ciência política pela Universidade Católica Portuguesa
+*
+Bom, mas ruim por Leandro Narloch
+O mundo em 2028 será mais próspero, pacífico, verde, tolerante, abundante e divertido. Passaremos muito mais noites frescas trocando figurinhas da Copa ou das Olimpíadas com estranhos na rua. Beberemos drinques com champagne como quem hoje toma cerveja em lata. Farmacêuticos resolverão o problema da obesidade -falando nisso, imagine as deliciosas drogas legais e ilegais que teremos à disposição...
+O Brasil receberá bravos imigrantes que deixarão o país mais cosmopolita e interessante. A África será a nova China e mais centenas de milhões de pessoas sairão da miséria.
+Mas haverá um problema: os intelectuais. Com a produtividade maior, mais gente poderá se dar ao luxo de passar a vida problematizando. "Bombeiros de um mundo sem incêndio", como diz Youval Harari, esses intelectuais criarão estatísticas e narrativas para nos convencer de que estamos mal, que poderíamos estar melhor, que uma catástrofe se aproxima, que o nosso conforto é fruto de injustiças e por isso devemos nos sentir culpados por ele.
+A bordo de hotéis com rodas (ônibus autônomos com suítes individuais e serviço de quarto), intelectuais e políticos farão romarias pelo Brasil disseminando ideias de injustiça e opressão. Os problemas que eles inventarem serão pauta de redes sociais e sites de notícia.
+Viveremos em 2028 no mundo mais divertido e próspero até então, mas que pena: não teremos consciência disso.
+-
+Leandro Narloch é autor do 'Guia Politicamente Incorreto da História do Brasil'
+*
+Privacidade será o novo preto por Mariliz Pereira Jorge
+Em dez anos, olharemos para trás e morreremos de vergonha do festival de selfies, das fotos dos pratos de comida, da postura perfeita na ioga, do exibicionismo sem fim, da ostentação sem limite que desfilamos nas redes sociais.
+Reclamamos que o Facebook entrega de bandeja nossos dados, mas todos os dias servimos sem parcimônia, depois de uma mãozinha de verniz, claro, uma versão melhorada do que somos.
+A superexposição transformou pessoas sem talentos em celebridades. Vivemos numa época em que somos o que postamos, não o que fazemos. Nossa individualidade virou produto para consumo externo, o que os especialistas chamam de "personal brands".
+Mas a onda que nos empapuçou de Kardashians e Pugliesis já começa a dar sinais de decadência. Por que passamos tanto tempo vivendo experiências que não são nossas ou escancarando nossas vidas à espera de likes?
+A empresa de tendências Box1824 detectou um novo comportamento entre jovens de 18 e 24 anos, o de deixar as redes sociais ou decretar uma grande mudança em como elas funcionam.
+Contas fechadas, poucos amigos, posts efêmeros e o fim da busca pelo feed perfeito. É a geração Exit (saída), que vai abrir mão de ser seguida pela liberdade de ser anônima. Privacidade será o novo cool. Tomara que essa moda pegue.
+-
+Mariliz Pereira Jorge é jornalista e roteirista de TV
+*
+Truque heurístico por Hélio Schwartsman
+Como será o mundo daqui a dez anos? Esse tipo de pergunta existe apenas para humilhar os que ousam respondê-la. A crônica das previsões embaraçosamente erradas, muitas delas feitas por verdadeiros gênios, preencheria todas as páginas desta revista. Por quê?
+Antecipar o futuro é um negócio complicado. Se me pedissem para prever a hora em que ocorrerá a preamar matinal em San Diego, Califórnia, no dia 6/5/2028, não teria nenhuma dificuldade em afirmar que será às 8h18.
+Poderia até acrescentar que a maré atingirá 1,4m. Como eu sei disso? Fácil. Olhei no site da NOAA, a agência americana encarregada de calcular essas coisas.
+E como os técnicos da NOAA sabem disso? Bem, quando se trata de prever marés precisamos lidar basicamente com as forças gravitacionais exercidas pela Lua e pelo Sol e a rotação da Terra, que atuam de acordo com leis conhecidas (efeitos climáticos influem, mas muito discretamente).
+Só que poucos fenômenos são tão bem-comportados como as marés. Previsões sobre o estado do mundo, que envolvem atitudes de mais de sete bilhões de humanos interagindo entre si e com a natureza, de acordo com leis e regras que ainda nem conseguimos identificar, estão fadadas ao fracasso. Devemos, então, desistir? Não necessariamente.
+Podemos recorrer a um truque heurístico, que, se não produz previsões muito boas, serve para evitar a repetição de vexames. Qual é o melhor chute que você pode dar sobre como será o tempo amanhã, se não dispuser de nenhuma informação meteorológica?
+Diga que será igual ao de hoje. Não é que você vá acertar sempre. Errará várias vezes. Mas, como um ano típico tem mais dias sem virada de tempo do que com, você acertará mais do que errará.
+Minha resposta, então, é que o mundo daqui a dez anos será quase igual ao de hoje.
+-
+Hélio Schwartsman é bacharel em filosofia e jornalista
+*
+Espelho, espelho meu por Zeca Camargo
+Daqui a dez anos as pessoas vão ser avaliadas em tudo que fazem numa escala de uma a cinco estrelas -e vão precisar de uma média boa se quiserem ir em frente na vida. Vão ter também memória infinita: qualquer dúvida do passado, só pressionar sua cabeça, encontrar o arquivo e rever o que passou.
+Será possível conversar com quem já morreu: empresas terão algoritmos capazes de "captar" a essência de uma pessoa e formular frases novas. E os aplicativos de namoro ditarão quanto tempo cada relação deverá durar.
+Nenhum desses cenários é otimista. Ou original.
+Todos foram tirados de episódios de "Black Mirror", a melhor obra de ficção científica que apareceu até agora na televisão do século 21 (que um dia, diga-se, já foi também o futuro). E, como todas as tramas dessa série, trazem ideias que são quase possíveis -como se estivéssemos apenas a um passo para elas realmente acontecerem.
+O que não significa que vão acontecer. O exercício de adivinhar o que nos espera lá na frente é ao mesmo tempo um dos mais tentadores... e frustrantes. Por isso mesmo, a única previsão que eu arrisco é que em 2028 ainda contaremos boas histórias. Criaremos novos universos, imaginaremos novas realidades.
+Porque essa é a única força que realmente nos leva adiante: a nossa capacidade infinita de sonhar com o futuro.
+-
+Zeca Camargo é jornalista e apresentador de TV
+*
+Depois das ovelhas elétricas, antes dos androides por Salvador Nogueira
+Como já dizia o sábio, é muito difícil fazer profecias, especialmente sobre o futuro. Mesmo lidando com ciência, onde tendências se projetam com facilidade e cronogramas oferecem um vislumbre do que está por vir. Mas, vamos lá, no que dá para apostar?
+Até 2022 Estamos sozinhos no Universo? Em 2020, partirá para Marte o jipe robótico europeu ExoMars. Sua missão será encontrar evidências de vida presente ou passada no planeta vermelho. E mesmo que ele só ache fósseis de bactérias com 4 bilhões de anos, encontrá-las no planeta vizinho nos levaria à conclusão de que deve haver muitas outras biosferas lá fora, só esperando para ser descobertas.
+Até 2025 No final dos anos 1960, com as missões Apollo à Lua, parecia que a humanidade estava destinada a conquistar as estrelas. Mas nos últimos 45 anos, tudo que os astronautas fizeram foi dar voltinhas ao redor da Terra. Felizmente, em tempos recentes, as agências espaciais resolveram esticar os horizontes. Já há planos para a construção de uma estação orbital ao redor da Lua, e é uma aposta razoável que em mais sete anos teremos humanos de volta ao espaço profundo.
+Até 2028 O magnata/gênio/excêntrico Elon Musk promete isto para 2024, mas pode contar para 2028: é quando veremos voar o primeiro superfoguete da SpaceX, que possibilitará uma viagem intercontinental ultrarrápida (Rio a Tóquio em 50 minutos?) pelo preço de uma passagem de avião. Esse mesmo veículo levará gente até a Lua ou até Marte, tornando a colonização espacial possível. Enquanto isso, a outra revolução impulsionada por Musk -a dos carros elétricos- deve estar de vento em popa. Em 2028, mais da metade dos veículos novos vendidos devem ser elétricos e vão se autodirigir. Mas inteligência artificial equivalente à humana ainda levará um cadinho mais. A conferir.
+-
+Salvador Nogueira é jornalista especializado em ciência
+*
+Do papai-mamãe à mamãe-papai por Ruy Castro
+Os homens, depois de 4.000 anos de ditadura na área da sexualidade, foram finalmente alijados do poder e estão tendo de conviver com seu novo lugar na sociedade. Alguns ainda não se acostumaram a ouvir fiu-fius na rua e fingir que não é com eles.
+A velha posição do papai-mamãe foi banida e substituída pela do mamãe-papai. E os que se queixam de que foram relegados a uma mera função reprodutiva é porque não perceberam que a ciência está a ponto de dispensá-los também dessa utilidade.
+O café sem cafeína, o leite sem lactose e o ovo sem gema ficaram estabelecidos de vez na nossa mesa. Com a proibição definitiva do tabaco e a obrigatoriedade de fumar maconha, as antigas companhias de cigarros adaptaram-se e estão diversificando a produção, oferecendo baseados de 80 ou 100 mm, com ou sem filtro e sabor de cravo ou mentol.
+Nem tudo é perfeito. Carros autômatos ficam rodando à toa pelas cidades e decidindo eles próprios o que fazer e onde. Alguns gostam de avançar o sinal e dar sustos em pedestres. Outros tiram finos em ciclistas, para ver se estes estão espertos. E ainda outros não perdem a mania de desafiar colegas para pegas em túneis de madrugada. Não se sabe o que deu nos carros autômatos, parece que ficaram malucos. E não há legislação para coibi-los porque eles têm no bolso metade do Congresso e mais um.
+Estas são apenas algumas das novidades de 2028. Diziam também que o livro iria acabar. Mas, todas as vezes em que isso pareceu se confirmar, você leu a respeito — num livro.
+-
+Ruy Castro é jornalista e autor de biografias
+*
+O Brasil se ufana dos Bolsonaros por Renato Terra , colunista da Folha e documentarista
+Estamos caminhando para a metade do governo Eduardo Bolsonaro, eleito em 2026. Nunca estivemos tão bem. Não há corrupção, violência ou viadagem. O caminho até aqui, no entanto, foi árduo. O primeiro passo foi a Reforma Armamentista no primeiro mandato de Jair Bolsonaro, o Tackleberry Varonil. Todo brasileiro de bem poderia, enfim, andar armado. Em dois anos, a população brasileira já era de 20 milhões de pessoas. Havia, portanto, emprego, Previdência e habitação para todos que lograram êxito em sobreviver.
+A ditadura das minorias parou de atrasar nosso desenvolvimento. Em 2022, uma nova Assembleia Constituinte adotou os Dez Mandamentos para simplificar o entendimento jurídico.
+Bolsonaro, o Mito, enxugou o Estado ao máximo. Privatizou as estatais, acabou com o Congresso, com o Senado, com o Supremo, com tudo. Em três anos, concentrou o poder no que importa: controle da imprensa, internet e fiscalização dos cidadãos de conduta duvidosa -gays, comunistas ou bruxas.
+O segundo mandato de Bolsonaro consolidou o Milagre Tecnológico com a criação do Vale do Nióbio. O Brasil pode, enfim, substituir a internet por uma tecnologia 100% nacional com algoritmos desenvolvidos pelo governo de bem. E, evidente, instaurar algo mais funcional que aquela ultrapassada forma de governar que os antigos chamavam de democracia.
+-
+Renato Terra é roteirista e autor de 'Diário da Dilma'
+*
+Plurais 'necessárias' por Juca Kfouri
+Não vou escrever sobre o mundo daqui a dez anos, porque nem sei se ainda estarei por aqui. Escreverei sobre a Serafina daqui a dez anos. Porque esta, sim, seguirá por aí em 2028. No papel? Ora, se eu soubesse ganharia um milhão de dólares, embora deseje e aposte que sim, porque essa história de que as revistas impressas vão acabar parece aquelas que falavam sobre o fim do rádio, dos cinemas e da TV. Dos livros... Revistas boas sobreviverão porque os leitores sobreviverão, além dos que crescerem e aparecerem. O texto bem feito, a publicação feita com mais tempo, seguirão por séculos sendo mais que necessários, sendo imprescindíveis. O que talvez mude é a regra que manda botar o plural no masculino quando o texto se refere a termos masculinos e femininos. Quem sabe uma reforma ortográfica não machista determine fazer o plural de acordo com a quantidade de palavras femininas ou masculinas citadas: o texto, a reportagem e a publicação? 2 a 1 para as meninas; necessárias, portanto. Enfim, imagino uma capa da Serafina em dezembro de 2028 com uma incrível matéria sobre o 12º título mundial do Corinthians, recheada de infográficos que saltam das páginas e reproduzem os gols. Farei o texto com o maior prazer. Até lá!
+-
+Juca Kfouri é colunista de esporte.
+*
+Vida comprida por Camila Appel
+Em 2028, fará um século da descoberta da penicilina, por Alexander Fleming, que contribuiu para aumentar a expectativa de vida.
+Já há promessas de substituição completa de partes do corpo e técnicas de edição de genes, que podem nos fazer viver mais. Do ponto de vista do indivíduo, viver mais pode ser bom. Do ponto de vista da sociedade, traz desafios ao exacerbar problemas econômicos e sociais já existentes.
+Mas a morte ainda será uma realidade. Há uma demanda, quase um apelo da população, para que a mídia trate temas como autonomia no processo de morrer. Entender que a morte pode ser encaminhada como algo natural, sem intervenção da tecnologia para sua extensão a qualquer custo, ou mesmo com todas as intervenções possíveis, desde que seja uma escolha.
+Não temos maturidade para discutir leis que abordem a eutanásia e o suicídio assistido em caso de doenças terminais. A qualidade da morte no Brasil ainda é muito ruim. Como indicou um ranking da revista "The Economist", isso acontece por falta de divulgação de uma área da medicina chamada cuidados paliativos, muitas vezes tida como um novo olhar para a medicina. Imagino que os paliativistas já terão um espaço maior em 2028, tanto na grade curricular da medicina, quanto na mente do público.
+Até outro dia, não falávamos sobre orgasmo ou masturbação na mídia. Hoje, sexo é discutido normalmente. A morte segue esse caminho e poderá, enfim, ser vista como ela é. Algo que nos une como espécie, como seres que têm consciência da própria finitude e são capazes de discuti-la. A morte ainda não será opcional, mas a forma como a tratamos, sim.
+-
+Camila Appel , dramaturga, escritora do blog "Morte sem tabu" e redatora do "Conversa com Bial"
+*
+Nada pode ser descartado por Rodrigo Vizeu
+Em 1998, com Fernando Henrique Cardoso reeleito em primeiro turno e Lula derrotado pela terceira vez, quem imaginaria que, em 2008, o petista estaria em um popularíssimo segundo mandato e o PSDB, batido nas urnas, escantearia FHC?
+Em 2008, com a esquerda de vento em popa e a direita em crise de discurso, quantos apostariam que, em 2018, o petismo teria nas costas um impeachment e Lula preso, enquanto o conservadorismo seria disputado por presidenciáveis?
+Diante de tal retrospecto, quão absurdo seria vislumbrar em 2028 um PT de volta ao Planalto após vencer, vá lá, em 2022? Um Gilmar Mendes (sim, ele ainda poderá ser ministro do STF em 2028) ovacionado em aviões após conceder habeas corpus a Lula, 82, e por, sei lá, ter mandado prender Sergio Moro baseado em jurisprudência ainda inexistente do Supremo?
+Jair Bolsonaro criticado por amplas parcelas da população que teriam passado a considerar suas opiniões moderadas demais? Uma Marina Silva mais contundente do que nunca? Isso tudo se os militares deixarem. Com o retrospecto de nossa democracia, fato é que nada pode ser descartado em dez anos -exceto a Presidência sob Kim Kataguiri, que não terá os 35 anos exigidos pela Constituição para se candidatar ao cargo (bom, também podemos sempre emendar a Carta).
+Mas quando começo a lamentar que tudo se desenhe tão imprevisível e a sonhar com uma previsibilidade escandinava, tão sã para negócios e timelines, lembro que saber demais o que esperar também pode querer dizer algo de errado.
+Em 2008, quantos duvidavam que Vladimir Putin estaria dando as cartas em 2018?
+-
+Rodrigo Vizeu , editor-adjunto de Poder
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "bf4f822919698c3ee2a7ee92f3e5f2daabc44ad39a91fc5f38f844fba17c69a9",
+    "mention_text": "Tóquio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b257d018787e6169b95e590f386074a8895037c200fff61c0003927f055c1859",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d90ed4f87e1aa013b9c72a41af0a34e00d79ddc25b3a9e9fad9e680bb901f1bd",
+    "mention_text": "Serafina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "956ef75ff0ea3a6544269c2e3f35f8ab8f9bf1013b7cf46696c9295bdd73e535",
+    "mention_text": "Marcelo Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21e3e786ac7a1da42526ef71607f583ac3d2a24e1e93fe599da3003a038fe14b",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b0f97d506fab3ea3ba8b565e6c80722684af76bcee0a67b093e30fb18ebed77",
+    "mention_text": "Marcelo Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f175478ebcfbeb443c00bc75ed94a76a5e96f400b82aaf8bc825f39f86c26e3",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a79dd1a6000be2e05f60b3ba0250bb3e9a909e8c72b16a5316af4cc6139f0c7",
+    "mention_text": "Conselho Editorial da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cd27e66f827b757acf09db2d8260f09f8032cb0c5c02c7cbca72fb1af84c0be",
+    "mention_text": "João Pereira Coutinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2634d22439c152fc901ce75181ae7acb391b3e8cde201af44756a0c395e32187",
+    "mention_text": "Mozart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7807493972644dd4166fdfa350e230339b646afe5101f4ef7119ded1ca55617",
+    "mention_text": "Charlie Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c60346632b6284f7669adcbee4a55611c9faf742041f7332739c3619f88dd6ac",
+    "mention_text": "Keats",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a02c3c22ed03f1f1ae29f12e87cbacea5741c71bf2e81d9c3ae55b897ecf71e4",
+    "mention_text": "Saramago",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3027f6306c8a33b7526ec773f3fb1f79fc18a1716b716a69e5b01c27e4050a4",
+    "mention_text": "Serafina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aee472e236896bbf6bbccf9b9732078719db589982fe322935b2441129a07ea3",
+    "mention_text": "João Pereira Coutinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4cb0b8e23431842e07bb39c6d6299567ca1889d4c97a1b953c2d5008c2f68fa",
+    "mention_text": "Universidade Católica Portuguesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e616a8bc007b3e14adbaa9504fe93d4fcbfd48591b3396d1d1a15930be521f24",
+    "mention_text": "Leandro Narloch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e10dbf389ec1ba8dbc20cedd20cdfc035ca4a85f13325c3dea6c3be291a808ca",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae46ae4fc0c5a146e2f781bdcadcbe13559e9afdac157c8c062ad652c896601d",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8766643db1e68cb25bdd89482e2e82215cc25f213e1d334fe84936e26b2c8a11",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39e28e01ed02371be8bad4366a75b09b7215e3cf98e9d4bf8589c14ac6f16182",
+    "mention_text": "Youval Harari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e5e0b48a68e9844f7486835802d759768569f44fbe5f6dab1b850beff37957c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9af7ff5055e336056a34c3a690063e3f02a3d11a57b044292e1184dfb1b344ea",
+    "mention_text": "Leandro Narloch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfd1ff55572302bd3261441765a379e7193323dc79ac554e4f380007beec2c05",
+    "mention_text": "Mariliz Pereira Jorge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36b1be833afbd64011cebfdda0f8ce8e313e709aaf07a16c41a275b8c1bfa472",
+    "mention_text": "Kardashians",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e698b00bf578175c0c3ed7bd2baa011f363b93020cc438ff131ffa721cca95d7",
+    "mention_text": "Pugliesis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86246378e92e66485c64475d5efb0d7d7800c605666d5ec614b4fa63e0f00bcc",
+    "mention_text": "Box1824",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f259a5063d8b3bc0b122053793c914d7166c8e630e52daa99e2e7e65b911411",
+    "mention_text": "Mariliz Pereira Jorge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4b6fcc823a87c16bc99184eb459fb09b766d928b9e4e10afe1bec54289b7942",
+    "mention_text": "Hélio Schwartsman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0df28a255288b6eb15aa916ffb461c81ba679e2ea092f5aea6e6a095686897f7",
+    "mention_text": "San Diego",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f39fcc1de1ebbadc5279023e46f398a36f784354761ed7850ced9f1232e0a521",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12439f2be5c555ef808a94691b7e779f62c97f384d6397663809ec885f31e9a4",
+    "mention_text": "NOAA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ec858bff68cee835248a9ad1f06f24ad041487a0a1d7d9890b8493f46808edea",
+    "mention_text": "NOAA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a0abf0c36b4994a3266052ed6e2ecd0e6913c9ab062950b75f79a26278e7767",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae78feacefc03999930558ab006379d6229d9723f2406f6e8f307c59b6be7eb2",
+    "mention_text": "Sol",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "beaac250f99b87d06259dda8156c0aa0e04e7f96c13cc5dd6445719beb154c57",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e43a22477929cb920d18ff9510e10d3cf6220408c01fa527c0ffa89c476cfd32",
+    "mention_text": "Hélio Schwartsman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c58f8bf3463ae9b0253adfdbb27a3246a76353905c4c381fe7fb3a8bb00f7ffd",
+    "mention_text": "Zeca Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05e626b77eb129ba4768cbd5f79558a54ebd1f9a483b036eeb43290375c0cc96",
+    "mention_text": "Zeca Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7821d5efde423c3cd906e2b174ce3c99b903b43e69e493765a71f37860b806c",
+    "mention_text": "Salvador Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02ffc64a686953ab9ff6acb9ac3e7f0c282aa27f08a99a624c2e2b964434cc5a",
+    "mention_text": "Universo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe9539443ee29f793461f83bae614a9d7a9adf3e3e15690e7895c5e69edc3171",
+    "mention_text": "Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf330402c144172077f3f53132313aa074cad6b5b06f802f92709555f70175b4",
+    "mention_text": "planeta vermelho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "49a83756b9483f8edb6a50499fc22ee55dd0e463cc3f8702a95154d374ce1aaf",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bac1ed84ec8c40699e3a5c8ad3e6f6e4ca1c79c94c96197a2bee6384f72c4ae",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a7d21cb67cedc8d1a330ce1191865ced657f6c92c89f43fca1a3a324d9659d17",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c68c46f4fd8ae8d055e03f24b6df272e9cef528bb021da2a59b03e7b269e0343",
+    "mention_text": "SpaceX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8eb7a946a2dfebbf93dc67428ae66c3c7f2c85e62837653168a490004decdb9c",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ebf9c75ad649ed577af8188673c53de39b4455ef50147ec722c4c1a58b0eed71",
+    "mention_text": "Tóquio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f6da9cc7e33e8965cff4a5fc4ba1d5ac1ce6961817df53295dd76d86574c0ff",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af0f5b0cefc972bbdc488fa83f9c38600c397acad98dffbb817a8dedbb141a6d",
+    "mention_text": "Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b182e4df1f20b7b68a1e698b8f1e41de6e2fe710f2e124fca4ad6315a4c047d8",
+    "mention_text": "Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3f54cba351b1f3a3a03bb53e11bfc916f25df929445b32f9a17eeba4b941901",
+    "mention_text": "Salvador Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa98cddd3a5a9d2b8d7c194c65b47f30e2cb03ca73c91e850c4395364da58cc4",
+    "mention_text": "Ruy Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9905fc70adb92b75f1a2bd912cf643fe740244e0280a6f1db5f21a3f0d02e5fc",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc8cd6b6ccfc95ee72977e21c27d66cd5b70cdbc76c2c293ce924f256981b20b",
+    "mention_text": "Ruy Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6dfdc4cf32fee2b7a5a30d827c006b2ac8197781e90115648a5a64ce44e9898b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6e3c5d29e524a08a65f801fade006a7191872f9da7d3cc30ffd905be700b34b7",
+    "mention_text": "Bolsonaros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26fc297a1f0246f514bf85480f5b780e944f00adeeee727caa9a06e9329f3583",
+    "mention_text": "Renato Terra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fad2907cb22c775d9dafcb746c11de26fee526f643a2c7c2a86ea573d510ba3d",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "becf5d0e14a2c3cb47c3d9a25350c3f4e22ce36c96bc3e30265eee7c7b9839ec",
+    "mention_text": "Eduardo Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d917010856cf95be94861cd9c2ed596548c22e3c44f643f1261aca82f980b82",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c7c3f5d263b1069d05f4570137faa49b773d27e85c3b10d48276eda870c3400",
+    "mention_text": "Tackleberry Varonil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f0ed58a8c19bb506d6603c103a6562eeeda8b060feaa2308ac8fea8fb480235",
+    "mention_text": "Assembleia Constituinte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b0e10ff74a564ee2b9c15ead05fe22d70288788acb3023f386b9f3d6a57f569",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1cfef6f4b754641b831c870d7c334564933c105a8aa9a5a0ccc50afd8171dfbd",
+    "mention_text": "Mito",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0297e352785d11af1cd787bda272c1f042c8140a5a48740be9abc17bcbd68fd6",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78f5e0399a7b003f658c5af97bf407c0334c15fd2fe0032ff092193689918ab7",
+    "mention_text": "Senado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2fdc4befb0b8a4225d14bf5e29247f7a56f04f759f40bdf08e915db491eb2100",
+    "mention_text": "Supremo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb8b2ba7062408d31c09730e2dbfe9c94ebdae6ba649989cbcb176afc6b41ff3",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92e72856a1af48954cf77e40f3392e59700cc7d01f05c1e2c8babc16d7d4a759",
+    "mention_text": "Vale do Nióbio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "90bd03c0dc474910dbf4a84a035cc05d0a37e22b0e49c7373151bc5c00bed441",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cc773f6620db2397b1fbc9bbb557a964a745fc235b26cdc9f03ea5d3b316ba63",
+    "mention_text": "Renato Terra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e6ba7cf308e4e7cef7a1bc4530f37083b4c606f50c4baa325613bfdaef3c35b",
+    "mention_text": "Juca Kfouri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9556b40ccfcd39befa555b17732af6cca6eaf10253c886608b266f62f21eebdb",
+    "mention_text": "Serafina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfb81407314044349435a0674f9ff141bd9a605abfab30091437bebab026295a",
+    "mention_text": "Serafina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b46593729204b35e06801b7c819efda7ee9d3ccba3efce9de0e84c210bab2ce",
+    "mention_text": "Corinthians",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbf0fac3693029136d54d4266988a640829598b0053e3135c84bfa7fef744aa2",
+    "mention_text": "Juca Kfouri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04b89de18bf8e9e483a2d05ff7f9c1fbac24089467f220487239baa4d14f16e1",
+    "mention_text": "Camila Appel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60960004577b958f5a5130cbd4a6492cc82beb48786ee95fa95d2541afac0518",
+    "mention_text": "Alexander Fleming",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8d6454d36269e8c33c39d21c1e5108b3084904495175ca534443a335152bc69",
+    "mention_text": "Camila Appel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83e4838048432a167e22e716d921d03f8807532f99097d0656128cf88d503c97",
+    "mention_text": "Rodrigo Vizeu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fdea0a6ad9ddb5643f8a1da095cb1a69d3c5ae4033d87f0933f0bbd7160ef177",
+    "mention_text": "Fernando Henrique Cardoso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "53996647feb4bf360212002a1e303aec1e941a75d131d5b9f9626a5822babffc",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3147ebe54065590318f75dae97410fd5b456eee979ef76c09d9d370e2117a3c",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e7ea9bc81677589512c459438d3529cb709bda29c6e53135bb60948a1bdb6fb",
+    "mention_text": "FHC",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "422cfa3a2f76a4b5f84fa29e73e17f0dd8eb7bac763bd3c4b7940047b910eaef",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c4d3877d317ca204b690c815dd4fbf493680a46175db8c008246a09a326e632",
+    "mention_text": "PT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43e7baf05e1195d4662e8b29b081815fc91a7f10056627d0b1fbb7dfa99649f9",
+    "mention_text": "Planalto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "375753cea5218a71c958225a0e359e47dd4616f261e462575d6b57b2be69683a",
+    "mention_text": "Gilmar Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fd336c823149880392d582af97321cfc4e79a87c814cbff5d5cdf2e5da36ba6",
+    "mention_text": "STF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5f1b4973d836ff2f55cc4a098ab309342a500ada6edc3760921edb56af15cb5",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df11d18b6ab10c61d3746284d16c49edf5701c896322573d52e66e7ae53318b1",
+    "mention_text": "Sergio Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b866cb38f219ec658481d05b1d2849cf9c182a4e7c97237b0beba80e95bc161a",
+    "mention_text": "Supremo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e196bd6beb76c1ae7d9ad7140dc2641adc86420c23acf06ecb98e60b54971ca9",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ddf9fb06d4b047557645128cd04cb8b27fc27a28bc24ed1cb106c493479289e2",
+    "mention_text": "Marina Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6afb3eca3262d2f5b0e150e0a80af4a3210cff28d44c28cc0dc55d965d744d16",
+    "mention_text": "Kim Kataguiri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c352998a233a867e339591fc22e244315ed6a83559fc2059b395ed00645b7dc4",
+    "mention_text": "Vladimir Putin",
+    "categoria": "PESSOA"
+  }
+]

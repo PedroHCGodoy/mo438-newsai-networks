@@ -1,0 +1,332 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: bce5ba68345e91807fa6ff6b02f512041a8d353418e4fef02ce3166122450adb
+
+TEXTO:
+Carro sem motorista deve chegar ao mercado em 2020
+
+Um anúncio na revista americana "Life" dizia, em 1957, que o carro do futuro não precisaria de motorista.
+O que parecia delírio de consumo nos anos 1950 encosta na realidade, 60 anos depois. A Volvo anunciou que em 2017 entregará seus primeiros veículos autônomos para testes a cem clientes em Gotemburgo (Suécia).
+Em 2018, segundo o plano da montadora sueca, esse sistema de direção que prescinde de piloto humano estará disponível ao público para vários modelos, ao custo estimado de € 2.000 (R$ 6.920).
+Veja imagens
+"Veículos autônomos são o futuro do mercado", afirma Dirlei Dias, gerente da Mercedes-Benz. Isso porque o consumidor demanda cada vez mais conforto "e necessita de tempo livre e interatividade com plataformas digitais".
+A montadora alemã testa versões sem piloto dos modelos E e S na Califórnia, nos EUA. A previsão é de que cheguem às lojas em 2020.
+A japonesa Nissan, em parceria com a Nasa (agência espacial americana), também promete para 2020 esse carro dos sonhos de quem não gosta de dirigir. E lançará parte dessa tecnologia já em 2016: trata-se de um sistema que liga o piloto automático só em vias congestionadas.
+Entre vários testes de carros autônomos feitos por montadoras está o da alemã Audi, que realizou sem incidentes uma viagem de 900 quilômetros, entre o Vale do Silício e Las Vegas (EUA), com o modelo A7 adaptado.
+Até o Google resolveu entrar na briga. Em parceria com uma firma de engenharia, criou um protótipo de veículo sem pedais e sem volante, em teste nos EUA. Embora não faça previsão oficial de lançamento, a empresa também trabalha para levar o modelo ao mercado até 2020.
+DECISÕES RÁPIDAS
+Cada marca tem um sistema de carro autônomo, mas todos funcionam de forma semelhante. Consiste em uma combinação de radares e câmeras que analisam o que ocorre em volta do veículo.
+"Os softwares obtêm dados dos sensores, interpretam e calculam, no fim das contas, quantos graus o volante deve virar e qual será a pressão aplicada no freio e no acelerador a cada momento", afirma Denis Wolf, coordenador do Carina (Carro Robótico Inteligente para Navegação Autônoma), desenvolvido pela USP São Carlos desde 2010.
+A direção autônoma, portanto, pode ser implantada em diferentes modelos. No futuro, deve funcionar como um opcional que o comprador escolherá como faz hoje com a cor do carro ou o som.
+Segundo Wolf, os "segredos" de cada montadora estão nos programas, já que os sensores usados são parecidos. Cada marca desenvolve um software com técnicas distintas de inteligência artificial "para que ele pense como um ser humano em situações complexas" e tome decisões em milésimos de segundo, explica o engenheiro.
+"A tecnologia para o carro autônomo já existe, o que precisa é melhorar a infraestrutura de trânsito", afirma Ricardo Takahira, da AEA Brasil (associação de engenheiros). "O carro precisa de informação da rua, do semáforo, das faixas de trânsito, da ciclovia", acrescenta.
+Tudo dependerá de mapas oficiais de tráfego fornecidos em tempo real, com avisos sobre acidentes e interdições. Nenhuma cidade do planeta dispõe hoje desse tipo de informação atualizada.
+Segundo a Audi, levará décadas para que dados dessa natureza estejam disponíveis a ponto de permitir a circulação de carros sem motorista em qualquer circunstância. A montadora diz, porém, que em 2020 já terá modelos nos quais a máquina "assume o volante" em um congestionamento, ao menos.
+Em países como EUA e Inglaterra já é possível obter autorização para testar carro sem piloto em vias públicas. No Brasil, não há iniciativa parecida, embora as marcas planejem trazer o sistema para este mercado.
+"Ainda não iniciamos conversa com o poder público aqui, serão necessárias a cooperação de autoridades de trânsito e a adequação da lei. É preciso estabelecer de quem será a culpa em caso de acidente", exemplifica Jorge Mussi, diretor da Volvo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "302c171484195170ad5d641b354b7b7d99db8fff62010fbe870589c0a81dd553",
+    "mention_text": "Volvo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba7918baf3eb6467372265f67380bd32053e3182d16ff1ac113f18b526a5b907",
+    "mention_text": "Gotemburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "976e153b60187848d19f7096fad95c0ee04a68b8a0efedb6711c3a03e79a4b81",
+    "mention_text": "Suécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b50938c036214f0757efbf58ccd6be3e83700c73cabab6f7949b03f58b212aff",
+    "mention_text": "Dirlei Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "907082814c1f6a712ee5b21542660b1138d8bfd0f166cdad30e2151ea34b8f42",
+    "mention_text": "Mercedes-Benz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ecab64cd1694b04c821c55668edd237e18dd3dd90e6b998a81034cd7b6439d6",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "caabac26710362674414f3b85c76c69cb537d1bb04a0fbd927657b5bf4745aa6",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1dc2b6500d7723af6dac9c0d870f8f33c9d9751fe019924499b6560ba77fafe",
+    "mention_text": "Nissan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cee840950db80ae7bf8df0f8db9bc64f41cac0e05cb00c8989d56e4f801b6e23",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e04cba009f023796884e43bbfa1dece8c9cf58a6a12333357f02bc28f8b59c67",
+    "mention_text": "Audi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58c719e4d787b72de38023297737c8e0f90f328547862d728df68952b4b597c8",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "24b8d2609323899260074e00c898968de228d1f8c124d61d43b86517c13f86cb",
+    "mention_text": "Las Vegas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c26a4c0555777f23cb227fe1433dfb8a1b52f7822c8eb30bbb4532db9244af7e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a83a6c769d1900c0a20b56d7f0669ad4ec65f05a7ce71fb966bc15b471ca705d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9eec1fecbf35ae7a4a9ce43abb99a5551a278cdf549b269386c44f9c68ce0f6b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af79150f8ae1c09e379691244cfe444d2a33db1088a24de9d9a75f1c3b77ac47",
+    "mention_text": "Denis Wolf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72403a412af097c40bb1ee6b75501e8a99ef766e9b88a3d1f994b162c3b916d6",
+    "mention_text": "USP São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e97473bfbcfd930728ca56967baf24227328e214511dba4feedce2980dc50f2",
+    "mention_text": "Wolf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "652386faa042db19c77e4ad40b00f535e1f8cbe40f993231769c8d87b4a70f79",
+    "mention_text": "Ricardo Takahira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ece444198ea187e2b2ac537398b9001ebc31cfe029bedba0ddb11ed7072cc436",
+    "mention_text": "AEA Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa19449ce502fce807aa9b80997674bb92045dd1aed1d05b2027fff9b4e50669",
+    "mention_text": "Audi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94e8f26e4d4e59a652bda428ab26800bd6aa228416d3948491aab4bfc725ee19",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "540b86073573d18d4819d0d0d0a69c40df995be17d0b23e21772e132e7ac84a8",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3ac7adccee6744086500663ff9df851672390e82866fc9c52f648df4e1340d87",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd87ceb683dfa6e303b8e166c768f3ccaca3daacd40304b2d37c19c05d84dff7",
+    "mention_text": "Jorge Mussi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f078f21e391ae06f292cd2be9f73c8a650f6381427d179e6c1d750d2c70df442",
+    "mention_text": "Volvo",
+    "categoria": "ORGANIZACAO"
+  }
+]

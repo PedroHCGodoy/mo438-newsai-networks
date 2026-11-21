@@ -1,0 +1,677 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8c27ea8b4d8d817acf7886303533b05076ba6bd4e065340c6cfb4a18f5bc2c6d
+
+TEXTO:
+Ícones do segmento de Finanças investem no esporte e mantêm hegemonia no Top of Mind
+
+Finanças: Visa | Banco: Banco do Brasil | Poupança: Caixa Econômica Federal | Seguro: Porto Seguro e Bradesco Seguros | Aplicativo: Itaú
+NAIEF HADDAD
+Um dos mais famosos jogadores de futebol do mundo, o sueco Zlatan Ibrahimovic se aposentou da seleção do seu país em junho de 2016, decisão que o afastaria da disputa da Copa do Mundo de 2018.
+No entanto, meses antes do Mundial da Rússia, ele participou de uma entrevista coletiva e sinalizou um possível recuo.
+"Vou me classificar por conta própria e dominarei o torneio", disse. "Mas para isso é preciso que você esteja em uma seleção", afirmou um repórter. "As regras são para os jogadores comuns. Eu sou Zlatan", respondeu o sueco.
+Poderia ser mais um lance de irreverência do atacante. Era, na verdade, uma peça de publicidade da Visa. O jogador foi o principal garoto-propaganda das campanhas globais da empresa de cartão de crédito durante a competição e nos meses que antecederam o torneio.
+A Visa firmou uma parceria com a Fifa em 2007 e, desde então, é uma das grandes patrocinadoras do Mundial.
+"O mote era mostrar que, com a Visa, não se perde tempo, é possível fazer as compras de maneira descomplicada. Como não jogaria a Copa, o Ibrahimovic se tornou o nome perfeito [para transmitir essa ideia]. Ele carregou essa mensagem: graças à Visa, não vou perder a Copa, não vou perder sequer um segundo", afirmou Sergio Giorgetti, vice-presidente de marketing da Visa do Brasil.
+A Copa contribuiu para o fortalecimento de algumas das marcas líderes no universo das finanças na edição 2018 do Top of Mind. As ações de publicidade nessa área, porém, não se restringiram aos ídolos do futebol.
+Expoentes do tênis, do vôlei e do atletismo também participaram de campanhas de marketing nesse setor.
+No caso da Visa, a visibilidade conquistada pela empresa devido ao Mundial de futebol ajudou a assegurar a liderança pela 20ª vez consecutiva como a marca mais lembrada quando o assunto é cartão de crédito.
+Foi citada por 21% dos entrevistados, destacando-se entre os mais escolarizados (27%) e os mais ricos (29%).
+A Visa Causas é outra importante campanha da empresa nos últimos meses.
+O consumidor é incentivado a entrar no site da Visa para escolher um entre cinco temas: crianças e adolescentes, idosos, educação, saúde e animais.
+A cada pagamento feito pelo cliente com o cartão, independentemente do valor, a Visa doa um centavo para uma entidade do setor escolhida. Foram mais de 24 milhões de doações nos 11 primeiros meses do programa.
+O chamado "marketing de causa" é, para Giorgetti, um dos meios utilizados pela Visa para se diferenciar da concorrência.
+Banco
+O Banco do Brasil também tem guiado seus planos de publicidade com o objetivo de se distinguir das demais instituições financeiras. A julgar pelo resultado do Top of Mind, a estratégia alcança bom resultado.
+A marca se mantém como a mais lembrada nessa categoria desde que o Datafolha a incluiu na pesquisa, em 1992.
+Na edição atual, obteve 31% das menções, com percentuais melhores entre os mais velhos (36%) e nas regiões Norte (37%), Centro-Oeste (39%) e Nordeste (41%).
+De acordo com Delano Valentim de Andrade, gerente-executivo de marketing e comunicação do Banco do Brasil, a principal campanha da instituição neste momento é "Descomplique", com a atriz Giovanna Antonelli.
+"O banco tenta se posicionar de forma diferente dos demais players, mostrando que investir não é complicado", afirma.
+O Banco do Brasil também tem se associado fortemente ao esporte.
+No caso da Copa do Mundo, acertou uma parceria com a Visa para promover o cartão Ourocard e sortear passagens para a Rússia entre os seus correntistas.
+A instituição financeira patrocina as seleções feminina e masculina de vôlei de quadra e de praia há mais de 25 anos.
+Além disso, organiza um circuito de corridas, que tem 16 etapas em 2018.
+O banco se beneficia ainda da tradição . Fundado em 1808, ostenta o título de mais antigo do país.
+Poupança
+Uma história que também começou no século 19 é decisiva para a consolidação da Caixa, criada em 1861, como marca de poupança .
+"Há mais de 150 anos, temos orgulho do reconhecimento como o banco da poupança. Somos um banco acessível e conhecemos as necessidades da população", diz Gerson Bordignon, diretor de marketing da Caixa.
+O banco ocupa o primeiro lugar quando o tema é poupança desde 2002, ano em que a categoria foi incluída na pesquisa Datafolha. No Top of Mind de 2018, a marca atingiu 54% das menções. Nas regiões metropolitanas, o resultado é ainda melhor, 59%.
+Entre as campanhas recentes da Caixa para divulgar a poupança, a principal é "A Língua do P", que destaca palavras como "passos", "planos" e "patrimônio" em meio às atividades de personagens de variadas faixas etárias.
+Para Bordignon, a ação publicitária contribuiu para que a Caixa alcançasse 76,8 milhões de contas-poupança em junho deste ano, um crescimento de 6,5% em relação ao mesmo período do ano passado.
+Ele ressalta o desafio da campanha de abordar o assunto de "forma leve, bem-humorada e que transmitisse credibilidade".
+Seguro
+O humor também tem sido peça-chave das campanhas da Porto Seguro e da Bradesco Seguros, que desde 2015 dividem a liderança na pesquisa Datafolha.
+Neste ano, Porto Seguro obteve 10% das menções, e Bradesco, 9%. Empate técnico, já que a margem de erro da pesquisa é dois pontos percentuais para mais ou para menos. Na aferição do "awareness", nova igualdade, com 15% a 13% para Bradesco.
+Porto reina na região Sudeste (18%), enquanto Bradesco se destaca no Nordeste (11%) e no Centro-Oeste (10%). Ambas têm melhores resultados entre os mais escolarizados (19% Porto, 14% Bradesco).
+A Porto Seguro desenvolve um programa de conscientização dos motoristas chamado "Trânsito Mais Gentil", dividido em várias frentes. A mais recente delas é o aplicativo T+G, cujo garoto-propaganda é o ex-tenista Gustavo Kuerten, o Guga.
+"Fizemos uma grande pesquisa para encontrar o embaixador deste aplicativo. Buscávamos uma pessoa que, além de querida entre todos os públicos, transmitisse gentileza", afirma Roberto Santos, presidente da Porto Seguro. Cerca de 250 mil pessoas baixaram o novo app no primeiro mês da campanha de tom divertido.
+A divulgação vai além do "Trânsito Mais Gentil". O apoio à cultura tem conquistado espaço entre as iniciativas da empresa. Além do teatro Porto Seguro, inaugurado em 2015, e o espaço cultural de mesmo nome, aberto no ano seguinte, a empresa patrocinou cerca de 280 espetáculos no primeiro semestre deste ano.
+A Bradesco Seguros também se notabiliza pela adesão a projetos culturais, especialmente musicais. Já patrocinou versões nacionais de adaptações da Broadway, como "O Fantasma da Ópera", e produções de origem brasileira, caso de "Bibi - Uma Vida em Musical".
+De acordo com Alexandre Nogueira, diretor de marketing da Bradesco Seguros, as ações de divulgação visam mostrar que a seguradora "pode estar em todos os momentos da vida da pessoa, da família dela, olhando para o presente e também para o futuro".
+Nesse sentido, lançou em maio deste ano a campanha "Quinzena do Seguro", na qual reforçava a ideia de que adquirir um seguro deve se tornar um hábito. A publicidade evitava a sisudez. "Existe uma maior persistência na visualização da propaganda quando o tom é de humor", diz Nogueira.
+No caso da Bradesco Seguros, o marketing recorre ao esporte, desta vez sob o viés do cuidado com a saúde.
+A marca organiza um circuito de corridas e caminhadas e mantém o site "Viva a Longevidade", com vídeos de especialistas, como o médico Alexandre Kalache e o ex-atleta Robson Caetano, medalha de bronze na Olimpíada de Seul, em 1988.
+Aplicativo de banco
+O esporte também impulsionou os aplicativos de banco, que, pela primeira vez, entram como um segmento pesquisado pelo Datafolha para o Top of Mind.
+E para o ano de estreia, o resultado surpreendeu por revelar um rigoroso equilíbrio, com empate técnico no topo, assim como ocorre no setor de seguros.
+O Itaú obteve 14% das menções, o Bradesco, 12%, e o Banco do Brasil 11%. No "awareness", as duas primeiras atingem 26% cada uma, sagrando-se campeãs e deixando o BB para trás.
+Itaú é citado especialmente entre os mais jovens, os mais escolarizados e os mais ricos (21% em cada recorte). Já o Bradesco mantém a média em todos os segmentos pesquisados.
+Os diretores de marketing das empresas líderes apontam a praticidade do aplicativo como fator essencial para fortalecer a marca.
+Fernando Amaral, do Itaú, enfatiza a importância de economizar o tempo do cliente. Ele cita iniciativas recentes do banco, como o teclado virtual, que permite ao correntista fazer operações bancárias por meio de aplicativos como Whatsapp. O objetivo é facilitar as transações com o celular.
+Entre os vídeos de divulgação do aplicativo, Amaral destaca a variada produção de tutoriais e peças leves e divertidas protagonizadas pela equipe do Itaú. "O aplicativo é feito por nossos funcionários, nossos colaboradores. E eles querem ficar mais próximos dos clientes", diz o executivo do Itaú.
+Tanto Amaral quanto Marcio Parizotto, diretor de marketing do Bradesco, indicam a empatia como atributo importante para o marketing dos aplicativos.
+O Bradesco tem produzido vídeos curtos e bem-humorados para transmitir a ideia de que a ferramenta é fácil de usar. O mote, aliás, é "Tá se complicando? Faz no app".
+A mais recente campanha, lançada em agosto, apresenta a BIA (Bradesco Inteligência Artificial), recurso que permite ao correntista interagir com a sua conta por meio do comando de voz. Em pouco mais de um mês, a plataforma ultrapassou 46 milhões de interações.
+"Toda essa movimentação em prol do cliente gera fidelização, reconhecimento, lembrança e desejo pela marca", afirma Parizotto.
+Durante a Copa do Mundo, o Bradesco fechou parceria com o canal de futebol Desimpedidos com a intenção de promover o app.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "37396de4014859b5f5f35fd6af810badb5138d42cdba31b889e185345bd1618f",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c098e2fb9f0994b5b4e551d85831493101e476ee81d3ac8f8d323227fc175c8",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca3506f10cb1b9b3c83493f229c8b23cdbdf84656e05f211918882237171874a",
+    "mention_text": "Caixa Econômica Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cffa8622a120b396a7ab5992e3b8a7558973751fb5911bcef462971a320d9616",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f966a501ec2471af088d40e7a899703984102508446c6786361cc4291009cdea",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3afccba59377e0888115d18123da519a131021de8cbe9c1d0f07b510e5d2d13c",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6eacb378c2445b7c9ad593da2e159d37f5ddc6dfaee6ee1cf91680ca97ed150",
+    "mention_text": "NAIEF HADDAD",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d11cece902c665e0a7a8ab661c21f99a4f4933c60278bf9996863e9f7d930de2",
+    "mention_text": "Zlatan Ibrahimovic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "812c6469cc6456838e8fdbf7d5be6a7600d74f949f8605b6492a9edce646cc05",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43be86fc8fc27e88d6dd504c969392ae6a20e00e2185cbf8bfeaaebf095e2737",
+    "mention_text": "Zlatan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05a5be9d8eeadedd41c22833c5dada45bda4cff7439040259d03ca35e2f46fec",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c970a69115d6b783f391756d3cecbc674661f9d85cd1a5756b697e29afe9f72",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15de4a2bebe2ee29a416b2128628501b8411fa4f06011a59854456e3da634973",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "581ed6b94b682f324f20f50011890de73db43ee4b6ef2ecdaee57c4e1a6ac7b7",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "117228480eb877e599e4059fe313e6bd7aac4cf6a008144aae0bdf8197c73b75",
+    "mention_text": "Ibrahimovic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2196eefe5ba57aeb208540c7f99f71bb1e9206c514a21ab4dcf866508b111d79",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "768fc84df3b1ca3a1de3930fe184273e09e981b95a3a6c4d29b2c344373e3afd",
+    "mention_text": "Sergio Giorgetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a96d385bbe9407510dd11f31482f0200a73b7da9c56f4d4d7e4b2326ca59f0c3",
+    "mention_text": "Visa do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f29ee6046b27a5839ff0e05bd380aa97fcc9ac2fbaa0839dd386138476e09e32",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62a82482ae829a5fb1120bf6d8bae3242388c1801837fb354e3182acbbcd6b4e",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65165f42054c99f466f4e7620316ce03dded5f74fadcc876d40592fc1c130894",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "291d1c4b7945199e466098aafd2712e8a4369b495b6de50f4caa77e4c054ce8b",
+    "mention_text": "Giorgetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3459de530c75c6ed92aa8dc5a4452a9ecaf1ea0b343f5c41937379869200f6e5",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "354fb6028a8920b16e366c7cad935b9fe2e927b0fa8eac425736da74875c1831",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e66b90c9b5f0c2f468c20d80e251c72bd6f63ed0fe3f4d77ea4a596d849b88e5",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3b1f703e7e4b775b46faae1dad4d2dd3d75c4740c5683c39451da6fa86ca129",
+    "mention_text": "Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdb27854946ba7b2a05d762e0b99e5200bdb34f26e3d9db221eb6197e66092ff",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e080c2d8c21f70645c8347ecc14d1491d666a0a8a1f6f360bcd4d13250070e85",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6de9aca9a9560dc223b01f035029da8da53491c8cc043a3d52fe98cf1909fd9b",
+    "mention_text": "Delano Valentim de Andrade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "691b460249fa5a7c15e89b8c78745692b2fd5f0f664ff750a04f2f98b752bba9",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58a8ea60c108c24824e1dc36657e691cb70e8fa8da7034bfb2218458ac98bced",
+    "mention_text": "Giovanna Antonelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a67b2f64d72883ee2361869f250cd16cd6befe645474b18965953068574f9145",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78e58c0237f087af54003c8276727e6fb18b2ca9eea593d9de777f9f6c0890a3",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e352d2f7d5695ece82bae9c266388b8fa544c8b99443b67f680ddf0800d3793",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a9c517bbe47a3f74fc10b2f7ed5b7445b19de0054365b75ebc39bbfa4cd23d39",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7bc37728a86cb77d51a637b74bbdf1252fcf80c7d05de6515a612890a8d5a20b",
+    "mention_text": "Gerson Bordignon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4090adc396e4e3ace71de2f2c4d3dae50d2266701f8dca4b4fdad41342d8a933",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "55991d558d1bc42128bd8a97f727fe1d5af61757c1ce5cbe4f9e2f385198a7d6",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21cba241387e064f15d5023e66d1d5b02860e2893b17212e6c2e359cb27705cd",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba99cd1f1cadfb9779034523a0f37cc68b69aae8a55c18df78070d795fdd72cc",
+    "mention_text": "Bordignon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18821ee72b1c74638603577478eacb609c79ed28e229cc3dec27d94e592c484f",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e231bface8291d17582c173dbe46ba4c0a75a299b2646b457dbce24479c8699c",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f2626a52c1c4bbc88a5080c175b6fe0bcf0531fba0d1c552891ce7d9e09ddc3",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea99ad22f6ef41e4ddbcf53e77cc726f350061ca251afa430738d7e7b323b760",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9d767ae8bbb6399b373379f4e08f4f2c35cfbee2d275851f5b5c976b9ec0984",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba395859fc7b64e1da9f5cad7d05da4cc7cc8c745af9f20fc37bb4b2d0c7fcb4",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d012c83385b7e9e59887f05d242131c7bc65a4cca533e7bdfa274f45396c2bac",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fa946b9722377b12a5ae9af2a94f55b4d744f106bb7be3aab755f4e8deef9a2",
+    "mention_text": "Porto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efe71dd8524fecdd5b9c078d85f1f46f37cb003b352c70386ea215b1f2e41c1a",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c8a1051a59d4a03dee6b81e0dff82eb7b887ab7b69e4ed04fe99c4671be5798a",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00b763ddd556a3ee8496fece9a8ae5fb5576625ea60a7698d3c606375b635c02",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be87de8550557272926ca1cc6c64018a6c7cdf118d29db8ed74ac8e264ebabce",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c00a2195dae39068fe568ba945fe8c35dc923bc67bd58016a2de8aadf1db040",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94cedeed86c67e8194f9a282ba957c10afb17440c9d035d160ef2b5cdc70f27a",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d7ab535b31d0f155b30acaf7032faaff180f1a331ab9415f8a3cbc14310eb9d",
+    "mention_text": "Gustavo Kuerten",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf41b073a59a1d9062fc502cff55f1122577ee88cea4c6d155e4eda52d21c2b4",
+    "mention_text": "Guga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c54de259ad5bef92e74a8c2e67d7d2bcb860298d285dc7bad75e808564978cf",
+    "mention_text": "Roberto Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c80df17ee7fff25812b535a90861f09d7011ca4aefbead59f15bae3061de9f75",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66780ef1ecd0f3e68d299139915c1f34f86e97f421c0984da6668b359f2b813d",
+    "mention_text": "teatro Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e44f85550fa77f22f0beacda55a601dbe96c7f159e42715c3b68e02360228bf9",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a6eebc723ffae44ea66cc22e51a259f716257ef4bf0505be94ea43ac7f80dc1",
+    "mention_text": "espaço cultural de mesmo nome",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2797200be55edd18d756729e200f8bd76ce33f4f1288e0f391aafdb59066cdbc",
+    "mention_text": "empresa patrocinou cerca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed5ada724479802998cffd0b349620bda7d5538855a9377a4d78699af8daba26",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e30151996d8973167b54c0e2fbb2b9ae152179a6840c26ccb809dbce8574f6ea",
+    "mention_text": "Alexandre Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c1b158ce51f3ec15e1994262c628e04be50a6e5712d7856dc205cf705178570",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "186facf9d449f1a22d5855003e1e8cd4ed95ea97d07049199fd18f48de349c40",
+    "mention_text": "Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "993afe6d339e34451654bb29c2a6c8d9eae2788d4c46285faf4598874e63cf7d",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b93b15dc48abc136fe17deea64fc917ca32039d027395946e7ec3f69955584c2",
+    "mention_text": "Alexandre Kalache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e4dd5fc81a444133e3cb06434aee0b6a497d78c39fa610776dd6411fd71108b",
+    "mention_text": "Robson Caetano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acfc99d6ee9d7fae8fb08ea46a972f51730f291ec1fdab45cb76f51f75254501",
+    "mention_text": "Seul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fdacee8bc654cd79bdde0ac9dfc0bd250b0de344bc2033e67f4932c6f0a7a20a",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "815e3414800d7df12419661897ab6ec83bb012af5a0b8e8e0a868225f734b7ee",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b80f3cf88f50709d4ca57f2cc2d8401c916fdb5acd7efaea3dacafe404a9b1ef",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72ca6673c4cd46e6efea0b6ac41c66ba9e57d5232bc102ad202f7f1f41e49bf8",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83f5b3cbbc66542b8a3d48f1da9ed0310c1dc8684b5ed4259c0a3d2f52328785",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cf8d4b3bd79a5a866a4dc861b4cbef7327e6c2a089b1ef006ac7617497b3ba2",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13444a7840b3eac1f83b97f9c2beb6166098f1d9febfd6b5b8a3beb7bcc8da89",
+    "mention_text": "Fernando Amaral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ed6d3344ada52c3910d90e4f7dec35bf534a91e9a3ed3b71b28420be6f5c023",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47ce9470cf2ed55e75cece59379eb81e93da338667c098bf0329d2aff7ea9c12",
+    "mention_text": "Amaral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbd2eaecf2e50de08fc77fda929920483c299a7f985a7f130e64b9176e90794a",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5234a749f367609ddb7cdc16eed5113b138a544a8b7e11d11bb3b99f19908236",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57ecb60bf035d15e7527b416afb194d2a851095ea68950e12814a9dd209622e9",
+    "mention_text": "Marcio Parizotto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e830e9b7bfd2f90f615c83ad848cba44be667103594cabf491324b70a2c3c4b2",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a65b318be675b44377eb88f84b4068eeffda7f815d2cba7809d73b81d0cdde14",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62e6cac35032393c4365558ad3032466934a8345fa6de56c8c1fd177d01da3f8",
+    "mention_text": "Parizotto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "609e5ffccb94d9ba2d933ff8e23285fb41b29ddde5b1d3e762c95b72f5d005eb",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7721650b21a2f62094318d1d957bfbbd18a8b230f324eb5218dabe53034ea104",
+    "mention_text": "Desimpedidos",
+    "categoria": "ORGANIZACAO"
+  }
+]

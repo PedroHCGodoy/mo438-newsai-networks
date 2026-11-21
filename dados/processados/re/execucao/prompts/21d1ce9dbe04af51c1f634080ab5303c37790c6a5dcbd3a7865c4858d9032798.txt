@@ -1,0 +1,775 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8533a54311404a1a6b49a8d01223ce8be0c147944a8b338dafc92b0f1cb09fbf
+
+TEXTO:
+App chinês TikTok ameaça domínio de Instagram, YouTube e até Spotify
+
+Em só dois anos e três meses de vida, os números da plataforma de vídeos curtos e bobos TikTok são monstruosos.
+Resultado da junção de dois aplicativos chineses e voltado ao mercado internacional, ele acaba de atingir 1,5 bilhão de downloads na App Store e no Google Play —as lojas de conteúdo para iPhones e celulares Android— de acordo com a empresa de análise Sensor Tower.
+Fechou o ano passado como o quarto aplicativo mais baixado no ano, na tradicional lista da empresa de análise App Annie. Deixou para trás, em quinto, o Instagram.
+Com crescimento explosivo nos Estados Unidos, a rede social acabou sendo a grande responsável pelo alcance viral de “Old Town Road”, segundo o próprio rapper Lil Nas X : "O TikTok mudou a minha vida”. Um vídeo com a música encabeçou a lista dos dez artistas “top” da plataforma, recém-divulgada, seguido de Mariah Carey .
+Os americanos Facebook , dono do Instagram, e Google, do YouTube, vêm procurando enfrentar a ascensão do aplicativo chinês de diferentes maneiras. Meses atrás, por exemplo, o Google estudou comprar o Firework, um clone do TikTok, mas acabou desistindo.
+O Facebook, que já havia tentado comprar um dos aplicativos que originaram o TikTok , o Musical.ly, de Xangai, partiu para os clones, como já havia feito com sucesso contra o Snapchat. Há um ano, lançou o aplicativo Lasso, sem maior impacto.
+Há dois meses, começou a testar uma ferramenta em tudo semelhante ao TikTok no Instagram, por enquanto num único mercado, o Brasil. Por aqui, ela se chama Cenas. Nos EUA, será Reels.
+Questionado, Rodrigo Barbosa, “community manager” do TikTok, comenta que “a clonagem é testemunho do nosso sucesso”. Mas Mark Zuckerberg , fundador e presidente-executivo do Facebook, passou a criticar também na esfera política o seu mais novo concorrente.
+Em pronunciamento feito em Washington, cercado de bandeiras americanas, ele afirmou que “o TikTok, o aplicativo chinês que está crescendo rapidamente ao redor do mundo, censura protestos”, ao contrário dos seus aplicativos. “É essa a internet que queremos?”, perguntou retoricamente.
+O lobby parece ter sensibilizado a Casa Branca, em meio à guerra comercial com a China , e o Pentágono acaba de proibir os militares americanos de baixar o aplicativo em seus celulares, alegando risco de segurança. Também foi aberta uma investigação de “segurança nacional”.
+“O TikTok cumpre rigorosamente as leis e regulamentos em todos os mercados em que operamos”, responde Barbosa, dizendo que segurança e privacidade são a “principal prioridade” do grupo.
+Mais
+Na competição mundial crescente com Facebook e Google, não se trata só de audiência digital, mas de um ataque à própria fonte de receita do chamado duopólio.
+No meio do ano passado, enquanto “Old Town Road” viralizava pelo mundo, a ByteDance, empresa chinesa dona do TikTok , contratou Blake Chandlee, que comandou por uma década a área de publicidade e parcerias do Facebook, para fazer o mesmo em sua plataforma.
+Ele já teria obtido algum sucesso, atraindo marcas como Nike e parcerias com veículos como o Washington Post, mas a ferramenta de publicidade do TikTok ainda está em desenvolvimento.
+Também prossegue a corrida paralela por tecnologia. Entre as funcionalidades já presentes no TikTok, mas ainda mantidas em segredo, está uma de inteligência artificial que permite inserir o rosto do usuário em qualquer vídeo.
+Pelo que indica um áudio vazado do próprio Zuckerberg em reunião interna, uma das razões para iniciar os testes com o Instagram Cenas pela América Latina é que se trata de uma região em que o TikTok “ainda não é grande”.
+De fato, a plataforma ainda não tem um caso de sucesso como Lil Nas X para apresentar no Brasil. Seu maior nome local é um influenciador de 20 anos, Luis Mariz, que soma 4,3 milhões de fãs no TikTok.
+Mas Barbosa garante que o país não está ficando para trás, entre os 150 que têm hoje acesso à plataforma. “Embora Estados Unidos e Índia tenham experimentado um crescimento notável, o mesmo ocorre com outros mercados, como a América Latina, especialmente o Brasil”, diz.
+Acrescenta porém que, “como empresa privada, o TikTok não divulga dados ou informações relacionadas a crescimento”.
+Dados da empresa de análise Priori Data apontavam que, no início do ano passado, quando a plataforma somava 500 milhões de usuários ativos por mês —hoje está em 1 bilhão—, o Brasil tinha perto de 20 milhões.
+A exemplo da plataforma chinesa do TikTok, chamada Douyin , a brasileira vem procurando se tornar incubadora de artistas. No fim do ano, reuniu num evento os seus “top creators”, como chama, para anunciar novas funcionalidades no aplicativo.
+Destacou nomes como a cantora Giulia Be e a atriz Thatty Ferreira, esta com 2,5 milhões de fãs no TikTok e que falou sobre como “os caminhos profissionais se abriram” para ela, como as marcas passaram a procurar por ela.
+Mais
+No rastro do êxito global do TikTok, a ByteDance começou a testar um streaming de música para concorrer mundialmente com Spotify e Apple Music, que denominou Resso.
+Ele saiu em versão Beta na Índia e na Indonésia, depois de fechar parceria com o indiano T-Series, gigante musical que tem o maior canal do YouTube no mundo, com 123 milhões de inscritos. O canal brasileiro KondZilla aparece em sexto lugar, com 54 milhões.
+No Brasil, o Resso também já está disponível em versão Beta no Google Play, mas por enquanto só para convidados.
+Raio-X do TikTok
+O que é Rede social para criar e compartilhar vídeos de 15 segundos  a 1 minuto, acompanhados de músicas. Em geral, o teor é simples,  superficial e cômico, mas avança por dicas de faça-você-mesmo, culinária e construção
+Alcance Lançado em setembro de 2017, alcança 150 países e 75 línguas
+Perfil dos usuários Nos Estados Unidos, 60% dos usuários ativos têm entre 16 e 24 anos de idade
+1 bilhão De usuários ativos por mês
+1,5 bilhão De downloads do aplicativo
+Outras redes O TikTok foi o quarto aplicativo para celulares, tanto iPhone quanto de sistema Android, mais baixado do ano passado em todo o mundo. Antes dele aparecem Messenger, Facebook e WhatsApp, pela ordem. O  quinto lugar ficou com o Instagram
+Músicos mais populares Lil Nas X, que bateu o recorde de semanas consecutivas com uma canção no primeiro lugar da Billboard, além de Mariah Carey, Lizzo , Stunna Girl e Blanco Brown estão entre os artistas mais visualizados da plataforma no mundo todo. Entre os brasileiros, Anitta
+Celebridades mais populares Os atores Will Smith , Dwayne Johnson, Howie Mandel, Terry Crews e Arnold Schwarzenegger também fazem sucesso na rede social. Entre os brasileiros,  os apresentadores Marcos Mion, Celso Portiolli e Maísa e o comediante Whindersson Nunes
+Fontes: Sensor Tower, App Annie, TikTok
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a80d6ae17fcd2681e6bc255081dce73a8e7944a6bf20f80977d419bdb17464dd",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "601080dea3ca5ec0eb0ad4707e28900c5536eed4c821fd7cd493367046191ec2",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5526743da1c4c84d086c4fdabaf1d4797b5ebd6a0eb6d46bba86489349d5a144",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1fe65bfcade31315474d9738cb6118e52823966e252fbda2eb3106483400e68",
+    "mention_text": "Spotify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66360cb4a52983beef5c73aac40e83e072055ab5d3da47dec12e75dcc2bfd52c",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9a61517c54032fd5560d5248b8f49e9cd0fe02aaaadeb2038ee72091984178b",
+    "mention_text": "App Store",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "311cb66c8a15c0280e58da2ef5d5be004a96ba039f2e8bc8d5ba4a637d76cb1f",
+    "mention_text": "Google Play",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d797eec6caa4205889e564060a4ef330316098f1fab79a7412a0af07f53e541",
+    "mention_text": "Sensor Tower",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c4a3ee5c4b29cb9f25a85fa2c07a4e56129f1c813d457c588ea2619fecb900dc",
+    "mention_text": "App Annie",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba7610d3a0e3b98d97361cd81602f1246bdab0cc34ff21e0bf3d515bbd8bd86b",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d71e9486690bfd7b890bfefaeb21309c593469f52f3899f03ef51b855cf8776",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52199121c14d55ada7e9212d0d01a375adebd8a08805bcbb9d046ce54c3ad4eb",
+    "mention_text": "Lil Nas X",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f74e32b20ab076e9286ebf0c2ed8624cebf71ff0cc2e97526923ea58390e03dd",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4187808379e63fa10f6f19d0f3609912787b4203cba0175154fdfbbe2c2d4563",
+    "mention_text": "Mariah Carey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "733d72b592a6109ab2b2f5723eaf5c7e7bbcca4c803d4b5de3f5e14c0e0d4ea6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7f7d2d9e966704c933b212ee9f7614b70b7631159fdefd077996d00d1a0e2fe",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ee33c8868ddf1d601f46da5ffed64318bffa9f0eee2cb618e5bba5e744dea3e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c961b82792881cb0ecac341d4cc6c55b8eae57549de9f4b204dc8607561ac36",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f116cc14072c8570c6581decedf6a8b92240d2710efcec38b22fd873baab4cab",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87c4a0d7d414be144fc2e74dcd3da5843cfdbac76c4c01abc79660131a44222e",
+    "mention_text": "Firework",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5f1e1aa42efd48ed9a680d6d68e11079d5b4942fdd4c5c5225ac3659743527a",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ebb5dc1cec93d516958700fa1ba50526f92dc1145a93a0e24cf8ea5d3d50638",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34fd51f43c5f3fec1fa8a4780d1200d58820e446514babaf2daab3696d5d9355",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2036cfd66a70aa13705686fc56fa1443424c4d1677e5e9d30ff09dcd08dc12bd",
+    "mention_text": "Musical.ly",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83c2d431241a0caac9fd014d703263ea29c0bed208c299de28ebab6bd2ed2485",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4d7df0c99ba9accf65f55d0e7408a56fb8b79394a3e7055931fdd24be9d89dc6",
+    "mention_text": "Snapchat",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d213eacea2b689b800c58ddecc338bf058ecfbe2646fb0e1bde620fa45f63e30",
+    "mention_text": "Lasso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6fb1f925aa70323705c676290dffdbb2d36568409f7ad3a445f9217efb19486",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc6ffa1f4b599a6bfa57dc4f115d5c1d6e4504f05d44fa47a848fc4f06ead665",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0a519ff70f872226e63c7b17deb2b398d42ebcea9d339be03fed8fb6d4cbcc5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e1417c3da01af9e704cceff9a9e277c63a56af6fa0813a854237ed2654e04a4",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4e403e5c8609159ee9a1bfdfa61275a8e1cb94105947afca8b231a9b6207a3c",
+    "mention_text": "Rodrigo Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0cef1e34b6c1f53d9894e2f2efb8043f550e765f30da0bd39a7b710e1d3f0129",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ec0a46719a10f1fda62c6afc407a51504ca4f699d23d14e550e703d029f94ef8",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "308a651ce8e691805e7c27de4ea2d1a75cc717d694c1a577df96997f2b7009da",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d9ab95bee24c67eb206ed9733579bf7f1c8ba1d60e2bd77578862c7d2f4ce72",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b6d3a823ff3500060f804f67493f59192c432d32589f01ba41a5c749cc5f9e3c",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09575e5061dda74564f2c8cc3f4a30a715cb1e200cacdfeb02d95c3ac9a3e543",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ed0ab908a39b87c6ef95a02832b194f17fc7aab8367e601c346afb2c1ec55db",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c9448c6df4a59fcc0ddd3297991f8f82054387f6e4ea4dd4ba6611e3447ae754",
+    "mention_text": "Pentágono",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39e1eb41e258d0e86b0b04f0202c944daef35854822d34b3d5abdb6fb4070356",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e1c895226a8b72c727dadd3f99b2230fa91a4ccd7a40ee5e81ea15fd8fcf264",
+    "mention_text": "Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b4651e7ee5bf4a577091fd11dbc1852f0252af7a881b3d50701a3cac306f2e7",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1e689f52eb26d23b2ef68f243db7a0e73230628c810a01c9149c56d295882ac",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fca4b50ac1d2791074fed19694c2da76522d9b82cc7c5d45181f6750b41c3ff1",
+    "mention_text": "ByteDance",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a97c1fcee84b7f30676a7c1364b774054a1058ce37750202ff315498291d8dd1",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10aac4f533a77fee610508697c018a15d9a163d74e2ef413f0f9f11ba876811e",
+    "mention_text": "Blake Chandlee",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d0dc0800d78445b39b3313d67387d560c54a3a312d9c932a3e3f364a319b364",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ff138155020d0ed264041c9987e7654d87c113e1618c45e741e389c6b936bd3",
+    "mention_text": "Nike",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c6f4cce75106e9ad8ebe85bb631031b6c524a43e8911d8df5f24307ea50a1bc",
+    "mention_text": "Washington Post",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0da9ae737c4ba838ac29a5ce6bb18e89ffad114130e1937ccafbb835422a77ce",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "099cefaf4195976c55bb3dd784221c426ddd745f08d7aab1c0bcd6ac89b8803e",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3bf1bc0022f5719446e87bef992b7b72c3a6789e124baba642599070f2e7c22",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82c969eb021d98099591b344c70ec3e4c4a79f20db704168a34f7fae21a32a14",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a19ba7ddae131969be8a945708d7fe3573c6dfddfbba057624618286b10ce97",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8bbea8cd395fe0ee12a874f4799cdc00ec664de1cbf9d4c1c2a24cf1513b584",
+    "mention_text": "Lil Nas X",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37a8352aa93cb2eaebe74682cf5043c3e1c20bf38a0368d3fdae0f620a4b3cd2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff817a7ec221e44c35035cd0330513116578caaeeb5ec00cf065426e96b564cf",
+    "mention_text": "Luis Mariz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c7bcee93108deed4ee10f24bd2422e014cc572f867d5161645704307c9444d8",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "157189e882cdb84ed4c2327a6223b9406904f6921a017e74a204fda2a60c00c6",
+    "mention_text": "Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d89e3d9d9e5a43ee8dcf8572c2058c261d7e8e3cf4be70bcd34d516b70cc5000",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ac951a8d449cbf2d49766dadb5124ff388ab046578ca2066f6d3937e1e4ded7",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "50f9b4584b6b53c300d90c36cd34a83689532ba14224281114ced8192b4e6942",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d095590f386264393ac85973ba4add9e6a7e5024a19553321ed3afb86b5b1c9d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec832d10cfcfc1b0975b1d13346f0fe06b0f0e8da4ce267350ec45d326b86aeb",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d50a4a76a8ba3fcf40b90235b47b16200c5ad37f956bc9c994f3fe5e8439ab61",
+    "mention_text": "Priori Data",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0940764526b01b35e9d7379bc7327cf9189f7051f499f94187c88033db41cccd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d178639596d3262646e6f3befc3a11b64f8d40330372c21c88b901695b7cfd6",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b47ef8452a87066eeaaeebedabc3afda8503f1778a8a767e6960755a4ad3bfbe",
+    "mention_text": "Douyin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "973ac46c3b0e3d3104e6d7983bab4cf1f8f61419fca62675deb4b1a7855b858d",
+    "mention_text": "Giulia Be",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2284e477dc9611171a59f11d87e3b8635c683cb01396646f1ad5eebb429af880",
+    "mention_text": "Thatty Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6680c86ff40172ff75626729ecb215d20d0ded69f5cd0ff3132cab55a98f5a8",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c74d1304f7abc0bc46e3958c986c2caa05e6c0d0e683158c82e864836be0b177",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cdcc9163d2a609e575633cd6992cb52ab2197f0438017619a6b0a71756b60a62",
+    "mention_text": "ByteDance",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5dfd05ff4055140b91a1ab88659a9f41da7104945c6e9935a87950f22755a2b",
+    "mention_text": "Spotify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfb739c2bc960868fe306e397c67417f3591f7ea5f96cca754608259cb0b5955",
+    "mention_text": "Apple Music",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2211185d151ce879a033fa742a461824532665af54b0a3fdbc3e1fa81c74960",
+    "mention_text": "Resso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb5e187a124a693a10f0d786ffa61d413fe14c9fbe39881d637b9b2ed08ce83c",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7599d2dd1aa63d41708d294a03e00fa8017ca4516989cd668e34307ee85df13e",
+    "mention_text": "Indonésia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7f791370cb6a0042529fbe3d1ef53e93f9b573ae56234bc7c6756e2e84e5591e",
+    "mention_text": "T-Series",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bad2d9af7b0eff6b69d74376a1b38bcc0ec17b9f184e2583275868f4f99884e",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a83dbd576d2cd813e186106c4e39817253eda03a6ff929e6d1ba3a4264ae06c9",
+    "mention_text": "KondZilla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fbc310f6b5b263aa88ad495e09006659bb9804c4b138492228bac0944da5412",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ba2f147e303cf8e00a0b4b0bdaaa6785824e4f076ee60af920b0e8e55a87f79",
+    "mention_text": "Resso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b3ba122db70d1ef8b8add10217d5b918bc07f8f40629735fa1ec4b05c248a93",
+    "mention_text": "Google Play",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6401ffc16aa63f07582f6c8a7458ffb9270a70e66926f0145e222f14737e391",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a4d9660abf255547070aec1d46884f92fcd4a31589c34a6d9afd19f9812fa93",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "176bfdce56a4caf81acad3cd60c5392c870aea78e6cf2bc71f9fce91d877adf5",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f37db61634c1ba31945953528154700090a24ef5e929eb69169f1dc4f93094f6",
+    "mention_text": "Messenger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9892bc374338d3c68e4cd79a9fb2b418d4e5b6d2d3f8935ed7dee67fc3be21ea",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9dff8a93be127f5736f67c23f01f9378259c5e1d2873d530173927f6af61b180",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e65de1a3e58e3876779292b16e1e1b4f8f65baf59fe483b88e5b4e28bef72e9a",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ba2fc84611ba8f9cf4fca0ef381a5464a92c7cb0292c16e0803eb3b60831f16",
+    "mention_text": "Lil Nas X",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69129cc362fa202290c30c696ab3fc8c6feb81027612c78a88b73be9f4e03094",
+    "mention_text": "Billboard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77270f74d73436149dd542f967cb13c5eaae9c76b7d7f4fd156af63b0fae553b",
+    "mention_text": "Mariah Carey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1f88644fb82150c2599369ab6c2d5889bd6cd3681797d8428267f3395aa537f",
+    "mention_text": "Lizzo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abd09fa4a14922e6c6493d654f3d686385b9bd83665fdeb687fafefcee89f962",
+    "mention_text": "Stunna Girl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "edcdb9034378cd51966a434ab2763137c3150a980a72859b3e877c227822a896",
+    "mention_text": "Blanco Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cae179e29d6610cd19dcc4837db8910f6aa73cebf69e822b8d14b04ca0312804",
+    "mention_text": "Anitta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b82f869a257a3ad9bbcda99f69de77f1ca33ba0c2dea487fdd701b8bf42adac",
+    "mention_text": "Will Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "334acdcb7859037bdb62b8190b38aaee177a00ecfa8e531ade2b67fbf39b78d8",
+    "mention_text": "Dwayne Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72a391447d12fcffdd0b355b8ede69d98853c0ff5abac1956d2654d9ef21680c",
+    "mention_text": "Howie Mandel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bae1a778dcde1466315111da3d9d4602512d027981369a1f36dd472ec7e8caf8",
+    "mention_text": "Terry Crews",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab1bbe6b1bc06ea8f1afa0e55bea24d4354bdf08ba3d27c5c39e50457c1cde20",
+    "mention_text": "Arnold Schwarzenegger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea78c5b3be0f51ffd627854b9a466278283a2092283ec3d3c8247cd398541de4",
+    "mention_text": "Marcos Mion",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d9dc2b3c492ae923125471359a8ecc1f3886b6b1f6ed80e52469fbcadc4a026",
+    "mention_text": "Celso Portiolli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d68f601ccaafb9b9af609450e96d86125abfc994d488272850f315d8efdd4d9",
+    "mention_text": "Maísa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb793495d6969e2ece25c2531b9245885868ad5121209c715f768bc9b702d771",
+    "mention_text": "Whindersson Nunes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ae0a025782a65a95f0f5ad94b6493e3e64be16e16f337493106ecc70b0e0c1f",
+    "mention_text": "Sensor Tower",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ce6d25743aa17d200a285b91dd62bb76c4d00942c4869a6f10906b1bea076ce",
+    "mention_text": "App Annie",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b692066e5d1cae76a4330a73e768a22a0964338eec2cd74bfc5977519a57353",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,428 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 11a7f41de7392a8670f24ef0689b6c707fded2e633587342c9ec289c03ea3354
+
+TEXTO:
+É tempo de informalidade e flexibilização do trabalho no país
+
+A recuperação da economia mais lenta do que o esperado teve impacto direto no mercado de trabalho , com a criação de vagas informais em ritmo acelerado.
+O desemprego neste ano só não foi maior , na análise de alguns especialistas, porque a reforma trabalhista, que completou um ano em novembro, permitiu a redução do custo do trabalho com novas formas de contratação.
+Uma dessas formas é o chamado contrato intermitente, sem jornadas fixas regulares de trabalho. Nesse caso, o profissional é chamado de acordo com a demanda do empregador e pode aceitar ou não a convocação.
+Entre julho e setembro deste ano, o Brasil registrou 43,3% de trabalhadores sem carteira assinada, o maior percentual desde o final de 2015. Há dois anos, representavam 41,5%.
+A tendência de aumento da informalidade deve se manter se a economia não decolar em 2019. Além dos efeitos da conjuntura, o emprego com carteira assinada também perde força com o maior uso de inovações tecnológicas e as novas formas de trabalho flexível.
+Dos 92,6 milhões de brasileiros ocupados no terceiro trimestre, quase 40 milhões não tinham carteira de trabalho assinada. O número considera os empregados dos setores privado e público sem registro, trabalhadores por conta própria sem CNPJ (os chamados informais), domésticos sem carteira e aqueles que trabalham em família.
+No setor privado, o número de empregados sem carteira assinada cresceu 5,5% frente ao terceiro trimestre de 2017, aumento de 601 mil pessoas no contingente informal.
+“Foram 13 trimestres seguidos de queda do emprego com carteira assinada. Em um cenário de desemprego de longo prazo, quem perdeu o emprego teve de se reinventar no mercado informal”, diz Cimar Azeredo, coordenador de trabalho e rendimento do IBGE.
+A informalidade é marcada por serviços que vão desde a venda de quentinhas nos arredores de centros comerciais e cabeleireiros nas periferias das metrópoles até a mão-de-obra de pedreiros para pequenos reparos e de motoristas de aplicativos de transporte, que migraram de outras profissões, explica Azeredo.
+Para o professor da PUC-RJ José Márcio Camargo, economista da Genial Investimentos, a redução do custo do trabalho e a ampliação da terceirização frearam o aumento do desemprego e devem ter um impacto ainda maior na taxa no futuro.
+“O Brasil vem de uma recessão que é de um padrão de país em guerra civil. Enfrentou ainda fortes choques, como o aumento de preços dos combustíveis, a greve de caminhoneiros e uma brutal desvalorização cambial. Mesmo assim, a economia cresceu; pouco, é fato, mas cresceu. E o desemprego recuou”, diz Camargo.
+Uma das razões pode ser o efeito da reforma trabalhista , com redução nas demandas na Justiça do Trabalho e no valor das indenizações pagas nas ações. “Isso significa uma redução de custo do trabalho importante para o setor produtivo”, acrescenta Camargo.
+A ampliação da terceirização —liberada para as atividades principais de uma empresa, o que antes era proibido— está relacionada, por sua vez, ao aumento do trabalho por conta própria, diz o especialista.
+Com a retomada do crescimento econômico, ele acredita que deve haver maior formalização do emprego, mas não nos moldes tradicionais. “O que deve ocorrer é outro tipo de formalização, baseado mais em novos modelos de contrato, como o intermitente e o parcial.”
+Criadas com a aprovação da reforma trabalhista, as vagas intermitentes corresponderam a 6% dos 162 mil postos gerados no país entre abril e junho deste ano, de acordo com dados do governo.
+O aumento de contratos intermitentes, na análise do coordenador do IBGE, pode ter relação com o número significativo dos trabalhadores subocupados por insuficiência de horas trabalhadas –quase 7 milhões no terceiro trimestre.
+Na subocupação, as pessoas fazem jornadas de menos de 40 horas semanais, mas gostariam de trabalhar mais.
+“A criação do emprego, mesmo que informal, é o primeiro passo da recuperação no mercado de trabalho”, diz Fernando de Holanda Barbosa Filho, pesquisador sênior do Ibre (Instituto Brasileiro de Economia), da FGV.
+Mais
+Dados do IBGE compilados pelo Ibre mostram que a informalidade avançou mais na região Sul e entre os mais jovens, na comparação entre junho de 2018 e o mesmo mês de 2012, considerando os empregados sem carteira assinada e os trabalhadores por conta própria.
+A flexibilização do trabalho é tendência no mundo, destaca Naercio Menezes Filho, coordenador do Centro de Políticas Públicas do Insper.
+“O emprego formal full-time tende a cair no mundo, por causa da flexibilização do trabalho . Aquele vínculo tradicional de vários anos na mesma empresa está sumindo. As pessoas têm trabalhado de casa, por conta própria, prestando serviço a várias empresas e de uma forma mais flexível”, diz Menezes Filho.
+A tendência também é de o trabalhador executar tarefas menos repetitivas, com e expansão de novas tecnologias em vários segmentos da economia e o avanço de sistemas de inteligência artificial e de máquinas que aprendem a partir do padrão de comportamento humano.
+“As novas tecnologias trazem aumento da produtividade, com impacto nos preços dos produtos, que devem ser reduzidos. A participação do trabalho no preço final das mercadorias tende a cair, e, com isso, os salários também”, avalia o professor do Insper.
+Na análise do economista Fabio Silveira, sócio-diretor da consultoria MacroSector, a tecnologia é o grande motor de transformação e fragmentação do trabalho.
+A Alemanha e outros países europeus desde os anos 1990 já se preparavam para adequar a legislação trabalhista a essa nova lógica do trabalho, explica. “O Brasil, por sua vez, insistiu em uma legislação anacrônica, que encareceu demais a mão de obra e tornou muito rígida a possibilidade de substituir a mão de obra tradicional por formas mais flexíveis, que se adaptam mais rapidamente à demanda”, diz Silveira.
+Os especialistas são unânimes em afirmar que as políticas públicas devem ser voltadas para preparar melhor o jovem para o mercado de trabalho, desburocratizar a criação de empresas e permitir o desenvolvimento de companhias mais dinâmicas, com tecnologias mais inovadoras.
+“Não há outra saída a não ser investir em educação e dar igualdade de oportunidade”, diz Naercio Menezes Filho, coordenador do Centro de Políticas Públicas do Insper, ao destacar que o desemprego entre os jovens é o mais elevado no país.
+O sociólogo Clemente Ganz Lúcio, diretor-técnico do Dieese, chama a atenção para o que ocorre com os salários: o rendimento médio dos ocupados que conseguiram uma vaga (de janeiro a junho) equivale a menos da metade do que é pago no mercado.
+Enquanto os que ingressaram no mercado recebiam em média R$ 1.023, o mercado oferecia R$ 2.128 para os demais. Os jovens chegam a ganhar apenas 65% do rendimento dos trabalhadores de 60 anos ou mais, segundo estudo do Dieese a partir de dados da pesquisa PNAD Contínua.
+“Desemprego, fragilidade na representação sindical e diminuição da proteção social compõem o cenário que imobiliza a sociedade para disputar o que será o trabalho no futuro”, afirma Ganz Lúcio.
+A falta de planejamento e de informação sobre projetos de futuro preocupa, na análise do economista Fabio Silveira, diretor da MacroSector. “É uma improvisação que predomina. Não há clareza na condução, o cenário para 2019 ainda é de muita incerteza e isso afeta diretamente as perspectivas de investimento e de melhora da economia, que está frente a uma grave situação fiscal”, diz ele.
+Como exemplo da ausência de planejamento ele cita o episódio da extinção do Ministério do Trabalho, anunciada, cancelada e por fim confirmada pelo próximo governo.
+“Não adianta o mercado de trabalho ter uma relação estressada entre empresas e trabalhadores. É óbvio que é preciso ter uma instância que regule essa relação. Extinguir não é a solução”, opina.
+A retirada de direitos trabalhistas pode ocorrer com uma nova reforma no próximo governo, na projeção de Fernando de Holanda Barbosa Filho, pesquisador da FGV Ibre. “No governo Temer, o foco foi reduzir as incertezas, com regras para terceirização e novos contratos. Na próxima reforma, pode haver sim retirada de direitos com foco na redução de custo do trabalho.”
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "5f9eb6d0c2377400970d3ac7dcd74d49739e7ea5cf4c74b19a181566a12219ad",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d4ec8edc464904aba5b324a94b9c5401c1011cc42b294623ed465abcfe37e9ee",
+    "mention_text": "Cimar Azeredo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95fd76f8f2ae5ccc17035a95624addd8808dd526cd02a848ea641a123b3d3b5f",
+    "mention_text": "IBGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84344cfd2b92504688b111e596f2221ca2a46f103283feca6bc2056246de46b5",
+    "mention_text": "Azeredo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bc8fe2ac35201890d2d086b195c91f867d87f4a54e14314af0cbee8b22eeaef",
+    "mention_text": "PUC-RJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c9aac48815c51a296c852bec237562eeedcfcba8e5cdac422eec7a2231edb14",
+    "mention_text": "José Márcio Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "455bf2e05682f92c95d42043abc9de6a1838e0595ab3088942751f672f0f34df",
+    "mention_text": "Genial Investimentos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4abf95ed40e06c1d3d1559aa37a42bdaaea0360844a8f334288d32f1713c42d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b7c8c7449604cb03429fcafd1598af251e43ef84608325fb44e6785e51714e0",
+    "mention_text": "Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e8da2ecdbafdf23680fc96ca70c96dd665252d3796ad66638f3699cd9df67e7",
+    "mention_text": "Justiça do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "782094d2859a730c4fe14f2bf07787ee6be6b918fc4bc5d8a6a0f8106984391e",
+    "mention_text": "Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc399b1fd222b04d05782e5535c07c7c2d7dc99d3993ca500523fab669ca3c14",
+    "mention_text": "IBGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96ade917a3a57c05f23a9176d19512eef715beb9c0cb1d0ed2687e6e9a5e6ed7",
+    "mention_text": "Fernando de Holanda Barbosa Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ba71975ee52d22e64b01deffe14e13e704ea16f133efb3a7976ebce1d2aef37e",
+    "mention_text": "Ibre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1eb14e4ea9e7bae1b093da863488e243b0f88f3fb7c5e8311c198368d3087faa",
+    "mention_text": "Instituto Brasileiro de Economia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15f9c123da8e593df3aba87b2a19aca5598016251ce114f4977a5f4f61b9477c",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c2821866a846748eac84aeb4d366d732f5c468882f6929325216cdccff2c9ac",
+    "mention_text": "IBGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f16764a37ad6f9f1c5da52d2bc042163edd4c3e08a66ab931c0d3d6369204469",
+    "mention_text": "Ibre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6798e177784690216e81bb8905c3232f065ea0df2caae88c8ddf6c796652955c",
+    "mention_text": "região Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a52b8a214cfe90b95cef655502a2b8210465c63e7b084e2add6d0deabf7beb33",
+    "mention_text": "Naercio Menezes Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83d505a48be89987fb969541ab756c3c722f13cd0f32a9dcc0d908fde09cdbd1",
+    "mention_text": "Centro de Políticas Públicas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bfdb70f9a7c03575ccae30c3e96b336e9dc00a03f535bcb752e5b534ffe3b66",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "218b3c769646186f186ae7bd7edb18c8e95b45b8902098c6587dd0fd1fc8f43e",
+    "mention_text": "Menezes Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab14fe8c99cb806fd418b56f21426c17265412e3ecb7060fc742a27d9c9f8917",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a10ede0feb15d3897ae244fc2142e2c16aadc8c1d1b8015273ee192849b7beb",
+    "mention_text": "Silveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "335fa6e85c88f7cbac6e673d41e6cf1617de32ef85dc0d602b9c2b8833557d3c",
+    "mention_text": "MacroSector",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a4456f1c2a932bb5f0acf009c7ad2bee6bb702a21f5908314bf86102b742824",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be803160533c6f9362c27158343b7fb88d066ab44bf0d71d4f5427cf38807cd5",
+    "mention_text": "países europeus",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "42e01deb81d9d1580fe867cc6ffb95656f01d4d9189fd46dece02f4dbfcb9d50",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a69e0f7e7edd4c887393cb9542c56ce95764c8bfc383e0531c8207abbe1681ca",
+    "mention_text": "Naercio Menezes Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9777ced8a0a6ee1f6d0cb4d875aed6b3313344c9be82377b2bd61bfd5fe0320",
+    "mention_text": "Centro de Políticas Públicas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97d5eb6d560c9a1ef2018741a77e422bbb5f8dbb05ff1b0472b685dfd0e4ee9a",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "322c4d8cdff63c31ead3c9e50d7f3feba6d85716fe1ff5ddb5c4f14540edb141",
+    "mention_text": "Clemente Ganz Lúcio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b6760547d1639278b5933a3a3727632a3a3c2f5ded837a1a8dab816ed8f5a80",
+    "mention_text": "Dieese",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c57955696e05a9d8744ceec5733dce67e5d75590bfaeaa3c08a78c950f96055e",
+    "mention_text": "Dieese",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4e93bfbef4a1456ff7bcb2ab8abc38725a6c41cc77f3ebb31d51aa6790653a3",
+    "mention_text": "Ganz Lúcio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10eef1aa4d32098466a5f341220d860b74ba3db04c25496efd611b7eb8b998ed",
+    "mention_text": "Fabio Silveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8c098e3a157a0e12291b5468203782771eaab17690a86b1649822bca069ac1d",
+    "mention_text": "MacroSector",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "715ae823dbf8f997048b74c86092c6f6184a0685901fd1a9a87c4f4079a3c094",
+    "mention_text": "Ministério do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f1604eec7dc9a3abd49ff1b080d1f7f53b23f3961c24d6f4c9b0ea488c0d862",
+    "mention_text": "Fernando de Holanda Barbosa Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "080f0172481ec5829f554c6804129f1c8a8c89d2a13d6a6aaa29cf9099065686",
+    "mention_text": "FGV Ibre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4872431d550c6a6ebad954fd728b0a9458927ec5d2eadd285dbab711ea146f58",
+    "mention_text": "governo Temer",
+    "categoria": "ORGANIZACAO"
+  }
+]

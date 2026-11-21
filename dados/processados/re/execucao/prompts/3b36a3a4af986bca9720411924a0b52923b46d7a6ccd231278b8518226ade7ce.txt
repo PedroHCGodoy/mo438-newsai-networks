@@ -1,0 +1,371 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 21eb31feb85ea14818dcda831bbb3134a7cfb3fb434e50dcd7aa11dace3003b1
+
+TEXTO:
+Tecnologia da Fifa que detecta gol não é infalível
+
+A tecnologia utilizada pela Fifa para detectar se a bola cruzou ou não a linha de gol pode ser um grande avanço para um esporte que se acostumou a seguidos erros de arbitragem. Mas a máquina também não é infalível.
+A margem de erro exigida pela Fifa é de 1,5 centímetro –e esse número era o dobro disso dois anos atrás. O diâmetro de uma bola de futebol gira em torno de 22 centímetros.
+Existem três empresas no mundo com tecnologia aprovada pela Fifa para uso em competições oficiais de futebol. A alemã GoalControl foi a escolhida para o uso nesta Copa, a primeira que conta com essa ferramenta.
+"A GoalControl tem uma margem de erro média menor do que a requisitada", afirma Priscilla Duncan, gerente de comunicações da Fifa, sem explicar qual sua precisão exatamente. A empresa diz que consegue determinar a posição da bola com até 5 milímetros de imprecisão.
+Segundo a Fifa, a tecnologia foi aprovada para uso no Mundial após ser submetida a 2.400 testes nos 12 estádios da Copa. Ela utiliza sete câmeras para cada gol, que informam ao árbitro, por um aviso no relógio, se a bola ultrapassou inteiramente a linha ou não. Até um segundo depois do lance, o juiz tem que receber um aviso simples, dizendo se foi ou não gol.
+O árbitro continua tendo a palavra final, embora seja difícil imaginar que ele vá ter coragem de contestar a conclusão da máquina.
+Não existe tecnologia infalível para dirimir dúvidas do esporte, explica o professor Harry Collins, pesquisador de inteligência artificial na Universidade de Cardiff, no País de Gales. "Mas existem tecnologias com margem de erro muito pequena."
+Collins fez estudos na área ao lado de seu colega Robert Evans, concentrando-se no que acreditam ser a referência disso no esporte.
+"As melhores práticas nessa área sem dúvida são as do críquete", explica Evans. "A incerteza em relação à simulação é explicitamente dita e existe uma categoria de ´decisão do juiz´ para esses casos nos quais a estimativa do computador está dentro da margem de erro conhecida."
+Mesmo sem ter estudado academicamente o futebol, eles estendem críticas conceituais à entidade, e não à tecnologia em si. "É a maneira como o sistema é mostrado, com incerteza apresentada como certeza, que nos incomoda", diz Evans.
+Os pesquisadores elogiam o fato de a Fifa não tentar apresentar as imagens como sendo uma reprodução real do jogo –o campo, por exemplo, fica azul, o que evidencia isso. Mas criticam o fato de que não é dada a distância da bola para a linha; o sistema apenas informa se considera que houve ou que não houve gol.
+É um problema de natureza parecida ao do tênis, outro esporte que vem adotando a tecnologia para dirimir dúvidas. Quando um jogador pede o chamado "desafio", o computador estima uma trajetória para a bola, também sujeita a erros –mas isso não é dito.
+Ao apresentar a tecnologia, no Maracanã, na semana passada, o dono da GoalControl, Dirk Broichhausen, afirmou: "Não vamos falar de questões técnicas. Ela vai funcionar perfeitamente. Ponto final."
+Em uma entrevista neste à agência Associated Press, ele defendeu sua ferramenta com o argumento de que ela não requer mudanças no estádio. "O investimento na tecnologia é suficiente.". Segundo ele, são necessários US$ 260 mil (R$ 581 mil) para instalá-la em cada estádio, mais US$ 3.900 (R$ 8.700) para operá-la em cada jogo.
+A decisão da Fifa, tomada depois de receber críticas por anos a fio, tem sido elogiada por quem está nesta Copa.
+"Me parece justo que se use, pode decidir um título mundial", afirmou o meia espanhol Juan Mata. "Isso beneficia o futebol", concordou seu colega Pedro.
+"A tecnologia é uma coisa boa", afirmou Didier Deschamps, o técnico da França, primeira seleção beneficada pela GoalControl neste Mundial, na partida com Honduras.
+O lance, o segundo gol da vitória francesa por 3 a 0 , no domingo, gerou tantas conversas de bar quanto antes da adoção do olho eletrônico.
+A confusão de deu porque o placar exibiu primeiro a mensagem de "não gol" relacionada ao momento em que o chute de Benzema acertou a trave. O "gol" foi anunciado na sequência, na simulação da sequência do lance, quando o goleiro Valladares empurrou a bola para dentro.
+As reclamações do técnico da Honduras e a falta de entendimento do público fizeram a Fifa decidir a forma como irá mostrar ao público as decisões do auxílio tecnológico.
+A entidade não anunciou quais serão as mudanças. É provável, no entanto, que em jogadas como a de domingo, com dois momentos bem distintos, seja informado ao público apenas a decisão final, o gol, no caso francês.
+Uma das determinações da Fifa foi que a tecnologia fosse utilizada apenas para determinar se a bola passou ou não da linha de gol. Não há, por ora, replays para esclarecer pênaltis duvidosos ou situações de impedimento.
+O presidente da entidade, Joseph Blatter, porém, já admite estender o uso da tecnologia para outros tipos de lances.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "52e39df3d4a3fb58e5dcc1f7262f140f94247f4e986db52bd05734195c800582",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c828d6f2220597d4c3a222fc56a5ccb07bd9a162ca1152298799b9f6678c4ee2",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed4b830ec880bab573478ce7f3d585f90217492b825f657869b60d9c5d73fe06",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea5f745adfd37cf4affd86560c304bd536aff330ac039fc92012727c1a4a8fd0",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab4c90880316b34790760caf7f8f58e3532f2a7198571d0dbd323d02d2f9ab89",
+    "mention_text": "GoalControl",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "262ae6a4d7e34b0c96858505339c91d8d6347f0749edbd89fbe072b92bc07c77",
+    "mention_text": "GoalControl",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c016001f029df747727c4b4f5c4d1d8dd8ec7350a989ae3fc662bcc735b8e8fe",
+    "mention_text": "Priscilla Duncan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "458720e104c781e75f60154b88889f88716e96742c8b24ece525cbe25289a4f4",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6aa28c5206964699b03516c2fc1540e407f8156b006b177f5ec163800d0793d",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "899bf743ffaba82fc2d16f2d88e6a19ac6c03a1ef3c7cd106bafb34f05602ff3",
+    "mention_text": "Harry Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4711ab1d8b4aca440809e1e829a2a23bf153972322c04a21b8a5d39d92ae75c2",
+    "mention_text": "Universidade de Cardiff",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10892b1481869ebb6973e801f786d28cc8205a8e700a17e96928532bd87b09be",
+    "mention_text": "País de Gales",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "574a990d0c6da18e19ca25991c61260c9192a85f407424a6ee0509c3df518d57",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b23018e1f9e2f88293f012841df184a3b0c6df068d87f36c371e7b26c72458f1",
+    "mention_text": "Robert Evans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72970ebfa6fece812450e98a010fe480a8347012208295ff3e805986790a14a6",
+    "mention_text": "Evans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8df44ea024dd2cf8ccba49dae9c06a2003902533841a9a85cf4d2966e19a0318",
+    "mention_text": "Evans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58c369e69163709d998e028650deb3f4ca31948626bb927ab792ba19d94b9d51",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7c325ea51d2c43bd10f0068bb8a51cabdd3b69b5f72ebcf6bcd416a8c3d6a3d4",
+    "mention_text": "Maracanã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a1ae362ba90fc3d95f4d1b702968584ebe1d5856e8f74eafdcf8aa2348071e5",
+    "mention_text": "GoalControl",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44509b929d156eb83fb2e24056bf38488f5152715647044deee96c3a66753fba",
+    "mention_text": "Dirk Broichhausen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fd0b1282df5e6f42a4c9ea4cf5e0d41b578d2a03bd033b67e1f7aad67a3812e",
+    "mention_text": "Associated Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac12c046b65f3579eee8aadbd77911e2ddfc1f7e55625e25e6a42b962da60fd5",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d2bb944f5eaa8c653e96483ad53cd427fb544d44a0d2d34a7f6538bef32c7a6",
+    "mention_text": "Juan Mata",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b3fa2013fa58f3e679d021f6f407dd07b97ecbf543f112a6d1de4063f3d85f3",
+    "mention_text": "Pedro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42a21ca39fac8effb488cb862e5a18335ab9d7058ad3984cb2d7dec4de0b556c",
+    "mention_text": "Didier Deschamps",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16abef435526bf5f1be01789186a8930cbfd55d7b3fd0016ef3918e17290c992",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b0b7221cbb20028cd390048a7905ba4130d99d3f0c563e0fb71bafe73100bf40",
+    "mention_text": "GoalControl",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "270398e8f4141e3b28cb8ec4431a5a972dd7f4d234799d23167c41158b53d037",
+    "mention_text": "Honduras",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9330f519017b9dc6cda19f24e6fa1b97591c7643523f6c683ff55e5b03be2330",
+    "mention_text": "Benzema",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eee2c9e9231dc99804ce39ffa660c0198fc3be7e2b3114ce007c2378af813852",
+    "mention_text": "Valladares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61b33b09ddff9107954a9d29fe644902155d39d51cde6b679db096bcbd48f369",
+    "mention_text": "Honduras",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dabb1e36e537c6bee4a354fa50fe13f0a412a78b0b1f688c7ff2f7ddb8bc3fdc",
+    "mention_text": "Fifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c684a42ed8a6fac4a5c097adfad67d4c3d9a4dc57f13fe0995844d52652990c1",
+    "mention_text": "Joseph Blatter",
+    "categoria": "PESSOA"
+  }
+]

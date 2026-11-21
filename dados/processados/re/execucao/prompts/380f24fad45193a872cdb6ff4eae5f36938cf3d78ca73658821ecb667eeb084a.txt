@@ -1,0 +1,942 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ce193521334e2056ba40d4e0abeccc98190da07e9a8d08a9619511267f8f2a65
+
+TEXTO:
+Clássico moderno
+
+FEIRA DE FRANKFURT
+Suhrkamp comemora Jubileu em Frankfurt
+A editora fundada por Peter Suhrkamp em 1950, depois de uma separação judicial da Fischer, nasceu de uma "rebelião" de escritores, como Thomas Mann e Bertolt Brecht
+Clássico moderno
+JOSÉ GALISI FILHO
+ESPECIAL PARA A FOLHA, DE FRANKFURT
+A Suhrkamp comemora nesta 
+Feira de Livros de Frankfurt, que 
+começa hoje, seu jubileu. A editora fundada por Peter Suhrkamp 
+em 1950, depois de uma separação judicial da Fischer, nasceu de 
+uma "rebelião" de escritores.
+Thomas Mann e o espólio de 
+Kafka ficariam na Fischer, enquanto Hermann Hesse e Bertolt 
+Brecht e mais 33 escritores formariam a espinha dorsal da nova editora. Foi Hermann Hesse também quem angariou recursos financeiros na Suíça para a formação da nova sociedade. É célebre a 
+carta de Brecht a Peter Suhrkamp: 
+"Caro Peter, sob quaisquer circunstâncias, gostaria de permanecer na editora que você dirige. 
+Seu, Bertolt Brecht".
+Depois da morte de Peter Suhrkamp em 1959, Siegfried Unseld 
+assumia a direção da casa, na qual 
+permanece até hoje. Unseld, 75, é 
+uma legenda do mercado editorial alemão e sua figura mais impregnante no pós-guerra.
+O segredo de sua fórmula de sucesso editorial, herdada do fundador, que seria a marca distintiva 
+da Suhrkamp nas décadas seguintes, era não se concentrar na edição do livro, mas no próprio autor. "Unseld é um editor único, 
+cujo amor patológico pela literatura fazem-no uma figura particularmente sensível às necessidades de um escritor", afirma Hans 
+Magnus Enzensberger.
+Essa sensibilidade, aliada ao talento impulsivo de um empreendedor, descobriria e construiria 
+quase toda a constelação literária 
+alemã do pós-guerra, a começar 
+pelo próprio Enzensberger, conselheiro editorial da casa durante 
+anos, bem como Peter Handke, 
+Martin Walser, Uwe Johnson, Peter Weiss, Max Frisch, Thomas 
+Bernhard, além da organização 
+de uma biblioteca básica do clássico moderno como Brecht, Samuel Beckett e Eliot.
+A Suhrkamp foi, de fato, a locomotiva da renovação literária da 
+República Federal, tornando-se 
+um ícone de uma cultura aristocrática de esquerda. Foi a Suhrkamp também que deu forma sistemática e institucional ao ensaísmo da Escola de Frankfurt, nascida à margem da Universidade no 
+Instituto de Pesquisa Social, no 
+pré-guerra, com Adorno, Marcuse e Benjamin. Unseld dispõe de 
+um faro nato para descobrir novos talentos. Nos anos 80, a Suhrkamp investiria no "boom" do 
+continente literário latino-americano.
+Siegfried Unseld falou com exclusividade à Folha sobre sua carreira à frente da editora e sobre 
+seu futuro.
+Folha - O sr. parece ser como editor aquilo de que o futebol alemão 
+mais precisa neste momento: um 
+bom técnico. Como o sr. se entende 
+como editor?
+Siegfried Unseld -
+(Risos) Nós 
+perseguimos a divisa de Beckett: 
+prosseguir sempre, de maneira 
+cada vez mais precisa, intensa e 
+criativa. Assim como meu amigo 
+Peter Handke ("O Medo do Goleiro diante do Pênalti") afirma em 
+relação à literatura": temos de jogar o "jogo decisivo", avaliar com 
+cada vez mais precisão e elevar cada vez mais o nosso patamar.
+A Suhrkamp tem por linha editorial não pensar apenas em termos de um livro, mas de uma 
+obra. Foi a partir desse princípio 
+que elaboramos nossas várias bibliotecas. É na organização dessas 
+séries que se lê com mais precisão 
+a vontade de uma editora.
+A peculiaridade da profissão de 
+editor consiste no fato de que ele 
+disponha de um impulso em formar algo espiritual, mas lhe faltem os órgãos para configurar 
+imediatamente sua vontade.
+Ele deve, portanto, suscitar em 
+outros que disponham desses órgãos, como poetas, artistas e escritores, a capacidade em dar forma 
+espiritual a esse impulso; essa é, 
+de fato, sua produtividade. Faz 
+parte desta profissão tanto o espírito de renúncia quanto a capacidade de ação. Sua atividade consiste em afirmar essa vontade, na 
+medida em que permita a objetivação do talento artístico.
+Folha- A história da Suhrkamp 
+identifica-se à própria teoria crítica 
+frankfurtiana da sociedade. O sr. 
+poderia falar dessa imbricação?
+Unseld -
+Peter Suhrkamp não 
+era um homem ligado à teoria. Ele 
+nunca negou suas origens camponesas e disso derivava também 
+um pouco daquela sua desconfiança. O próprio Adorno mencionou uma vez como seu verdadeiro pano de fundo o elemento 
+telúrico como nostalgia. Mas Peter Suhrkamp não era um leitor 
+de Adorno, cujos conselhos, não 
+obstante, prezava bastante, não 
+menos que sua amizade com 
+Gerschom Scholem. Ambos tiveram sobre ele uma enorme influência insistindo no valor da 
+obra de Walter Benjamin, depois 
+de sua pré-história aventurosa.
+E foi Peter Suhrkamp quem realizou essa idéia movido por uma 
+enorme obstinação e tenacidade, 
+mesmo quando a realização dessa 
+idéia ultrapassava as forças materiais da editora, mesmo quando 
+esse empreendimento colocava 
+até mesmo em xeque a própria 
+viabilidade da editora, assim como depois a retradução integral 
+de Marcel Proust. Mas Walter 
+Benjamim era simplesmente o 
+maior. "Infância Berlinense", que 
+é uma das mais belas autobiografias do século 20 e igualmente um 
+texto chave do moderno, foi o primeiro a ser publicado.
+No outono de 1955, são lançados então os dois volumes dos 
+"Escritos", organizados por 
+Adorno e Gretel com a colaboração de Friedrich Podsy. Uma verdadeira sensação. Vinte anos depois, Benjamim já figurava entre 
+os maiores teóricos do moderno. 
+Hannah Arendt afirmou uma vez: 
+"A amizade entre Benjamim e 
+Brecht é única, porque nela se encontram o mais importante lírico 
+alemão deste século com seu mais 
+importante crítico".
+Foi o crítico George Steiner, em 
+1973, no suplemento literário do 
+"The New York Times", quem cunhou a expressão "cultura Suhrkamp" para definir um fenômeno 
+cultural. A expressão referia-se 
+originalmente a uma camada intelectual e literária dominante na 
+Alemanha. Nas palavras de Steiner, a Suhrkamp, em razão de sua 
+visão cultural e sensibilidade editorial, acabou criando um padrão 
+para uma cultura filosófica moderna. Nesse sentido, na medida 
+em que a Suhrkamp trazia novas 
+vozes filosóficas a um público cada vez maior, preenchendo as 
+prateleiras de cada estante com os 
+intelectuais judeus que o nazismo 
+quis banir, ela prestava um inestimável serviço à cultura filosófica 
+contemporânea e à sua internacionalização. Habermas e eu nos 
+conhecemos no início dos 60 na 
+Frankfurt da Escola de Frankfurt 
+de então. Criamos juntos a coleção Teoria. Ele se tornou meu 
+conselheiro e amigo e, dessa amizade, um conselheiro mais íntimo. Não descobrimos apenas 
+clássicos, mas novos autores.
+Folha - Um das fórmulas deste sucesso foi o trabalho de equipe junto a seus conselheiros. Quais foram 
+os mais marcantes para o sr.?
+Unseld -
+Desde o começo, estive 
+sempre rodeado de conselheiros 
+com grandes qualidades editoriais. Martin Walser e Hans Magnus Enzensberger, que se tornaram depois colaboradores extremamente dinâmicos. Walser, como chefe da seção de teatro, e Enzensberger, como "lektor" (conselheiro). Um pouco depois, meu 
+amigo Uwe Johnson também participaria desse círculo como meu 
+conselheiro íntimo. Juntos com 
+esses três autores, a Suhrkamp 
+cresceu. Todos os finais de tarde, 
+discutíamos os acontecimentos 
+do dia na Alemanha e no mundo.
+Folha - A Suhrkamp descobriria 
+mais tarde o continente latino-americano e protagonizaria o 
+"boom" desses escritores no mercado europeu nos 80.
+Unseld -
+A literatura latino-americana tem um lugar muito especial em nosso coração. O nosso 
+catálogo reúne 250 títulos. Além 
+da incrível força dinâmica e da beleza dessa literatura, há dois motivos especiais para essa afinidade. 
+De um lado, meu amigo Michi 
+Strausfeld, que é para nós o ouvido e as antenas do continente e no 
+domínio hispânico, e, por outro, 
+tive uma experiência chave que 
+me aproximou dela. No começo 
+de 1970, Michi Strausfeld apresentou-me ao autor cubano Alejo 
+Carpentier. Nós o visitamos na 
+embaixada cubana em Paris, onde ele era conselheiro cultural. 
+Aquele homem enorme, um homem de Estado, começou logo 
+com um discurso: "Você se chama Siegfried. Por que vocês alemães não prezam mais suas origens literárias como a saga de 
+Siegfried nos "Nibelungos'". Passada a primeira irritação, apontei 
+para o abuso que os nazistas fizeram dessa cultura de heróis e fiquei ainda mais irritado quando 
+ele me afirmou: "O que esse patife 
+do Hitler tinha a ver com a grandeza dos "Nibelungos'". Então o 
+autor cubano citou em alemão os 
+primeiros versos da epopéia em 
+alemão medieval. Encontrei-me 
+muitas vezes com autores e intelectuais de grande sensibilidade 
+política. Penso em Dámaso Alonso, Juan Carlos Onetti, para não 
+silenciar sobre o incomparável 
+Octavio Paz, Julio Cortázar e Mario Vargas Llosa.
+Folha - Como será a "cultura 
+Suhrkamp" na Internet?
+Unseld -
+Mesmo que o computador ainda venha a colonizar nossa 
+imaginação vital com o fascínio 
+de sua inteligência mecânica nesses abismos do ciberespaço, nós 
+continuaremos, enquanto espécie, a nos definir somente pelo 
+conceito de liberdade e transcendência. Não permitiremos que a 
+genética ou mesmo modelos de 
+horror de uma inteligência artificial dissolvam a definição de homem e humanismo.
+Folha - Qual será o futuro da 
+Suhrkamp diante de conglomerados como a Bertelsmann?
+Unseld -
+Preservaremos nossa linha editorial, devemos e permaneceremos sempre independentes e não nos dissolveremos em 
+conglomerados. Vou destinar minha cota na sociedade, bem como 
+o montante que ainda devo receber, a uma fundação com meu 
+nome, de cujo conselho participarão autores e livreiros que zelem 
+pela "cultura Suhrkamp" e permaneçam fiel a seus princípios.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "71396b974b189b785a2787aa24d4885894509fb6970864ccdb828f3ab823da0f",
+    "mention_text": "FEIRA DE FRANKFURT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09109f079006c7f1a4b55bb6e0ecff09c3e9caded607fcb4ed6acd1d0953396b",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b73baf2ac556d2954200b842722e25aa23ccfe3a916b70528bd3f0dd689776f6",
+    "mention_text": "Frankfurt",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b194a2f47e7b2970d2e705bfeb8a3b979b157287258cd13bcdf008fb2212db79",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "480253a359a5123fa97cd3793505d68056c2c89503ff5a67d8917c142bedbe90",
+    "mention_text": "Fischer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8178d1ed16be43bfd9edac057b5c95574ced42c7966ac041f2469f9d904478b",
+    "mention_text": "Thomas Mann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8acc539d234d9441c5ed378851835cc7a4fc3f57daaa21a23562ca4d755eade",
+    "mention_text": "Bertolt Brecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a90ade93c30012ea209fdec32ce50542754f00f6b36ea347ecfeb466b8c477dc",
+    "mention_text": "JOSÉ GALISI FILHO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a9e0cf0362b4921b726779754cfc929af6ae999fd7d5eb0da8917955fdc4a90",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0cb90f5842cb7a9ac789c93f74487d2b23e5bf07cfdf6d21c906b85a1667a62e",
+    "mention_text": "FRANKFURT",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c22bab3d6d6596886aa2aaa46a20b6f5e4dffc7351e2f5a23199b1e5506d47f",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2b742aa7998a8fbaacf38344669b15167d0c691e9a07b309f2cc90c215accf2",
+    "mention_text": "Feira de Livros de Frankfurt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99b2cfa22a0633bfeb9917b5d81e64ebea653b1514ccd40f5779c35e4119d945",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "550eae8b86a426be0493b450a63ec82d7d3f7a627ddf6be292ff1be17f156cea",
+    "mention_text": "Fischer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e13f5e60d7ae832e8ddb902f159d098d7e13f577d995e7972dc3d63b1abbd2e",
+    "mention_text": "Thomas Mann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b204469385cf01df374de34a74f1c9227f4a63a8136f95cb811c65b717a73478",
+    "mention_text": "Kafka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34f2a819708cb25c3150be087b873f534e48d6bcb2bbc4987244919c4d85f04d",
+    "mention_text": "Fischer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db1f7cc78c2c975b2ed82f189b3eefc0a24b3af7d42a1a64c005614d001d9c7b",
+    "mention_text": "Hermann Hesse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c399ae0eba489e4c3547259d032d43a6e672f2d20da49b98617f401190a8c34f",
+    "mention_text": "Brecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "720ce54891887f1b0ec01bc6378760ff69084b25b4b21add4b7aacf2a0788daa",
+    "mention_text": "Hermann Hesse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84ae51f0397590c1a7c43e2b9e15f83b4b7803c0b41a8ff586fea106ff04dbf7",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "356309b320fa43b4e944945312de87223e902cea7792e43edc3f457c98beeac0",
+    "mention_text": "Brecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5aff07dc107ffddca87c5946dd08d0e56e29a90a3323f7c5d55021c895000a47",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e8d2125eba1b4fc578bdae7e8d0d05aa133a39746ae92d0c2c93d6455d74561",
+    "mention_text": "Peter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77bb382d5a7d76594185ddb73ca77b1ab0c167308400b643c60040eab3204d0b",
+    "mention_text": "Bertolt Brecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76e46fd801503fb283c4fd0638df8e29c5ba93764bd9438b6aa3fbbe87a2844d",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79a77d41cb30eb8abd53c93613fe3427b1137534c7769310bbfea4c9f7bc2953",
+    "mention_text": "Siegfried Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99382dc9a39bd049b4526a3b465502c4d900284dfc03c37d9f34686ac445a4d7",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6c711bc52ecc2e32696fe2e6782d5473c1cffe260b1b478ed21dc03334fe33a",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e9c9310e03c314b5ad1f18a6bbf1a6500ea87aa69b1288eedd40092703b4634",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10261d09aaa8cf4df32719afe53c7665e5746506bc5e49bf061d92141d86530e",
+    "mention_text": "Enzensberger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4166a30d2094870cfeaaef2f41618a175aa1afb1e42bd43716eeea2c421f6eeb",
+    "mention_text": "Enzensberger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2211367dc3809e959cd6df1e6c701c78aa145b076706918cd095c88a146f1c50",
+    "mention_text": "Peter Handke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7435b1ead5ce93bd484edc599af95a0d380ba14ffba58c26c43eec163a859458",
+    "mention_text": "Martin Walser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bd45c69203ec795afd93d36c2b6efde7fa514e67e5010dc8bcc451074ce14e5",
+    "mention_text": "Uwe Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "389be927eb69900dd8f614efaa16da0a0f5a4d9523b87485286c88bbc0064f7f",
+    "mention_text": "Peter Weiss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "104df952dd9a8753377c6a061028ea6b3aed7a1fcccbcd941f5e6b1ae6619e8b",
+    "mention_text": "Max Frisch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c9b55c6015ad3b06f0c6f7e1ea93a6e63bc220fe879390e209ae050aba458f8",
+    "mention_text": "Brecht",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1f3b0e3c10a0a255b735af01d6e454b4c48f53f9cb9804cd78e76f5a73e415a",
+    "mention_text": "Samuel Beckett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23ef912e3ea25074aff0ec5946b89dcf4594be1bac1c46a901d323162d7d0ba9",
+    "mention_text": "Eliot",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d30519af7718e43cc8311d71ebbd1299619ccd89e563a4fe21828cdac7564d8",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc11aec4f2bf54aec451ff76d059c34dd2a4885b582d0860a9f6709e5523d2ed",
+    "mention_text": "República Federal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa26fc5f0b827c91ff77e7774e12d2c097b5a37a8acdfde27b5a2a66528f91b2",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ec333660d2ef4089be5364d479c9e3b0afd1c46a74f785bf8dd3799500679745",
+    "mention_text": "Escola de Frankfurt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cee1de3a4a5c52f2431aec358e96c7a0eed7718799f6474242888b84feb3957",
+    "mention_text": "Universidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b567c3ebd14b5517a6cf30a3aa2a142173d67bbc028cd469145cf1e27d9516e",
+    "mention_text": "Instituto de Pesquisa Social",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "886dfcb9da3b3bf352ed9ec29966723b8f19102c53cf5bd57030d2809df1c5c2",
+    "mention_text": "Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4ff6f6e717e4b41d271c3bb55be3063304a33abe2daac5b34e535ea95fb1499",
+    "mention_text": "Marcuse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f670d56cd4ad5ea3dd9a49d4b22d51d1c0f231805e005591264b5839ab51e138",
+    "mention_text": "Benjamin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ced03058a351be55b77feaa0864b61ff7c683f288d7ca2e111731bb93cec7e0c",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fcd8ed9bdaa706832a23bf68aa1ecfe023c4689e43b2bb93b3fbb0973c005596",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "941cf77e141ffe66801b7a3ee907e6fb6e1d627470ecc9df6cd06126fdc2a4cc",
+    "mention_text": "latino-americano",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63c5e91064fff7a7a3486f4af2dd9decfc17832dcb0d59c07c1f14be35e68cf2",
+    "mention_text": "Siegfried Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f17ca53144be2356dd708e53b0cb49ad990bdf1d2f1a9f030643713d7cb59762",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06323da21d17a160994b1e9ceb56d7d7e543ff6586c8138d279da9ee2632af37",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c74b1eb0c6952101ca3442294c0f42c3bfadc3b9cc2255085f36e4dc6b44b7b7",
+    "mention_text": "Siegfried Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5c5799ba7ec101711a2605352fba711baf93edbb3010b8e89cfc0d49c2b0b80",
+    "mention_text": "Beckett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c7a145f94173d2d57c4354eaf1159bee9c848151de39c4c0d81943557a97136",
+    "mention_text": "Peter Handke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4408f1e8eee59e6cbc385b07e66e7f3e6ab5e8289e9f4d7cb81d06526d9c0dcf",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24774b4c3dea72b59768b3b1c44cf76f8f3afaeedc985cea6fe52b020994ab82",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "867f9392fad4430d3630326ff10c27d0e531a827d59b6b50de045b0978475234",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45094acc943fb55c7f2e513f37f90ae30473baa1285ea73d91c824b7129512a4",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6897f6a5e88710306802309443eadaa0c8c47f2e816839cd29306704d5154024",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2582329888b5eb8a2dc571cad1c976fce23c8f6f89192a74ac5791d2e0d5c345",
+    "mention_text": "Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b69541ed88edd4168207480a77a80b4983fdc1407250f33bbce22beee085f25e",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54e650e244ef95145fd421bea0ff7c7ff6598121313157cd38342ade249b9d52",
+    "mention_text": "Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6f752ca92e73d894d147948b00c2d785fe129ff802fadf4e88a312cdfca6802",
+    "mention_text": "Gerschom Scholem",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed634ca00e23a761c33fb32f646bbf766c5fea29156faf99479a7d5126a069b5",
+    "mention_text": "Walter Benjamin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f91749e5174e894bfee0f8c75ec66a79e500f5137f14c30b72fb564012f8460e",
+    "mention_text": "Peter Suhrkamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "599a95f16020e92bacaa5c260a8ce19fcbc0dde17fd12723e2f0c96b17e3fb3d",
+    "mention_text": "Marcel Proust",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0afc89f9a811cfcdf79781a063389348eae58546cdc980d92918bd3b1900c5ae",
+    "mention_text": "Benjamim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25e13ac03c4a8a22548fe09f1629a8a1557468f48483d1f865cca5036cf9d78c",
+    "mention_text": "Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51814374511ee6e369d89380bfa90206485acc9350fb35abe0a80177a46aa455",
+    "mention_text": "Gretel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ceb75ab07ef7a0efb0fffab39af0ec436733ba5434be2aa5abd6c81872ad13fb",
+    "mention_text": "Friedrich Podsy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55b0721b4b21b70a558a4763846cce7a80f2d227a2af7d712ab35f5793c532ab",
+    "mention_text": "Benjamim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06aa7aab31e22d87c087f3c0b98c45efd3665913d5d5cace62468ef643752c62",
+    "mention_text": "Hannah Arendt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31131659a21e3c69704c1efb78769d64a3202b4744a2990ea878b079ae73a7b7",
+    "mention_text": "George Steiner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3c7e30639e437b80d8f7fce414afb5dd90f24320e4835b183be273f4a757cba",
+    "mention_text": "\"The New York Times\"",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be25b5f14095127625f0823b020acc5a7a41d5e0bfe87ac9a70db0d13df35939",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "388da7a4cd1401772046cfcf0c87cf9eb1f3730005047f231640083b4d9d2fc2",
+    "mention_text": "Steiner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e47c635270f0dbc6dbef078d9fcba3dd04a7b8a2ff71622adaa7dd24be3e5fa",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b3d03857f89adb31fc0b2f2a9337de29e1e818b1fcff5fd2fc0559ac3c4fd0d",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8703d8016711cb6452d99515c8f961cb5da6a3bd6c951f2f63362217c4b4066c",
+    "mention_text": "Habermas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25cf3f4389898e819cf0572705754327cfc25eeaccf61f34ec5ecd14144130f8",
+    "mention_text": "Frankfurt",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3561bfe02c24de565be03edf399f19635a0f3dccae61555e07a33c18ba44d291",
+    "mention_text": "Escola de Frankfurt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbcfd72453e1aaf8b603159a61f07ea074365baf94f98d1468e7d389134c74c9",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e2db9501d942fcb1df8b89549cf79e499944c2f16b7f5121b048685889a2d0b",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd3d99640fc2ec244fb8e68c56bba83254d1b8eacff27b8092cbf91c27621aac",
+    "mention_text": "Martin Walser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0648be44f0d93ba5343b6f45b40f33118411344b371b384228dd38061aa2e495",
+    "mention_text": "Hans Magnus Enzensberger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "652771c6b61c0a77cebcd0d1f94c16a52201091cb0de288959448724b1e923a6",
+    "mention_text": "Walser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c91372e7fe6f87e435aba4cbd21a2f299eac392409ed6364ba0b20d135fce083",
+    "mention_text": "Uwe Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c52b280e02228b8568635841e806cefaf9865d86f549196bacf3c56c0ff19f1",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50d3c32f432aa8396bd4a1b8e4127aab8403ba599973cad792aadda98b67845b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6088b310331bd83565bd75a85c6141ba00191e7c90b1a215b40df7dfa73cc08",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a40d7428de1a71597646bbc0e2b98b907c9babd5cd984afbf134ccec49e096d",
+    "mention_text": "latino-americano",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65c6e5bd987bc0c8686b5c3630a142039dbafcdf07df72d54479d8d8b054c2cd",
+    "mention_text": "europeu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5bf10f4bf93075a998fc12dc555fee11c1e4179fe2f070efc03ace8a12435265",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c826e003b539c2f94fac7a69cc966afe6059b74d3f85498e2f15cfd9d272e63",
+    "mention_text": "latino-americana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6b50df11d3277bb06990ba4882d1616db97c0c07d1246ca120aab2490faf08da",
+    "mention_text": "hispânico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b0967eecf02f6b3120ed09574273e84fcb98adfe47e9f2e5c1fec7e5432b0003",
+    "mention_text": "Michi Strausfeld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39c37639156a74827e7e0d639a4565a437bf9c42a3af784852350de122f87f03",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "455dad6b9e294295339bd6675eb58c9002bef1f25bfb231ee44443f9769a5fa4",
+    "mention_text": "Siegfried",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3a97193a7315db48d209cfaa59bd16242e975219d353051be8ed582c5f835f6",
+    "mention_text": "Siegfried",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c8e177e5e87a231652946f39d9b53684f4c73c483477431dcb719ea7d96d2a2b",
+    "mention_text": "Hitler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30a757f2ba55515dc2adcd73e73f24a9d50cf04035668cc0096042d0073b5c82",
+    "mention_text": "Dámaso Alonso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d947ae57477e3cfdd8faee1886379e0513f80c35b076fa1e097b1c8b5a4ec303",
+    "mention_text": "Juan Carlos Onetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e1025d78ab1759b846027071fa535d79bdb57e9766829cec934d4c5a5a356ce",
+    "mention_text": "Octavio Paz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f216b8c7a640d332c5494c5615f9c21e6c9caabf86500ed3e99c5d7a81a2348",
+    "mention_text": "Julio Cortázar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a47db90a40bc4e8b28d9e687aaf3eda910d8ac8902d40ea4d76138b0c78ffc3a",
+    "mention_text": "Mario Vargas Llosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ee9d81438204e872ed0d3d1d1cba4f7bf3b9c5662ba11b30ecddba7604b366a",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de641275765c49f38c85b95be68a4cb51718791bf07aacf75a412ea9739a7bf9",
+    "mention_text": "Suhrkamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5c8f2cc67273b87f68aee521bd023a60d868d8eae103c685bc91ca5600e7a2e",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79fdb174b114e025a827b49c5df5ae8cfa19cd45723a09ea3ce48539d7918132",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7605cdaf9ba04ab2b498bdfb4ae9722addd2c3772fb2f99b2e7b432e87ce4eee",
+    "mention_text": "Bertelsmann",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0292f257bf8118763c7b36ee62a7def614241573d0eb3a378c1235ae2b319b00",
+    "mention_text": "Unseld",
+    "categoria": "PESSOA"
+  }
+]

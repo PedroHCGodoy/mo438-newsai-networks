@@ -1,0 +1,360 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b25fbdae358f19059816a9dbfce869ded10a2e3f9f5225f8541c63c9ccd0be74
+
+TEXTO:
+Festival SXSW, no Texas, mostra tendências dos Estados Unidos
+
+Um dos grandes celeiros de tendências dos EUA, o festival SXSW (South By Southwest), que ocorre em Austin, no Texas, mostrou neste ano que as grandes inovações tecnológicas e culturais já estão entre nós.
+Realidade virtual? Agora toda empresa de tecnologia que se preze tem sua própria versão de óculos de realidade virtual. Carros voadores? Devem ser lançados em menos de dois anos. Robôs que constroem, limpam e resgatam pessoas de catástrofes? Órgãos artificiais para transplante que são impressos em poucos minutos? Tudo isso já existe e foi mostrado no evento.
+É tudo tão interessante que é preciso ser criativo para ser visto no SXSW. O filme "Ex Machina", que discute a relação amorosa entre humanos e robôs, criou um perfil no aplicativo de paquera Tinder que era operado por uma máquina. Muita gente caiu.
+A série "Mr. Robot", com estreia prevista para este ano na TV americana, obrigou as pessoas a "conversarem" com um hacker em código para acessar o wi-fi do aeroporto de Austin de graça.
+Realidade virtual Foi o grande tema do SXSW. A Samsung demonstrou seus óculos de realidade virtual, com os quais era possível fazer uma simulação com o filme "Insurgente" ou assistir a um vídeo bastante realista de snowboarding
+Meerkat Há anos um aplicativo não fazia tanto sucesso no SXSW –desde que o Twitter foi lançado no evento, em 2007, e o Foursquare, em 2009. O Meerkat, para streaming de vídeo, não tem muita novidade, mas virou o assunto
+Inteligência artificial O SXSW deixou a sensação de que as pessoas estão mais abertas a robôs circulando entre nós, como mostrou o filme "Ex Machina", de Alex Garland. Havia um zoológico de robôs, no qual era possível operar alguns modelos
+Indústria automotiva Os grandes temas do evento para o setor automotivo foram os carros autônomos (sem necessidade de piloto) e os carros voadores –os últimos, produzidos pela empresa AeroMobil, devem ser lançados em 2017
+Ecologia Alternativas para os meios de transporte, de combustíveis diferentes a serviços de caronas compartilhadas, em que motoristas e passageiros são colocados em contato de acordo com sua origem e destino, também foram fortes
+Cyber-bullying O tema foi bastante discutido e teve até representantes brasileiras –Amanda Luz (da campanha Chega de Fiu Fiu) e Juliana de Faria (do centro de estudos Think Olga), que falaram sobre assédio sexual sofrido por mulheres na internet
+Wearables As tecnologias "vestíveis" não só estiveram no SXSW como o evento também encorajou os frequentadores a pensarem nelas como acessórios de moda, e não apenas funcionais. Para isso, convocou a modelo Karlie Kloss, da Victoria's Secret, para falar sobre o assunto
+Marcas sustentáveis O que antigamente era um nicho agora parece virar mainstream. A prova disso é a atriz Jessica Alba, que esteve no evento para falar sobre sua marca, a Honest Company, que faz desde produtos de beleza a fraldas ecológicas. O Brasil foi representado pela marca de calçados de tecidos reciclados Insecta
+Brasil Representado no evento por 58 empresas (contra 28 no ano passado), o país provou que não sabe fazer só Carnaval e caipirinha. Destacaram-se empresas como a MovPak, que produz um inventivo skate que vira mochila
+Impressão 3D A técnica mostrou que vai invadir todos os setores da indústria, como cinema, moda, artes visuais, saúde, setor automotivo e até alimentício –uma marca de bolachas permitiu escolher o sabor que você quisesse e "imprimiu" a bolacha na hora
+Aplicativos No ano passado, as empresas presentes ofereciam serviços (principalmente caronas) e prêmios em troca de tuítes. Neste ano, porém, o download de apps foi a moeda de troca da vez. Instruções para entrar numa festa secreta, por exemplo, foram enviadas por notificação em aplicativos. O download também virava ingresso e prêmios
+Drones Em Austin, parece que todo mundo tem um drone –veículo aéreo não tripulado. Eles são os novos aviõezinhos ou helicópteros de controle remoto
+O rock voltou Wolf Alice, Public Access T.V., Girl Band, July Talk e Courtney Barnett mostraram que a popularidade do gênero está próxima de uma ressurreição com vocais femininos. Ellie Rowsell, do Wolf Alice, é a líder da onda
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "097ac9c6a5c43a9cad9e8f0a21738f500f6a77cf98e541550f8feee341486845",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9337245809053d12da6b243c22056e9ab504c4e0067e63fb071a6e667f6f97ea",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b068cd4c4dde83f03cde975a87b3c5852c353e4f329cea77606a024eea31104d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9436b9925defa810341b821694e2cf922806a828cb937eacfff8bf02beb46d7c",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f54b75f9f9c5926fe603dce4ae087c6053787ebcae50418825df16256385e9bf",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8701ade7f1ee99858036c8b170e8ebb871276730b02ed89ba999b1c0c259fb31",
+    "mention_text": "Tinder",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ef2140e3d23a070daaa06556ebb27f1d54cf9ad903ca65f3609f0bbfecf4141",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "818c63b856eec01cfc010ea877cd1dfe26587ac7c8a0dbfa7c067018855e24ca",
+    "mention_text": "Samsung",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cd306f104668d771cc78609a36050b1f3f4094753ef90eaf2c52d69c88df381",
+    "mention_text": "Meerkat",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "518214bc4558e0e7315a5bfe02757417cb5e407bdc264ef4feee6bbb0339f23b",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e078a816b617dff8e3d6646e56bcf0bd3ed640ee156f745db1ce545652fa6298",
+    "mention_text": "Foursquare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74028374f6b0410cadf56274d2ea6522557dae7b2b026845006d7b02f3f0faa9",
+    "mention_text": "Alex Garland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d26385c15699a485150a6da0ea988b5241f3306d307bd4a88753e374e7af180",
+    "mention_text": "AeroMobil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cdfae5b53f2c4aee3b0e2335da4092cfc62fd4fa03e62ba51bb7c302d726e24",
+    "mention_text": "Amanda Luz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02a0098aa8f62bc210ba913ab9beb9cd518ff155dadb156b2215ec00b25c7200",
+    "mention_text": "Juliana de Faria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1744217341a8227158c1f89d0b8eb271e1cdb16925a611788ade5b874dea8d7",
+    "mention_text": "Think Olga",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e5bad7b54db8d5db1650173947070c11ca8f8b66bbf10d81b616ca3cb5785cb",
+    "mention_text": "Karlie Kloss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe2ba42a7a5bfef95b58103caf1c84df6b8471b9bf74c0aa8188c1018f241173",
+    "mention_text": "Victoria's Secret",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3115b9b6af4a7e163dcc17ae6f0857b8782f91956a6f6f587fb8ac81c909a0ef",
+    "mention_text": "Jessica Alba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b710975834df69950279e2b04f91308b728a0b42b596e024dfda80299a7ed2e",
+    "mention_text": "Honest Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d570614b67bfdb36ebefaa8de56c0c24d782259486e750edefa555cedbbd01da",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "357c2dd2264dd763c5bb3327a6d83f94fc0d7e7a735bea4115ce5a6fa9d6c02b",
+    "mention_text": "Insecta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dec6d53fedcb619eb5f5f95112985b54e70705a477c8b8b148dc31b098c2df25",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "742b81baac171e22f3ddcc0bb63f3347197bd414ceebed3ca24045e7a8841d83",
+    "mention_text": "MovPak",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a58b580c9febc44fea6f8ca84b0c2f9e5d02cbfa9cb04f06bb3756148797e84",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e7feb42367296af3661433a4ac65a4cfc383f9cd0acd35a54c5a3e144dda899",
+    "mention_text": "Wolf Alice",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b64ee8060893fda2170ae8a441763996de2788be4390eee590dc50ea3f66a5c5",
+    "mention_text": "Public Access T.V.",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "618deaefb7520f695b381a63ca5d6ec55d5abc65bec2af52bb19abf7283d4949",
+    "mention_text": "Girl Band",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bf22ee8e9c1cdf8aa968fc69d1b9fc7b2d5529aac1193419ca07f25a0d4aeba",
+    "mention_text": "July Talk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9769cd3bda92ea6c61c26f126730bec6e69cfce7eb3474e2c1dd9ced347025f",
+    "mention_text": "Courtney Barnett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1822b59ee25c3749048f5b11146f5b944430301120e222c42e05858dd75f8de5",
+    "mention_text": "Ellie Rowsell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21b3bf7b82febbce96c9b2ce04b2c7e64e0ca5a5ffb3ca02c241281e3c3164d1",
+    "mention_text": "Wolf Alice",
+    "categoria": "ORGANIZACAO"
+  }
+]

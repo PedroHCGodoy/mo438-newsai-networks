@@ -1,0 +1,458 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 291d06cc1a19af9b0755ef7dc4c8753d2fec9ebb733ee45c33e44f132055a000
+
+TEXTO:
+Parte de projeto sobre leniência é alvo de críticas de advogados
+
+O projeto de lei que define critérios para penalidades impostas à prática de cartel tem sido alvo de questionamentos de advogados.
+Uma das principais se refere à inversão do ônus da prova em ações ajuizadas por quem foi prejudicado.
+Em contrapartida, é elogiado por resolver questões processuais que não estavam claras, como quando se iniciam os prazos de prescrição.
+A versão mais recente do texto está na Comissão de Assuntos Econômicos do Senado —a previsão da equipe do relator Armando Monteiro (PTB-PE) é que seja votada na próxima terça (11).
+O relatório estabelece que não se presume que a parte lesada tenha repassado o sobrepreço do cartel. Caberia aos investigados provar o reajuste para atenuar a pena.
+“É a chamada prova diabólica, porque não é a demandada que tem essa informação. A preocupação é que isso prejudique a defesa”, diz Bruno Drago, sócio do escritório Demarest.
+“A parte investigada teria de provar que o dano não é do tamanho estimado”, afirma Cristianne Saccab Zarzur, sócia do Pinheiro Neto.
+“É algo super complicado porque há uma discussão de como dimensionar o dano, e a redação do projeto é um pouco simplista em relação a isso”, diz ela.
+“É possível questionar se essa imposição em uma lei ordinária não limita princípios constitucionais, como da ampla defesa”, segundo Guilherme Dantas, do escritório Siqueira Castro.
+Aporte no casco
+O grupo cearense Edson Queiroz vai investir ao menos R$ 100 milhões em equipamentos e vasilhames para sua distribuidora Nacional Gás.
+“Queremos ampliar nossa participação no segmento industrial, que ainda é pequena, e fazemos aportes graduais nesse sentido, especialmente no Sul e no Sudeste, que concentram clientes”, diz o diretor-executivo, Igor Queiroz.
+A companhia também segue como uma das interessadas na privatização da Liquigás, segundo ele.
+Além do ramo de gás, o conglomerado atua no de bebidas —é dono da Minalba— e comprou a divisão de águas da Nestlé em março. Agora, planeja integrar as operações.
+“A Minalba Brasil será o grande guarda-chuva do portfólio das oito marcas. Agora nossa preocupação é identificar pontos de [possível] sinergia.”
+R$ 6,9 bilhões foi o faturamento do grupo no ano passado
+Venda de imóveis para estrangeiros decola só em dois anos, diz entidade
+A concessão de visto ao estrangeiro que comprar imóvel no Brasil tem potencial para adicionar de 8 mil a 10 mil transações ao mercado, diz João Teodoro da Silva, presidente do Cofeci-Creci (conselho federal de corretores).
+“Durante os dois primeiros anos não vai haver muitas vendas, pois a regra demora para ser conhecida. Depois disso, será um número próximo de 10 mil unidades, o que é pouco para o Brasil.”
+Acontecem cerca de 700 mil negociações por ano no país, segundo Silva.
+Para dar certo, será preciso um trabalho de promoção pesado por parte das agências de promoção ligadas ao governo, afirma o dirigente.
+Estrangeiros que comprarem imóveis de R$ 1 milhão podem pedir visto de permanência. Se o bem estiver no Nordeste ou no Norte, o valor é menor, de R$ 700 mil.
+A iniciativa é positiva e poderá atrair investidores que não teriam capital para aportar em imóveis em Portugal ou Estados Unidos, diz Flávio Amary, presidente do Secovi-SP (sindicato da habitação).
+Generalizada, enfim
+Grandes redes de hotéis deverão ter em 2019 o primeiro ano de recuperação em todos os principais mercados do país desde a recessão, segundo o Fohb (fórum do setor).
+A projeção é de uma alta de 4,3% na taxa de ocupação e de 5,7% no valor médio das diárias, de acordo com consulta da entidade com associadas.
+Os indicadores deverão encerrar 2018 com uma alta de 6,4% e 1,7%, respectivamente.
+Algumas cidades, como Rio de Janeiro e Campinas (SP), porém, seguem com queda nos preços em 2018 devido ao excesso de oferta, algo que deverá ser atenuado no ano que vem, segundo Orlando de Souza, à frente do Fohb.
+“Mesmo com a melhora da demanda, é impossível reajustar totalmente os valores dos contratos assinados de com clientes corporativos para compensar os últimos anos. A correção maior é feita nas reservas individuais.”
+Mais dinheiro sueco
+A maioria (73%) das multinacionais suecas presentes no Brasil planeja aumentar seus investimentos no país nos próximos três anos, segundo a Câmara de Comércio Sueco-Brasileira.
+“O otimismo cresceu após a definição do quadro eleitoral e dos rumos da política econômica”, diz Jonas Lindström, diretor-executivo da entidade.
+Cerca de 85% das 72 marcas dizem acreditar que o fluxo de investimento estrangeiro deverá aumentar com o governo Bolsonaro. “O índice é alto, foi uma das surpresas do levantamento.”
+O sistema tributário local é o fator mais desafiador do país para as empresas para 67% dos consultados.
+Atlântico... A Azul passará a operar uma rota de Campinas (SP) a Porto, em Portugal. A aérea já tem Lisboa como destino, e a demanda justifica a adição de mais uma cidade.
+...norte A empresa tem hoje sete aeronaves com capacidade para voos internacionais. Cinco outros Airbus 330 foram alugados e chegarão nos próximos anos.
+Eu... Seis em cada dez advogados do país acreditam que o uso de tecnologia, como softwares de inteligência artificial para análise jurídica, já tem impacto no segmento.
+...robô Apesar disso, a maioria (51%) dos escritórios de advocacia usa programas no auxílio de suas atividades jurídicas, segundo levantamento da FGV.
+Hora do café
+com Felipe Gutierrez (interino), Igor Utsumi e Ivan Martínez-Vargas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "09b121f95a97d13f906778817c403866f8c54971e9ed62dc9f6f57948b0e8ff4",
+    "mention_text": "Comissão de Assuntos Econômicos do Senado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd2b762e71cee400ced8f98a0f2867a1720c5a0fdede7319fe5a39a5c07db4e8",
+    "mention_text": "Armando Monteiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "346a57da472cbcb7e53614f741d51ce5553d09744cc453660c8957404a0b716c",
+    "mention_text": "PTB-PE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fa61e1d7f2aa445f25ae1be243fe8d0aec23453698f6fe4d8d18a041f1390ba",
+    "mention_text": "Bruno Drago",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b0a42aa46ce34ea8a0d876a330eeca5186f7bb708642990dedcb892647b77a1",
+    "mention_text": "Demarest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4770434596f2b371e3b428fed4b0ba8092ccca3db2302064a540ba6eb64a898",
+    "mention_text": "Cristianne Saccab Zarzur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bf978a8e8abd083f3af9d652ebdf89edcbdce628a90b9807fe62aa635a6c34b",
+    "mention_text": "Pinheiro Neto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f10a78d4061ea1b5a2453e462a8144f1020adc28fe83e59bc2c49f30a8935df",
+    "mention_text": "Guilherme Dantas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdcbe8efd2685d5b998317baf71770cd2fded8ddafcc0cf7c6bd163ac334ebd4",
+    "mention_text": "Siqueira Castro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e786ad7762cd8bbf4ae9321b845facc71e15ad0edc82e3b8b077a763f26e20ca",
+    "mention_text": "Edson Queiroz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6283a267b9c69a723f3751b3a7ea12b3e14b787fb8d8014a54a75ea9deb7d5ba",
+    "mention_text": "Nacional Gás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "294ea82f10c831e954898dac6a6ebc1dee839ecfacefa506a0e226b938c9f2b2",
+    "mention_text": "Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "80077fb53cb675084641dda70ebb5d90c0537138357890447a8df8f6829187c7",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f4cfa588cf8798facded7696162cdfd550954c02be07fbcbfd0b76e75e868229",
+    "mention_text": "Igor Queiroz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cce145eec2926e65aff964af8d39aa9e333b4a815b1d9a5006831e70decfcc0e",
+    "mention_text": "Liquigás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42628302e891a1b24671bf0bb742efdf68bd279f16dd8d467f62a0452434049e",
+    "mention_text": "Minalba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd70e6b7afccd1ecd1c78534bc454449346ee68844dd307dfe538d1b661830b1",
+    "mention_text": "Nestlé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05d99b2c872a656b5cee3c6cb31a21c91d72fb5de1dfbeff967a27bab8b51e61",
+    "mention_text": "Minalba Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "866a9c9bec0aa3b0e2047fa5f7200e6654fb44e2b82e5478e8d3eb7853caffa2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5bcaa886a976cc7fd19ba9b877868c021dd9bf593b1661603b9aff86c3539f9f",
+    "mention_text": "João Teodoro da Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42a645fb84759cc9708af9bc8c496413083fd20bb8518f945262e9abaf13bbf6",
+    "mention_text": "Cofeci-Creci",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0aff94c6f55904d5d5dc4b0b1484c078316582d1ee1fe620ebc38b34b58e6aa",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4390621684841463ced0a0fa4fa08d5526358829a6f3e01b543aba7b43432587",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f65dd0dd5ed368fbb9e32ed983e04e0307139b9b0b64c458f7c48494ae2f87e",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe814687ff807fc08fd048c6c5300b6f3edf3fecfdc4ae942c6f7fa1a0429652",
+    "mention_text": "Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7fcf83a73902f69310a666cef88801fae13891a86351a3f18bdfb6a3ae9d81a",
+    "mention_text": "Portugal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30df47925725fa7a2579e412106ff9373ec13e130d639999efad48c03a9ea028",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a214074025f0ec9eb5d6120089ebb832b72397e409b5020986276181584e475",
+    "mention_text": "Flávio Amary",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "464af0fad70f3eb3de6e2ea03d5b646204012a1497b4384c4ce671a5e75bcf30",
+    "mention_text": "Secovi-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b45acd53edc1f7a7690c040952ba2514accd7d165d24181d57100250dfbbf4cd",
+    "mention_text": "Fohb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9cfcd0f648e913e9142e46994fafcb7a591d1dc0a9835a078dc2871aa359695",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "edbbcc32fc1434f5871deb045896c81e7fecb1441926fcc7424cf22d80e8e261",
+    "mention_text": "Campinas (SP)",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d6a21206c03b79c32325ebab4e652e495457683140945739aae9c433523e04b",
+    "mention_text": "Orlando de Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa2886a304c7e3f4b9c372931d02d0ac59660925b44f6c4a683a35b6b05d6517",
+    "mention_text": "Fohb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c43a90b7ba1c93ca3e9f1e1a19a0f8b99958bb6f666b0fab70798414df60a098",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e734b3b875e8ddd699e424388a70b0ecc1858256165ce1f4be819775a23a5e3",
+    "mention_text": "Câmara de Comércio Sueco-Brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3496dd065828ceae665f179e5faa0efa1102760136f90e862a557612de107189",
+    "mention_text": "Jonas Lindström",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0394c432c4380c6ad8130e47e7e5ca639cb47073b5ed6a9fb75a509c6daa1e70",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9394533528ea12dde2d6ce06f023525632a1ad7cd946f09fad2a1a6c293659a2",
+    "mention_text": "Azul",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c366bc699b7975c84e43d9b12f4f52abe23cedfcebc49e5da17e1123f2203ecd",
+    "mention_text": "Campinas (SP)",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1723c398fd94656baea91a702cf77732835c3cded90f8af85c0c6a028d04bc1",
+    "mention_text": "Porto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9e38054712dcd9e87dedb72f088d9d7ecca845a8ab45f5b0d30fe03f7c65dbcb",
+    "mention_text": "Portugal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ad034c00fcaa622b27145ea04c138fa418bb31685a45473f925b47b1054abd1",
+    "mention_text": "Lisboa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "66dc47b67c80a0276bbd6c073cb181b7a4ebfbcc1d5ce1c44527fad6f31fa827",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b0efcc7f64bc88359d44bbbfea0d8e98c60cd553aaf6210b155432ea17436c7",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b9aa53e2e3a10ad4ca38c7dd7836b032b8ee565e71d5dd019805f834c6626163",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "864f7cd8037f8d88ffc91273dfcf44d1451a2bf4175b4b0c6981c6f9350a3f38",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  }
+]

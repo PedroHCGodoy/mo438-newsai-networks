@@ -1,0 +1,433 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: bf316ff6b2856c3526b94f0f52937874e5b1078c311b6577a620105f1493e597
+
+TEXTO:
+Tecnologia aprimora o combate aos crimes no setor de seguros
+
+​O combate às fraudes no setor de seguros tem avançado no Brasil com o uso de novas tecnologias, a sofisticação de bancos de dados que facilitam o trabalho dos investigadores e o investimento em treinamento e capacitação de profissionais.
+Em 2017, as fraudes comprovadas nesse mercado chegaram a R$ 730 milhões, ou 2,2% do total de R$ 33,2 bilhões de indenizações registradas pelas seguradoras. Em 2016, o percentual foi menor: 1,8% do total de sinistros registrados, ou R$ R$ 520,2 milhões.
+Para a CNseg, confederação nacional das seguradoras, os números —registrados no Sistema de Quantificação de Fraudes, o banco de informações monitorado pela entidade— mostram que as ações de combate têm se aprimorado.
+O crescimento das fraudes comprovadas, por outro lado, pode sinalizar também aumento das irregularidades, segundo especialistas.
+“Em momentos de recessão econômica e piora das condições de vida, as fraudes tendem a aumentar. Como dar sumiço no carro porque perdeu o emprego”, diz Lucio Marques, vice-presidente do sindicato das seguradoras do Rio de Janeiro, referindo-se ao golpe que ainda é um dos mais comuns no Brasil.
+Recentemente, uma universitária da Baixada Santista teve a indenização suspensa depois de a empresa provar que ela vendera o veículo “desaparecido” a uma quadrilha que revendia peças no Paraguai.
+O carro foi vendido por cerca de 30% do preço, ela perdeu o direito ao seguro, claro, e responde na Justiça por fraude. O trabalho de campo dos investigadores e o cruzamento de dados de inteligência permitiu a identificação do truque.
+A tecnologia tem ajudado as seguradoras a sofisticar processos —desde detectar a autenticidade de documentos apresentados num sinistro até cruzar informações públicas disponíveis em redes sociais e sites, com soluções de inteligência artificial.
+A Zurich é uma das empresas que tem investido em machine learning, o chamado aprendizado de máquina, em que o método de análise permite construir modelos, aprender com os dados obtidos, identificar padrões e tomar decisões com o mínimo de intervenção humana, para atestar a veracidade das coisas na hora de avaliar uma proposta de seguro ou checar uma ocorrência.
+“A tecnologia nos permite identificar novos comportamentos ou modelos. Hoje, a área de prevenção e combate à fraude tem o foco nas ferramentas de analytics e machine learning”, diz Roberto Hernández, diretor de sinistros da Zurich.
+Seis em cada dez empresas já têm alguma tecnologia de prevenção a irregularidades, mas menos da metade usa essa solução para avaliar a proposta de um novo cliente.
+A conclusão é de uma pesquisa da SAS, companhia no segmento de analytics, feita em 2016 com 17 seguradoras brasileiras.
+“O setor demorou a investir, mas percebeu a necessidade de reforçar a prevenção”, diz Ricardo Saponara, especialista em prevenção a fraudes na SAS. Para ele, adotar medidas em tempo real para detectar uma tentativa antes que gere prejuízo é um dos desafios para o mercado de seguros.
+A HDI Seguros foi uma das primeiras a adotar uma solução da SAS, segundo a qual é possível calcular em tempo real a possibilidade de fraude no momento em que o veículo chega para análise do sinistro nos centros automotivos.
+Para isso, é usada uma tecnologia “híbrida”, que combina várias técnicas e estratégias a meios de detectar até se na rede de relacionamentos da pessoa há suspeitos ou envolvidos em outras fraudes.
+“Nas seguradoras têm aumentado o uso de analytics, inteligência artificial, machine learning para ‘mastigar’ informações, detectar incoerências e entregá-las a um analista de sinistro. Ele sozinho não conseguiria cruzar todos os dados”, diz Saponara.
+Os robôs usam como fonte sites de notícias, mídias sociais e bancos de dados públicos e jurídicos para saber, por exemplo, se o cliente está com restrição de crédito, se está inadimplente com um financiamento etc. Nesse caso, já se acende uma luz amarela.
+“A tecnologia permite identificar casos como o de um paciente que passou por duas clínicas, a 300 quilômetros de distância uma da outra, na mesma data, em um intervalo de 20 minutos, numa tentativa de fraude na área de saúde”, explica Saponara.
+O uso da tecnologia nessas investigações, segundo ele, permite a redução de até 40% no total de gastos com fraudes, dependendo do ramo de atuação da seguradora.
+Mesmo com o avanço, o economista Lauro Viera de Faria, da Escola Nacional de Seguros, acredita que o índice de fraudes comprovadas no Brasil ainda é bem baixo comparado a EUA e Europa.
+“O mercado precisa desenvolver sistemas mais sofisticados para medir as perdas e combater o problema de forma mais eficaz”, diz Faria.
+Parte das seguradoras não leva todos os casos suspeitos à Justiça ou comunica ao sistema. Ou por temer mudança de entendimento nas ações movidas por perdas e danos, que podem custar indenizações ainda maiores às empresas, ou por segurança.
+Dois empresários do setor relataram, sob a condição de anonimato, ter recebido ameaças quando participaram de investigações envolvendo quadrilhas que fraudavam seguros de carros. Um deles mudou de Estado e o outro buscou proteção policial.
+Na Europa, os processos de investigação das empresas contam com proteção da polícia, que trabalha integrada. França, Suécia e Reino Unido são alguns dos países em que as companhias de seguros criaram grupos formalizados para investigar fraudes.
+No Reino Unido, as seguradoras financiam o Insurance Fraud Enforcement Department, criado em 2012 e que faz parte da Polícia da Cidade de Londres, para combater crimes econômicos.
+Modelos assim poderiam dar mais agilidade aos processos de investigação e segurança aos profissionais do setor.
+As fraudes têm impacto direto no valor do seguro, uma vez que o preço é calculado com base nos custos e nas indenizações pagas e repassado ao consumidor.
+Em alguns setores, como o de autos, esse impacto já chegou a 25%. Hoje é estimado em torno de 10%. Quando comprovada a fraude, a apólice é cancelada. Além disso, fraudar seguros é crime previsto no artigo 171 do Código Penal, com pena de um a cinco anos de prisão.
+Apesar de as empresas expandirem os investimentos em tecnologia, o setor ainda enfrenta dificuldades para provar irregularidades.
+“A seguradora pode detectar a fraude, mas muitas vezes não consegue provar. E a tecnologia pode ajudar tanto a seguradora como o fraudador”, diz Marques, ao se referir a casos considerados mais simples, como os de adulteração da nota fiscal do carro usado para zero km, de maneira a evitar vistoria na contratação do seguro, para depois receber indenização, alegando um acidente.
+As indenizações com algum indício de irregularidade chegaram a R$ 5,2 bilhões em 2017 —ou 15,2% do total de sinistros, o que significa que 1,5 em cada 10 pedidos de pagamento de seguro ainda é fraudulento. Enquanto isso, as fraudes comprovadas somaram R$ 730 milhões, quantia sete vezes inferior às suspeitas.
+Na média mundial, as fraudes acarretam perdas em torno de 5% do faturamento de uma empresa, segundo dados internacionais da consultoria KPMG. No Brasil, esse percentual já variou entre 15% e 20% incluindo o setor de seguro e ramo financeiro.
+A ClearSale, startup que atua na prevenção a fraudes, desenvolveu um algoritmo de machine learning em parceria com a Minuto Seguro, corretora virtual de seguros com 100 mil clientes em 13 seguradoras de auto e 10 de vários ramos.
+A ferramenta cruza diversas fontes de informação e estima quando uma proposta de seguro ou sinistro tem maior propensão à fraude.
+“Houve redução de 20% da sinistralidade entre os casos 5% mais arriscados”, diz Bernardo Lustosa, sócio da ClearSale. A empresa também testa suas soluções para canais digitais de outras seguradoras.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d99a33315079cdf2bdd230ead9c73d29c02e57f5cdf9a3eae9c957d8a03e9fc4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c7537a4d5bf6a555c9f38c3af7348ee990d7b27a732cb8ce10a0ee1806c0fc1c",
+    "mention_text": "CNseg",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59f91b50e9e8eaa7f283e47692725de3b665c1e5f267f0fa02434eb9b6d38cc3",
+    "mention_text": "Sistema de Quantificação de Fraudes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb4beadff1ac6d84a9e6660e3804aff8e77c2553d9e02c416d0f33074f4fb17a",
+    "mention_text": "Lucio Marques",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "443731478016b913263b6c42ff1e7ce23ab923f49bbf5623f6515499ed583590",
+    "mention_text": "sindicato das seguradoras do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81e45e2a7e1238ba12cb37e1850631892f54774fdfbdd2af60fa8dab53b491fe",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "408c7915c5095f902e64b64b448315baa8ef5c5972e676b5ce94af5140152a41",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e06416bf62d946cd35fbecef822721c27e98f70fba8a76a6e65f0a0e687e842c",
+    "mention_text": "Baixada Santista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dce8fcb122dfd619f3a724c96d1ad500d9acf6268e92db225cd6caf00f61cb7b",
+    "mention_text": "Paraguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a24e355ff23fa2c71cd9378cab31748f2b9d7fb0131f620685ec0c06b937a39",
+    "mention_text": "Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0922be805859d36e2a970f562aaf9c074fbb2cfd67d0438e9965bf271ef9fe2a",
+    "mention_text": "Zurich",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c05baee9f68cbc997173cec16c16bd8565fb91b759f29f440757ffba350116d3",
+    "mention_text": "Roberto Hernández",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4920af0f4eb95d025356982a15e992ee8de290775d7ed1731f6eee233ce80c6",
+    "mention_text": "Zurich",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8cdcf462d65a5d4a750e4079c477aaaf2d1d09093959d65db0234765311e47d2",
+    "mention_text": "SAS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18a945010f012006397fc10fce019c664f95daa3173f68dc6997201de2f8ecb7",
+    "mention_text": "Ricardo Saponara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d4edf058a69b6f4a6c6635879873a4178d929b5b664bb5a1fea8af7d2abdf7b",
+    "mention_text": "SAS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f8b2161e79ccee0db67f9a6bac47d00969e226e221df576211a8d1ef8568de2",
+    "mention_text": "HDI Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "726cf2c6c56cbfafac79f1a6cc5628e3b20c901adf2d2e3628b95f0b3a3eb8a5",
+    "mention_text": "SAS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c60de992fdb839630146f74f9e3560096b4156c320b169055c66ae6075a231ce",
+    "mention_text": "Saponara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c027014cd2bfa38046ea954339540d176596496bcffc73aa40564b169eb0653f",
+    "mention_text": "Saponara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e23d1887538b677d7746b3b018ee7b13db0a935af3e8354970add5007feca42",
+    "mention_text": "Lauro Viera de Faria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22cc253fe3b4e6fc06dda025d9cd8f1db1b24ab5b89403f6d568ec57ca949507",
+    "mention_text": "Escola Nacional de Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "841747819edc259c1816c463da46e9c56ee20fd81bfd7686c147306b0d83e16f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "66a92777c1901da05a41d8f37f1dc7cfdde88dc440f895198e5d5249c6ad2dd0",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2227fa57fa61ee7fbf335197f2a961435d96624cfe50fd3cf41a7111a571649",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c71efbd6bf2e5f300fb7e7052805eb96537080cf31b57bda1ad41d9ed239026c",
+    "mention_text": "Faria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d6c09bb1f976eac98ce94a907498ba4025960f546a5ce22807d5f852c53f78a",
+    "mention_text": "Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b996831a1d700cee1c3d912d720b334040ae036ea01668eceb1f8583a1125083",
+    "mention_text": "Estado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "91adccf1a29cc5ca34f2c0fc004b500a12e121e19b5eabcd84145f803b989444",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "805e6ab8005c27deab26662fd457065c2752906768b8b6b1b9590ce9eff24992",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79c60df64c2a2f34fd7a408fc8a07c9abcfe2a113226b166ff76fa83d93aa13b",
+    "mention_text": "Suécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "275e24776c0a454f3bdc2d191d6f22550fd0dc9c53f015f86cc551bf9e789942",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08b1f03d8d16692d79ed22b79e3a00a9326fde36866385d43661b8e2fc685704",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56b0ae9323a7e8d245757098f4a5dafdad92601fcde5ae0dabfc6be45a782c23",
+    "mention_text": "Insurance Fraud Enforcement Department",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "428d5e6db89e5c8cc5ac4eb5ee0facbcf424236e4003cb074868a7dba593be07",
+    "mention_text": "Polícia da Cidade de Londres",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d67899481d2ca79bc40dc79342775c07090680074830f45c1f617772272415a7",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b0aa904ec2a7f1eaa6f1d2c417896fc5ff4a65e744907f82be2c1958bb33e7d",
+    "mention_text": "Marques",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "807dc99083b2ba76aec719866fa759dd5ae34bdec7fb38e8e7b096f139fef45d",
+    "mention_text": "KPMG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e92a16300c81ca1baaa31d55bf800510c1ffa8d74364d89df3c8b6844caffbe4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dccc728ecf741c4bf217d077bc3e087a14482b22e5e817db8ba4ff63863a1b03",
+    "mention_text": "ClearSale",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "76fc89485670a5466a8dd35d9d39ab729d4b52fb5d26b24661910b3a6efb678b",
+    "mention_text": "Minuto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53d81eff190a48295e70d91cda7676f097528b3a19036f320aa0f5dd648b4f44",
+    "mention_text": "Bernardo Lustosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e15243cbea31e0599eb3e8ae6067cc75bd87028ec28375373f0823ccfb9da24",
+    "mention_text": "ClearSale",
+    "categoria": "ORGANIZACAO"
+  }
+]

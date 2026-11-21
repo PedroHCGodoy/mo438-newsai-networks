@@ -1,0 +1,418 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8d3cebfa8b9af29a48f02b39d1abd215d8552ceb2d88182790c3f6996d44d34b
+
+TEXTO:
+China se prepara para assumir liderança mundial, diz criador do Fórum Mundial
+
+​
+Klaus Schwab, o homem que criou o Fórum Econômico Mundial em 1971 e fez dele um evento central para as decisões políticas e econômicas globais, antevê um mundo em que a China assumirá a liderança econômica e no qual o conceito de direita e esquerda está superado.
+O cenário que o engenheiro e economista alemão descreve se divide entre aqueles que defendem o passado —os populistas, embora ele evite a palavra— e aqueles que se preparam para um futuro no qual educação tecnológica, paridade de gênero e inclusão social são questão de sobrevivência econômica.
+Prestes a completar 80 anos, dia 30, Schwab veio ao Brasil para abrir o capítulo latino-americano do Fórum, nesta quarta, dia em que lança no país o livro "Aplicando a Quarta Revolução Industrial", sobre os efeitos da evolução digital no trabalho e na produção.
+Folha - A decisão dos EUA de impor novas tarifas sobre o aço e alumínio pode monopolizar o Fórum em São Paulo?
+Klaus Schwab - Esta é uma das questões com as quais nos preocupamos, integrada a um contexto mais amplo. Temos hoje uma transição de um mundo com polo único para um mundo multipolar, no qual cada um segue seus interesses. Quando o presidente [Donald Trump] fala em guerra comercial, é sintoma disso.
+A decisão causará nova turbulência no comércio global?
+Pode criar um efeito dominó. A chave é manter o compromisso com o sistema de regras para a economia. Podemos até mudá-las se sentirmos que não somos tratados de forma justa, mas tem que ser por meio de negociação.
+O que é urgente reformar na América Latina?
+Antigamente tínhamos uma divisão política entre esquerda e direita. Mas capitalismo e socialismo são ideologias criadas no contexto da Primeira Revolução Industrial [no século 18].
+Hoje estamos na Quarta Revolução Industrial, e as linhas divisórias não são mais entre direita e esquerda, são entre aqueles que querem defender o passado e aqueles que querem se preparar para o futuro.
+O Brasil está ficando para trás?
+O Brasil está fazendo algumas mudanças necessárias, como tornar as suas leis trabalhistas mais flexíveis, mas todo governo deveria fazer o máximo para estimular a inovação e o empreendedorismo.
+Isso significa flexibilizar o processo para que empreendedores montem empresas, criar um sistema tributário que permita ao empreendedor assumir riscos, e transformar a educação —o sistema é antiquado no mundo todo.
+Os EUA hoje tendem ao protecionismo, enquanto a China mostra interesses globais. A China pode vir a ter mais poder econômico do que os EUA?
+A China já tem um PIB em paridade de poder de compra comparável ao dos EUA, e a China já está de fato se preparando para o futuro. Em Pequim, há uma área que deve chegar a 100 km 2 para incubadoras. A China também já reconhece que a inteligência artificial deve ser muito bem sucedida. Olhando para o futuro, você vê que a China está se preparando para assumir a dianteira em tecnologia.
+Os participantes do encontro anual do Fórum Econômico Mundial em Davos pareceram otimistas, mas desde então tivemos turbulências. O sr. vê risco de uma bolha explodir?
+Não diria que é bolha, mas a economia opera em ciclos, e estamos em um longo ciclo de recuperação econômica que pode estar no fim. E há a questão da dívida. O total de endividamento de governos, famílias e empresas equivale a 200%-250% do PIB [global]. Não sabemos se haverá outra desaceleração econômica, mas, se houver, não dá para reduzir juros [para estimular a economia], pois isso foi feito na última crise, e as taxas já estão baixas. E se agirmos para evitar a dívida [subindo juros], não sabemos qual será o efeito —a volatilidade voltou às bolsas depois de aumentos modestos nas taxas.
+Os países têm preferido acordos bi e plurilaterais aos multilaterais. Precisamos de regras para todos, mas grandes negociações são lentas para captar as mudanças de hoje. Como lidar com o paradoxo?
+Discordo em parte, pois temos por exemplo o Acordo de Paris sobre o Clima. Algo, porém, mudou: antes os governos negociavam acordos e podiam garantir seu cumprimento. Hoje os governos são apenas um dos atores globais —se quisermos resolver um problema, precisamos da cooperação entre governos, empresas e sociedade civil. As empresas são atores-chave, mas precisam de diretrizes criadas por governos e de apoio da sociedade civil.
+O sr. citou empregos precários. Há exemplos de como usar a educação para evitar isso?
+Há novos modelos de currículos para ensinar programação da mesma forma que se ensina o alfabeto. Há escolas em Cingapura que se propõem a ensinar não necessariamente aquilo que você pode ler na Wikipédia, mas a ser criativo, a fazer a equipe interagir para obter resultados. Os países que mais trabalharem talentos serão os mais bem-sucedidos. E há a questão da inclusão, que se trata não só de responsabilidade social, mas de competitividade. É importante que todos tenham as mesmas oportunidades, pois, se você exclui metade da população por ser pobre, pode excluir um Einstein.
+É difícil educar para um mundo que desconhecemos.
+Se uma inteligência artificial pode substituir algumas características masculinas, como racionalização e objetividade, e se deixarmos a criatividade de lado, o que nos diferenciará de um robô?
+A diferença é nós termos sentimentos, criatividade, intuição, empatia.
+Se você olhar para as aptidões de que precisaremos no futuro, são as que chamamos de femininas.
+Paridade de gênero, portanto, não é só questão de justiça, mas o melhor jeito de se preparar para o futuro.
+Nascimento: 30.mar.1938, Ravensburg, Alemanha
+Formação: doutor em economia pela Universidade de Friburgo e em engenharia pelo Instituto Federal de Tecnologia da Suíça; mestre em administração pública pela Kennedy School, Universidade Harvard
+Carreira: fundou em 1971 o Fórum Econômico Mundial, do qual é presidente; criou em 1998 a Fundação Schwab de Empreendedorismo Social e, em 2004, o Fórum de Jovens Líderes Globais
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a4b0ab29d0c28995532a5856d4a1ab58c56438d65f55b8d62e669b61c29603e6",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5ea5da93b589ab667059a49d0cafdfdda416b8b4b795b252843dec7e3c7d7ef",
+    "mention_text": "Fórum Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d405959104459bd7cbd2a8c1aee8870c42178cc2227c8fc0fb2983162595e6bd",
+    "mention_text": "Klaus Schwab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c840205d5c116ce92d452b9c9ce125186504682804a8ece0bce6d2fd1296821",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee81084365f10d4ad0906eeb552936fe45dcbaf728ade0d2aba9df6ca0f8f529",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bf356e04bcdb27d0159cb5cb976d304d0b7993ae0f3a3941622f19669d0b3a3",
+    "mention_text": "Schwab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d9ba5a1ac19239e51997b71b02a694266ce268744dab8f084dbbae287d7fe6d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5bfa2212a09cc76e39febf0102ba25629c4af1e697460d2abc9aa82505ae687",
+    "mention_text": "Fórum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3fb0cd0835a02c02968cfe191f9a3e3abea1b5d622b5c4ea23be0860d37d6f07",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df3c99d50914a1106be6bfd7db7b4a05c1e27b33ff19bc05010b3a569ad08c91",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "758b0b58d022f844d9dc80f4c9041c8939dfe50d580a3a2b8acc2e1b243ba593",
+    "mention_text": "Fórum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "181309e6706c9bc272a409845c92c39cba40cbdce9ea37d2ce96c6b298cca33d",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7f66086cce45fc761b4a0920508f79e74da98758dbf32f9ecdf4022a5464e4a2",
+    "mention_text": "Klaus Schwab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f07f5c2a1f016c6f0838728b5717846e36a74b8393e5b759e90911ad204fe75",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da5eb244cf48f872b0ed4b2c7a5d93c7f1a37cf538631d3b00f6870bd5f55649",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ac425f57e0fe747a20ce3a4a285d594dfd483b60e7fe0a9db4bbe2d0ed313e5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87b1399e111dc052fd6b143106caa4ecfbb6ae01659e473485bc397416f54b95",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "309a60cf0d3704f382ae593188a9a68e7a4c4dea3725f667e05ba6121896e9aa",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fbf58d85b0be534e3fb48f48b3b68f1aaa5a98941fc81b8590f85811a8db869c",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d881cd43985ea0fa978f86863417fdab731feb3ede6460a16bdd26131256c7e",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7910c18b169df477906032367656b10309f838c22ed0f814daea4c8ef3bdd8bb",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "58e63b4e2dd9cd3b4029fee7b7e0e1a622bb65d2bca9c1377be7af86250db399",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa1960007e89963a6ae01ac3b1503e0bea325a42de9fbf25ad1e5364078d7f49",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3009189d791975c1c221f54d6caab801c42ee483fe383f93b62b67f3e18c9f68",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d1f649fe3c64c5b1f14900329483cc14c499af5eb40f35cc4458229401d6f15",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b0bb524192489bb7ab42c0a99a79de19f98127e32103719cd1648e43349274e",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56a04a0aa4d974d098d5c41d3905df6d5cf3520c8a3b27c58bc4499e39727d11",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1787ab2635cec04583f6ec0a94aa51ccef2364dec922c3dac4a4e9a4bf6c83f1",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f5df1e3273047dbd6c0c0edaf83cbf304d516790de7ae6938bd0de8ca2ebdef",
+    "mention_text": "Davos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "da157a24730fed30ac58cfaaec4c9396dc021e177c5e328128b55469d1be38b6",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1929badada5a973604136c6a37152dcd792ae5f7280e80c5c60b487bdb6cf42a",
+    "mention_text": "Wikipédia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fd572142e062f5fef75dff5f39a9fed14c66b85ef7ba079984e0a00c6774cf4",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7317327c8749e6bd4ac34a35d09532829224d584ae8841110687dc844fc0b4d9",
+    "mention_text": "Ravensburg",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9f36c1721c2168f83b454b91b553d5cca27291c353c858b018ccf76278b57b1",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "abd9db575126306f380ce665e616c374606a5d33ab81eb6ca6f4fe302a81b407",
+    "mention_text": "Universidade de Friburgo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bbda2823a96e735248fd5659267c32df9f60716ee0559f9437315900a99f2d8",
+    "mention_text": "Instituto Federal de Tecnologia da Suíça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e49c92348355ef9a11238b51d099b85264ee5dee831bbfdaf064887ddd2aea6d",
+    "mention_text": "Kennedy School",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fee9586d221a67538c2d282af6af8a8133fd283402f78d8f513fb23ff331d123",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45967c2d2f1c80088548508e15fca1b7035bc8b2b6da8e4799976063d7537c81",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "927d800cf6b0d772602cd7cb4a8a5888631df537787a56f0e41d2fd11d7dc819",
+    "mention_text": "Fundação Schwab de Empreendedorismo Social",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "006925afe42ae885c7989154e6baef8306ae8c555dca3f0f0f7061fa11ff036f",
+    "mention_text": "Fórum de Jovens Líderes Globais",
+    "categoria": "ORGANIZACAO"
+  }
+]

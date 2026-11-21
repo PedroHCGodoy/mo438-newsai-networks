@@ -1,0 +1,1005 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9132b2333b7f8db937768ce181cae37c601e96730596912f08143cadb9509ad5
+
+TEXTO:
+Filme italiano ganha Globo de Ouro por filme estrangeiro; Spike Jonze recebe de melhor roteiro
+
+O filme italiano de Paolo Sorrentino, "A Grande Beleza", desbancou o francês "O Azul é a Cor Mais Quente" e foi escolhido como melhor produção estrangeira no Globo de Ouro.
+O diretor e roteirista Spike Jonze recebeu o Globo de Ouro por melhor roteiro com o texto de "Ela", estrelado por Joaquin Phoenix e pela voz de Scarlett Johansson.
+O filme conta a história de um homem solitário (Phoenix) que se apaixona pela voz de uma inteligência artificial. "Ela" ainda concorre a melhor filme de drama.
+Jonze já havia sido indicado em 2003 a melhor diretor, por "Adaptação".
+O Globo de Ouro de melhor ator em série cômica foi para Andy Samberg, pelo seu trabalho como um dos policiais na primeira temporada de "Brooklyn Nine-Nine".
+Globo de Ouro
+Confira os vencedores:
+MELHOR FILME - DRAMA "12 Anos de Escravidão" - dir. Steve McQueen "Capitão Phillips" - dir. Paul Greengrass "Gravidade" - dir. Alfonso Cuarón "Philomena" - dir. Stephen Frears "Rush: No Limite da Emoção" - dir. Ron Howard
+MELHOR ATOR - DRAMA Chiwetel Ejiofor - "12 Anos de Escravidão" Idris Elba - "Mandela" Tom Hanks - "Capitão Phillips" Matthew McConaughey - "Clube de Compras Dallas" Robert Redford - "Até o Fim"
+MELHOR ATRIZ - DRAMA Cate Blanchett - "Blue Jasmine" Sandra Bullock - "Gravidade" Judi Dench - "Philomena" Emma Thompson - "Walt Nos Bastidores de Mary Poppins" Kate Winslet - "Refém da Paixão"
+MELHOR FILME - COMÉDIA OU MUSICAL "Trapaça" - dir. David O. Russell "Ela" - dir. Spike Jonze "Inside Llewyn Davis - Balada de Um Homem Comum" - dir. Ethan Coen e Joel Coen "Nebraska" - dir. Alexander Payne "O Lobo de Wall Street" - dir. Martin Scorsese
+MELHOR ATRIZ - COMÉDIA OU MUSICAL Amy Adams - "Trapaça" Julie Delpy - "Antes da Meia-Noite" Greta Gerwig - "Frances Ha" Julia Louis-Dreyfus - "À Procura do Amor" Meryl Streep - "Álbum de Família"
+MELHOR ATOR - COMÉDIA OU MUSICAL Christian Bale - "Trapaça" Bruce Dern - "Nebraska" Leonardo DiCaprio - "O Lobo de Wall Street" Oscar Isaac - "Inside Llewyn Davis - Balada de Um Homem Comum" Joaquin Phoenix - "Ela"
+MELHOR ATOR COADJUVANTE Barkhad Abdi - "Capitão Phillips" Daniel Brühl - "Rush: No Limite da Emoção" Bradley Cooper - "Trapaça" Michael Fassbender - "12 Anos de Escravidão" Jared Leto - "Clube de Compras Dallas"
+MELHOR ATRIZ COADJUVANTE Sally Hawkins - "Blue Jasmine" Jennifer Lawrance - "Trapaça" Lupita Nyong'o - "12 Anos de Escravidão" Julia Roberts - "Álbum de Família" June Squibb - "Nebraska"
+MELHOR DIRETOR Alfonso Cuarón - "Gravidade" Paul Greengrass - "Capitão Phillips" Steve McQueen - "12 Anos de Escravidão" Alexander Payne - "Nebraska" David O. Russell - "Trapaça"
+MELHOR FILME ANIMADO "Os Croods" - dir. Kirk De Micco e Chris Sanders "Meu Malvado Favorito 2" - dir. Pierre Coffin e Chris Renaud "Frozen: Uma Aventura Congelante" - dir. Chris Buck e Jennifer Lee
+MELHOR FILME ESTRANGEIRO "Azul é a Cor Mais Quente" - França "A Grande Beleza" - Itália "A Caça" - Dinamarca "O passado" - Irã "Vidas ao Vento" - Japão
+MELHOR ROTEIRO Spike Jonze - "Ela" Bob Nelson - "Nebraska" Jeff Pope e Steve Coogan - "Philomena" John Ridley - "12 Anos de Escravidão" Eric Warren Singer e David O. Russell - "Trapaça"
+MELHOR CANÇÃO ORIGINAL "Atlas" (Chris Martin, Guy Berryman, Jonny Buckland, Will Champion) - "Jogos Vorazes - Em Chamas" "Let It Go" (Chris Martin, Guy Berryman, Jonny Buckland, Will Champion) - "Frozen: Uma Aventura Congelante" "Ordinary Love" (Bono, The Edge, Adam Clayton, Larry Mullen, Jr., Brian Burton) - "Mandela" "Please Mr. Kennedy" (Ed Rush, George Cromarty, T Bone Burnett, Justin Timberlake, Joel Coen, Ethan Coen) - "Inside Llewyn Davis - Balada de Um Homem Comum" "Sweeter Than Fiction" (Taylor Swift, Jack Antonoff) - "One Chance"
+MELHOR TRILHA ORIGINAL Alex Ebert - "Até o Fim" Alex Heffes Freedom - "Mandela" Steven Price - "Gravidade" John Williams - "A Menina que Roubava Livros" Hans Zimmer - "12 Anos de Escravidão"
+MELHOR SÉRIE DE TV - COMÉDIA OU MUSICAL "The Big Bang Theory" - CBS "Brooklyn Nine-Nine" - Fox "Girls" - HBO "Modern Family" - ABC "Parks and Recreation" - NBC
+MELHOR ATRIZ - COMÉDIA OU MUSICAL Zooey Deschanel - "New Girl" Lena Dunham - "Girls" Edie Falco - "Nurse Jackie" Julia Louis-Dreyfus - "Veep" Amy Poehler - "Parks and Recreation"
+MELHOR ATOR EM SÉRIE - COMÉDIA OU MUSICAL Jason Bateman - "Arrested Development" Don Cheadle - "House of Lies" Michael J. Fox - "The Michael J. Fox Show" Jim Parsons - "The Big Bang Theory" Andy Samberg - "Brooklyn Nine-Nine"
+MELHOR ATOR EM MINISSÉRIE OU FILME FEITO PARA TV Matt Damon - "Behind the Candelabra" Michael Douglas - "Behind the Candelabra" Chiwetel Ejiofor - "Dancing on the Edge" Idris Elba - "Luther" Al Pacino - "Phil Spector"
+MELHOR ATRIZ EM SÉRIE - DRAMA Julianna Margulies - "The Good Wife" Tatiana Maslany - "Orphan Black" Taylor Schilling - "Orange is the New Black" Kerry Washington - "Scandal" Robin Wright - "House of Cards"
+MELHOR ATOR COADJUVANTE EM SÉRIE, MINISSÉRIE OU FILME FEITO PARA TV Josh Charles - "The Good Wife" Rob Lowe - "Behind the Candelabra" Aaron Paul - "Breaking Bad" Corey Stoll - "House of Cards" Jon Voight - "Ray Donovan"
+MELHOR SÉRIE DE TV - DRAMA "Breaking Bad" - AMC "Downton Abbey" - PBS "The Good Wife" - CBS "House of Cards" - Netflix "Masters of Sex" - Showtime
+MELHOR ATOR EM SÉRIE - DRAMA Bryan Cranston - "Breaking Bad" Liev Schreiber - "Ray Donovan" Michael Sheen - "Masters of Sex" Kevin Spacey - "House of Cards" James Spader - "The Blacklist"
+MELHOR MINISSÉRIE OU FILME FEITO PARA TV "American Horror Story: Coven" - FX "Behind The Candelabra" - HBO "Dancing on the Edge" - Starz "Top of the Lake" - Sandance Channel "White Queen" - Starz
+MELHOR ATRIZ EM MINISSÉRIE OU FILME FEITO PARA TV Helena Bonham Carter - "Burton and Taylor" Rebecca Ferguson - "White Queen" Jessica Lange - "American Horror Story: Coven" Helen Mirren - "Phil Spector" Elisabeth Moss - "Top of the Lake"
+MELHOR ATRIZ COADJUVANTE EM SÉRIE, MINISSÉRIE OU FILME FEITO PARA TV Jacqueline Bisset - "Dancing on the Edge" Janet McTeer - "White Queen" Hayden Panettiere - "Nashville" Monica Potter - "Parenthood" Sofia Vergara - "Modern Family"
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ce705b5cddca2f0f6466c50934d47c65757423543fb2bdf29ee738d519c2a428",
+    "mention_text": "Globo de Ouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d516790f346e2cb398f5cd7b1b66e9b4cb5ba64fadf3c94d59be171c7b3fd230",
+    "mention_text": "Spike Jonze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0b977830d65fab43e2c81a8be3f061c3c1db7ce93d419a70abd80747749aca0",
+    "mention_text": "Paolo Sorrentino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5746607ce51418b0bb2fb797d3574875c751331183507d4431cf53e16238b0e",
+    "mention_text": "Globo de Ouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "419b435adee89cf9358ad90e7e621832c3f3a29e99be139487b72c7d30eba5de",
+    "mention_text": "Spike Jonze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c99133967d6bcbee5d0d7416a265481845f265ffdbbeb61904d6b802e212f90",
+    "mention_text": "Globo de Ouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af7a71be926f682e4c6d3f1185218b1d79fa29d19a8527adfd2d1f46c86c953e",
+    "mention_text": "Joaquin Phoenix",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b3c3b6d83604b4284dd418ac5360cdd582c35e41ef0478ab56c6e17915e53d8",
+    "mention_text": "Scarlett Johansson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2f6f973d30365a4f8d955d75c65f0f871a1c5a3341f26ba69eb9dab284902cf",
+    "mention_text": "Phoenix",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b2b5d27208f3b308a307c1023574908561618a5b17942595050d12ce3595ff8",
+    "mention_text": "Jonze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd7b0d1193bef025437d5726b995e6569b28682c339b3da24e53a45f3a077279",
+    "mention_text": "Globo de Ouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0dadad63559019b81d9a5d8147460936c82c61c438f14cce72f117099db3b3c5",
+    "mention_text": "Andy Samberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a56d0d3725b684ec3e4c4be05f9ef84a26f59ba164d811933afe53a07e67f0cf",
+    "mention_text": "Globo de Ouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "665d6feb0a6206e4e7c2c2f3be5c31489626125f4d07eb956943bee1751849d5",
+    "mention_text": "Steve McQueen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb550da603e118c8932d98e596894913a317846a055a17676bf8c14665d213ef",
+    "mention_text": "Paul Greengrass",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01fa874fb85c39ee8016644e7249c529e6ff051fd8bf04915e720674096941cf",
+    "mention_text": "Alfonso Cuarón",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "569a784d961eb8d655b922840a831fa1d04bee76bf15ae6a947cfd58cb494500",
+    "mention_text": "Stephen Frears",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf8acbd5e7dfcee268861ca86402b2819e4542aff0627de5de02da99e0c7a551",
+    "mention_text": "Ron Howard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d963605850e159559654c8ad63bcef26980c6023a63cf2852de8dacce5f29ea",
+    "mention_text": "Chiwetel Ejiofor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77c18e5862c26fa9137ade1ae986d64e17e1938d8d4ed4cc56905a037ee42ecc",
+    "mention_text": "Idris Elba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a71d5a8f3e02b0d8523e36efffcc4bfa3e329c0fca99578ec81e796215a91b99",
+    "mention_text": "Tom Hanks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b9c99df3eaf0b94f2e57abb789fd5dd6730c0a0f9ff70a7c01d43dc9f13bbc93",
+    "mention_text": "Matthew McConaughey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19faf784a7ca01becf9f5c603dfeea894bbc4efaab24cc77757baf427ce27496",
+    "mention_text": "Robert Redford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "059c01fddbd356d1e9773653494343327f868f0bfda37cd57cfc53562f90f8b2",
+    "mention_text": "Cate Blanchett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0bce2c4988d03e07fd6acf747ade831df47af6058dc4961cee6ff86ad466e146",
+    "mention_text": "Sandra Bullock",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd9e4b5af3529dec0fcda9e9a8e59b3dfe446325873cd2a25ab3f2541bc9cf1f",
+    "mention_text": "Judi Dench",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17a13480f77e1c44172052dd24c7324b783e97f8b5160f8d094b2ca177bdc985",
+    "mention_text": "Emma Thompson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c59a5c783635cf50854932a75753a5201af1b3a8589c63ae4c372e655d616b32",
+    "mention_text": "Kate Winslet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7dd4ab56cc9a6432ab4dcf568433dfaaa38a3734fc0765e35c994e4978aa8af",
+    "mention_text": "David O. Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef3565e7502f1ee393f1cb212d6ad65bc83737056bee315f0aa9b85aab500f29",
+    "mention_text": "Spike Jonze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "12f2c1854a9f2f7365623455e4b1c08a85c61f9e864083e6154426b9b63aeb8d",
+    "mention_text": "Ethan Coen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab6d36a21e986243e94365b5a9c1e628bb03416612acd426980d55fc351cf05a",
+    "mention_text": "Joel Coen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa8a0db2427c59cbec2a63c2ef23ece82e61fa474a10d9860e23aadd6be5d23d",
+    "mention_text": "Alexander Payne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "127806fc8d7778a99569c3e1801f69888d2c41ee28ba459523da1c6fc3a32773",
+    "mention_text": "Martin Scorsese",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d73e0c6dd92eccb6344622809b8a21d4bdfe6dc27c5a93c6c4a4450c60a88a35",
+    "mention_text": "Amy Adams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "edc85b3c9459f2c1ffea85959136bf14a4d29d145b1a3e32d1ddb07ccff8e1a1",
+    "mention_text": "Julie Delpy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d996a91151e4c8157812a34fcbf2c4fc768abae03b4da534b42149ec28d4ca4",
+    "mention_text": "Greta Gerwig",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c7364808d267b1b978650fa7dc1d19a92aca089d436dce4240f8acb26d8a7a6",
+    "mention_text": "Julia Louis-Dreyfus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e77dbe2216b63adcc4222adfaf5e5e6234645dc922fe175e8c3d775dd0688a8",
+    "mention_text": "Meryl Streep",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9931720d0cb9171da3fd7a04caa929c0a5171c531b39e84dfc491e7c7fcf9d3e",
+    "mention_text": "Christian Bale",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa67b35810ff07f405fe3113bbdeb1cac98a383514d82eb02ef9bce8c1b2894b",
+    "mention_text": "Bruce Dern",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2744b49df4d1c36f9c15b6d8393a378ccc4367251a33b26bdd1525e70e5125a1",
+    "mention_text": "Leonardo DiCaprio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91cb53a65694151a1ea2c6df3119214fc2bfe436c454c952988a47170abd08f9",
+    "mention_text": "Oscar Isaac",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "600e6e21263b6fcaf17a716bb15a86a705e52337d58817100c64e2bf19f3f32e",
+    "mention_text": "Joaquin Phoenix",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50b98d9bb897188698184ca27fdc2be2dbdd46bdf9b2a9f0cee0fafdc4df7b3e",
+    "mention_text": "Barkhad Abdi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6477b1ff2bd76a458af882b3b50fd26e0a0137b05a8411aa883c313f6c4664b",
+    "mention_text": "Daniel Brühl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c6e1894bbabd28fd740af00c9d058df42636c907f71bc5fc0c9c4e8869b8fa7",
+    "mention_text": "Bradley Cooper",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9cdd11da9632d83285d9211d088d8ea9fcb99d889be238db4e9dfcc5f28ead3e",
+    "mention_text": "Michael Fassbender",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7879fd29d8fb2c213716007124805eae1dc1131366b032c8f81d02c2a1d854a",
+    "mention_text": "Jared Leto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4311f85b46221978438056f4d7cc8fd05417dcd5c950ba0ba7e3ed4f5d3ea24b",
+    "mention_text": "Sally Hawkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b940282f6982d316973730f0b0df660bdeef09385e125c56b90b7746191d281",
+    "mention_text": "Jennifer Lawrance",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "efcc51e9d746798b6b6e955cab29270f90b109ac82675d12ebec9020ba20919c",
+    "mention_text": "Lupita Nyong'o",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c986edaa1125f27c90566dd4a1bef2a02988b5e4a9c760f049afa57d4eb9d480",
+    "mention_text": "Julia Roberts",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81769445cf51a5037ae459a604f111e3073d9abe8dcdbebc822a00f8ab25dfcb",
+    "mention_text": "June Squibb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f132c46b912233a55c3d45c9b92d0a05bd2a0c7231aed0d678f6d13a6d555419",
+    "mention_text": "Alfonso Cuarón",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16634db39ee24d1d748f674a50646d59c0223809975d06cca6ba0db9bc2f35b7",
+    "mention_text": "Paul Greengrass",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62fa2e7ded87ec7182766ca2264003b44fa9f4997370d28c6975df1f6b4a275c",
+    "mention_text": "Steve McQueen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "300f7939888d22456b3fad12c6f68b83379b8edbfc05b4c8712b220f6b78a542",
+    "mention_text": "Alexander Payne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9aa25f8c3c216caa792eef0dd4d16721b1a310457446f941a3727e2c81570805",
+    "mention_text": "David O. Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c3a350ecc87ad88e9dee7cad3a31c43a2c722fb0c2294890e7ba220cd5dabb9",
+    "mention_text": "Kirk De Micco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b9f4d5a99b31d506eaa43b7eec906ce469bd87c5c8aa329db0a9d0df580a32b",
+    "mention_text": "Chris Sanders",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b1f418f78e62cfaf7c965295cc8b56132b3d77a9d9c58d950ed146b4ad38ab0",
+    "mention_text": "Pierre Coffin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6267094e3002920b0228562093f5a332feacb515628991b52a7fbfd6aacb9e7",
+    "mention_text": "Chris Renaud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "27a8fd25b686cb636125245652feb922a56a195a2c24167cce6e110a684a2542",
+    "mention_text": "Chris Buck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b68a5db631157aa08f2bc314117233271374b69e51aea6ab88da2bb3d1d487cd",
+    "mention_text": "Jennifer Lee",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b5e05f08ef77d3a9e466011ca89bf6f1868a35827f9b862c0e82146a3cc7990",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "713a58def2569847c583d6ba76bc1bd32b905c4e7e4342fd3eeff8b3c8ee3c6d",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9c2b0ea478ebe54472ec125374dd5fbea87c6c9f79d596b842d1f143957c6c01",
+    "mention_text": "Dinamarca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "feca11ef6d0c3581b0b46173f70275a99fd62820fa6d9595c7a45545f3da499b",
+    "mention_text": "Irã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98498b3483ed16db110d8ec46966aae833d2d4b03d68168071ad83d26dc0bc9f",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f9fa9dc1f611552ac5e7e04d57e3d5246e4dbe5aa710cd93a49ee86b00d3d23",
+    "mention_text": "Spike Jonze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aba1cd4326a21142b22b60f13bc16c276b73c19fd587793f40ba6d07b3b7c4ed",
+    "mention_text": "Bob Nelson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bef731046bd2063c3853b2f29d7d6a5e40142d0c640509bfe6062c485c38b7e",
+    "mention_text": "Jeff Pope",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c01e4fc5041433a77901424c5454befd08bc9fb08c66bd6746d410089473b4d",
+    "mention_text": "Steve Coogan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e63b5c9372b1d4562ed830e43fe9728f84fa64e2832a5f8322c0a5a852595ecc",
+    "mention_text": "John Ridley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b85ea5e741b21dcb4b2e5832467e901cfd0f4b382ea2a01c3b7c479132be2fac",
+    "mention_text": "Eric Warren Singer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b260ec59a544a2ee036217916f2a9751e58a3c5662371e8a82f40a23ccfbf77",
+    "mention_text": "David O. Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3308122e1e0cc01d2b0142b4fe15875042a4ba30c352bad8cd256228fc45fc29",
+    "mention_text": "Chris Martin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5e1dead3cf0b992f450c0a9dbf572ce4caea3481ffe1099b05997254e241bc2",
+    "mention_text": "Guy Berryman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34115af1b7ad267b258934f6c5af1274c4645967c2329b8713c5a81b060ff4ff",
+    "mention_text": "Jonny Buckland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1622dee34ba9bcffb0bf254ad2e0960b54de6bebb80db81fc2bfd11d9c104020",
+    "mention_text": "Will Champion",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7776145327096a97ca4e8710a7edbe749c28423cbbb9b0f356b2233802ede74",
+    "mention_text": "Chris Martin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1f12637c5a9ccd0752a1998e3f950de3fda68322b5870fd5773ff3d4159b02f",
+    "mention_text": "Guy Berryman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d45fcd8d626d6731956b014f45b7d4ccb0b9012eb9d84008a9be62f35ccea81b",
+    "mention_text": "Jonny Buckland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "958b412439ccd97d977682fd650fa3363bb8b5b78538930d8dd5add0bf4f504b",
+    "mention_text": "Will Champion",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fbc1473fba84a4ec080bd7c5382433a0221765079e51bae6127fffd436eba13",
+    "mention_text": "Bono",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "595afecb727b783ac078945376a1f45e9aae8c01821c7dff8e110e4ebca227cb",
+    "mention_text": "The Edge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f895180dbd72d6bdbc5c9e93ff9f399b94c3254d19150fe8b461a3e2a3983933",
+    "mention_text": "Adam Clayton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65a5bb0efd23d4a8cfdda3cba9f5c388926ce52e4cdc15a760c5b3822e512e8a",
+    "mention_text": "Larry Mullen, Jr.",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c05f63c1986fde34ae5ce53c4652d83d32de09d7f5bfd930b35b5e49c65e7e0",
+    "mention_text": "Brian Burton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73354975d0e5221d74fa1ed0ef73b61f7e6be89b3a06bb2845d5f450149db557",
+    "mention_text": "Ed Rush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbe9f3e1c69e6f8c15bc53ec97cb69ee16a6ebccedbbf315d0943889b30dce98",
+    "mention_text": "George Cromarty",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49b1632b9c42a84a19b39053b818ea39e42f161c8c17881588ed0054b9d59f3f",
+    "mention_text": "T Bone Burnett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcd186c06569ab7006256a2ec8c80486705e8a286a9c13784a0607fb4a04b164",
+    "mention_text": "Justin Timberlake",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "714a658a85f4b2f0900f596608506fd93777385223196fb7d5249fd7b6470cf0",
+    "mention_text": "Joel Coen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9fcdac2e33336bfdd0c5b3a2cdd0024f14458019a07b680f793d18a8d216a68c",
+    "mention_text": "Ethan Coen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97017de0b2aeb828a332c2223fc93ff5324bb9b4141c2ae01760ed9fc336bf92",
+    "mention_text": "Taylor Swift",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "343bab244e3de3b8636f7a7ae2de2cb9319157b6f53c61e89d018f69334f51ee",
+    "mention_text": "Jack Antonoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a03cd303d3b02957628bcf619b39588c6d9138f06289e0ba9651333b0de5ad8",
+    "mention_text": "Alex Ebert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a674208e57bfd96e794b8f94b4e695baf8a2c9b2184acc4d2a4285a30e47dd59",
+    "mention_text": "Alex Heffes Freedom",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0e9a1b9dd2134b963daec784f51e8c7bef97b1bf6ec0f918337920aa1a0cff8",
+    "mention_text": "Steven Price",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97fd3dec53aac6e90704bf0817e95f67335a93d503987843b042a0baa2331cd8",
+    "mention_text": "John Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44a8f2fb2de3563b6222ce624e7ab19e52c98b4cc1d1a06c80c2f386f9f1714e",
+    "mention_text": "Hans Zimmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c095a4a8ded9f90ac9301f38b9c378ff89759830d6803bf1cc89671ecec4fd71",
+    "mention_text": "CBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0e82ed57b15da151e748626dacbf1a6e0cae5987225731c0502f5eb680fa018",
+    "mention_text": "Fox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88c431b7a5041c2642c91f27f595c9cf5b3aac310cf232307aaaf4758951577e",
+    "mention_text": "HBO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abc9e233cb348bfab4e93ac50acda01d7a0de531162351bb1069aae49e217fb4",
+    "mention_text": "ABC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b4c454aa968497c33cc835964cb2836981fd99ecd78d6bc7a7d608cbf1544d2",
+    "mention_text": "NBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ebdb942bb341fe7a1e73148708b15d49efc4aaa1f38e97d693850f8e3ef6dba",
+    "mention_text": "Zooey Deschanel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7be50970fc61ba64cba077e547be108dfaeaec56523304e1a97771107e8caf0b",
+    "mention_text": "Lena Dunham",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98cae3ad2b62c763bc4c47d8e87a462f0764d6b8ca45b2a9697df28d4c59b00d",
+    "mention_text": "Edie Falco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c657a7fc261ca8eeb9e5b06e93c1b0be281169d60cb9d4702538afcc66a75bc7",
+    "mention_text": "Julia Louis-Dreyfus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcbee107b96a55a42bb9384e23e43303166b3785d3783c4e3ede6884422063cf",
+    "mention_text": "Amy Poehler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f284791428da1885fa7f27ee4badb6ca17c715f318589a637b5cd400b4c6c5d7",
+    "mention_text": "Jason Bateman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a64bac4acbe755d815d34b748ad3e3f08bf8e58be589d84c418907b69ec91e97",
+    "mention_text": "Don Cheadle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f495a49dc4bf616f07a1242303c6fa5d4d4ff3db9569b8eed6c266ca6c9d90ec",
+    "mention_text": "Michael J. Fox",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6314a9f6a8d14ff2429c246fe3e42d319708487d39e140b8a0f36d7cf8cb4ebb",
+    "mention_text": "Jim Parsons",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fb948d6e702a634255115a65782e31b697760026f7e0967581200f8ef07eda2",
+    "mention_text": "Andy Samberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de76927d65ecf802be707f16ff3b5fc1b949d9fc110d2cdbd7bf1b0f7f401a66",
+    "mention_text": "Matt Damon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0b73f98aebfc9c2000d55ff064aefd7cbe6ba5754192c15e6792181b2d2a50f",
+    "mention_text": "Michael Douglas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5e1203e184094dd0b1f6d2e46b0b37eb23623e5490d8d5fbd88912fe713b4a3",
+    "mention_text": "Chiwetel Ejiofor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "feb20dcdcd18f57f5b30741bcb60db830ce030d17230f495540f11c62dbdf3e8",
+    "mention_text": "Idris Elba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ca5ba9ea599aacc4738d7083bf71d4848ebf83541f4bd873d931cfd727aa52b",
+    "mention_text": "Al Pacino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0913905918876f463dd8511452b690b5beddaeec87c4d1b0ef9de3a054319bc5",
+    "mention_text": "Julianna Margulies",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f7b7f924a8ae62080752222436bf0de6db36a4d8f82ec96c8151dc42fe007d2",
+    "mention_text": "Tatiana Maslany",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4949b3f86e9548d49830e72b913611d30a770fdbd61b62554d07d69cc7c921bd",
+    "mention_text": "Taylor Schilling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1178ffd921a46e58a0f0fd5b49d1c5f893141a6f0d52a6967a586699b479ec43",
+    "mention_text": "Kerry Washington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14f7d9755b26a1bd8cc1f7bada2b04b0c71c4fc685b79e6cef820ca9e254234f",
+    "mention_text": "Robin Wright",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "342a3a8f54cb18f1b7defcfb5b8fb30b9c853dbbaca883c3f78abffb938c1cbf",
+    "mention_text": "Josh Charles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20dda84102a52d62a5141acd77cc921df2b921733d589ba009a21aaa9c146495",
+    "mention_text": "Rob Lowe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09c73936d13c6a7a3b70a0d8dc107b170fd7ba41c1dd6d7d132a3873d7f1a2cb",
+    "mention_text": "Aaron Paul",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "794634c279263188d36b5ff43490c68c45cf0db5d82ae4d5c50c0bd2f2b6f538",
+    "mention_text": "Corey Stoll",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7e1af16898db4f066562f1eb0c30b7977585ed3efef5e6d30d5d0c27242bc02",
+    "mention_text": "Jon Voight",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a641a866b01c58f42993864b0f91b5702f68ed19c26e92f7b78b77459926fe42",
+    "mention_text": "AMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a742b846a82431b1238f18535342e7d847d9f25c8da79edac4cec8d5a1f11f41",
+    "mention_text": "PBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd8bf34703eb9c7f7bf4dfeaa2142f45c5934171b1079dcdcbc47ef015a41cf1",
+    "mention_text": "CBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3931f16813cb10ab81e8f47d5d0e7860b94fe24ad333d50b22f05ded1649661c",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3f4f1500621fd98505e844bd36b2c2d6537f5f48ed6b18ed434db083204ea8a",
+    "mention_text": "Showtime",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9b61ceffd66f7806a34bee3d735f1e6916e19350be65670ecb48692bc336e17",
+    "mention_text": "Bryan Cranston",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78af013bd59b50bccb6eefcf9abcf284262b01cc17c2b620f8e1e3d3ae47baea",
+    "mention_text": "Liev Schreiber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eac979a79bdca95774db39cce00faf6870fee28f295e8d085d6199b82d4a3f56",
+    "mention_text": "Michael Sheen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d1dd7ee4e0861f940f24e9aeefd925470af15c99bc9912c63bba88172ed517a",
+    "mention_text": "Kevin Spacey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11aa0263bc80eed142bfab9ad95c19f660ff8e354c4ecce7e6e587d07767beac",
+    "mention_text": "James Spader",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8617a837caadee1ab3c8530551065f18b5271f559aa93bc03608920c7c0fa024",
+    "mention_text": "FX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d1b51a5a82ec03704da7e61a65456978682b205592ddd796bd9b8895ca5ed3d",
+    "mention_text": "HBO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa0c4f7c92f704fd5f202114e21a6eab7eab9792a7543c56bd1e356ed480c689",
+    "mention_text": "Starz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33d0335d18513d63fd8e6ede33f51280f63a317eaca539cbfad80f4d8b3d4b5e",
+    "mention_text": "Sandance Channel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cec094d2dac4c618be226ba5ed759cdbddfcf3966979b9df328c7267e5462af",
+    "mention_text": "Starz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf4fa3afd43fbf756d0f46c4f82314904daabe79d69faa236de5aa5d8483cf81",
+    "mention_text": "Helena Bonham Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "069149b6a88b78ca8c8260fd7120b505f48010dd7d490f7424fa1af7b3afd7bc",
+    "mention_text": "Rebecca Ferguson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62491fca8e6431fdc07bfae517346bb2702808fa95dc8f5fa9dfb839d6668aa3",
+    "mention_text": "Jessica Lange",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2af6d2ea1677da5d02f375fcfeb860fefb54477e2ebc80561163a7405a780224",
+    "mention_text": "Helen Mirren",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fee69c1bb88812c038f1db6af0908f03e9a50b061d2be5d028ee1ba7f7ca78f2",
+    "mention_text": "Elisabeth Moss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02352a70d4c71b8381ce31c61fe738564aeb172c3296260dd31b8fcd566fc165",
+    "mention_text": "Jacqueline Bisset",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78532f553c5ea2105872ab89a7594ee8ed0b3b0aea17035b75727cf45abd062d",
+    "mention_text": "Janet McTeer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6957ce2d8d863a04127e4b2ae6c1016b5fd4abed37d83d1601f1d72d794359e",
+    "mention_text": "Hayden Panettiere",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "850862dddbcdd06554cd6e714f8b09f1276e8cc6ec3a99923e90a5550f38d5bb",
+    "mention_text": "Monica Potter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd05da6c9e85363512d0c362261bcbe2cd09faa1260c0022ecdf8d8af2ab6929",
+    "mention_text": "Sofia Vergara",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,381 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c616e125707df126ca776e39295997c26e7bf6d937ac86c078c3fb21e7910c74
+
+TEXTO:
+Internautas ajudam a implantar inteligência humana em robôs
+
+30/10/2011
+-
+10h51
+Internautas ajudam a implantar inteligência humana em robôs
+Publicidade
+RAFAEL GARCIA
+DE WASHINGTON
+Robôs com inteligência artificial avançada são capazes de vencer um campeão de xadrez, mas têm dificuldade para executar tarefas tão simples quanto preparar uma tigela de cereal com leite.
+Cientistas começaram a resolver isso dando um passo atrás: implantaram nos robôs inteligência humana, "natural", capturada via web, com ajuda de internautas.
+Editoria de Arte/Folhapress
+A abordagem se baseia no uso de autômatos que aprendem por demonstração: uma pessoa guia a máquina em uma determinada tarefa, e depois ela repete o que o usuário fez. A ideia surgiu há três décadas, mas problemas práticos impediam o progresso.
+"A coisa mais difícil para os robôs é entender o que os humanos querem deles", explica Chad Jenkins, da Universidade Brown, de Rhode Island (EUA), um dos cientistas que têm aprimorado o aprendizado robótico.
+É por causa da dificuldade de comunicação, em parte, que robôs versáteis como Rosie, a babá do desenho "Os Jetsons", só existem na ficção. O treino por demonstração só funciona se o robô cumpre a tarefa sob as exatas condições de aprendizado.
+Se colocamos uma jarra de leite, uma caixa de cereal e uma tigela numa mesa, podemos ensinar um robô a despejar cereal e leite na tigela. Ao mudarmos os objetos de posição, porém, o autômato fica incapaz de repetir a tarefa sem emporcalhar a mesa.
+Cientistas como Wolfgang Ertel, da Universidade de Ciências Aplicadas de Ravensburg em Weingarten, na Alemanha, têm conseguido superar esse problema projetando novos tipos de algoritmo, a "mente" matemática dos autômatos. Kate, a robô criada pelo grupo, é capaz de localizar uma xícara em uma mesa, posicioná-la numa cafeteira e ligar a máquina.
+Repetindo a demonstração e mudando a posição do objeto algumas vezes, a robô "entende" o desejo do pesquisador. Ertel recebeu agora uma verba de  2 mihões para continuar o projeto e tentar fazer Kate realizar tarefas mais complexas.
+Alguns movimentos, porém, são tão difíceis para um robô que exigem centenas de repetições da demonstração. Nos EUA, Jenkins resolveu esse problema com o crowdsourcing, a prática que divide atribuições trabalhosas em uma multidão de pequenas tarefas via internet.
+Bastou conectar o robô à web e deixá-lo à disposição de quem estivesse disposto a contribuir com o aprendizado do autômato. Deu certo: o cientista já conseguiu ensinar um pequeno robô a navegar em um labirinto.
++ Notícias em Tec
+Randi Zuckerberg, irmã de Mark, agora em carreira solo
+Problemas de bateria atingem iPhone 4S; Apple desconhece motivo
+Aplicativo permite a manifestante avisar que está sendo preso
++ Blog de Tec
+Veja foto do Motorola Droid 4
+Microsoft imagina futuro em vídeo-conceito; veja
+Assine o feed do Blog de Tec
++ Canais
+Acompanhe a Folha Tec no Twitter
+Acompanhe a Folha no Twitter
+Conheça a página da Folha Tec no Facebook
+Conheça a página da Folha no Facebook
+Livraria da Folha
+Giallo - Vol. 4 (DVD)
+Vários
+De:
+Por:
+Comprar
+Coleção Pixar 2016 (17 DVDs)
+Vários
+De:
+Por:
+Comprar
+Coleção "Cinema Policial" reúne quatro filmes de grandes diretores
+Sociólogo discute transformações do século 21 em "A Era do Imprevisto"
+Livro de escritora russa compila contos de fada assustadores; leia trecho
+Box de DVD reúne dupla de clássicos de Andrei Tarkóvski
+Como atingir alta performance por meio da autorresponsabilidade
+folha.contextual_ads.init()
+Comentar esta reportagem
+Termos e condições
+folha.sharing.ads = ''; //fallback antigas
+folha.sharing.ads_before = '';
+folha.sharing.ads_after = '';
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "719a530242ad0229de74429f02189d16c4382fad207c4deac69ca9d12e6fc48e",
+    "mention_text": "RAFAEL GARCIA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f872002941bb8798f2defb1d0ef3958ad072cb137571564080ea5e1cd3e6c6c",
+    "mention_text": "WASHINGTON",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11039fe1933c3875b55c1ea42829fdd47577fd18055dd901e22903f8fc733a6f",
+    "mention_text": "Editoria de Arte/Folhapress",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ba55963a5abd686258a71fc552cf8d70b92cf20bc30e4236910a4df9d410b33",
+    "mention_text": "Chad Jenkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da910b93ba360db081fa3249496dd8bd20831c88347afa85bb73f21cfc425ae5",
+    "mention_text": "Universidade Brown",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e04eef9e3028356a2989691cac02bfda690c592cbbb8f7eec646e1884fd066f2",
+    "mention_text": "Rhode Island",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eecf997836730e23d904f2dcfb217492b79e46981d4bd29c7c5427c6d77617ec",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0877bd904213fef6f73818d2fb9acb92b345e5f0a3a57dfeb9a2bfe3cd5cd98a",
+    "mention_text": "Rosie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d04363293d4a3418f706f1dfcaf3055480b7782008c2fe6c92dc49a8ba8052c7",
+    "mention_text": "Wolfgang Ertel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3529a83a1095a889cb1b4c4550ca71f54849255195805d420e4ae7ae0b0b5935",
+    "mention_text": "Universidade de Ciências Aplicadas de Ravensburg",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52798f9560d9af34461f2ec78ac8fed45a2e76d4fe70ea02e2c681e26cc9b246",
+    "mention_text": "Weingarten",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "719e525c73cc5fe38d19edb8e6b48989be95ec918ac4bbb005bcb2cc2f321200",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a8f442bdf97d29942828079460334bd68f1767e7dd8929fe0b7239f603dfa03",
+    "mention_text": "Ertel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c1c7bf0616c0c394a280927ff93b0cbfa53937989ef5a7567e11b6509d3a378",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2833307f3f344beff9b0b234257cec04d8c34aa43eb61d5ce987f8b0b3fda46b",
+    "mention_text": "Jenkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b09bfe1b8bf42db3ebf54f8f9ffae236d13c0429f5025b3ee34d71dc4895ad9b",
+    "mention_text": "Randi Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4dd13ab2e5ce972d7074d35bb7bde74ceb3b950a360a41455ae18abd359eb604",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b93de3aa08d61e1c9b48fd8b0dfd0f49de14a5b70e3caa93f417d9073ae3b780",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cef5e4fd8622ccb033751e8e15851042b7e097f55ca64083c66ef1bfaae0f78",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd824e89a295d4d8202d8624aad416d35f74d67467dfba833c780ead1b8f2a0e",
+    "mention_text": "Folha Tec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7c0519748f2a7781c74f93271bf40518e741346e5cb23013007617e9e36509c",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49c2b3c32362aef2fffd5ae08356696015dd913aba12a9ad6d0ea7dcd896ec07",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e760aa295e3c684651d32051424839acd64c20bd4cd326acf5a47f024272a37c",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "055d29ce536e966db8f901ffa662c54ec2975d9712aba52220a5aa9d4136f2d2",
+    "mention_text": "Folha Tec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba80624e66cc5b103e691a50163a10db3f3f8e05e03c1016d7eb43ee59f93895",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd973031cbd3a956d8e4cd70c407d778c6acb321bc0157b9c0ccb5661ba352a5",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27a7784adad69297e792c8d8e6049c47d0c86ad6eba4be12184f82b7b70ed8b9",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0913e048531dd7ab719fae96ca011b9bd6e184bfbac42d2bf474ff40e5b63125",
+    "mention_text": "Livraria da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9ce4e0e47f5c1563a75000521a50a381d2ae7ea4ba38f9aec74542cbe35b480",
+    "mention_text": "Andrei Tarkóvski",
+    "categoria": "PESSOA"
+  }
+]

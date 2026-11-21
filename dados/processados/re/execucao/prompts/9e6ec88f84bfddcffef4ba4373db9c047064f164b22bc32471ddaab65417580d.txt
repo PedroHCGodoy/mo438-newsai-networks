@@ -1,0 +1,335 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 36669d93a674dad77712c2273c9773910b5ba4f177bda1b3ea987f9d6d71f9ce
+
+TEXTO:
+Apple deve receber aprovação da UE para compra do Shazam
+
+A Apple deve ganhar a aprovação antitruste incondicional da União Europeia para a aquisição planejada do aplicativo de identificação de música britânico Shazam, disseram duas fontes familiarizadas com o assunto na quarta-feira (22). O acordo, anunciado em dezembro do ano passado, ajudará a fabricante do iPhone a competir melhor com o Spotify, líder do setor em serviços de streaming de música . O Shazam identifica músicas quando um smartphone é direcionado a uma fonte de áudio.
+A Comissão Europeia abriu uma investigação em grande escala sobre o acordo em abril, em uma atitude emblemática em suas recentes preocupações de que as empresas possam comprar um rival rico em dados para extrair informações ou tirar outros do mercado.
+A autoridade antitruste da UE disse estar preocupada que o acordo Shazam possa dar à Apple uma vantagem injusta na captura de usuários de seus rivais.
+A autoridade também citou preocupações de que a Apple possa possivelmente suspender a aplicação do Shazam para os concorrentes da Apple Music, o segundo maior serviço de streaming de música da Europa.
+O porta-voz para concorrência da Comissão Europeia, Ricardo Cardoso, recusou-se a comentar. O executivo da UE deve decidir sobre o negócio até o dia 18 de setembro. A Apple não estava imediatamente disponível para comentar o assunto.
+A Comissão assumiu o caso dos reguladores nacionais da UE, a pedido de sete países europeus, incluindo a França, a Itália, a Espanha e a Suécia.
+A Apple não deu um valor ao negócio. O site de tecnologia TechCrunch informou na época que o preço poderia chegar a US$ 400 milhões, bem abaixo da mais recente avaliação da empresa de US$ 1 bilhão para o valor da empresa fechada Shazam.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "90b4c7b19305fe886c1988901ff23b618fdd2e7f0fb9bc94d4d1eeb50f508b5a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33fdcbcab2a0fc1ccfbd8cf2be9afffa221e8a99c4652ed73557914dc184ae3a",
+    "mention_text": "UE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f63ffefa9b9233b0edcebd5a38d3ad78d95ce10e452570abb244424c7c9d828",
+    "mention_text": "Shazam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "051c427a78fc42d5067668927d9c43e40676a7a179726d345694580511ca4253",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "776970e2448d3c6a2cc6fbcd47d8f45f5b40668c612f77acf642766120279854",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba8e0482285308e80413146b3b3b98981874823fa6db5be856e866998c8c7114",
+    "mention_text": "Shazam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11d9562990b02739a1acd6303bad6e534a4f02899cb94f7bfa1c96e19dd76c8b",
+    "mention_text": "Spotify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75d1dcfa08b07b6cb9493c05d5202f187d751e6a872088fa04f1d891c288e47b",
+    "mention_text": "Shazam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "916c12f70572b846f5f1c2e7ede3edb0edf48ef0a9f26031453aa3ed186698bd",
+    "mention_text": "Comissão Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ff16e029acadb9caf77257250d7d9499b06defd53245a493f8d82cb33d40a8e",
+    "mention_text": "UE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5f47bc10a3fbad40ea2ff390505c58c8f4b2737c6179e6e475bc149a8808f03",
+    "mention_text": "Shazam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78a8329e7fc3227fbef167bd1e3a3e265ea29948a02fdc39c0ed9b05a6813792",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2dee6ec6776c662de16912397fea9902e05dec7184646074e03115936316cc0",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9c1fab335a59359659ca756b4d2c42b5c5f0972473223ec6dd1a3deda96bc32",
+    "mention_text": "Shazam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85b886655c677e384cd5e97a60a0507b29a2cfeee0153e5e2b8f1c056a07c4e8",
+    "mention_text": "Apple Music",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4088bc85001a7cc780a16cb1eb3c6ed27f042a8efeb5649f54dd89a17d95e6de",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8a56c0177de34189548cb71ebc765b866b75d83ecac21acab5b885536118302",
+    "mention_text": "Comissão Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0f6ec0677e79eebcd01c2b17ee0f2053e09b47920f6c2de5232cb5b3ba870b8",
+    "mention_text": "Ricardo Cardoso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b3028bb857cfce87269b8bb443baa9f030eabc236b587e3626dc1531e29b8d3",
+    "mention_text": "UE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d05283bb1452c5fd54763532a13772dda9024e154b716cb96275c6bf469f8775",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "858a83cd632433e606536dced28c3589a7499659d8b2503bd7805fe7d95dbe37",
+    "mention_text": "Comissão",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "914fadf6bd3db90d34287cd8c9d3d404b39a0cd7fd91893e63445f8d12fa047a",
+    "mention_text": "UE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64277cba5e1ef2c60d353c24a89fbcfe3679b9309dfe5cba5bc2510899b6933c",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2fa10c87a6f4b5463125b01a95502045487ad6ab1975d97fa9d957b5441849f2",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e5cc0810a03d8d1d757e31873cbb3487495b28235ccdbc7aaba565184d6d65f",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "076249b3b684164e309d07ba03a44e43ea7fa8b6120718a9b2501d9a7570cf6d",
+    "mention_text": "Suécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdc538ff0fdd01748685cbfbbaf4097dcd9dcdaf3009d9a03875a422d0f58166",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9eb6e92db464fe8eb45f07c1a14bb9ca62edfc6d707369880a9acbb0eee54087",
+    "mention_text": "TechCrunch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd85cb54a9547ea20e39920585d71859da45e2bd06b0d12358e39596072f62f9",
+    "mention_text": "Shazam",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,2898 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 7cb7a38354c914546385deeee51e687eb330c80ec75f8cbc710c74bbdf581d2f
+
+TEXTO:
+Veja a programação do Fórum Econômico Mundial
+
+19h30-21h30 | Recepção Prefeito de São Paulo, João Doria, será o anfitrião
+8h30-9h30 | Panorama da América Latina Alícia Bárcena Ibarra, secretária-executiva da Comunidade de Estados Latino-Americanos e Caribenhos (Celac), Denise Dresser, do Instituto Tecnológico Autônomo do México, Isabel de Saint Malo de Alvarado, chanceler e vice-presidente do Panamá, Ricardo Villela Marino, vice-presidente do Itaú Unibanco, e Daniel Zovatto, diretor regional do Instituto para Democracia e Assistência Eleitoral do Chile Será transmitido na internet
+8h30-9h30 | A Política da Desinformação Esteban Bullrich, senador argentino, Maria Cristina Frias, editora da coluna Mercado Aberto da Folha , Leandro Machado, cofundador e sócio da Cause, Park Yuhyun, fundadora e CEO do DQ Institute, e Oscar Soria, da Avaaz.org Será transmitido na internet
+9h15-10h45 | Desigualdade de Renda: Problema Persistente, Novas Soluções Margareta Drzeniek-Hanouz, membro do comitê-executivo do Fórum Econômico Mundial; Sebastian Cabello, chefe para a América Latina do GSMA (Reino Unido); Mauricio Cardenas, ministro de Finanças e Crédito Público da Colômbia; Dulcidio De La Guardia, ministro de Economia e Finança do Panamá; Marcela Escobari, conselheira sênior da MasterCard (EUA), e Andrea Pradilla, diretora da GRI Hispanic America (Colômbia)
+9h30-10h | Tolerância Zero: Acabando com o Assédio Luiza Helena Trajano, presidente da Magazine Luiza, Andrea Grobocopatel, fundadora e presidente da organização Flor, e Ricardo Amaral, vice-presidente da The Western Union Company Será transmitido na internet
+10h-10h45 | Preservando nosso Capital Natural Juan Carlos Castilla-Rubio, presidente da Space Time Ventures (Brasil); Elsa Galarza Contreras, ministra de Ambiente do Peru; Manuel A. González Sanz, ministro de Relações Exteriores da Costa Rica, e Alfredo Rivera, presidente do grupo Coca-Cola na América Latina (EUA)
+10h-11h | Integração Regional: a Todo Vapor? Alícia Bárcena Ibarra, secretária-executiva da Comissão Econômicas das Nações Unidas para América Latina e Caribe (Celac), Nicola Calicchio, sócio-gerente para a América Latina da McKinsey & Company, Alejandro Ramirez, CEO da Cinépolis e Ildefonso Guajardo Villarreal, secretário da Economia do México, e Marcos Troyjo, diretor do BRICLab (Universidade Columbia, EUA) e colunista da Folha Será transmitido na internet
+11h-12h | Plenário de abertura Edson Arantes do Nascimento, o Pelé, ex-jogador de futebol e presidente das Empresas Pelé; Klaus Schwab, fundador e presidente-executivo do Fórum Econômico Mundial; Geraldo Alckmin, governador de SP; João Doria, prefeito de SP, e Michel Temer, presidente do Brasil Será transmitido na internet
+12h15-13h | Educação do Amanhã Verónica Abud Cabrera, diretora-executiva da Fundação Educacional e Cultural La Fuente (Chile), Salvador Blasco, vice-presidente da Qualcomm no México, e Monica Flores, presidente para América Latina do Manpower Group
+12h15-13h45 | A Agenda de Cem Dias Mario Martin Delgado Carrillo, senador (México); Sergio Fausto, diretor do Instituto Fernando Henrique Cardoso (Brasil); David Herranz Acebuche, líder regional da América Latina do Grupo Adecco (Chile); Augusto Rey, vereador de Lima (Peru); Max Trejo Cervantes, secretário-geral da Organização Internacional para a Juventude para a Ibero-América (Espanha); Patricia Villela Marino, fundadora e presidente da Humanitas 360 (Brasil), Daniel Zovatto, diretor regional do Instituto para Democracia e Assistência Eleitoral do Chile, e Cristina Bitar, diretora-executiva da Azerta Comunicação Estratégica
+12h45-13h45 | O Próximo Unicórnio Latino Amiram Appelbaum, cientista-chefe e presidente da Autoridade de Inovação de Israel, Andy Freire, legislador da Câmara de Buenos Aires, Hernan Kazah, sócio-gerente da Kaszek Ventures, e Enrique Ortegon, diretor de operações da Salesforce.com Será transmitido na internet
+13h-13h45 | Entre Tradição e Transição Maria Fernanda Felix de la Luz (fundadora, Parlamento Jovem das Américas); Laura Soriano de Yawanawá, diretora-presidente da Associação Cultural Yawanawá, e Hushashu Yawanawá, xamã dos Yawanawá
+14h15-15h15 | Novos Cenários para o Brasil Geraldo Alckmin, governador de São Paulo, Lourdes Casanova, diretora do Instituto de Mercados Emergentes da Universidade Cornell, Aloysio Nunes Ferreira Filho, ministro de Relações Exteriores do Brasil, Luiz Carlos Trabuco, presidente do Banco Bradesco, e Paulo Sotero, diretor do Instituto Brasil do Centro Internacional para Acadêmicos Woodrow Wilson Será transmitido na internet
+14h15-15h15 | Liderando Negócios com Propósito Paul Bulcke, presidente do conselho da Nestlé (Suíça); Gonzalo Muñoz, cofundador e CEO da TriCiclos (Brasil), Karina Saade, diretora de operações para a América Latina e região ibérica da BlackRock (Brasil), Rebeca Grynspan, secretária-geral da Secretaria Geral Iberoamericana Será transmitido na internet
+15h15-16h | Pesquisa e Desenvolvimento: Feito na América Latina Vahan Agopyan, reitor da Universidade de São Paulo (Brasil); Ana Paula Assis, gerente-geral para a América Latina da IBM (Brasil); Gilberto Kassab, ministro de Ciência e Tecnologia (Brasil), e Martin Palazzo, pesquisador de inteligência artificial do IBioBA-MPSP (Argentina)
+15h30-16h | Blockchain Desvendado Tyler Bryson, vice-presidente de vendas, marketing e operações para a América Latina e Caribe da Microsoft (EUA), Marcos Troyjo, diretor do BRICLab (Universidade Columbia, EUA) e colunista da Folha , e Ronaldo Lemos, colunista da Folha e diretor do Instituto de Tecnologia e Sociedade (Brasil)
+15h30-16h | Meça sua Desigualdade de Gênero Cynthia Castro, vice-presidente da RBA (Costa Rica)
+15h30-16h30 | Cenário Econômico Global Hans-Paul Bürkner, presidente do Boston Consulting Group (Alemanha); Henrique Meirelles, ministro da Fazenda do Brasil, Andrés Velasco, professor de prática internacional da Universidade de Columbia (Chile) Será transmitido na internet
+15h30-16h30 | Moldando a Quarta Revolução Industrial Fabio Coelho, presidente do Google no Brasil e vice-presidente do Google Inc.; Michael Gregoire, CEO da CA Technologies (EUA); Marcos Jorge de Lima, ministro da Indústria, Comércio Exterior e Desenvolvimento do Brasil; Lieneke Maria Schol Calle, ministra de Produção do Peru,  Ngaire Woods, reitora da Escola Blavatnik de Governo da Universidade de Oxford (Reino Unido)
+Será transmitido na internet
+15h30-17h | Do Planejamento à Implementação: Financiando Paris e os Objetivos de Desenvolvimento Sustentável Nikhil da Victoria Lobo, diretor-gerente e líder para Américas da Swiss Reinsurance America Corporation (Suíça); Mukhisa Kituyi, secretário-geral da Conferência sobre Comércio e Desenvolvimento da ONU (Genebra), Rodolfo Spielmann, chefe para a América Latina do CPPIB (Canadá), Elsa Galarza Contreras, ministra do ambiente do Peru
+16h15-16h45 | Conhecendo os Drones Jose Acosta, presidente de Relações Públicas e Operações para a América Latina da UPS (EUA), e Christophe Roux, vice-presidente sênior da Airbus (França)
+16h30-17h30 | O Futuro do G20 Jorge Faurie, ministro de Relações Exteriores da Argentina, Daniel Funes de Rioja, diretor do B20 (Argentina); Andrea Grobocopatel,  fundadora e presidente da organização Flor, David Herranz Acebuche, CEO para a América Latina do Grupo Adecco; e Marcos Alberto Medina Britos, ministro de Agricultura do Paraguai
+16h45-17h30 | Transformando a Região: Cibersegurança Jordi Botifoll, presidente para a América Latina da Cisco (EUA), e Belisario Contreras, gerente do programa de cibersegurança da OAS (EUA); e Jeff Kratz, gerente geral para a América Latina, Canadá e Caribe da Amazon.com
+16h45-17h45 | Revigorando o Clima de Investimento do Brasil Candido Bracher, CEO do Itaú Unibanco (Brasil); João Doria, prefeito de São Paulo (Brasil); Armínio Fraga Neto, sócio-fundador da Gávea Investimentos (Brasil), Roberto Jaguaribe, presidente da Apex-Brasil; Armínio Fraga, sócio da Gávea Investimentos Será transmitido na internet
+17h-17h30 | Um Insight, uma Ideia com Pelé Edson Arantes do Nascimento, o Pelé, presidente das Empresas Pelé (Brasil) Será transmitido na internet
+17h-18h | A Economia da Pós-Manufatura Jennifer Artley, presidente das Américas do BT Group (EUA); Mauricio Cardenas, ministro de Finanças e Crédito Público da Colômbia; Monica Flores, presidente para a América Latina do ManpowerGroup (México), Angel Melguizo, economista-chefe da unidade de América Latina da OCDE (Paris) Será transmitido na internet
+17h30-18h30 | Um Novo Acordo na Globalização Roberto Azevêdo, diretor-geral da OMC (Genebra); Jorge Faurie, ministro de Relações Exteriores da Argentina; Brian Gallagher, presidente da United Way Worldwide (EUA); Michael Gregoire, CEO da CATechnologies (EUA) Será transmitido na internet
+18h30-19h15 | Liberando a transição energética Fernando Coelho Filho, ministro de Minas e Energia (Brasil); Wilson Pinto Ferreira Junior, presidente da Eletrobras; Ricardo Torres, CEO da Edenor (Argentina), e Solange Pinto Ribeiro, CEO-adjunta da Neoenergia (Brasil)
+18h30-19h30 | América Latina em uma Ordem Global Baseada em Acordos Kjell Grandhagen, conselheiro especial de geopolítica e estratégia da DNB (Noruega); Trinidad Jiménez Garcia-Herrera, diretor global de estratégia de relações públicas da Telefónica (Espanha); Arturo Valenzuela, conselheiro sênior de América Latina para a Covington & Burling (EUA); e Luciana Coelho, editora de Mundo da Folha Será transmitido na internet
+18h45-19h15 | Comércio Eletrônico: Expandindo os Horizontes do Comércio Roberto Azevêdo, diretor-geral da OMC (Genebra); Demetrios Marantis, vice-presidente da Visa (EUA); Jeff Kratz,  gerente geral para a América Latina, Canadá e Caribe da Amazon.com Será transmitido na internet
+20h-22h30 | Noite cultural Governador de São Paulo, Geraldo Alckmin, será o anfitrião
+8h30-9h30 | Aumentando a Inovação na Agricultura Victoria Alonsoperez, fundadora e CEO da Chipsafer (Uruguai); Svein Tore Holsether, presidente da Yara International (Noruega); Patrick Struebi, fundador e CEO da Fairtrasa (Suíça); Mauricio Adadde, presidente para América Latina da Royal DSM (Holanda); e Marcos Alberto Medina Britos, ministro da Agricultura e Pecuária (Paraguai) Será transmitido na internet
+8h45-9h30 | A Revolução da Saúde Geraldo Alckmin, governador de São Paulo (Brasil); Isabella Anna Danel, diretora da Organização Panamericana de Saúde (EUA); Patricia Ellen da Silva, CEO da Optum Brasil, e José Antonio Toledo Vieira, presidente no Brasil da Novartis
+8h45-9h30 | Transformando a Região: a Lógica do Risco Edson Franco, CEO do Grupo de Seguros Zurich (Brasil), e Eugênio Paschoal, diretor para Brasil da Marsh
+9h-9h30 | A Era dos Dados Claudio Muruzábal, presidente  para a América Latina e Caribe da SAP (EUA); Alejandro Romero Gallego, CEO da Alto Analytics (Espanha), e Jairo Trad, CEO da Kilimo (Argentina)
+9h-9h30 | Melhorando a Resposta a Desastres com Tecnologia Nicolás Mariscal Servitje, CEO do Grupo Marhnos (México); Alejandro Ismael Murat Hinojosa, governador de Oaxaca (México), e Bruno Sánchez-Andrade Nuño, vice-presidente da Satellogic (Argentina)
+9h-10h | Quebrando o Ciclo de Corrupção Cármen Lúcia Antunes Rocha, presidente do Supremo Tribunal Federal (Brasil); Torquato Jardim, ministro da Justiça (Brasil); Paula Bellizia, gerente-geral da Microsoft Informática (Brasil); Denise Dresser, analista política do Instituto Tecnológico Autônomo do México; Delia Ferreira Rubio, da Transparência Internacional (Alemanha); e José Antonio Vera, presidente da agência de notícias EFE Será transmitido na internet
+9h45-10h15 | Migração na América Latina: entre a Mobilidade Econômica e o Deslocamento Humanitário Marcos Jorge de Lima, ministro da Indústria, Comércio Exterior e Serviços (Brasil); Sergio Andrade, fundador e diretor-executivo da Agenda Pública (Brasil); Marcela Escobari, conselheira sênior da MasterCard (EUA) Será transmitido na internet
+9h45-10h15 | Nutrindo Dietas Saudáveis Mauricio Adade, presidente da Royal DSM (Brasil); Gisela Maria Bernardes Solymos, gerente-geral do Centro de Recuperação e Educação Nutricional (Brasil), e Bibi Gonzalez, fundadora e diretora da Eat Better Wa’ik (Guatemala)
+9h45-10h30 | Redefinindo Crescimento Baseado em Recursos Osvaldo di Campli, presidente para a América Latina da Nokia (Finlândia), Alícia Bárcena Ibarra, secretária-executiva da Celac (Comissão Econômicas das Nações Unidas para América Latina e Caribe), e Barbara Humpton, presidente e CEO da Siemens Government Technologies
+9h45-10h30 | Preparando a Juventude para o Futuro do Trabalho Claudio Sassaki, CEO da Geekie (Brasil), Bettina Schaller, chefe de relações públicas do Grupo Adecco (Suíça), e Freddy Vega, CEO da Platzi
+9h45-10h45 | Equipando a Cidade Inteligente do Amanhã Cristiano Amon, vice-presidente da Qualcomm (EUA); Jonathan Hursh, fundador e produtor-executivo da Utopia (EUA); Bibop Gresta, cofundador e presidente da Hyperloop Transportation Technologies (EUA); Maria Soledad Nuñez Mendez, ministra de Habitação e Habitat do Paraguai Será transmitido na internet
+10h15-11h45 | Os Dividendos de Desenvolvimento da Quarta Revolução Industrial Jordi Botifoll, presidente para a América Latina da Cisco (EUA); Manuella Cunha Brito, gerente de programação do Good Tech Lab (Brasil); Fabian Gil, presidente para a América Latina da Dow Chemical Company (Brasil), Timothy Hwang, cofundador da FiscalNote Inc., Maruricio Minas, membro do conselho e vice-presidente executivo  do Banco Bradesco, Altair Rossato, CEO da Deloitte Brasil e Jairo Trad, CEO da Kilimo (Argentina)
+10h45-11h15 | Conheça o Futuro da Carne Izabella Teixeira, copresidente do Painel de Recursos do Programa Internacional Ambiental da ONU
+10h45-11h15 | Saúde para Impacto Social Roberto Kikawa, presidente e fundador do CIES Global (Brasil); Javier Okhuysen, co-CEO da salaUno (México), e Diana Carolina Quintero Giraldo, cofundadora e CEO da Bive (Colômbia)
+11h-11h45 | Revolucionando Segurança Pública Cynthia Arnson, diretora do programa de América Latina do Centro Internacional para Acadêmicos Woodrow Wilson (EUA), Valdeci Ferreira, diretor-executivo da FBAC (Brasil), e Stephan Sakalian, diretor para Américas do Comitê Internacional da Cruz Vermelha
+11h-12h | A Maré está Mudando: Comércio Internacional em 2018 Gilberto Caldart, presidente para América Latina e Caribe da MasterCard (EUA); Ildefonso Guajardo Villarreal, secretário de Economia do México; Ricardo Meléndez-Ortiz, CEO do ICTSD (Suíça); Fernando Zavala, presidente do Conselho Privado de Competitividade (Peru); Brian Newman, vice-presidente de finanças e operações para a América Latina da Pepsico (EUA); Será transmitido na internet
+11h-12h | Ampliando a Infraestrutura da América Latina Georgina Baker, vice-presidente da Corporação Financeira Internacional (EUA); Jaime Francisco Hernandéz Martinez, CEO da Comissão Federal de Eletricidade (México); Joe Kaeser, presidente da Siemens (Alemanha); Wellington Moreira Franco, ministro-chefe da Secretaria-Geral da Presidência (Brasil); Rodolfo Speilman, chefe para a América Latina da CPP Investiment Será transmitido na internet
+12h-13h | Uma Nova Era de Liderança Candido Bracher, CEO do Itaú Unibanco (Brasil); Paul Buckle, presidente do conselho da Nestlé (Suíça); Maria Cristina Frias, editora da coluna Mercado Aberto da Folha (Brasil); Alejandro Ramirez, CEO do Cinepolis (México); Luiza Helena Trajano, presidente da Magazine Luiza (Brasil); Ngaire Woods,  reitora da Escola de Governo Blavatnik, da Universidade de Oxford (Reino Unido) Será transmitido na internet ​
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "aefeba671edbf027ec8e098bc277b7e30263fde428d97aedde81ba2aa5d9a30a",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fabc3146b2e45817228b67e1fbd594d6583040dfcd24ca37a9e8e8b73387533e",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4614376a3d60225331d2ed1332155fc9b38ee19983ae079a022dc34c6c0da7ea",
+    "mention_text": "João Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0ae5ac7ab2a14b222d07aff9984c3046ff62e1be37a9eb4ebe19317545a5294",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9886892f0f92ee777a4f8cf3fdf154a7c52a2b5a7efb33713346be627e8439e3",
+    "mention_text": "Alícia Bárcena Ibarra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3485fb70087d3347287b8ecea6779d839f1b99909e3991005869105104395c6d",
+    "mention_text": "Comunidade de Estados Latino-Americanos e Caribenhos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "117dddc41402d8adbba32311683ae73036ab81899188469f66c8716e559f41c1",
+    "mention_text": "Celac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c621e70fe5464d913b9832e770d60383bab30a8afc9ad11537b76b23c342cb4",
+    "mention_text": "Denise Dresser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "050a42d0d3fd480f1a54843e7b75c52a5f6a62d00e548949602c6a690936a8da",
+    "mention_text": "Instituto Tecnológico Autônomo do México",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b44c572f74554b88dca3337c0c2a143dd03c554fd8d7624c8071defaaae74316",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b1b774faa1f732618ce595a6d51d4dfb3bc1648da6899f36ecec4402c43534d",
+    "mention_text": "Isabel de Saint Malo de Alvarado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f2e5c3ae59f348fa5ec2e0ca312836eea35a0e5cb2aa090f51775e893c499b7",
+    "mention_text": "Panamá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19378d19780543f308972f421ee8b6091ef2f84f14848324508bf8961efa1a33",
+    "mention_text": "Ricardo Villela Marino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17f5c7c511b1c1313d0475869c2298e4cf7027744abfef1b3bb8de48f3a1b2d3",
+    "mention_text": "Itaú Unibanco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cb05a8df7b40f3be16b36cd89c5e4c218a68fa5f22195b71a2dd26ae7313426",
+    "mention_text": "Daniel Zovatto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39c8915ca191702538888b32805a528747779ea051d52dd9f2641b111529a3a0",
+    "mention_text": "Instituto para Democracia e Assistência Eleitoral",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f036d78b000da323d1942743b50f367af8e8f2c0446be91d3a94db238c61168a",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f8c48ef337be6549be516e38056817bbfe59bea8876679be2dc31fee44226d7",
+    "mention_text": "Esteban Bullrich",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3dacddc76a406fb805521d701ffb57e34bd6231b26ca75db2a1d11c9096ca05",
+    "mention_text": "Maria Cristina Frias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6a2dd07fbb5908404d1cbf9c133c5f6fb5a52f917dfb0f59090867a8c083dde",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e893dcbcbf23a652016d0f95ccacc0a70d0c4cf8f4a4fbd5a4025941a3a64c3",
+    "mention_text": "Leandro Machado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3abc5341f9acee61c55b300ed7e776e394504e740caca3f06214b2d92a8f1337",
+    "mention_text": "Cause",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abaa754bf18d590d80768097ad85ce6c69962ed55c7e2fce90cd56db7a3e1715",
+    "mention_text": "Park Yuhyun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c84e83338275d5269a88f7b224fa15953759c8da5ae2c131a38d47e0c90b5d44",
+    "mention_text": "DQ Institute",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ea1ea77ccdfb6f224e34c03f7e2a1b9799aac1590ead1a1a8a05d3164d645cc",
+    "mention_text": "Oscar Soria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4757a17016a001b02893a4d249c43b2e64c9a3be6fcc5a0616e1b57db777a747",
+    "mention_text": "Avaaz.org",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37ae80efb417f1d7f04696e5576e439f51106c90e91bc9a1994399a539965008",
+    "mention_text": "Margareta Drzeniek-Hanouz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f07a52e721b7832d66672244292128d26d9024b7d216fec45a172ba973e8aaf1",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49fcd3e307f9b5d3f77b523a68c2aec7b5dd6f87a062037c68873bb4361e06c4",
+    "mention_text": "Sebastian Cabello",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "894c4120eb8c58414a2a6e1bd436a0ba1b1d8217a449b1a83e5649d116925de4",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "530b1e2bb34d7a8cd3ac284ed6caf9d30270b4167799c2805a93bbbe57a95dc7",
+    "mention_text": "GSMA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8a5af64033ca2457a57c1b238671fa47b013d31e7a76649315925f6bf992e79",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5fc0f8733d22dc3d62cad60325b91c0bab6587171009eb617dce63f3a4c44b50",
+    "mention_text": "Mauricio Cardenas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e7b5c39958787cb027de9c3230807d4dbdc70b38d8a91fe3767de1edb551588",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "de2d8f76471b2cb6862d8dcfcf0418075c72b2fe221ca6edaa28f86baa2d5880",
+    "mention_text": "Dulcidio De La Guardia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e85b789bed6c36ba4090ff40fe3a6a18f32dffd8354b34c19ee809b03d103c0",
+    "mention_text": "Panamá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d512305493685b344b343b0dde9903c9e2b05d958b9abe813d954b7fb53a3755",
+    "mention_text": "Marcela Escobari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2a1d33bbedfe5184ca49fff669ebbdaa5c28868ca72cc3eacbdc133021d932f",
+    "mention_text": "MasterCard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16cd19b85a91c6c2d8ac10d8b0ea7eca361e1349efd8eed14e86a22734dd0dd3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "febbe9ca8dfcd9fe44941e7d2e0c79e4fd31e9d3979076fef2e31bdff179ea85",
+    "mention_text": "Andrea Pradilla",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ba6a33aafafbe8d091571feeb3fcec2fb591a8388e717e0e351781949e6dc0c7",
+    "mention_text": "GRI Hispanic America",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab4402f362849f938b418a2d031e3ad001515be170bb60f94d5e08dbdca02058",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dfe902b51ee75f2ba9e765fd9a13a6ce30adb976fff784988f362eeca099f78b",
+    "mention_text": "Luiza Helena Trajano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81aebe7b45d5e79b0c857e8a77d10b66d2971b45e48db58c0487397777620d49",
+    "mention_text": "Magazine Luiza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68c02c866e1d9cd2b03c29013055791e1dd783a0e9d01eb10d09b90fd19b316c",
+    "mention_text": "Andrea Grobocopatel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a725f373276bbcf94edbef77cd1bb8808bdc88009a41e885f2d81b27021b205d",
+    "mention_text": "Flor",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bd6f19f8b0cffa388a47cb8220f50f5d6f446a3ee42206225817b2c3e09e3ce",
+    "mention_text": "Ricardo Amaral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd2a4854ed7d5ecf9aecc25492e11bf6a2fd59642879432c2cbaa46960693dd3",
+    "mention_text": "The Western Union Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f660832f92bc43c0476068571d42885baa61d2f448aa54db6a9ede4c9c585212",
+    "mention_text": "Juan Carlos Castilla-Rubio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1733cf5f48dc83bde4695bc25273e88ae8a0c67ed1960513fe603f659f00de66",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36e515c9610278d1c15a652a47ffdb44313521f75e5783c5785c508cf3a31450",
+    "mention_text": "Elsa Galarza Contreras",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26cdbd9c6bafcbaa105cddee8570af04ca6caa582842a9d1a303036cb4793947",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28257ed23086e7f390b6c85a0bad92dc5eb874706cf1c4f71bb4becb74503a9e",
+    "mention_text": "Manuel A. González Sanz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "03fba7b81b2847b2e1596abe00430688a56bb6625db032334e83a74f36e21f0b",
+    "mention_text": "Costa Rica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ad5e2e53b282f02b1ace9d2e83e1c2317e732953e8bde32060ba19212484b02",
+    "mention_text": "Alfredo Rivera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "088c6d4cde49f74846d1acd1ab8939c13becf32d3ed600a6ebe1e5777402c98d",
+    "mention_text": "Coca-Cola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "967a5e8146c073ecef7ae8392c45988c4a1878d3e6a3a6a0bd08a920a73a7201",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "851d3a56276ac014de76ed9c88b29cdd58da4e914f8640f4e4dd398532a3a4ab",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ab24cc35bc4c85fcbb2a17679f5bc087f62c047d73ac343b906f7d55f4873fb",
+    "mention_text": "Alícia Bárcena Ibarra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c34da4a8571b3d41f6530afd94014b39149d75c93eeccae7fc4b8026db92569",
+    "mention_text": "Comissão Econômicas das Nações Unidas para América Latina e Caribe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6dbbb8a280705588d35c6344fbe4ed10d4a0527fcdd5f20ef6e94ab43cc71268",
+    "mention_text": "Celac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3dea849e61670190cd85207e21bc75b4b5ebb2feab94351856b63e6387a29e65",
+    "mention_text": "Nicola Calicchio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e26801bc959d0fde11de01a06dc83c2866444ebd8fe78b6c98f710ef580e4e4",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "15df8a96712c7659b45022e7598710223141e4d4375a960fbe4d2b63d61d5417",
+    "mention_text": "McKinsey & Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86f0aba3015a60a2f1f71ae1bec31a1d170ff38f2f28550d66872acbdf11a56b",
+    "mention_text": "Alejandro Ramirez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "882d276bd4d5e915ec8cc2af54793897724b5966f25d4b8774a10406af7f0179",
+    "mention_text": "Cinépolis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a822c29a44c200e43662fee3ea317d427333cf6659d283d972fd113db9efe9f5",
+    "mention_text": "Ildefonso Guajardo Villarreal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84c8925f9f3509518c7f2a05ece14b45fb2ed2c5c43ed4af525e4548ef1050a6",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fba506c81f43fe1e854c7b999e4aa2c14531a90137276c33522a708c7e20c462",
+    "mention_text": "Marcos Troyjo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b73faf1ee11524d2f5c81152f0205c31393692dd87565dd6dbbe5f830f1faf58",
+    "mention_text": "BRICLab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bb03e1921263a43901219a2d8555edfee397c68882fbf59b76813a8f98009f9",
+    "mention_text": "Universidade Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2fffd61af30818ce159c18d3529cce8cf4c99dd69f18fb539d3045dfed05b79f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ac95d41d2a2cf7a4d286e9391a3d9fe13b951e17d3ba395005a0f2ec96f19fe",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a53382f1736c78816aae67117d97b5e5ac8ded49d30be4d7d4ef17252678117",
+    "mention_text": "Edson Arantes do Nascimento",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6b65c06fa71e7bfd3cd37a28737b63b673a66c231ac1b1aad519789c3f6cd95",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "428f6f8f7d331d8e5d048a68f6c45b3805b27689c77faa21bf7352b9b0142896",
+    "mention_text": "Empresas Pelé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94e322d6331d61e1ff03af9d9764e47f78187c5e91e8912e896755c3d2fc6295",
+    "mention_text": "Klaus Schwab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "187e9106c764f5ad80cf5387e7ea4c6d22f34403af87c9c8fe9115eeb22b7cd2",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45e478d252b02afe1ceafbabbc388cc3ba74f514aaad6ede867fd0e4be8ddb04",
+    "mention_text": "Geraldo Alckmin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98009c88b46f87a74e5c044e574592c424c39dfafacdcea93fe2a179c30c8272",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08490239025b7b0cd497158a053a43e7289259233e330dfc3bede844fb745ac0",
+    "mention_text": "João Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d461684047d97689e31282b1cf02e96220a47380ee5a545bca58b4f4efb0c3b",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0eca7345efecc6b39b84d3c874696b5b667078cee4755e9d285e03283a2c6dc",
+    "mention_text": "Michel Temer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "825fbe82ebb8007f917f550654274d66c7b6c1b441c7a81ab8f6ee86d89007a3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2953772820ee04895f522c708c4f6ede8f918f5ac7253f81dc4b378f017c1b0a",
+    "mention_text": "Verónica Abud Cabrera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56e810af88cdc44c57edea96f95590931e8a81e6b95986c17a0887bd75369adc",
+    "mention_text": "Fundação Educacional e Cultural La Fuente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82dd0be65ea0b32d6fccec5eefc26d3d30a5240ae1c1cee2ebded36be7e7986b",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7de320f0ccaafe88683f9f28b2d73e4eb04ec09b9b52d094e6fae9a59a526ad",
+    "mention_text": "Salvador Blasco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2a606dc7c33216604d748e4bfd86e8ef81ab6c8dedafad2efe685237a942a15",
+    "mention_text": "Qualcomm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5f68171c4d5f03d661ba17388dea0f1e189334f8520ee1ecfef3157d5e2a1c1",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f4e04b8bbf37659f3be699185216741d40a223a871511b260d33819f7dd65e90",
+    "mention_text": "Monica Flores",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b878de4a3d453b7cd509bd46540be1a0d2868e6ea9a69eff3c3034a74ffdbd2",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf01b4982c3818922368aeb908570292ffe99cc2cd4871e0db75e21134452b59",
+    "mention_text": "Manpower Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85f91dcbcb00c9c04c7b72ed082edcb47a88c5a53d04a0841956f70979b61a77",
+    "mention_text": "Mario Martin Delgado Carrillo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2e23e101972173a37b2c9c4ee8b7daaf41a4d6fd521c071dabffb2a854dd71a",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5fad0f59fa01d05486b364cbf1fb28f9a4d4fa2be6521ec22f96c988a8282c43",
+    "mention_text": "Sergio Fausto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cff627231fc7f541b2eff6966e6f741b1561b966aae7c69fd87464f38789fee0",
+    "mention_text": "Instituto Fernando Henrique Cardoso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27a943ed7ed9201d501ece3c10e1fda02b3a29135656af4abfbd9d7b9e9f0024",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e848d0ba4422ad6a36a26243de78ae177b61cf941ec9d07e80f8cbc92a9c4f6e",
+    "mention_text": "David Herranz Acebuche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3644eb3feacccf4eb5426b3c42329635af299ad05faa7b95a9eb5f281d58dd4",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "354919c8705e1346b42b70046198977d8770a75a05e46bd3aac2191967eaadfb",
+    "mention_text": "Grupo Adecco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "090010fa819f4c45ab0b6279269d8face533f7758caab95b8e5c986f7336de6b",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f54cb3d6caf266f8cc44ca46deef8486d49ca141cd52b450b61f1f44fb01c0b",
+    "mention_text": "Augusto Rey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "becf6c3147743e92e6ce8ebf37459ce8d21fda30b0d7c01842218f999ca94ed5",
+    "mention_text": "Lima",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "97b429b5a03f0ed7c7998e403689c4a2ff0c1579ccded17d5886c1d3740a97c6",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "098f2c383a066975c7b63b9a65d9d46bc5a84c51a1396c0ba3456e3dd04d097d",
+    "mention_text": "Max Trejo Cervantes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19528f161c7751f615fe491b4752a43afcec0bfee89e8fedb91833d879d1b9d9",
+    "mention_text": "Organização Internacional para a Juventude para a Ibero-América",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17704f04c02c0fa3c692128f9d3b66fb5fc60de44e0129cadd4c1518c1a3641d",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "13dbc113da939e8f125702ce19cbf2616550bd6aa978c983c9ba24ce3706a973",
+    "mention_text": "Patricia Villela Marino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7bccc6f094b67d430aaa3e20df587367e1c1742375c0e759116bed4dcb73df4f",
+    "mention_text": "Humanitas 360",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5c0e519734eab1473c3d7589e1bf7d778d5a4351fea45fcff0f635a752545b6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39f8fa9c79cc10d9327f132c3567051419233be6727d24a8c9e84d9907b8258e",
+    "mention_text": "Daniel Zovatto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f5a3aff05fbae36f83defaed6ebdf83f3beeeebcd71679ed078799571db4d8b",
+    "mention_text": "Instituto para Democracia e Assistência Eleitoral",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82a42f17d300d7e677c4d946ff6c792b587d4bec154aae36fda3a3ff09191161",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04882a47dbf936a314272153d80e10c1f261945c56043962511fb14b6731c9f7",
+    "mention_text": "Cristina Bitar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dbe29711864757d9ecd2e401842a9ef357b30ebe86bc3262e832466932b9c34d",
+    "mention_text": "Azerta Comunicação Estratégica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6076785f6499eaeaaf472b5694132983006a428129e01123656062d969eb0a4",
+    "mention_text": "Amiram Appelbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c85771552d760af2eb80997ac8d97a9182080c9afe1f545f9812e949850d6f55",
+    "mention_text": "Autoridade de Inovação de Israel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "271a6043121b939c451635df39568101b3da2183bc9fb8799451c23d9df43149",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f508a9a8f6018d9bb36f0b1ee157d6da26e0b81927a6acb232f141b24ebe6cc",
+    "mention_text": "Andy Freire",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0304aef556d8cddccc43fa22c456e1cbd26192330e9ec2f9ef94b0db4b2ae43f",
+    "mention_text": "Câmara de Buenos Aires",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a93d47ac7b5b85d007adfdedba4ef5b0c8b83d51767486c6dfbda6b3fa300310",
+    "mention_text": "Buenos Aires",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e661fd33d074da3aec502e8e46e5e63ee8e8dfb34139b64cf55f62314cae2a8e",
+    "mention_text": "Hernan Kazah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49db1f4e68d4c112c7301242d9e5d2cbf1ed885ac2afd1c6c94ab7b814f2117b",
+    "mention_text": "Kaszek Ventures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3eaf26292b708c9b67a9b360d3cac87c5099d03279c617ba102c380f695eb4d",
+    "mention_text": "Enrique Ortegon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "185d31ded439e200c93bb186fad1f3c09d1cd1cd5dec7270ac91e587864051f0",
+    "mention_text": "Salesforce.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c293d25075f0dfd5dfa0bd7a1ce2c0295f4ef1bc9c7f46cd6f5a148727fc830",
+    "mention_text": "Maria Fernanda Felix de la Luz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73af68a390495b4e2c93bbe8ecf4cceb1bb1bb9bfe90b91e8ad2b49706d6a63a",
+    "mention_text": "Parlamento Jovem das Américas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab7dcb0499a96c61990787e607cb00969532b2342bf3c0c0c74f96f9cfdb4b7b",
+    "mention_text": "Laura Soriano de Yawanawá",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a452590b6d91ac856ef8516e52b680e27d8371cff9f779824bb8164a93850bd5",
+    "mention_text": "Associação Cultural Yawanawá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3091ad70a8321105a8cbaa6c1c8d1da1d4db2d52b9838e010a8a1a3283078d57",
+    "mention_text": "Hushashu Yawanawá",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd8786bf5c0d3848eb1f630e555c1f0a47ab7750f18d4ff321657e81f5d849d3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bcfc2e390ec3fbad93653e68217aa8ac5bfc78db8b280b4432a99f099188c13a",
+    "mention_text": "Geraldo Alckmin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7d7d8495170126956795a2d3054006b65c7662160b0e4277429fb9aa70dbaed",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7273f303de76d207f62c375123f368eca95308a102b7c60e39b3cb4ac9770a1b",
+    "mention_text": "Lourdes Casanova",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "348b83149243d2332b61f63ef262f17267aef88ef503dc4c53e7ff285c7f3982",
+    "mention_text": "Instituto de Mercados Emergentes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d761b86b61588e527b95b93f12391edbdae3673676b2f5561d71a42818fd25d8",
+    "mention_text": "Universidade Cornell",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cd3844d61e37244409149c27665a3e649661089d471946b11f06909456fe0b4",
+    "mention_text": "Aloysio Nunes Ferreira Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc6fd54dc2437c8e10e614e8e0b268383ff0bfeadc33aa8e1c1b99f936425af1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d7cdcd40c850fc28bcedfc4092348b21c0447ed24507f724b5cc2461eaf628c",
+    "mention_text": "Luiz Carlos Trabuco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b5d864e2c31daa649ffd2c47be7140043bd135e1e7bb2b085382815f63e9ad5",
+    "mention_text": "Banco Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cef26961255c89c33b321d2e5cd17c4f2e578091ba9b77575fc0a9c2e35279f1",
+    "mention_text": "Paulo Sotero",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "043ff23a0fd3de040e37a386ee12dfd5be5c4a6da21b23e230ea70cb75e55d6d",
+    "mention_text": "Instituto Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aeffb26b2d85086c42ac7ffa93d6ce29e371f9d8e22d93b13c24a1f16a8a563a",
+    "mention_text": "Centro Internacional para Acadêmicos Woodrow Wilson",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4f301cbaecedf30ebbc9a6b277318359cb42a4d99b5bc4a16c64d5c61f7ad17",
+    "mention_text": "Paul Bulcke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b83649e0d753d59e12f9c39b2127c55437ad691fa2cd8d888007813a74b8a907",
+    "mention_text": "Nestlé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43894ddd1de55ee2fcfe407b6812123e1aeb75f0d231b03e8371cde40737f6af",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec029022034aad31a5aba373986f61ebdd330230aedb794e17e5831c2cfa1e66",
+    "mention_text": "Gonzalo Muñoz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a5bf6548fad153cdc2881c5624ecb2119adbc8217eaf050ef164a204df2c702",
+    "mention_text": "TriCiclos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b150012ad78f4f5da46d322ea90b3f57c682a752db36b165de7ff99a7b03aaf",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54ed701c4be5caf54af075a201efe1ed25225338c6fdd1e1f0a85d81b7d4a12b",
+    "mention_text": "Karina Saade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf4c15f0aa5702b1612bae85a0c0951dfca8812b26100d21bec4578cd949b107",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c817bc134b9c59f28339e4ba27e78ae385f4e273bb325e03f5d148b3cd9d442d",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7411f5cede5485e22dd7ffdca9a5b0be1a870984c56a1d2015b65a9382be714b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a63cfde359977658f4bd079fdc2f100a1df68ed02f55acbc143c00fe264a4812",
+    "mention_text": "Rebeca Grynspan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bf6c2c74567b52f449d88b0b0230dcfcc7d0c1bbb1f2559162c859bd991703f",
+    "mention_text": "Secretaria Geral Iberoamericana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b03a482bba266dc56f9d0d13890c5de5a04ab545f1cfea60a2edf408d1d1b0fa",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d772bf858aad1342e9c490cfd36a689163c4d39ac503a53d148439b4ad08a77",
+    "mention_text": "Vahan Agopyan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29aa0ea5aea9eff647f6595101dc9e0e8187f1363ae02b8b93352987d999d084",
+    "mention_text": "Universidade de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba0b74a1802e4ede38d914815dcd0294679c6be87e82da7a9fb6b97ad4ef75e1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd0964fcd5f1d05959a528a8e5f5720f1429afba323f7e3153a9512f42b3d856",
+    "mention_text": "Ana Paula Assis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b00fd48b06e82e95e735db51545b96b5f0a0836807df8a04b1d72e21b56fd217",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "793a92eeec03b5d9bc4f7ecbc87c1de396825390c374afe148e67afed724aa2b",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a81bb1b2f171a49b0e49188b591cd8a01c39fd0a9b6d3842a083fa566c5562f5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8c33797e4b138b29eef4dc9db94688da3cf32ee5c6da802f9eedafc3e31a0fb",
+    "mention_text": "Gilberto Kassab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f4d32b297bfc65a630f350fdbb2dd978d476c3dfafba7e4bf911075a5ba43e7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8377d30965aba0c0d3955018fe224362f1be218dcd9e62a604656aa5188b3a7f",
+    "mention_text": "Martin Palazzo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "674c32a394eee41b741409be6ecaa86d3f158f89d0181f3d4e7b71bd693b3445",
+    "mention_text": "IBioBA-MPSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "121c8c7df854a863c4538323b17be4481c9efa66046c46e8e6ec663d461f969b",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9528028266c2ec2896135bb5c0f3d14e1293f6e15ef1831991057b8077c2731",
+    "mention_text": "Tyler Bryson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "32bdfee52e1433855ef92fbba500c02e26a4e763694cf4472bcd9cbea64bec4c",
+    "mention_text": "América Latina e Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c69fe35ae0fd42897c79c755a8497589d856648dff7e82a81259fa22e9c8bc77",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79e6066a785abfb28fe9431ccbf17708f9efffd3618e6e7929c7bec106cca07f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3e3282065b3a0c862ce7fec5250c1e74ef654828dc06494e79e7d876739659f",
+    "mention_text": "Marcos Troyjo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd5124ec9d17685280c936ef76c4ecc2478e9da7d17f718741f7d80fa3da7d2b",
+    "mention_text": "BRICLab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02b95e57255608dfe7bed24d08fea024170b7107d9cddcb34962c031cc2af508",
+    "mention_text": "Universidade Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85f7bfc5b334a678893ded1f994b0b004c11f17aadb3c8767c9e149fc295010c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f415cfc1d4e26c244320124198536df850160c31ec3d62411e3c9ceb723f44b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a74e124bd14011a11a3a7305643176562f70b257708d749e3d033a3d54fd9233",
+    "mention_text": "Ronaldo Lemos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "587684cc19a06c64da921ae9389ea8dac3ffe83a8a05b12dcb4df97811bb1065",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b51ecdd399676ae1ec2d9024e2718d649be1b27939d86e1e248aa5b1576b6b0",
+    "mention_text": "Instituto de Tecnologia e Sociedade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b5049d9a122b80aff67738724f6e8c777a85c74fc1491731904bb1a4b12d9d5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30da2d80b94db662baaf20b8f3980be03069c241ed2f40f6e0a823c576e3b4a9",
+    "mention_text": "Cynthia Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04a650a9cc290659976c0a525925e3f0bfc5c0e4187f5b3261223a622a6a81d6",
+    "mention_text": "RBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c53a7c01a1b9777782056ddf10e30ecb7493e6f2b391a9783e7e00be5cd452f",
+    "mention_text": "Costa Rica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ba56f80c00a9af5a6d9d8c9a293ba1fa9dd87975f378571ae2344fc0a627c45b",
+    "mention_text": "Hans-Paul Bürkner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4151f4b88f519e92f43bca9a9e7c6599d442a7a79a9899b16aaa55742dc12f0b",
+    "mention_text": "Boston Consulting Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b549331f45eff375743ceb99ba7208a1685be5e05981bde292e188e733a28f45",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8fe981bbeefd96619dbb2609f4f089c7cf5dbf026e1dd5dd5ddbf34217e9878b",
+    "mention_text": "Henrique Meirelles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b05e057fe8d8052064c23eb8a5669216fb180a8d112a2d9678092291e54f6fd3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc5bbcbae165cb486773141c792e6b0499b62504db1a2c8f289cb98df3e8cddc",
+    "mention_text": "Andrés Velasco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9078f96add96aac0f81a9fb46743ee20b8add5fb171ecaa9c4f37d49da9da6be",
+    "mention_text": "Universidade de Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48e6d605447997f734b524f7a26544532d36a7586743829bc49846926ea914a3",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3924bb63cd10e2f9a4a8647e5b69435dfd9cacee9690828e2aef88def9ff4202",
+    "mention_text": "Fabio Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2adc6d1e1875d94d8de81e3d691d28e87008666a4a4ee88ea2118220e80b11e7",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed5c05dc6b89b9c50b1702a4f7fed0b513ad4596b077c47759f43e50142bb8d4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69be14ffdecf4c545233191955f8cb7b65d4d3add7966d4e35be7c4cd4f9e177",
+    "mention_text": "Google Inc.",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00cab55d2dd7bdb88c3fae496681e736fbb7985804d326b64b2c86f48e91911e",
+    "mention_text": "Michael Gregoire",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bf237967495c1152c5713c75e84da347ba85a6ed531d92e3683815368874cb3",
+    "mention_text": "CA Technologies",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f44221f3649bc57b180779abd28a91670fb428619dad29e01abae3103cbeddc4",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "453b70cb3675b3c3b5c8e1fe4fa6651a0b3090744037751fabd87a4811f86aa2",
+    "mention_text": "Marcos Jorge de Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0fcf5216bee386b2514e6b478e7c4eb80adb30c0e798350789b7c9f5b30ced3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7de928b9bcef48ce460097f92a8945a5dfdbf0d7253adeb38c01307495ce9d69",
+    "mention_text": "Lieneke Maria Schol Calle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "849719980eec3a1b75631a743ca74eefe2bfd8f057fc45cc4860fad86477a7c6",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ad9f3d095aa7139d72923984a19a645855e1b71e809304cc870c3ec70369b51",
+    "mention_text": "Ngaire Woods",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afcbc5a77814bf80c04d4d6a80e836ae6bd67f79dd50c1c2796db77c81d00089",
+    "mention_text": "Escola Blavatnik de Governo da Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b6a421fdfa75cf0751c08e2d2dd9033dfd2420638b51ab903439763fe146c9a",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7963d08d5a6e494fc19b76440ad5d06acebbeb8ad663f174d9ddd64886f068ab",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ddddb3a45f6e6db155bb31f02732afd141d4a4aea6586be41d7cb46deb34b04",
+    "mention_text": "Nikhil da Victoria Lobo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02ff7499fa06e4b490360be34e8900ae808ac5af1f4c2d7f309829271d8549f5",
+    "mention_text": "Américas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5fdd0326cf12f0b775693129ac65966569ee377437c681c75388b9591c6dffc",
+    "mention_text": "Swiss Reinsurance America Corporation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1da58a4f4efb60740c7719293861ecd5b93ff235c9b10a72827ef0473a9033c5",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6debd4407276032d12b2222d94591331e84384fb2be1fbbb854e798bafeb4f4d",
+    "mention_text": "Mukhisa Kituyi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c30e26a2905ded2ab3c74c01bb62c5646c686eea8a5e5890a9786d320e101d99",
+    "mention_text": "Conferência sobre Comércio e Desenvolvimento da ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14a67698cf21adb7acf5e60f7a62ce13a5b1f773518bbf9bfa4231c8e6b9e2d9",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84fd55d9d703e3281de8b9f1148e61a21e811a65d5e27214c7a92fc08101cdbc",
+    "mention_text": "Genebra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d7e3ebb8069e5308a5029c09e6bafb8fef61e742890fb124e5e4cea2f2c396df",
+    "mention_text": "Rodolfo Spielmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b94820bd5c4b3f2499f26cc46d5395ad1d16c0a021f907cd1d53c01c87532251",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca7de26aba9589b4aa8f164e33765859be29f17ba83f91e32c8c01a185b4eb88",
+    "mention_text": "CPPIB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb8c38f378e55e3b157803262fe339fa6b5633892a484e3f8b17194d94fc0f9f",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38d15e7c53f07b67ffd21ef0a0db848b4f24a80b7ae727b9c4aa19ceddbf774d",
+    "mention_text": "Elsa Galarza Contreras",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "428f333c7fe30daea9acf347363a1b08e0207cef2075b0842a1a7040f0a6c1cb",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a135a6f7e67cadae1adc7075dc64340d08bfe1722c7b26519c0d43e77eef460",
+    "mention_text": "Jose Acosta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6f766aa30ae479744dfd5fdc1a0f64cc207519fe73fa92bdb43e940570e47c5",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7c5b54e0ab28d72a8eec8a726404dd4afc57a6409b25a1fdd160da80501b35f",
+    "mention_text": "UPS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab8b38b72e07bbe5cae3d36851ec4180487a69cc43841b87bf773c186e43d5cd",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "121a2885ab2797e9ba1cd016c6f2c8a1e3698af98d4c889cf1d6fdd85d29e0bb",
+    "mention_text": "Christophe Roux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2cb1f3ff712363ec7f1c0f7fd81a8fbe9c38780bdc6c2eba841cdd574084d56",
+    "mention_text": "Airbus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f007b81bf80180e89e6875e5e84d1346c39fec9735b314ed24566822896138b",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2d96fb647a22e0a4660449f8ceb4d7cfc2a282d309690281c8353eea5124633",
+    "mention_text": "G20",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7060de29d22de3a3176cad0d8621829aef9b53ac9667e345e6ba65d73970cca4",
+    "mention_text": "Jorge Faurie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68747f4f08ab7ada2f7c9493038ba68b59c34cd57b8c4438d42a1e51efdf968b",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f3866887216fd8180a690e8e9e086d3b5a992c42b8bf11a92f2facccf88e032e",
+    "mention_text": "Daniel Funes de Rioja",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9990ee809d662815b6014d466b515a22e804bd402343bc9f105e1b0f692a51e",
+    "mention_text": "B20",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e076ab5344d5bd1f7f9ef7d46f911bf582e6b84e048923fcd41db2e4cb113c80",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "999f70a3f16e614f4f37bf63bf70f621e41c017f1f7d8185c640b6a09e24fc5d",
+    "mention_text": "Andrea Grobocopatel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73261e36c2d76e244fab10ad7aa37e0f82155a634250a544f03298366e8ddb13",
+    "mention_text": "Flor",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d041c187c02c12acea30ae386958912748c5371f7c49cce458c8358f68362232",
+    "mention_text": "David Herranz Acebuche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acd2bd64aa123112a93ae6b6990d942e57c4a77e855e1c8f2a5d8f2dcec75844",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "161ba5b5da1991c617c0f07d95b060f5142e1948cf4b5be4c14b16b173755f88",
+    "mention_text": "Grupo Adecco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "169247ddb3adecea57c46086c33e7acb186fea683b80d138a299ef2eb7c42482",
+    "mention_text": "Marcos Alberto Medina Britos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e6819e934b76b7ef28e2f0faa47e7382853d308f349c2540ad89708d922626d",
+    "mention_text": "Paraguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e39f92d2d47e93dc5ed46f60c01f9b6fd69d773463a5898c49b0e1d86907b6df",
+    "mention_text": "Jordi Botifoll",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c66849ee8863f70e1e6d751d72ccc95945ae6842dc838d6eb7d9567d0d5bbb91",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe1bdf3eef148cd7c8a72e6b7ef64eda41be7ffb390f5588d919e1e02c3ae301",
+    "mention_text": "Cisco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "943253746faf393340ce8d7cd5c34a1604a5fbfaac5cc9e8636394121e57c5b3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20bc527c10de43d08810cb588cbb5ce49deb1caaaf85cdc808bceb52e7b2cd41",
+    "mention_text": "Belisario Contreras",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2d868cfc3f6f9dbf778346ea6689a5cdf54c01d3b44b769451d71b6b551c4e1",
+    "mention_text": "OAS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d69b1a5b6e5a2413546c0da410b468d693bafa9223227618f5b8734ccfb63d3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d06134a7c8185be6dc8386f41db354d8da89140e3bb61180b96392dbd89b5ad",
+    "mention_text": "Jeff Kratz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7f57a142aa920572f67041628470fd4d7c8641bb13f2bbe0011f156704394de",
+    "mention_text": "América Latina, Canadá e Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2402713fd6e5607e4e1c62d7e17bf45bf264f675f3ad12d96d8c88b51dece8cd",
+    "mention_text": "Amazon.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97603c945c11c23bc4d86514ca46ef18584e35702db0a0843a4602bd92a80c0f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3188b5e54f00192964c6b796c55e8378b4e82b612595b8724801e6f16e7a6e3f",
+    "mention_text": "Candido Bracher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9df32ed4667c2032c21c60e93b4c21a2b4f3e5285c565c8355e4c63b9d99da8b",
+    "mention_text": "Itaú Unibanco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5172892ecda7120b81be1f1cb06aba5438d5b3ef44459cc00829cd4c6e9d9b33",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f391bbfdf47b4ad16fd4c0a03d834c79752f2edb441b13599ab5a6558eb42a5",
+    "mention_text": "João Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a45df36ff8249ee1f3ae83bfa84835c0aa751f4b8667ebc4a187f3991e6fb6c2",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47f3fe57518a349b9d0a79d8642854a057c9f81144e29ac6fcfbbf35db754f1a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a8df4459a13acfe995f59859c6bdab34c4dae9e68464aac956c361a05e179ce",
+    "mention_text": "Armínio Fraga Neto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8292661e1d0e5fbb84a64b3aa806012471292893b4ae363fa9f5038e530f9cb",
+    "mention_text": "Gávea Investimentos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "141881a65f5181883628627895e0b5313a69956f67be03237c560cc4812d1284",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d27bf5abaf91833932e84e1f142ece7ea6006b5e68a547caffcaf71e8d84813",
+    "mention_text": "Roberto Jaguaribe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bb1686a2ae7c33207ea33edac863512fef3147920d6aae325a8cd6475f087fe",
+    "mention_text": "Apex-Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cba33d11db7d511f398d64bf246dca77ceed203c8dab22d98475e0f6c13e339f",
+    "mention_text": "Armínio Fraga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99176a5abaf944056a3d0f5132ad96c469f7f8480d7549b1c404dc896e7e5ec1",
+    "mention_text": "Gávea Investimentos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfe67bc117424408e845aed7e30eb1ba24a2d0a3fe3a2047f1bf753b6a5ae3b3",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aeaa45f886290526a2c30a8a9d8d2b5753ba6be8adb645740d4ffe3c81b63e5f",
+    "mention_text": "Edson Arantes do Nascimento",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5d15848a148764fdf64c84555ed205bd8cdf9aadaf535f5a554a1b91feb704a8",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45235f0d42bd27e4c8a93709282091baa359db290f96498130cd0aa22afcae57",
+    "mention_text": "Empresas Pelé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4951aaad9bc7f5e98753eac9e1808e37ed040f8ebdcc8b5b5c88e6544a5561cd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "907341529aefa7188adb4967d29a0970eb4244444e2acedcc28377788bf8ab87",
+    "mention_text": "Jennifer Artley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3202b3a81c7064351943d5664b659282ae2eef2d220b7baf11c16d67fed7f823",
+    "mention_text": "Américas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e58db469858e2c7ed15d30997c0058333d87cf3c7c60f2d697f81f8dd05634f4",
+    "mention_text": "BT Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3a3f14c72c911621dbec09f807d6606344bab610df9d4eb885a60343bd27642",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "933a619fb3bf95f3e137522d74d46abb68a51ad2f61b6edee26ce313c521f07c",
+    "mention_text": "Mauricio Cardenas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf06ac87726fa36ae30977ac3a6d6132fda99bdad0d4c71312b821ea5f76f2b0",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c3c8663a4ae920d7c8ee89ba56f28b742fd3af573c18509d467c189e874c7015",
+    "mention_text": "Monica Flores",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3fd878c3e18ad33e5f8246344cb51f5bb406d900a47a0e7bf462e1ceec13b08",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "186cfda1a11a72478b54196da1824c6fda8021e97f1cff06c4c667f059c05823",
+    "mention_text": "ManpowerGroup",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23d1ccc1609592ab3bf17b8cb4d78d19895e578a5e8b26bf5b203e090fdf6673",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "381370e8537b67558c4d1d6de2f42466dd3f97608933499f0b99f45a2faead11",
+    "mention_text": "Angel Melguizo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a351548cb782418bd6b38fbcc7357632d2a54ae10a86c68a5347420aef85b3eb",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9d0a4739e5f013d6ce236ded2b13e1f1201da020ed52331704ccdac1e35f439",
+    "mention_text": "OCDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc708f5013af2d02ba0878283c764466f47063d9b973cf75cd8d1fd3756653bd",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c63e02e2482b3c6f05b8c8dc76e9e713ee540b62bd31cfbfd73583a9a5c6c485",
+    "mention_text": "Roberto Azevêdo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb3d7b5a6bccab6c507b370d593cb6400473d93ab9867c8dc1f8f094b7dd72a9",
+    "mention_text": "OMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "145fcee6d33431fc3be25458b9d126a25f0cbabe18443348e560984bc85810e7",
+    "mention_text": "Genebra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be08aa9ff367d27d49629df000bee2d7d522f7eb4c0b5910d17368a2ca44d741",
+    "mention_text": "Jorge Faurie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c3bab093fff9023dbd304bdd65f5f48d65e204374e7dab543ba871ff058bcc6",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75cc9f1eb3e9a9198fa25dac5f573effb6b6ba3ff5d3551d19fd7d71600c3a30",
+    "mention_text": "Brian Gallagher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a19da83c984f4658e59b9b64a65b1dc3bda0551e7b9fa2c027b2ee176bd8e93d",
+    "mention_text": "United Way Worldwide",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a6169b29c1a95d4bb4e062fc4a92960675f4fd28104a41702b0827828a9ac79",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4d21d0f5a97d221fa5c288497afb93293d5e5cb6529f5b997852d50fd83c7ea",
+    "mention_text": "Michael Gregoire",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e6b6f331256ae4d4ced6942545c1220445cf61864e903cba8b2e3fcd614f39b",
+    "mention_text": "CATechnologies",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41da80e20e7c4de561273b4b0b7da34d304f38f516b39e4ec9640a4186bfc1d1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b1297f893ca662364a28ec7cf48030aa3046702684a138c5eacae788529614a",
+    "mention_text": "Fernando Coelho Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b8cbc3eb5a1a5867888c6721c954399264924aace3e864ecebe4c2395839b40",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "035963cf23d11c002c8eee3f7587ceaa243213e143c674d96a1fa71a2e5430de",
+    "mention_text": "Wilson Pinto Ferreira Junior",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a63d3f78a86ddd9713d4b119d2cbfa934d0bb6826ec912c3f1b35a31f744d95",
+    "mention_text": "Eletrobras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5ba3d852e5b62270c2f9052d8c5cbf4640de91814cf29f21a9c5e2c89608c4d",
+    "mention_text": "Ricardo Torres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b807dcbb806162e6d623655b2d0e450ec949e9ddca5fcd4e453a04ebb6495210",
+    "mention_text": "Edenor",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "425393afd2a1bfc45e5f89970257dae321c809887ea8bb8f4658e3be72a03a16",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d37e2b8c4fdacf03f0a7a1d30b40a5ddff6ac1b1ae95caaa822526d3f70bf8e",
+    "mention_text": "Solange Pinto Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14ca3aca993bec0a3fb3278d8f0f50a9edc88f185f2cd3d54b0ed593ef514aaf",
+    "mention_text": "Neoenergia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4455b823f0129447e383d42dedbcbf2d5ccf39d9cd9b51b0937cf7501057dd2c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "509ccc422cb23bb498268e9aee8bad7365fa63513da362f275e9a0d0cfe23b7a",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc769a92b405bb42037f03f28912b9f052004b0f0666a59b8485edae210dc77c",
+    "mention_text": "Kjell Grandhagen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7bc1510afcd56a2f089053bb8acea2464f18c63756be68d73d19ae734d936a56",
+    "mention_text": "DNB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32b1737301bc7cab5e556c9415926919b6fba1dd61c0ff0cf629ae759e56e22a",
+    "mention_text": "Noruega",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3700513f12359f21aaf67fb03a95603dbde92e2be1a7b1c83c9da45d3fe9a7e9",
+    "mention_text": "Trinidad Jiménez Garcia-Herrera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61f35347d443e56c79fc95bd812bb391b49cbdb01b3dad5f60682f3520f355bf",
+    "mention_text": "Telefónica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "755ebf31f8653b3659c6ee248ea23a8f28d4788566b20a6108b4f6e5b8c47e73",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ba429188bd3fff987676ede7f9e8051981f58e51b1a8e3571309f5955448c51",
+    "mention_text": "Arturo Valenzuela",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e591d07186038b13ad8b228687be959beebcabc283acc800a2c047895a1104f",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f020fc19964cdcf6dcef2859375b47975e12721f90155674355308f315a4d62",
+    "mention_text": "Covington & Burling",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a763d9e506459aa916ca64043c74e802a9d0e1a7ae7bdcbc08e2801169c703eb",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b712607ed1215974ce241dc88e361f95058510a937460eff434fe75bd89bcc35",
+    "mention_text": "Luciana Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5dbac6a6a212900cec5c17f6b662198ecbc583290218e3228a8be3c6dac08e2c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9208b62efeee2946a2c5d6cf62870e97eebcb7400600ff4d63de3d19353a224",
+    "mention_text": "Roberto Azevêdo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dad38359ccdee3e807ec2d02ad62cbed7b04836815377cc275921e620fe9d0b3",
+    "mention_text": "OMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dddc2f55af80710a4f087570cc7807773369fb8cbc50c990e714fb26f274c08c",
+    "mention_text": "Genebra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea4714ebb343ccce0780c8cddc54e8bcb46c2ea6c99f7be06e4a3953e6cefcdf",
+    "mention_text": "Demetrios Marantis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab0453fcc38c9e93579afb039bad2b0a10856ba54c436c1380f58ad7934554ee",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2feab5dc0baecbf3bf1e912b3f263f9658b94e0288b0962f1ac34434b5c94b95",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aeb410d36cc664f0945567e4b9b2721a9a86fee2717cb852c696a870bc9c376d",
+    "mention_text": "Jeff Kratz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "678b62184c0c45c0781c1d5db3e35a66cfc416ddff9e364d083d7d337ac6ad96",
+    "mention_text": "América Latina, Canadá e Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ec015a3684bb1449691c18c224060e8c58aca9f90339f3b6b28101cd29d580a",
+    "mention_text": "Amazon.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b2ef806a0de1a261117298444e741b5c8d3c27d7f016d48e72979950315510e",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a634673fc866439a7a8d82fa022225d1a6fc78602b68717184e60086761aa45",
+    "mention_text": "Geraldo Alckmin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51aa8d3a6ab995f2ec2d79b763bf9260e6cc2aa85c6e6fc87ed58dbbfdd1a6b9",
+    "mention_text": "Victoria Alonsoperez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2a0a511c52d58c880ccd7c6e906f7529790dda2ec9fe8a418c11248a812ba0f",
+    "mention_text": "Chipsafer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6b156c3ff3ba86c20737c276b8802b639f2360596e7f3d99c5ab018c2f37587",
+    "mention_text": "Uruguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "66bc32c673d8dba821b2716660d54eb44dc33adb20cd21bb043d7c77d3714715",
+    "mention_text": "Svein Tore Holsether",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c70b71eddfcbd4cd6a64c687a9608a1e8bc5e17ec1182652794458aedd8ed11",
+    "mention_text": "Yara International",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "469d0694cc948d2da6906e543cd0757b05a0fda506bdc2d700d4b3281e96bdd4",
+    "mention_text": "Noruega",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ceafd2ea182c6e3e0afc7249417e218059ce908261d0c2a9f08b8db9aa98ff9",
+    "mention_text": "Patrick Struebi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "197950aa8d70872886b330e115c7758b37fd7b6fe0e3c84824bd8ee16447b892",
+    "mention_text": "Fairtrasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc2568fc63e19fb0743f338b89f01051ddf723ddb8cbc28a5e5a57c5c30370b0",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9c22c04d97880dd8a1044cd84330693ae10c7e05de7a25a4442cc23a3ac81dd",
+    "mention_text": "Mauricio Adadde",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0b8e203262a207d54b76e7e62cd9e8ab9ae790bdf6748672e5166dd6e399843",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2632eb88639745a1166f4c4e9c2c540e8ee596af58740916eefc72ff5597966a",
+    "mention_text": "Royal DSM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd99dda9e9fa4e30e633c6466189fdf262eb8b79195b88a375b09b28efbe4d35",
+    "mention_text": "Holanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d5339a457f956c3cd7a080e0a070551d0e219ec42225d9e2c30920b4fe237c6",
+    "mention_text": "Marcos Alberto Medina Britos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0d4ce04a4a10be47ac2ed9c7131040eda908ab3c65d78c0677ba6dd5e57c951",
+    "mention_text": "Paraguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c2dd84c601fd6b94fb00c2bba07c0474998a4c778aff74bb289043e267be285a",
+    "mention_text": "Geraldo Alckmin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0bf293e90b7479aa8f40cb33de9177b9fa6a6055ac807d8350199b10d1b1954f",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0fd90472a324a7be765fd3e9edc899a33843d8476df0589401c71f2d9e263c1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "976eff91433384f0c8a9d345478fb32f94ea91672b58c1205b4e831471075066",
+    "mention_text": "Isabella Anna Danel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab2521433be700b86d3cffdfddc435392c00ca591e4255b2442a919b5de4fb1c",
+    "mention_text": "Organização Panamericana de Saúde",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "482d146a3df23baaab4df312bd19086f170e2a7d3386fccc578908d7fc537e74",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47fa6f4b53258c169eeb9549d7b582ef40a38f746a294dc4dd7c14d14b122675",
+    "mention_text": "Patricia Ellen da Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4da969bb8a56502f1befa250cd4747a077b5c3eaf911b78ae7e2da7d4be04ef",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ccdac771bebae82b7ae97e4371194b1dee7e6f4e6e9e4ce9cc9ad13fe2827db",
+    "mention_text": "José Antonio Toledo Vieira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60b4a3faa813fae9eea4b6a2e2d2748b13748658cc380072d50ec031761ea40d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a319f4c84305071d3393770078d77b6e08fe1a4aafbcaada0a405ba070a469fa",
+    "mention_text": "Novartis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a6695052979b41e3f354cff04c451a846a8d7aa01f5d3610ba78d9ea390f8d5",
+    "mention_text": "Edson Franco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2b77159573794ace42cfd8034abd5746c209a3166cf9a28c9dab4dde4c7f4c7",
+    "mention_text": "Grupo de Seguros Zurich",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "773f12148f900c7643ca7ee472974a9f225b66ec57513ad40c2c2e0fce8507c5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dd47700bdbc64042b7813b9624f151149e18baafc8e9b2c17318e5aa7a1452f6",
+    "mention_text": "Eugênio Paschoal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bf5f39e0917d0f70601d693a023d278427735687fe4b77f539efa74560500d9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "636f6558d661685c3582ad7f11e9ad84f5d5cdfb0f8dfff0cddc8cc3c99942d7",
+    "mention_text": "Marsh",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8dab57d1b38c4b43ac3878201493c910edd558192f619204083ba4fc0a47637c",
+    "mention_text": "Claudio Muruzábal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6da84b89a16ae6ed8f0d1c31058c7f702dcbd2003492b82ae1de6c348552ce2",
+    "mention_text": "América Latina e Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9da5d7fd87426eb0193d028cd696cc915333c81fd854f81aaf514cdc0ae59a5",
+    "mention_text": "SAP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a29aacd2f9329a40dd4a6e1a004be89243f9bc3f8bf2ae6c6a37458009e5d6f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6aa764ba55072e9a2d09447fc35fcf641f31dd01cec3830d0e55f612715a8897",
+    "mention_text": "Alejandro Romero Gallego",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3804d881ac6ee8dfd021dedb97688b8e2da8ca798e33b5781e784255ee0129f",
+    "mention_text": "Alto Analytics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b87a1b5ef3cef4ba9611554d1c0e16005061588845899608e87d2bea23b4de02",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "100f60cb25a7f4c844e9c4b7a1833b280deb162b99f9d4b0c19fa256f07d98c0",
+    "mention_text": "Jairo Trad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0822207b9ece8d12809161c96937990e8430092eaf33016d0c0680beed1dc3d9",
+    "mention_text": "Kilimo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0745fcc08613d5c564067718fe44e5ff8540dcbd1079fafdd4ff23f80dcc61ff",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1af5495cddd87976a5cc037f442ed1306cc6bcf53190902a6901e3eaded70cad",
+    "mention_text": "Nicolás Mariscal Servitje",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb4700c6884d0af123288593088993bc3d544da94e81e7585c6ba85b8b6712bf",
+    "mention_text": "Grupo Marhnos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "714df0df565ddb267e9a39c783acdddf6cd9619ccbbaea2a9aebcb0097edb8d7",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9821ccfefbb5487b9760f0d5b1f3544ce3e67ef4029a4eecaa3eac62815c2d2e",
+    "mention_text": "Alejandro Ismael Murat Hinojosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f69bc7a79cb09f701fcf7fb295b5d7ee7aab350164cd814cef8ea08806ccb2b",
+    "mention_text": "Oaxaca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bbe237403adacff1081728d4ff481da91b6240bc00b05d77cfabb383a38db1ca",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5da5e4e1a0340f879a0605b0c88b9f1749f4cf987ba3f0f58411ce514cb1213f",
+    "mention_text": "Bruno Sánchez-Andrade Nuño",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35a0b9776562ff8cdbe3cd79c9025254bceaec897acc00242b9f6179b0e4ad0b",
+    "mention_text": "Satellogic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "521a27c58e2022d5106045cc72268a5f546fe3c1887a66686f3699d77cb0e88c",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c5e30b202ced73a10136ef48479fe5d9f9b93681be46cedc688809e2da439874",
+    "mention_text": "Cármen Lúcia Antunes Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e55fe6a590aee32140b36267f395c2fc2d2b1c96d7ff4ad1445d01f1a1430482",
+    "mention_text": "Supremo Tribunal Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f93d029dc60e677ac113346951da8a1697e75fd9de3a9fac6f32070e9847dcc",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "baa9d71afe65cf6de6c172811f050d9adb82cdc26c6c7a67ad845e34945fc052",
+    "mention_text": "Torquato Jardim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a3dbd6b8fc3909d1a9f3a34ffd0e703241d7eb287f02fad38c1a0e352b75802",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "352bce642b77f5d1ff3431c8adaeeed9fbfe86ec7855545d31f74523a848a093",
+    "mention_text": "Paula Bellizia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e75c72f6d9c9fc3518f062c69d104ffea5111a6054444334c2c518fbdfc1a8c8",
+    "mention_text": "Microsoft Informática",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f068184614066372ed03d5b387310635f27cef7779ed865836cd0b20e13ce1c2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3cfad3413fc97dcd6cb91e26a18ff934f591e53cf4dd8def9f7376eab03483b2",
+    "mention_text": "Denise Dresser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "546007b7be9000c4584fa3ba63066726c9372b605648860dc22724ed290019fa",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ddb7db3345c06094528eff3c1fa0df45651d3a260c6acfee8fddd62d904835fb",
+    "mention_text": "Delia Ferreira Rubio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ba15dad3dd2b714587b6b918af6ff113d57da75fad588cc539cb31172d202586",
+    "mention_text": "Transparência Internacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd6ae9c26695acc60b02f642161c72dad8e7ec423b832e750c036f5cba0c0be6",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b2c0d58cb2b61c3832df2676d3936406d2d175bcf2420a69da19ddb487f2cf0",
+    "mention_text": "José Antonio Vera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95532187b90cc03f05f7399532aabd33f1f4a0072c09610445f635944b5b8b42",
+    "mention_text": "EFE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f36b3ab1460c4165996f66bbe35ed5a1c940b5c3712a62a874b20c8d0dbb074",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4acae20a833b4cbd8156c8fc257ac7a8c4462319762f393c4a5883e40619c5a2",
+    "mention_text": "Marcos Jorge de Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "862bea72923a7ef8b6d37a41660d6df40413db23e0daab0108c88d3458aed23e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f16f8c5a22ec978c5bfef5433988ce8f278213d29dd11bf174fb684a8a96284",
+    "mention_text": "Sergio Andrade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acbc6a97681d385097e827db4d9b58e527508a93111e811c2ccac57004f3894d",
+    "mention_text": "Agenda Pública",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5cd04d002ebc06271d4be408e81be575284a9d885d32b7417d8e9c3dd4e9558",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09f0048e5df319009a537003d10f6443bbdc98166a30b07f988a074b219d29ac",
+    "mention_text": "Marcela Escobari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7c8152251b9d90e5615d02d0116842fd1c14dd042ef07d3fa56659ac3bc2ad7",
+    "mention_text": "MasterCard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18bf723b674258e58c544e2c559b39004f19f7596bc40027e3061481a8282070",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65cdafe6910323b8f0acce5f339cb443ffbe4faa251fd4d78929ec03fcd21cda",
+    "mention_text": "Mauricio Adade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c812ac72154ec060993f0a6d4a09c69d7c090eb7fb75e9af55056e72e86e261",
+    "mention_text": "Royal DSM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0380627f679605701a32bbdc4e1dd90af2ea0723b09d656a3fa0e442ba801a63",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3adb997ba920363de9a4b95c4b71fb16bf2a3a0b345a0f69dcfc235fe26eb0cd",
+    "mention_text": "Gisela Maria Bernardes Solymos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bd5359446b304b951a2dedd89be6393ca6c3dd34cdae0d1ab3dbea418398885",
+    "mention_text": "Centro de Recuperação e Educação Nutricional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7533829e5923eb6a0aadaf5b1557e649b25bd1faae7d77b40761442f901c3dce",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d71d6113f59d1bdc43e583c291ec4a19a233ac775340447fff3fbeb256e49d30",
+    "mention_text": "Bibi Gonzalez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a311316457f846a45d46e0467988445b2aaf42b4fa5a1b6ff9e9311960aac05e",
+    "mention_text": "Eat Better Wa’ik",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3459bc6a1a535a9eb23a361771bde86e8da8d68b259a63998c06d8c1ad9cc15c",
+    "mention_text": "Guatemala",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5dc6203590c47e18c7ce7ad02a26cbbb5dce088e8ea94aebe08b6fdd1686441e",
+    "mention_text": "Osvaldo di Campli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b088ae82df243cdcc41a3f9dacf77df3536b5fcdf0c0d57c442641320852739",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28a673fc7d95d6f1dc1c2970966c755aad28a4b1702b4a4351bbf57ff623cbd0",
+    "mention_text": "Nokia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "267f4bcaf9ad549cd52751098ef2c259f5df3be67d2c24a63a3a41f2feb2d494",
+    "mention_text": "Finlândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34319f2571c319178f6e4a268c516848bfd43a05cbed57fca52f06d0ab33cfae",
+    "mention_text": "Alícia Bárcena Ibarra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf594d896481749f390f9688ee87eacbc98babace2ed04ee3c0c65107bc5abf4",
+    "mention_text": "Celac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba966f2a4ce6edcf066b3c4d316ad6964798f27b66fa0d3bd1d24b5886766b9c",
+    "mention_text": "Comissão Econômicas das Nações Unidas para América Latina e Caribe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ec8eb48e7f6f93c9b2972a02eacb00e4ac5e23f2c56e5a75d5aa0659bf2f861",
+    "mention_text": "Barbara Humpton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe691cdf01b06a2ea364f339693da77054d5a0d71bbee7f82dc49cdddd418c80",
+    "mention_text": "Siemens Government Technologies",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2928ece3ff6c0006e92854dcf670389025861a5667bab05ba3eb5fe86cd1bf0e",
+    "mention_text": "Claudio Sassaki",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf97dd383ed08d4df52f54c18984ec97594ab0be77b341b07fe27ddb8042033f",
+    "mention_text": "Geekie",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "057f03a4b9c9439e585ef21ca86f17219bd507b656065a671c696f0e156a1be6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2009cb0f465528d3be77150d7476d3acf96f1a964bf4434f01ed9828453f8810",
+    "mention_text": "Bettina Schaller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db1f517e1d7908e5efa2c2745521b83fda4c304c5c72afe7cd47990300e63ff3",
+    "mention_text": "Grupo Adecco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48dc2dcc652cfe667fd1e0bca1938cf6e4e351e7bdbae11f708d37e0c18dbbf9",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6e2d3158bb87b032da7887dd556a780c3468b809828970eea36241911b312924",
+    "mention_text": "Freddy Vega",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7aac431a56449f00da2bc7f99785881119d7b347cb03453e76b137f79eaf994b",
+    "mention_text": "Platzi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cb6c63c556232afea0bfb8c85dc36b35e2eda5dd5497682497d46f236eeadbe",
+    "mention_text": "Cristiano Amon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "114e49e7d59006e5d2e530dba0f0b934e62df0d39d2440ac298310596c33e3e4",
+    "mention_text": "Qualcomm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cec62e9f85a83d06207e3886bf04acb7e30f11f4d869cf49876ecf6974e236b9",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea9247c4f26d8c203365b1b097353efe9f9e65af99514c3e798ac18264dacfee",
+    "mention_text": "Jonathan Hursh",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b21c96b41a7a8d375d29b6cd73bc535fb5b52ee54a7405358dcdd277b20f11c5",
+    "mention_text": "Utopia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e2d46297b46b20cbc86b2a3325ff4a7c0a7856043e03d97149fe451b8ffe91f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bace4561823109008f601f6bd8767df4c045c9bec98a14f0f76866020bc2ff2e",
+    "mention_text": "Bibop Gresta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08bf7f61424eb3575d839c4b9ffe75d9000c0c34e59339521a76f6be4b45b8f3",
+    "mention_text": "Hyperloop Transportation Technologies",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd963e0f3bafe08c7945b7d8fc35dafca3b1bf33d737e99ce3b18a56196dc8c5",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9e0f0b72e86cfe8260e5497e18526ea63d519a20ddf81ea0de450c1b74e3cce",
+    "mention_text": "Maria Soledad Nuñez Mendez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "983bdcf1516ea2648b74228656da82f03990691e0bc1e4dc78c08f142cd8caaf",
+    "mention_text": "Paraguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c2e5852d5d5e13093ae5b94e217c18a7019d226c1ad7da745c1ab4982607905",
+    "mention_text": "Jordi Botifoll",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b32bc3390a48685a220f77d7b268ad9e00fcbcda1ae8feb10d904b64e8bd098",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6298b4db850ba12ca4e0418628af512d38afee7c52167081e8626e52b0bf652f",
+    "mention_text": "Cisco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c4cfad8a9117ea7f893be001d2c01aeb5d655bcc9cd4cd5bceadcd48d74f4e0b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6b90f8d1e4bb9e0e8acc3ab488fef64ebb89a1b7aaa485963f8ee2777a23469e",
+    "mention_text": "Manuella Cunha Brito",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04e674c1b0e37774fa7bae1c7a3c2f13e784a0608b66800e30d8d31f11710d7a",
+    "mention_text": "Good Tech Lab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d5027299e485a7857bd6233d67dea7a0c1c5c3f8c4704bda3f4611cfebdb691",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "430ded558e9fc1b0f275b9fa42faca5767de7be4aa0d58df46684f957551324e",
+    "mention_text": "Fabian Gil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34badd9a57736e505596d9c304ea5d011daae66147f15917a52d7febd84103e6",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0ad9dd44e4f12a07d6e6d5cabc38d15935ba51870977b27dbbaa64206c971fde",
+    "mention_text": "Dow Chemical Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f46c83b8eb80288ac5bfd83d7704af75fa4181f85c90d715279c25acc4ecd63",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4acc0a7c9c800e9480ee6702fa8d0ac170a2489f9854ad5af3350fb9e8024f62",
+    "mention_text": "Timothy Hwang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f44813a5a19671b92295a5468db9eb2e17bb798b29680f6413eca74b8ef92087",
+    "mention_text": "FiscalNote Inc.",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ef8013646f69fec20780d803bd0daed818bb715fdf626ced3256bf78e6b28e5",
+    "mention_text": "Maruricio Minas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26950f4803e9f87fe999d584a92e04faa971d1253c16ca413ed5139da9ba862e",
+    "mention_text": "Banco Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f7d184ff1eb0c64ea3f53ba92dbe31ecc2c3dd4258bd597d6e49810b1cf3f1e",
+    "mention_text": "Altair Rossato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef750b9b716103315147b8da38d851a73ba262482334908e1a9d39c64340656b",
+    "mention_text": "Deloitte Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5483ca365faef9fc6c00e7c8e67e94240015152217901b405afd53cb3c017f7",
+    "mention_text": "Jairo Trad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15f6eb58ff68b3a455c7bd2233b47a83460ff009415f20a95fef1b1027136c71",
+    "mention_text": "Kilimo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5cb9eac1ad5ca53eaa40d09b21a0e479cfa2a888bff760a5efc26e018c574678",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b47e0d7d4e77348b6d0c3d4bacfe318eac94815000d20d06e1b9ed9f8161415",
+    "mention_text": "Izabella Teixeira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb16642548e530d13e08d30d52e521cf700a4704846eca8ee30488fa0ed1f8c3",
+    "mention_text": "Painel de Recursos do Programa Internacional Ambiental da ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d272f4125f05061c390d4221772e7689e1f92a40fc09c47889532ef4c798da74",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c951dde347dd4cbc2a01bcb64384f4839a6618e8d3eddf9a3162c53edae7defb",
+    "mention_text": "Roberto Kikawa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbaabeaba97229c403e4e06551341d2e1759d2a5679e3b06512656903cd22154",
+    "mention_text": "CIES Global",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "736264cd261275393c463c44fc0fdade4e26d5e365f39f84a1eac26cbb0238c0",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a519af054ad134584c9f78db36718cd3836699a95b7e4c342d9ae786ff20a67",
+    "mention_text": "Javier Okhuysen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b515d8817800bce600793fe0e401b9094f0c23da474e15ad56a8bf35eeaaf6f",
+    "mention_text": "salaUno",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7bd745e44fdaec42f7634bc78af582341618e8f5d2fa3681bc412cc1310b3989",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "623ce867f071629b3976192ff0c24579213115145a5a746d86a0ad798e4e8eff",
+    "mention_text": "Diana Carolina Quintero Giraldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd8966a565938aa4516a2223c25ba775978198d3617a64c170466e2bd0177668",
+    "mention_text": "Bive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0f346c3d4a8bb361c907e1068b077a2e23e90683907a4525b60a4614f657096",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3ceaf2da229737dfbbc0a6308ed7a8ca5429b178d272b8013ba249b7719d6cf0",
+    "mention_text": "Cynthia Arnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fc1670a7e549937d94def3f2dcfa02895b2db072a8b717a8ff31cc3bbad4375",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d81d7a009491ba9367379e92bc9a075c19726789d872a816a948d92da9047e6c",
+    "mention_text": "Centro Internacional para Acadêmicos Woodrow Wilson",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ffb25bc7b992b14f344d307f596f5a12d54e1596054b589c82a9a07da2f1c0d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b959c085e4612d3a444b11f97eabd83465182ad72f14a5bf985acc30f8765541",
+    "mention_text": "Valdeci Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6090eb72887aeb84438ac4a8a0d4d33461bbd51ab88d0973fc1e431b454f98f",
+    "mention_text": "FBAC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6130e03ef4eed6afeb0455be516a1119909c129ed38d445db99816708399580",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02ac918e799f5e518c1e329dea39b110bb5ee34783d9d3d09e7a3deb65f474db",
+    "mention_text": "Stephan Sakalian",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bfd6eb92e9487b9d810b83abc9f9192ae9ff27740cfd89b13db6d8bacb0254b",
+    "mention_text": "Américas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7187323df8eed774c8acbb691cf288b603d1a4521ac71ec9566f55c9a450f2b",
+    "mention_text": "Comitê Internacional da Cruz Vermelha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a75b0851bcf5ffd22f3907f73b006fde69ccf7addb21c7ccb3f13f71251d3a48",
+    "mention_text": "Gilberto Caldart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8722c649741dfaaa811ce0ad4d767eb116f630c2ec5918c07b59b9f032683955",
+    "mention_text": "América Latina e Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "011dc8d08d9134806fbe33cd0092212d112424c66d62187b781ce39914b06492",
+    "mention_text": "MasterCard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bcc55588699a21ae963f71e76db376fa0edb8d230d999eedb754c7a9e20a956",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b90e2afe6639aa6883b77b5ec749fded5ab5831a3d15f53f48a12f981250e76",
+    "mention_text": "Ildefonso Guajardo Villarreal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84a7eff52e5d1c3ae1a2ca1f5642698d26f3d4a8551164c85be4ea07945dade1",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1af00b7f7d693deb353699944bacbf18ed3b62aa5bc42037cb0d2a4c2f4ba6b",
+    "mention_text": "Ricardo Meléndez-Ortiz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9e91c0cf35ca337a3a5917b0b9c21589b28dcf41d8a89c8fc17f328cc17547b",
+    "mention_text": "ICTSD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0baa651925ef5dd50d4c933d5b7553d29ee55846bdc2fdda906ba5403e2a00cc",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6206ce452e2c589b7ec82fcd0262484aa528968a2068113e81d4ac7614890cfd",
+    "mention_text": "Fernando Zavala",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a351a2e11c3b1a3fc25e5abb3e0a61473e35e50f9bfa3de58a1b9e09864fc88f",
+    "mention_text": "Conselho Privado de Competitividade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa6ae55883a55cc634db531e845051412962d7acd9507e1b1dcd7e84e3055dbf",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c246409493b545d16753c11a98ac104fb439b752933d4b73d98d36d921218cf",
+    "mention_text": "Brian Newman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f38e2aecbbaf85b30249f659bdeb34377c2ba30bfe7dab6d0cf90ec17be40d2",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f6b2b1c6e5d28c134e8a3c2a612635a5248d05c61b8302f09442c494f192c80",
+    "mention_text": "Pepsico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c35871469d8e0a45652db221b43f1466b872dc52e5a92d1e36287cccbb91d43e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "224919b23102a9af673c4e95bad1dfa5a3ecbf896aaacd2840b553bbac974209",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6505f62b2d5f5d58debc665da6da8ebbebf9a4bb61e0a0ada08b08519cf2ac93",
+    "mention_text": "Georgina Baker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5d5909d1f863c9da142e5d52759f63cc93167bb22e39945313c0e096dd283bc",
+    "mention_text": "Corporação Financeira Internacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6017d06e5228ae1d4f3314bf5c3b7b89a8af49de66be0fc7ed805da9cf6f97c0",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8e8b41a3602c6a067472f7643966f3a7ee31acb128c5c934de658df75b0f4dff",
+    "mention_text": "Jaime Francisco Hernandéz Martinez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abedb148edf704604e7f41dc0db01de40a8ec608930442ca3a2cc40002f3508d",
+    "mention_text": "Comissão Federal de Eletricidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bef5799ccb42817d898404e2aaa468108dfd71d2b1fd96a25c59d887059390ef",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56dc0c627b8425277954c9dd2a16e63bd82935034e457ba34b511ea626779b63",
+    "mention_text": "Joe Kaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f561177a83c19df89ca243cfc307b07c4f8aece4edd97444370e1141369f8854",
+    "mention_text": "Siemens",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78d9e00c5c2a02c9d1e685bee485df9f3bd3a9ad93390c350174cb14b6bb9444",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9104a5478f60207462a3f91a468ca303696f0af41bc4cc1f95e4135cbcaf276",
+    "mention_text": "Wellington Moreira Franco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac2d317f97929a99e23df4c0936b4b0c90329341c0f2569e0c1a9bbbf3d47742",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93dedf5ee7ea4fa92a4fda175b28f4c3cfe428aab501cc9d70a41470b34e5fab",
+    "mention_text": "Rodolfo Speilman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d62a1c53f14fc6936e2c444bdd918741dd844e184ebb9a208699627744d45dc7",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb41d400bc3202522c0bea5cec7c0d092ced831a53fda049b12ec03b71c43fed",
+    "mention_text": "CPP Investiment",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b60646e771922f67dc42d0f116f0e0c8a56aec1f8bed99ba61814054bcfd9c70",
+    "mention_text": "Candido Bracher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40074251bba763c29217152313582ff61b5cea491c5bfdc96c875f03a687ad2c",
+    "mention_text": "Itaú Unibanco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ab2530075c241d9692a8a476b934733ded4ccfe8be4ed55ebb8b35620db39d3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12718d1fbece63f8d09ed443f8383ab910bc39028da295f246ff8db3a4048c1e",
+    "mention_text": "Paul Buckle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c510900fe5b09d66e122eec12fa7e3ed3755e59fd18225df9c5e1c80711091e2",
+    "mention_text": "Nestlé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7602b2fa3f55c184ff6b7f3d0588dba56ff93267cbe7e3ff3337176adc2909d2",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75cd51735ba0c2945c98de345045b58bc851d493bc5fdacfd92cbe7e7e642963",
+    "mention_text": "Maria Cristina Frias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39bba95f4d2a0469dac6f9d93464e6787213cc77868d5fd60b51001d251316fd",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37ef0a6e7ed884df6cf8b775f8d29ab98623de43cb8bc287c258be55cfc7f740",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ecbc1aa495057fbb305a23ab76eb14a509654b53af1cd1e0f222fa770364086",
+    "mention_text": "Alejandro Ramirez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f90a8aa5cc2e908e5f5d83f4d6e5c3d3aa45a163c0dd3faddfa6147e3d3b3b9",
+    "mention_text": "Cinepolis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "318d54df2150fbebe887f844d77c285a4b6ea1624603b1ba46008abf7b6dd9ae",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a6da86d679eb868c1dee959f7646f8acfa6425680552cebe42a5a9b16dbee6ff",
+    "mention_text": "Luiza Helena Trajano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0182b3aa97c3d03747950bbf75ad9fddd0ecabf96a98ebb8ae05488491405ec",
+    "mention_text": "Magazine Luiza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ec9debc10c8ad4f96a52b2cf9c05a3fd2019e7cdf32cc89010876fd46523058",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f4b74d0e003b3d0630f37022e206de5a2b11d18cde064f3d3542752fb037d398",
+    "mention_text": "Ngaire Woods",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7333b7cb5f4264caaf311434572bd247b32bba85030d4b3f92bbdfd6e6570ed",
+    "mention_text": "Escola de Governo Blavatnik, da Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8aaa3dee3ab0d5aede8fbad0d8b805a87d857afbb8f108ba4a4741f3a3d6709b",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  }
+]

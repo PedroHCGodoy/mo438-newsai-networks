@@ -1,0 +1,349 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d59b454c2a30d96362bd73107d40716bc442198218c6df0db7090f40bcc73b80
+
+TEXTO:
+Organizador de boicote a editora científica critica modelo de publicação
+
+Um abaixo-assinado que critica as práticas de mercado da maior editora científica do mundo, a Elsevier, já tem mais de 6.200 signatários, a maioria pesquisadores de instituições públicas. O organizador do boicote contra a empresa, porém, está na iniciativa privada.
+Cientistas podem pagar para ter seus artigos livres, diz Elsevier
+Tyler Neylon, 32, diz que os altos custos de assinaturas de periódicos e o policiamento contra a livre circulação de artigos na internet prejudica as pequenas companhias que contribuem para a ciência e para a inovação.
+Em entrevista à Folha , Neylon explica o que o motivou a começar o movimento.
+Folha - O sr. está fora do meio acadêmico. O que o motivou a propor um boicote à Elsevier? Tyler Neylon - Sou cofundador de uma empresa pequena e gosto de fazer pesquisa, mas não tenho como arcar com esses preços. Se eu quiser escrever um artigo sério, com cem citações, e o preço médio de periódicos científicos continuar em US$ 40 [cerca de R$ 68], faça as contas: eu teria de pagar US$ 4.000 [R$ 6.800] para submeter um único artigo. Se eu quiser assinar um periódico, o preço médio é US$ 22 mil [R$ 37,5 mil]. Mesmo eu tendo um doutorado hoje, fazer pesquisa é algo fora do meu alcance.
+Você esperava que o abaixo-assinado ganhasse tanta força nas instituições públicas e universidades? Bom, as pessoas que realmente têm influência são os professores universitários e eles estão mais a par de problemas como o dos NIH [Institutos Nacionais de Saúde dos EUA], que estão brigando pelo direito de abrir o acesso ao resultado de suas pesquisas. E esse é mesmo um problema importante, mas existem outros atrapalhando a pesquisa na iniciativa privada.
+Como vocês esperam que a Elsevier reaja ao boicote? A maior parte dos pesquisadores apenas quer abandonar completamente a publicação lucrativa e mudar para o acesso aberto, mas isso não é algo em que a Elsevier os acompanharia. Uma coisa menos drástica que a editora poderia fazer é dar apoio a um projeto de lei de acesso público de pesquisa, que foi lançado há uma semana no Congresso dos EUA. Hoje eles apoiam outro projeto de lei, cujo objetivo é praticamente o oposto.
+A Elsevier diz que não é contra o acesso aberto por princípio, mas alguém precisa pagar pelo processo de publicação e revisão. A Elsevier precisa deixar mais clara a sua posição sobre o direito dos autores de publicar seus estudos em suas páginas pessoais. A política deles em relação a isso é muito confusa e contraditória. Uma coisa que eles poderiam fazer é adotar o modelo da Public Library of Science, uma editora científica que cobra os autores pela submissão de artigos, e não os leitores. Isso funciona porque autores que publicam em bons periódicos recebem benefícios em troca. E são sua universidades, em geral, que pagam essa taxa.
+No meu caso, mesmo eu sendo um pesquisador independente em uma pequena empresa, eu preferiria pagar por isso --eles costumam cobrar uns US$ 1.000-- para publicar minha pesquisa, do que ter que arcar com os custos para fazer a pesquisa antes. No modelo da Public Library of Science, a motivação para pagar é colocada no lugar certo.
+Uma das comunidades de pesquisa que mais aderiram ao documento é a dos matemáticos. Existe alguma diferença entre os matemáticos e os biólogos que os torne mais proativos na campanha pelo acesso aberto? Eu não tenho como falar pelos pesquisadores de outras áreas. Talvez exista uma consciência maior na matemática, porque existe muita interação com as ciências da computação. Muitas pessoas na área têm consciência de quão fácil seria mudar todo o modelo de publicação científica. A única razão pela qual isso ainda não mudou é que alguns periódicos atuais ainda tem muito prestígio, e isso tem seu valor.
+Vocês acham que vão afetar o prestígio de periódicos da Elsevier com o boicote? Pelo menos três ganhadores da Medalha Fields --o prêmio para matemáticos que tem o mesmo peso de um Nobel-- já prometeram nunca mais publicar em periódicos da Elsevier. Timothy Gowers, Terence Tao e Wendelin Werner assinaram a petição. Em um dos periódicos da editora, um matemático anunciou que vai abandonar o conselho editorial. Então, acho que já estamos tendo algum impacto.
+O abaixo-assinado não está tentando crucificar a Elsevier por uma prática que há em todo o setor de publicação? Posso responder como isso ocorre na minha área: nenhum matemático recebe dinheiro para fazer revisão de artigos, e os editores dos periódicos também não são pagos. O fato de as editoras precisarem de dinheiro para organizar a revisão de artigos é verdade até certo ponto. Alguns periódicos têm editores e equipes pagos pela editora, mas na maioria das publicações não é assim.
+Se tem tanta gente trabalhando de graça, por que não fazer isso dentro de uma plataforma em que o acesso aos artigos seja gratuito? A razão pela qual nos concentramos na Elsevier e não na Springer ou na Wiley-Blackwell é que existe um consenso maior entre os pesquisadores que são contra as práticas deles. Muitos pesquisadores evitam esse tipo de confronto. Existe um tabu, um medo de se voltar contra publicações que têm prestígio. Se nós tivéssemos decidido incluir outras editoras, não sei se tantas pessoas teriam assinado a petição.
+*
+RAIO-X
+IDADE 32 FORMAÇÃO É doutor em matemática aplicada na Universidade de Nova York e bacharel em ciência da computação. Pesquisa sobre inteligência artificial ATUAÇÃO É cofundador da empresa Zillabyte, dedicada à inovação em análise de dados. Foi engenheiro de software na Google e pesquisador no Instituto de Análise de Defesa dos Estados Unidos
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "19bd637b89e93ce955f416c45d8c88297bbd94954f55940ccce0addda8a3a686",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46002c38147e105b8e3218e1c999e4cf456f285e5f6eace212e23847f627e0b4",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "449ea138a048fc1efc8904b8c3e59ea6e49e9710d294691c133afc96af17eb0d",
+    "mention_text": "Tyler Neylon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "983665b2f3b1c2ca905ce002b3dd6d050ed30cd5abab09200604b92d8d26ce37",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "082d44e6172e3abf758d31e37851576fb58c9a98c35224a8dd53389d2c8bea0f",
+    "mention_text": "Neylon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22a7d65d08910886919eb4ef90b35eb5a14117b1ce3f2e239952b22f6be1dc5f",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cf9da4c7a90f5cee6bd976f61bfb54e654de07a328b4043547046e8e93088f7",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9fd9bc4a21ead3d4b1f2fc084833a68cb99d73b2e33d8e30b116e896bdb793ee",
+    "mention_text": "Tyler Neylon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c87552034a0c5a60c40d055f02d87af18239d2c5eb0261c039372e3850eee3b",
+    "mention_text": "NIH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1731f65869293bc57834f42f9486995389836cef9653a49cac04c9c7e790763e",
+    "mention_text": "Institutos Nacionais de Saúde dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8798d8aae184b3da8bd09a76f100b2997845f26dade57f0a4d1ac946c7821f74",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71765487b5e900e7b5102c43fe15daa0c2c42c5c8c36ec637bc63a107f353275",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c291f8fc4839875b5c283032190d8fedbc4be3db30ef366217c316e9a7dab27",
+    "mention_text": "Congresso dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35fbe2f84f243811a72900da1d00694b91e0bd8a23ad012d3635aad06ebc39cd",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc3733752860dd06e40a1d7b5625cb0150f5ff3d847842c0cf1862b9b33e5bd5",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c6e1ac8fb846d51f512f9e90ed3587dafa66c1b68b61bfd5e991d93cbfa928c",
+    "mention_text": "Public Library of Science",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77bf4141441a4a5d361a0266352722315a578ec7f95ae4f08eed9d0f1ab18fee",
+    "mention_text": "Public Library of Science",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fc520de6ab7212e42be710f70b05f927213e3fc458e1a25d5e75083b42904ad",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0aec4a8e0d3e999b0509ba928155bf4868221a381c73d6c8ed871b66a1b2a334",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e08effc176d8ce537b5fdf5a8cafc2d6992a32e8314b380cb852a8890504217d",
+    "mention_text": "Timothy Gowers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd538b06d95d2c759668a3cc0ec1a0c0390ccf5cb2d5677c658217c8179e5866",
+    "mention_text": "Terence Tao",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5b23d4c95ab9917442f53bc28ea02efec0e5b8cd43ac04d303179840d329aed",
+    "mention_text": "Wendelin Werner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64149844dbb869aa0e2bae5c0fabf69500b9d5f0891ec038a78b6ab75e301689",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0f70d18aed22b4f70deb2614adc5fa728959556ca5db20d8565724c8db16817",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cccba53516431b547f6cdeb49cfa255600c76e49579767b2031b2e97ec5d3fae",
+    "mention_text": "Springer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e81b43a76b10c18074ab18a350e344ff8c1d869067f0145a02f225fe56f30edc",
+    "mention_text": "Wiley-Blackwell",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9abe9aa7c54e59606067fb7893285db4dd5914478ac2f9e4b1a9d96db8c5333",
+    "mention_text": "Universidade de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69d6b9d848c45f66a2673bf3c9b0e726dc4aa9d4adbb22d9b4b1af72b362c3ef",
+    "mention_text": "Zillabyte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5dddad03f4a4ce529e8e365a7d32b61da95a160a8aed09dba9cb819330f6883",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da2a91280a2a083371d811c99509a2979e15b2460f5c5f7544042d50958fdc16",
+    "mention_text": "Instituto de Análise de Defesa dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  }
+]

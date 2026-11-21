@@ -1,0 +1,455 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 912fa3dc24e8ca55395f5210903feb656e5c95b93d30e125eedf5b8f0d2a4a20
+
+TEXTO:
+Inteligência artificial aumenta risco de guerra nuclear, diz estudo
+
+​Ferramentas de inteligência artificial (IA) aumentam o risco de uma guerra nuclear e sua aplicação na indústria bélica pode deixar o mundo à beira da destruição.
+A conclusão é de um relatório recente do centro de estudos americano Rand Corp.
+O trabalho contempla usos militares de tecnologias de “machine learning” (aprendizado de máquinas) que também inspiram gigantes civis —em 2016, Google, Amazon, Microsoft e Apple investiram US$ 30 bilhões em pesquisas, diz a consultoria McKinsey.
+Estão destacados os possíveis ganhos, como a maior precisão das armas e o potencial de mitigar erros humanos.
+O potencial destrutivo, contudo, sobressai. Segundo o estudo, atribuir a sistemas de IA o controle sobre armas nucleares pode ser o primeiro passo para a extinção humana.
+Mais
+Nos meios militares, já há sistemas cujas redes imitam o cérebro humano e dispositivos capazes de aprender a andar, combater incêndios, evitar radares e tomar decisões a partir de algoritmos.
+“Não é mais um cenário de filmes”, diz Andrew Lohn, coautor do estudo e especialista em IA para fins pacíficos , como identificar sons de baleias e prever placares de jogos de basquete.
+Elon Musk, o bilionário que planeja colonizar Marte, concorda. Em março, o fundador da Tesla disse que os avanços em IA são a mais provável causa de uma 3ª Guerra Mundial.
+“Eu estou muito perto da vanguarda em IA e ela me assusta pra cacete.”
+Musk citou a tecnologia AlphaGo Zero , que aprendeu sozinha o jogo chinês de estratégia Go. Após três dias de “estudo”, a máquina derrotou o campeão mundial por 100 a 0.
+As potências mundiais parecem concordar com ele.
+Vladimir Putin, presidente da Rússia , já disse que essa corrida tecnológica vai decidir a liderança do mundo.
+Entre outros projetos , seu governo planeja um submarino que, caso o país seja atacado, atravessa oceanos com uma ogiva para revidar.
+Já a China, que ambiciona ser a líder mundial em IA até 2030, desenvolveu um algoritmo que pode ativar rede de drones militares, à semelhança dos enxames de abelhas.
+Os EUA testam barcos autônomos que rastreiam e atacam submarinos a milhares de km. E, segundo os russos, já usam na Síria drones com mísseis capazes de rever curso e alvos sem ação humana.
+Como Musk, da Tesla, o relatório da Rand Corp conclama um “diálogo internacional urgente”.
+Mas na quarta revolução industrial, um consenso não depende só de governantes, ponderam entidades como a Unoda (escritório da ONU para o desarmamento) e a Federação de Cientistas Americanos.
+Como esses processos vêm sendo conduzidos em grande parte pelo setor privado, o debate terá de incluir acionistas.
+Embora considerem inovações científicas benéficas, especialistas veem com preocupação o desenvolvimento delas com motivações militares.
+A ideia é fixar regras e evitar riscos à dissuasão nuclear.
+Esse equilíbrio tem um preceito simples: a garantia de retaliação imediata, com destruições de metrópoles, danos perenes sobre o meio ambiente e milhões de mortes.
+A indisposição em correr esses riscos impediu que a disputa entre EUA e União Soviética evoluísse para um confronto durante a Guerra Fria.
+Tecnologias inteligentes, porém, podem convencer o adversário de que está vulnerável. Isso fomentaria nova busca por igualdade e colocaria em dúvida o poder de reação, ampliando a predisposição a atacar .
+“Sistemas autônomos não precisam nem matar para tornar uma catástrofe mais provável”, diz Edward Geist, pesquisador da Rand Corp, especialista em segurança nuclear e um dos autores do estudo.
+Para ele, o emprego militar de IA “pode fazer líderes pensarem que vão ser derrotados caso hesitem, tornando os dedos mais nervosos ao gatilho”.
+Disposição, medo e dissuasão são conceitos e sentimentos humanos, e sobram exemplos em que ações de pessoas foram decisivas para corrigir diagnósticos de máquinas.
+Foi assim com o soviético Stanislav Petrov (1939-2017) em 26 de setembro de 1983.
+O então tenente-coronel era o responsável por uma estação de rastreamento nos arredores de Moscou quando radares, alertas e sirenes denunciaram cinco mísseis partindo dos EUA em direção ao país.
+À época, a União Soviética estava convicta de que seria atacada de surpresa pelos americanos, então sob o governo do republicano Ronald Reagan (1911-2004), cuja retórica incluía referir-se ao país como “império do mal”.
+O russo, porém, estranhou que o inimigo tivesse escolhido iniciar o apocalipse com apenas cinco mísseis.
+O protocolo previa ordenar imediatamente um ataque nuclear de retaliação, mas ele registrou alarme falso.
+Petrov tinha razão: as máquinas haviam confundido com rastros de mísseis o que na verdade eram raios de sol refletidos por topos de nuvens.
+REALIDADE
+Mísseis ‘inteligentes’ Os EUA podem ter testado na Síria mísseis que reveem sozinhos a trajetória e o alvo; China, Coreia do Sul e Rússia estudam a tecnologia
+Robô-bombeiro Os EUA testam um robô-bombeiro que se move, interage com humanos e toma decisões sob altas temperaturas
+Tanque que pensa EUA e Rússia têm tanques de guerra pré-programáveis, capazes de acessar zonas de conflito e destruir alvos; EUA acusam rivais de testar aparato na Síria
+NO PAPEL
+Enxame de drones A China cria sistema inspirado nas abelhas que ativa drones com mísseis em altitudes elevadas
+Simulador de guerras EUA projetam simuladores capazes de encenar em detalhes batalhas e ataques nucleares
+Barcos autônomos EUA testam barcos que rastreiam e atacam sozinhos submarinos a milhares de km de distância
+Revide A Rússia projeta um submarino que, em caso de ataque nuclear ao país, cruza oceanos com uma ogiva para o revide automático
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9c69b87c32d18f2b34d2d0d5d87b00036e7447c5e50944038f75797b6173bb38",
+    "mention_text": "Rand Corp.",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d71049d3d0bb3867c3bac6ce82a03a48053957840ab8593c553084f00eeaaf02",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5ef48888d7c754a7ea882f6f448a70e11bc9255673e3471ef7f8728f8ae80c0",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2877c78e34ccbfe85c164900f504a33a37cc6fe01148d30195c6a24331c342dc",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b67cd0ba203f6abea8b12ceccdeac06ba8c9c57c78bd2b267eb269a28b692f38",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8072d06a72cf6fa6616b68fd53a68da9b035b5bd7441f6a888ef0a1ef5047e1",
+    "mention_text": "McKinsey",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4dee73e473489f951b3403444087f1c1953e56f07dbc9eb104bb86d7c35b2e9a",
+    "mention_text": "Andrew Lohn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3e254a2b63b25cb92f4c5ac8e1f59d5e3fd3413fced803d214f4b7d5a3ccc57",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "011474566cc859727486e8f94ece7ceb6e2a49ceb691a24baeafc8446da7bc24",
+    "mention_text": "Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ca1f5e9e45d1104d9897f8f1c84c953c076da0981fd06e6fe891a939319904f",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07df994cfbc7734820212084f9a364d68a3a01403053815b9b69ec05f3e98c00",
+    "mention_text": "Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ba3f0166f5ce5b56e3a4cfd57b1341bbe0198863edd5534356dcda836f53a24",
+    "mention_text": "Vladimir Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5a00a136c011d028d363934d7866db8e81ef7915da276408f7e9ba6f2bd0db8",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "284b67638c5ef385a5a79be7e36b2de579a6d1cffd03b4f4568c9e6d56637061",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bf287fd2c9a79b02631eb62c144616bf3647c15c9753c50510fd8e82136a0b0",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6de9654b031c0e42b29a5af4076d86ef5e157e2848f1c6f02ed38fec18ddf9a9",
+    "mention_text": "Síria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa6558086cac122ce9aca1364d874acc23025ccba0bce566fe6bb48f4cb02b90",
+    "mention_text": "Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6078744b6233e41ebb08be42c2a3f76cad70679f9b4da11ae37e02907509930",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "baaf9fb69b389d3e2198eec334d8fc70ba55f9aafa6b2eccf48d3683fa64672e",
+    "mention_text": "Rand Corp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "415c5728d46e82d08c91ee3657aa52a42047f3bbeb9efabd5a82303c52946e23",
+    "mention_text": "Unoda",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4d1cbcc049ae6e83364b0db4cbe4a2587e17dee0c3ae87c660f4c9e8bddb7e8",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0b74ed8d442a0370d257bba83f6037dcbae3a181af9b9d3990492ab324ce5e4",
+    "mention_text": "Federação de Cientistas Americanos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "496f1af960cf2cbb898833d24b5112b2a01d8f46969b06658637ee89dc3a8e9e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3a6cd69a96924e0f16950ee7a5a800a6867830e7a6d201c93632e6a7bb74c8f7",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07743908b4179a994943a581369820a98809f95336152a8096981ea8793ef1b6",
+    "mention_text": "Edward Geist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b439267eecb3c276037c5cfc2171eb2eea9e3519bbb0ac9eac065037b6239f01",
+    "mention_text": "Rand Corp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c9fd176e1acb9124d21439b49c65f01c9983ceb9203016c6cc5aab36951ee19",
+    "mention_text": "Stanislav Petrov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2d07e51040aa3d1f01fac25e003e6cf5a13555aea407b0d520ccd62d8ade3e7d",
+    "mention_text": "Moscou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d49654e15c05ff35e4e6eb5829fd1ea6e4d904d8fd60d92fd7c12b30c7584f6",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3dfc0c6970c1a622e776bea6cbb21856a5a238b112d44988e83236800944920",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "053f0db83b17a7f337b717322b3bb6f154f2939471abd3cad39de62999495bec",
+    "mention_text": "Ronald Reagan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68450b01bdaa6e4b6fb852b844d03fedcc158483330111f24859714e60e5983a",
+    "mention_text": "Petrov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "220cd112b85eccba6fd70bf611eb210c63aacf4dff6be73b06a16fc3702bce01",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fbdbf68c117c7dadf435901942f5b55e1c5fa9122c307b75612f0932f2165740",
+    "mention_text": "Síria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "103498297114ca7ccd2fc9a6381e17ec868acd729b0322067151ef9b5d71858f",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4cf53419379abbae92e91d7ef78b8647ce7bccc11d8873bc2b8d0b3195b54049",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c5ba0de2206e860a84998202e7e072d291dfd86152be8357feda1550443c0ae3",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "23f945983285c7f4e3857d9cc79250dd5d22b446a523b948fefd893e66dafa46",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8dff561c716fd4bc1cf64b9e8a41e29a49e804bb345ff74e0f00de0361e28e5",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd58b5d699758c346287eb8a861b7ec2336cb55433f0bd860aaafece50cd12ab",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d07df5c369e1f738711c2e773815a8783235ab3192fd70c70aa4386c54f185d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf32cab40f8bc672e8130f42b4fa1b0d5babda396f5e28687f5a6c20c3901df9",
+    "mention_text": "Síria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f948f1c8ff3679afa38281c5e88e16607eccd5bdf5baada54c0f5b98d73e6bfc",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa524c329eefbd46d6482226bb54145ee0e17b31c2154ca515c2a4f8dc15f943",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aecd9be5c29e1d85519a3ded651dd24ffd178ceddf7e77f46f4ddad61172c354",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63072ef3783e902f22715e04584b66e49edd30d4fb06399ed04f93dc10a6d40c",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  }
+]

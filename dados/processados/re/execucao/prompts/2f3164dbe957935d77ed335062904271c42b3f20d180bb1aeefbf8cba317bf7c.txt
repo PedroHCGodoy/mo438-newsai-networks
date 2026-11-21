@@ -1,0 +1,427 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e4ad2756683078d6ef12704251be81c16eeaf5dca721b29d234352a36ec86cf6
+
+TEXTO:
+Um percurso virtual
+
+Coletânea critica ciência cognitiva
+Um percurso virtual
+JOÃO PAULO MONTEIRO
+Como elemento descritivo da 
+obra publicada, o título parece indicar um percurso teórico entre a 
+nova ciência do conhecimento, 
+que nas três últimas décadas procurou constituir-se a partir dos 
+estudos de inteligência artificial, e 
+o método usado por algumas teorias marxistas no estudo da sociedade humana. Nada mais ilusório: por um lado, o título não descreve a obra, mas o autor; e, por 
+outro lado, nem sequer descreve 
+um percurso real do autor, mas 
+apenas o que ele tenciona seguir a 
+partir de agora. Trata-se apenas 
+de um percurso virtual.
+Explicando: Marcos Barbosa de 
+Oliveira, que entre nós é dos mais 
+competentes conhecedores da 
+ciência cognitiva, converteu-se ao 
+"ponto de vista dialético" e decidiu reunir neste volume seus ensaios dos últimos 15 anos, acompanhados de uma declaração de 
+repúdio a quase todos eles.
+A maior parte dos 13 artigos é 
+sobre as ciências da cognição e alguns poucos são sobre lógica, ou 
+sobre autores como Wittgenstein 
+e Popper, e o último, embora se 
+intitule "A Epistemologia Engajada de Hugh Lacey", é uma resenha do livro de um excelente autor católico, "Valores e Atividade 
+Científica" (Discurso Editorial), 
+que nada mostra da dialética, a 
+não ser que se tome por tal a frase 
+"na tradição marxista existem elementos que podem ser associados 
+às propostas de Lacey". E acrescenta, como exemplo, que "a conexão entre a predominância da 
+prática de controle nas sociedades 
+modernas e o capitalismo é afirmada no livro, porém relativamente pouco explorada". Convenhamos que é muito pouco para 
+justificar qualquer ligação à dialética.
+Contra o naturalismo
+Essas citações são do último parágrafo do livro, e no último parágrafo da "Apresentação" o autor 
+anunciara que "a última seção do 
+último capítulo dá uma idéia sobre os rumos de minhas investigações daqui por diante". O que 
+confirma estarmos no território 
+da virtualidade, pois nos informa 
+apenas acerca das intenções de 
+publicação futura de nosso convertido autor.
+Mas os estudos que constituem 
+este livro real (o que temos, enquanto esperamos os virtuais) nada devem a qualquer forma de 
+dialética. São interessantes discussões acerca da ciência cognitiva e assuntos correlatos, alguns 
+dos quais adotando uma perspectiva crítica em relação às pretensões dessa disciplina, notadamente contra o "naturalismo", tomado no sentido da adoção dos procedimentos das ciências da natureza no estudo do homem.
+O antinaturalismo, que ele passa a defender a partir da pág. 133, 
+acentua as diferenças entre as 
+ciências naturais e as humanas, 
+inspira a proposta de que passe a 
+haver uma ciência cognitiva cultural ao lado da ciência cognitiva 
+natural e leva à condenação da 
+ciência cognitiva (incluindo a de 
+Eleanor Rosch, altamente elogiada até então) por ser naturalista, 
+isto é, por ter "em sua parte cultural uma tendência naturalizante, a 
+considerar equivocadamente como naturais aspectos da humanidade que são na verdade culturais".
+Só tenho espaço para um exemplo da argumentação antinaturalista do autor, centrada na insistência na "dimensão normativa" 
+própria das ciências humanas e 
+ausente das ciências naturais. 
+Normas como "os preceitos morais, as leis, as regras de boas maneiras e de correção para a linguagem falada e escrita" são "aspectos culturais da humanidade" que 
+estão ausentes das ciências naturais. É trazido o exemplo da análise antinaturalista da ciência política por Charles Taylor. Mas fica 
+difícil ver a relevância de tudo isso 
+para os problemas da ciência cognitiva. Não seria melhor começar 
+pelo esforço de construir uma 
+"ciência cognitiva cultural real", 
+efetivamente presente em teorias 
+concretas? Não consta que exista 
+um único exemplo de tal ciência. 
+Sem dúvida que seria interessante 
+construí-la, como ciência da normatividade ou de outra perspectiva qualquer, e o final do livro parece prometer esforços nesse sentido. Só nos resta aguardar -mas 
+até lá certamente me será perdoado que considere meramente virtuais as críticas deste livro à ciência cognitiva "realmente existente".
+Da Ciência Cognitiva à Dialética
+Marcos Barbosa de Oliveira 
+Discurso Editorial/Fapesp 
+(Tel. 0/ xx/11/814-5383) 
+236 págs., R$ 20,00
+O tema do doutoramento de 
+nosso autor foi a teoria da ciência 
+de Karl Popper, um filósofo mais 
+"racionalista crítico" do que naturalista e objeto de um dos mais interessantes estudos deste livro. 
+Naquela teoria, a racionalidade da 
+ciência depende fundamentalmente do debate crítico na "comparação" entre teorias científicas 
+opostas. Para tal, obviamente, é 
+preciso que haja teorias científicas 
+em competição, o que não é o caso quanto à oposição, apenas virtual, entre uma ciência cognitiva 
+cultural e uma ciência cognitiva 
+natural. Não creio que a conversão de nosso autor o tenha levado 
+a renegar também as vantagens 
+dessa competição -que espero 
+ninguém pretenda confundir 
+com a competição capitalista.
+No ensaio "A Ciência Cognitiva 
+e a Robotização do Homem", o 
+autor critica uma entrevista de 
+Daniel Dennett intitulada "Somos 
+Todos Robôs", com a finalidade 
+expressa de criticar o naturalismo 
+em geral, mas nem mesmo aqui 
+propõe qualquer modelo de 
+"ciência cognitiva cultural". Tece 
+considerações gerais, dizendo, 
+por exemplo, que "o naturalista é 
+levado a conceber como objeto de 
+seu estudo a natureza do homem, 
+sendo esta natureza pensada como algo fixo, imutável", além de 
+tomar "aspectos do homem que 
+são culturais, e portanto modificáveis, como parte de uma natureza humana imutável", o que 
+"equivale a pô-los além da possibilidade de contestação" e "imunes à crítica". Mas continuamos 
+sem receber qualquer sugestão sequer da maneira como poderia 
+ser constituída uma ciência cultural da cognição humana.
+Quando autores como Dennett 
+e tantos outros procuram entender melhor a cognição, a consciência e outros aspectos da vida 
+humana tomando o homem como parte da natureza, enquanto 
+produto da evolução das espécies 
+por seleção natural e, portanto, 
+como ser biológico, não pretendem negar que ele seja capaz de 
+cultura ou recusar a distinção entre cultura e natureza, nem, por 
+outro lado, defender posições 
+conservadoras de qualquer tipo. 
+Leia-se, desse filósofo, "A Perigosa Idéia de Darwin" (Rocco), ou 
+outro qualquer de seus numerosos livros, e ver-se-á que o naturalismo no estudo do homem não é 
+um preconceito obscurantista, 
+mas apenas um esforço para 
+abordar velhos problemas de 
+uma maneira nova. O preconceito, receio bem, encontra-se do outro lado.
+Num tempo em que cada vez 
+mais se descobre que a comunicação, a sociedade e a própria cultura não são exclusivos de nossa espécie, mas parte de um patrimônio que partilhamos com muitas 
+outras espécies, talvez possa ser 
+considerado natural que muitos 
+cultores das chamadas ciências 
+humanas se sintam "territorialmente" ameaçados em seus domínios teóricos e reajam contra as 
+tentativas de renovação do saber 
+que levam um ou outro aspecto, 
+antes considerado puramente 
+"cultural", a ser considerado, afinal, como parte da natureza. Mas 
+uma verdadeira atitude crítica deve consistir (Marcos Barbosa perdoará que também eu pretenda 
+ser "normativo" em relação aos filósofos) em examinar com cuidado o que de novo vem surgindo 
+no saber atual, seja na filosofia, 
+nas ciências naturais ou humanas 
+ou na ciência cognitiva, sem pretender saber "a priori" que certos 
+aspectos da vida humana são pura e exclusivamente culturais e, 
+portanto, não podem ser discutidos em termos naturalistas. É 
+mais um domínio onde a tolerância tende a coincidir com a prudência.
+João Paulo Monteiro
+é professor do departamento de filosofia da USP e da Universidade de Lisboa.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0f59833497eb7453c153a81a72666f3632f04b997024c841a51669f0e6182256",
+    "mention_text": "JOÃO PAULO MONTEIRO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "400e645f4f851d21b417744a7d43d27303ee838741f0f53b0d54195810846a44",
+    "mention_text": "Marcos Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56f4f80e1a5ca6bc38da33791a6f78c7121b9e2611eb6e98518d558d9de126dc",
+    "mention_text": "Wittgenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7a902c665acb2b33a6c00fa7d9baf20c42662b8f8a24c24c38ccd2e5d764913",
+    "mention_text": "Popper",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb0e23ba8a633a72b88dea56da13ad31b8192d2d7dced547207fc35ff3977f69",
+    "mention_text": "Hugh Lacey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4fd55de39677b02f1714504c732e92d2426018b9c24b221424e11d9a5cb2945c",
+    "mention_text": "Discurso Editorial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb972e41dfafe93a23a1d0a94723a6de25ccc7ac6167e66e59fc96100805dba3",
+    "mention_text": "Lacey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "730ab512384e451c81541519c095db9947b23e6e152fb9c184139c71fd5e8268",
+    "mention_text": "Eleanor Rosch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1439b99a3e754f3a5cc4fb2c22b444b235336f78e7d05f9a4ae73c83ee5c1346",
+    "mention_text": "Charles Taylor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91a07c77335638fe58341e3ef320bb1897fa4aa50f166bbc6412b07289b8b937",
+    "mention_text": "Marcos Barbosa de Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ae2559c62349235876ef6bbf2157ebffd0f851d3a71aa1b862d3db04bece5d8",
+    "mention_text": "Discurso Editorial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "514b53b399e0cbd651b210a64d82ac6632f2cec29fba111e9ab5e39d6ab51c04",
+    "mention_text": "Fapesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57ecc134125169e47359cb64bd19203e53e1b3516bd6a3e8b8a5699c84b93562",
+    "mention_text": "Karl Popper",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9008d2cf99e5f7627075252f2fcae053401c1b000adde05645677777cf01ecf9",
+    "mention_text": "Daniel Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5f51f6882e8b25ded57869daa2334cf4cf524fc4f96e5c5faea8b2f57d2bc04",
+    "mention_text": "Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "464ed1c1177164ac2de67fbc9e4693ac79f183700082b7d5de7fc73537c8a49d",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b128f217dfd16fa1a07f9d08494f22b6619e3c9588931b16f5d48a3b6a2e2936",
+    "mention_text": "Rocco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b73ade4de9c8ce4437d0e72f7cf8571c6785165fd6ac1c866a29bb2a73348476",
+    "mention_text": "João Paulo Monteiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d1a004da9bafe11e60d2d2fca471b77ba189bcb189ec0b6313db5a69d287ce7",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e4ec83527c07c7d27a43b275f6075c81556dbb9451008bf23e1e776b24c62ab",
+    "mention_text": "Universidade de Lisboa",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,321 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8e45f2c6cd080085a2fbeeaf76fc767555ea869737bab33e3765e5122c726638
+
+TEXTO:
+A arte de fotografar dentro dos games
+
+Ataques de morteiro caem atrás do batalhão; uma poeira esbranquiçada sobrevoa nossas cabeças. O helicóptero que dava cobertura agora é um casco chamuscado à frente. Somos a última linha de defesa do checkpoint. O avanço inimigo é implacável. Não há trégua.
+Pouca munição nos mantém cautelosos. Mas ei, espere, uma pessoa do esquadrão está mais exposto do que deveria. É um atirador diferente, um documentarista. Um fotógrafo de games; nosso Robert Capa virtual. Um "screenshotter".
+"Screenshotting" é o nome da atividade de documentar um momento dentro de um espaço virtual. Os jogadores fazem uma foto e, em geral depois de uma passada no Photoshop, sobem a mídia para um blog dedicado. Alguns desses "screenshotters" são motivados pela beleza do game e prestam tributo ao talento de seus desenvolvedores e designers. Outros entusiastas exploram temáticas específicas ou artísticas, mais reflexivas.
+Os "screenshotters" interagem com os games de forma semelhante a como os artistas do passado percebiam o mundo real. A professora e teórica americana Janet Murray, em seu livro Hamlet no Holodeck - O futuro da narrativa no ciberespaço , explica que "a experiência de ser transportado(a) para um local simulado de forma elaborada é prazerosa por si só, independente do conteúdo da fantasia. Chamamos esta experiência de imersão... A sensação de estar cercado(a) por uma realidade completamente alheia."
+Em momentos de imersão total, pensamos mesmo que os cenários de "Skyrim" são lindos. Criamos laços reais com personagens não-jogáveis e companheiros de jornada. Vários sentem até uma estranha empatia pela galera que bebe de boa debaixo da ponte em "Grand Theft Auto". Basta conferir os arquivos do GTAMedia , um fórum em que correspondentes virtuais de guerras urbanas documentam roubos de carros, tiroteios e todo tipo de criminalidade do jogo.
+"Em vez de perder ou ganhar, se encontrar ou se perder, tais atos de meta-exploração são libertadores e enriquecem nossa experiência com os sistemas e a realidade", escreveu o "screenshotter" Eron Rauch em recente ensaio sobre o tema .
+Escolhemos alguns dos melhores exemplos de fotografia in-game e demos espaço para que screenshotters falem sobre sua subcultura emergente com suas próprias palavras.
+1. Duncan Harris
+O jornalista de games Duncan Harris talvez seja o mais célebre "screenshotter". Seu blog Dead End Thrills conta com uma série estonteante de momentos de games capturados por programadores e designers altamente talentosos.
+Meu perfil no Steam lista 114 horas de jogo em "Alien", 80 das quais envolviam hackeá-lo antes de tirar qualquer foto. Sinto que ainda não exauri as possibilidades deste game incrível. Esta imagem em especial envolveu congelar a inteligência artificial da criatura e sua animação antes de movê-la para diversos cômodos de distância, o que por si só levou muitas horas de jogo até encontrar a pose certa. ["Alien: Isolation"]
+Penso que (quase) todo personagem de game tem uma alma, mesmo que o desenvolvedor não perceba isso. Encontrar a química perfeita entre luz, pose, expressão e anatomia é algo especialmente divertido de se fazer em um game como "Skyrim" em que os resultados são tão únicos. ["Elder Scrolls V: Skyrim"]
+A CCP me permite usar seu pacote de ferramentas Jessica para construir diversas cenas do zero usando seu engine e recursos, camadas, escalas e manipulando efeitos para fins puramente artísticos. As ferramentas são extremamente voláteis, mas os resultados falam por si sós. ["EVE Online"]
+Hackeei os valores de pós-processamento do engine Unreal há uns meses, o que foi BEM útil para criar imagens mais dramáticas. Adoro trabalhar com retratos e fazer fotos estilo "pôster cinematográfico" em qualquer game -por mais que a capa em baixa resolução do Batman tenha sido um desafio a ser superado alterando a profundidade de campo, o que coincidentemente melhorou a foto. [Batman: Arkham City]
+Tinha jogado "Dragon Age" à exaustão, mas prezando mais por vasculhar os cenários, e eu gosto da caça por fotos de combate. Podia passar horas esperando aquele 'momento'. É o caso desta foto que mudei posição de cada personagem na tela. ["Dragon Age: Origins"]
+2. Eron Rauch
+Eron Rauch é um artista de Los Angeles cujo principal projeto de screenshots, A Land To Die In , foi exibido em uma parede inteira de uma exibição de arte pop-up e também virtualmente em um mural no museu Second Life do Williams College.
+Esta imagem é composta de diversos screenshots de cada cadáver de jogador que encontrei enquanto subia o nível do meu personagem em "World of Warcraft". ["World of Warcraft"]
+Todo o meu trabalho com videogames tem a ver com fornecer novas formas de se explorar esses ambientes e esses inevitáveis corpos eram um lembrete constante das massas de outras pessoas e suas histórias que também participam disso; alguns que triunfaram, outros que caíram, um milhão de Beowulfs virtuais. ["World of Warcraft"]
+Esta imagem faz parte do capítulo "Travels" do meu projeto de "World of Warcraft"; foi processada com uso de um laser leitor de filmes e impresso com um processo tradicional de gelatina de prata para que ficasse com aspecto de uma câmera de 1800. Os impressos ganharam molduras douradas e foram exibidos com luzes de lamparinas em meio a um bosque pela noite. ["World of Warcraft"]
+Ocasionalmente o engine gráfico travava enquanto jogava/fotografa e logo fui fascinado por como estes momentos de falha tornavam visíveis as regras comumente escondidas que governam aquele mundo. Aqui o ar deixou de ser transparente, tornando-se uma série de ondas geométricas cintilantes. Impresso em tamanhos muitas vezes maiores que a tela, essas formas começam a ganhar a aparência de arte abstrata clássica. ["World of Warcraft"]
+3. Karl Smith
+As incursões fotográficas de Karl Smith pela Los Santos e Blaine County em "GTA V" são marcadas por um jogo de iluminação virtual e as IAs que ali vivem. Seu trabalho é apresentado em seu blog Illsnapmatix .
+Encontrar beleza na simetria em games é raridade, já que sistemas óbvios, repetição e estruturas gráficas muitas vezes nos distraem do realismo de um jogo. O diabo está nos detalhes. ["GTA V"]
+O personagem nem me percebe enquanto o observo passar, mas estaria Los Santos me observando? ["GTA V"]
+Solidão, escuridão, abandono, desespero - construtos dentro de um game. Projetamos nossa compreensão do mundo na tela. Em que momento é normal que estes sentimentos se tornem reais? ["GTA V"]
+De quem é esse barco? Tem uma história aqui. Um sonho perdido, encalhado no deserto. O sol se põe novamente. ["GTA V"]
+4. Leonardo Sang
+Leonardo Sang deu início a seu blog VRP em 2011. Ele é um designer gráfico e fotógrafo que leva o que sabe de fotografia no mundo real de encontro à sua paixão por games.
+Esta é uma foto que combinou algumas de minhas escolhas de composição pessoais. A perspectiva de um só ponto, os gráficos compostos por luz e sombra e gosto muito de corredores e vielas. Além disso, tem esse sentimento mediterrâneo, um pequeno mercado de tapeçaria. Um lugar que vale a visita! ["Dying Light"]
+"GTA V" é o mais próximo do que faço quando tiro fotos na "vida real". Só saio andando e registro o que achar legal. Postos de gasolina à noite são demais, um de meus temas favoritos. ["GTA V"]
+Isso aqui é do comecinho do "Project CARS". É um projeto paralelo dentro do VRP (se é que isso faz sentido) chamado "backseats in videogames" [bancos traseiros em games]. É um lance meio "finja estar no banco traseiro de um carro em uma viagem pela estrada" e eu curto essa, tem um clima e luz bacanas, e também por detalhes como o de que este carro (BMW M3 GT4) não tem bancos de trás por motivos de carro de corrida e, como se tratava de um alfa bem no comecinho, o jogo não mostrava a "cabeça do motorista". Foi bem massa para a composição. ["Project CARS"]
+Tradução: Thiago "Índio" Silva
+Leia no site da Vice: A Arte de Fotografar Dentro dos Games
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "633c469dc89f05f6202676ddd1938f4c595ad4b1b9829596e5a5f8d98a213a87",
+    "mention_text": "Robert Capa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7437f434de2dcc6883344a10ec3c64bce6bfb20a8f85c03503900915b155eb22",
+    "mention_text": "Janet Murray",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d364d4a898c26c2a01aabefc9674669d054aee621e731702e5905a1e56ebc2f1",
+    "mention_text": "GTAMedia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23130f39d781a53b599f130e45edeb7317889ce8d3be404c74d249eddd22ad91",
+    "mention_text": "Eron Rauch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3978aa03830c5fce00f417943a9bfb3ee34eff85a1769d0ff037ee74404cc040",
+    "mention_text": "Duncan Harris",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3db49b18b4b558435c1ba849b955a2982a859d013a46ee3837c61a51f2436ab",
+    "mention_text": "Duncan Harris",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "223451202a4ff1f6216ae4500dcd542f36251ad167de1a3ef58ccbc28706d384",
+    "mention_text": "Steam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14a9a609cb6cbecb2f6a0c47d82842e9c7ccc4f72b83d132667643c6c8499455",
+    "mention_text": "CCP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d66b439ee4827fe3c2e92136c2f78647a4d03f4874e656674ed0588d3a3c1e04",
+    "mention_text": "Eron Rauch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da987d787e6e7c648c8191834271129162bb98954222792a0c9463a1e4a21495",
+    "mention_text": "Eron Rauch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1162246b778291948d962040c867cd8de441e2352433ee0532c76df8f1d929fd",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a14b1ad391ed5363191886b5b27244921bc18e69348bee8f2fa7a08da3e544a",
+    "mention_text": "Williams College",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8282411239ff1035e9062d9626936c8aed8a9d4484d199efa6756b584a85f7e",
+    "mention_text": "Karl Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de39a778a6172fe865678f9625583c08dbf6adf09564d41ec7c6b3e97ebb07d6",
+    "mention_text": "Karl Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da6b59d134311f34966f7ce9af1a589dfdcbe524cb1afb6d1bc798150c779f8d",
+    "mention_text": "Los Santos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b95e87fb23d1966a06c7bc5e0563aef37f498de441c42a9c6c02c2839a42a0e5",
+    "mention_text": "Blaine County",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d8a68f9dbf7e1f5ce8e11a46856206024a413ef0b8d64d175d7c04d55c4249a",
+    "mention_text": "Los Santos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "856588e65acad4a94e435a50dc3027e8c722ff84a7c99a16ccbf545419b4f60d",
+    "mention_text": "Leonardo Sang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "277ae9351dcc5854af29db9703ea0f5f81b1215a43795d5d3a1180f2300e779b",
+    "mention_text": "Leonardo Sang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a22f27b0f90004089152f7fde33df76cfaa8db45cc674778426dda3333df897f",
+    "mention_text": "Thiago \"Índio\" Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07db7f541f355ef60f4658c840c799256add5b432f1ae33214a451ce27a70f3a",
+    "mention_text": "Vice",
+    "categoria": "ORGANIZACAO"
+  }
+]

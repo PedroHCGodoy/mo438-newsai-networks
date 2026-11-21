@@ -1,0 +1,745 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 12c57cf24769b654b50ab9b19b190939ebdf7b7a01a489779776b6dabccaf91d
+
+TEXTO:
+Companhia sigilosa pode acabar com a privacidade na forma que conhecemos
+
+Até recentemente, o maior sucesso de Hoan Ton That havia sido um app que permitia que as pessoas colocassem os cabelos alaranjados típicos de Donald Trump em suas fotos.
+Mas ele em seguida fez algo de momentoso: inventou um instrumento que pode pôr fim a capacidade de qualquer pessoa de caminhar pelas ruas anonimamente , e o ofereceu a centenas de agências policiais.
+Sua minúscula empresa, Clerview AI, desenvolveu um app revolucionário de reconhecimento facial . Você tira uma foto de uma pessoa, a sobe para a rede e vê fotos públicas da mesma pessoa e links para os sites em que tenham aparecido.
+O sistema, cuja espinha dorsal é um banco de mais de três bilhões de imagens que a companhia afirma ter recolhido no Facebook, YouTube, Venmo e milhões de outros sites, vai muito além de qualquer coisa já criada pelo governo dos Estados Unidos ou pelos gigantes do Vale do Silício.
+Representantes de agências policiais federais e estaduais americanas disseram que, embora tenham conhecimento limitado sobre como funciona o Clearview e quem está por trás dele, empregaram o app para ajudar a resolver casos de furtos em lojas, roubo de identidade, fraude com cartões de crédito, homicídio e exploração sexual de crianças.
+Até agora, o uso de tecnologia capaz de identificar a todos com base em seus rostos era visto como tabu por representar uma erosão radical da privacidade.
+Mas sem escrutínio público, mais de 600 agências policiais começaram a usar o Clearview no ano passado, de acordo com a companhia, que se recusou a apresentar uma lista de clientes.
+O código de computador que embasa o app, analisado pelo The New York Times, inclui linguagem de programação que permite acoplá-lo a óculos de realidade aumentada; os usuários teriam potencialmente a capacidade de identificar todas as pessoas que vissem.
+Mais
+A Clearview também licenciou o app para outras companhias, para fins de segurança.
+“As possibilidades de transformar esse sistema em arma são infinitas”, disse Eric Goldman, codiretor do High Tech Law Institute da Universidade de Santa Clara. “Imagine um agente policial renegado que deseje perseguir potenciais parceiros amorosos, ou um governo estrangeiro que use isso para obter segredos sobre pessoas a fim de chantageá-las ou colocá-las na prisão”.
+A Clearview se protegeu ao operar em segredo, e evitar debates sobre sua tecnologia inovadora.
+Quando comecei a estudar a companhia, em novembro, seu site era uma página simples que mostrava um endereço não existente em Manhattan como sede.
+O único empregado da companhia que encontrei no LinkedIn, um gerente de vendas chamado “John Good”, era na verdade Ton That, usando um nome falso. Por um mês, pessoas afiliadas à companhia se recusaram a responder aos meus emails e telefonemas.
+Enquanto a empresa evitava contato comigo, ao mesmo tempo me vigiava. A meu pedido, policiais subiram minha foto para o app da Clearview.
+Logo receberam telefonemas de representantes da companhia perguntando se estavam falando com a imprensa –o que indica que a Clearview tem a capacidade, e nesse caso o interesse– de monitorar as pessoas que a polícia está procurando.
+A tecnologia de reconhecimento facial sempre foi controversa.
+O app da Clearview oferece riscos adicionais porque agências de polícia estão subindo fotos sigilosas para os servidores de uma empresa cuja capacidade de proteger esses dados não foi testada.
+A companhia por fim começou a responder minhas perguntas, afirmando que seu silêncio anterior era característico de uma startup em começo de trajetória e operando sob sigilo.
+Ton That reconheceu ter desenvolvido um protótipo para uso com óculos de realidade aumentada, mas disse que a companhia não tinha planos para lançá-lo, e disse que minha foto havia acionado alarmes porque o app “identifica comportamentos de busca potencialmente anômalos” a fim de impedir seus usuários de conduzir o que a empresa caracteriza como “buscas indevidas”.
+Além de Ton That, a Clearview foi fundada por Richard Schwartz, que foi assessor de Rudolph Giuliani quando esse foi prefeito de Nova York, e conta com investimentos de Peter Thiel, um investidor de capital para empreendimentos associado ao Facebook e à Palantir.
+Outro investidor inicial é uma pequena companhia chamada Kirenaga Partners. Seu fundador, David Scalzo, minimizou as preocupações sobre a Clearview, afirmando que o potencial de que ela abra a internet a buscas faciais é menos importante que sua operação como instrumento de combate ao crime.
+“Ceguei à conclusão de que, porque o volume de informações não para de aumentar, nunca haverá privacidade”, disse Scalzo. “As leis precisam determinar o que é legal, mas não se pode banir a tecnologia”.
+Mais
+Ton That, 31, cresceu bem longe do Vale do Silício, na Austrália, seu país natal. Em 2007, ele abandonou a universidade e se mudou para San Francisco. O iPhone tinha acabado de chegar ao mercado, e o objetivo dele era entrar cedo naquilo que antecipava viria a se tornar um mercado vibrante de apps de mídia social.
+Em 2015, ele lançou o app Trump Hair, que acrescentava o topete característico de Trump às fotos das pessoas, e criou um app de compartilhamento de fotos. Os dois fracassaram.
+Ton That se mudou para Nova York em 2016. Começou a ler trabalhos acadêmicos sobre inteligência artificial, reconhecimento de imagem e aprendizado por máquina.
+Schwartz e Ton That se conheceram em 2016 em um evento literário no Manhattan Institute, uma organização de pesquisa de tendências conservadoras. Schwartz, 61, acumulou uma lista impressionante de contatos enquanto trabalhava para Giuliani na década de 1990.
+Ele e Ton That logo decidiram começar um negócio no ramo de reconhecimento facial. O segundo criaria o app, e Schwartz se encarregaria de usar seus contatos para criar interesse comercial.
+Os serviços de polícia têm acesso a instrumentos de reconhecimento facial há quase 20 anos, mas estavam limitados, historicamente, a realizar buscas em imagens de propriedade do governo, como fotos de fichas policiais ou de licenças de motorista.
+Ton That queria ir além disso. Em 2016, ele começou pela contratação de um par de engenheiros. Um ajudou a projetar um programa capaz de recolher automaticamente imagens de rostos na internet, por exemplo em sites de emprego e redes sociais.
+Representantes das companhias das quais imagens foram obtidas dizem que suas regras de uso proíbem a coleta de imagens.
+Outro engenheiro foi contratado para aperfeiçoar um algoritmo de reconhecimento facial derivado de estudos acadêmicos.
+O resultado: um sistema que usa o que Ton That descreveu como “uma rede neural de última geração” para converter todas as imagens em fórmulas matemáticas, ou vetores, com base na geometria facial –por exemplo, a distância entre os olhos da pessoa.
+A Clearview criou um vasto diretório que reúne todas as fotos com vetores semelhantes em “vizinhanças”.
+Quando um usuário sobe a foto de um rosto para o sistema da Clearview, essa foto é convertida em vetores e todas as fotos armazenadas na vizinhança daquele conjunto de vetores são exibidas ao usuário –acompanhadas por links para os sites de que essas imagens vieram.
+A Clearview continua minúscula, tendo arrecado US$ 7 milhões (aproximadamente R$ 29,3 milhões) de investidores, de acordo com o Pitchbook, um site que acompanha o investimento em startups. A companhia se recusou a confirmar a quantia.
+Em fevereiro, a polícia estadual de Indiana começou a experimentar o sistema da Clearview. Investigadores resolveram um caso em 20 minutos, usando o app.
+Dois homens haviam entrado em uma briga em um parque, que terminou com deles levando um tiro no estômago. Um transeunte registrou o incidente em vídeo em seu celular, e por isso a polícia tinha uma imagem do rosto do atirador para subir para o Clearview.
+Surgiu um resultado imediatamente. O homem aparecia em um vídeo que alguém havia postado na mídia social, e o nome dele constava da legenda.
+“Ele não tinha licença de motorista e nunca tinha sido preso como adulto, e por isso não constava dos bancos de dados do governo”, disse Chuck Cohen, na época capitão de polícia em Indiana.
+O homem foi detido e acusado. Cohen afirma que ele provavelmente não teria sido identificado sem a capacidade de buscar imagens de seu rosto na mídia social.
+A polícia estadual de Indiana se tornou o primeiro cliente pago da Clearview, de acordo com a companhia. (A polícia se recusou a comentar, se limitando a informar que havia testado o app da Clearview.)
+A técnica de venda mais efetiva da empresa é a de oferecer testes gratuitos do app por 30 dias aos policiais. Ton That enfim conseguiu seu sucesso viral.
+Organizações federais de policiamento e segurança, como o Serviço Federal de Investigações (FBI) e o Departamento de Segurança Interna, estão testando o sistema, assim como as autoridades de segurança do Canadá, de acordo com a companhia e representantes de governos.
+Ton That disse que o app nem sempre faz o serviço. A maioria das fotos no banco de dados da Clearview são tiradas de frente. Boa parte do material que a polícia sobe para o app é registrado por câmeras de vigilância montadas no teto ou no alto das paredes.
+Apesar disso, a companhia afirmou, seu app encontra resultados 75% do tempo.
+Um motivo para que o Clearview esteja crescendo é que seu serviço é único. Isso acontece porque o Facebook e outros sites de mídia social proíbem que fotos de seus usuários sejam recolhidas. O Clearview está violando as regras de uso desses sites.
+Alguns policiais disseram não saber que as fotos que subiram para o app estavam sendo armazenadas nos servidores da Clearview. A empresa tenta atenuar as preocupações com uma seção de perguntas e respostas encaminhada aos potenciais clientes, segundo a qual os empregados do serviço de assistência da empresa ao cliente não verão as fotos subidas pela polícia.
+A Clearview também contratou Paul Clement, procurador geral dos Estados Unidos no governo do presidente George W. Bush, para acalmar as preocupações quanto à legalidade do app.
+Em um memorando enviado em agosto e encaminhado pela Clearview a potenciais clientes, entre os quais a polícia de Atlanta e a polícia do condado de Pinellas, na Flórida, Clement afirmou que as agências policiais “não estão violando a constituição federal ou as leis estaduais de privacidade e biometria relevantes, ao usar o Clearview para seu propósito explícito”.
+Clement, hoje sócio no escritório de advocacia Kirkland & Ellis, escreveu que as autoridades não precisam informar aos réus que eles foram identificados por meio do Clearview, desde que esta não seja a única razão para a obtenção de um mandado de prisão contra eles. Clement não respondeu a múltiplos pedidos de comentário.
+O memorando parece ter funcionado. A polícia de Atlanta e a do condado de Pinellas logo começaram a usar o Clearview.
+Woodrow Hartzog, professor de direito e ciência da computação na Universidade Northeastern, em Boston, vê o Clearview como a mais recente prova de que é preciso banir o reconhecimento facial nos Estados Unidos.
+“Nós confiamos nos esforços da indústria para se autopoliciar e não adotar uma tecnologia assim arriscada, mas as barragens estão se rompendo porque há dinheiro demais em jogo”, disse Hartzog.
+“Não antevejo um futuro no qual possamos colher os benefícios da tecnologia de reconhecimento facial sem o abuso paralisante de vigilância que viria em sua companhia. A única forma de impedir que isso aconteça é proibir o uso”.
+The New York Times, tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1880ca858639babe6015d58979231f7ea54fcde57edd8ddff60dd4ac48ee928a",
+    "mention_text": "Hoan Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6754df48628d5918cdeea6fb9af1463a5c3f1d4905a7b6c002426e785a977b10",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "925ca3bd65acc32dded40f5dc979489a250341800d1058c26d277a56eec2e6dd",
+    "mention_text": "Clerview AI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09acb52a8c9b708c66a562d9c6b659d150a850801ce043b12ce20fe3e007d1d3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bcf03e409cb936f3e4cd0e2d309660aaa6c9508c5d6553760280fcf080fb34e0",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9cd96951860897e6d67cd8b6acf2976d26a974a8ee19c2b17caff71bce5cf1b",
+    "mention_text": "Venmo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee31d67dc1af47140fff1c1c802e4b596b0e286202b095de7459b5597086bb6f",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae5704b8be0a8f71ee70edda3e90ec0d63e5cb508deb63d4f81f1de59de33d64",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "59e46569119558d63506d0f99d01e6f8adb53f023340552b8e44607d39b7cddf",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "380af3480bb8a7f947075b9d3dd520eca00419011539d8c23dbc5f957715ac76",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "112caae6eec1136e4a6f964b770339ca1e6964276bac6ab1a10fa0805312602c",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e860ea86aab65132020cc1871289eac1724711bace1f7a5eaac8cb65f4b7e80",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73508d5e14546e11fa62725d741b838fc539d51a9cb773725789d2fa2844a080",
+    "mention_text": "Eric Goldman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ba4532e2de7997c86f09f89193c56c2ffc3fda2c0fbb31295fa392e9bb070e0",
+    "mention_text": "High Tech Law Institute",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d85335ddcbbf79611f27fafd6739345bbcec23a24765c8036301239e000932f7",
+    "mention_text": "Universidade de Santa Clara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0f5937925e62c0b23052755f5c69ae993604651a2dbad51c7c781339a6f03f5",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f26c44135ce7b676fed6b213b9701dccf89ddae5ecd915d8c6847ddcf5b8881",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "14bfed68f5ecaec3e58706b05a4f860f4fed6653d0a877c3b4cb3951ffcceefe",
+    "mention_text": "LinkedIn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82a54012db4e0f780fb94570f23fc8b67ec13c7101ed142353641d032685cf06",
+    "mention_text": "John Good",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07eaf2b40bb4babfdb8aee47d8b857732efd055718962c890bfc01c2b0648f41",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a545a2c72f4534589c5f3444d2ec030e56fc043567a831c93ea9b92f3b3a27a8",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22843cef26ba2ff4f495c9aac50e9dfb824c315f537f149562862eb469d91854",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eaf5cd550db1251d65abb9bd21d466535cb92ac1d31c3d97c369c9eaa844dccc",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ae2b1b71e105b313e553f3259a2fa3f9ab818d03fac54e9fa9b0ad6012a2e26",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1caf95f1c6d50a37eb1cf47eed1368ff31270a04dd8b0899e1c0a78725da759f",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "604e69ed65140f6b6399f34fbdf71ac45deda0ede54e8865a5ce5171ead87efd",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86c1d9b7537e04e1ab7251786e2a3ec750e72e00ba15ad3077b8c1cb7fef0200",
+    "mention_text": "Richard Schwartz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9591633ec076f7f59842891a8beb7a7b33bdb0b408116db32bba9938447c8dd8",
+    "mention_text": "Rudolph Giuliani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4632fafad846be7fa32164bf44f3a68aede89dfd9c0937054e23dfc53682f370",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "098036e33566a3eb296803c7b37c4130c069a1957d5464477be3d82a4859a081",
+    "mention_text": "Peter Thiel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31a462a202cd33b43680aa903782a3a03aed9c4c010d6eb7ddc9bfc3c8919f99",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4174a2d89e515d05576fb948ea86b26053c7d159808baa6fc7f1885fc44a568c",
+    "mention_text": "Palantir",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87f0a5d72f6252ea6271fe03377949ad84da517ea4468b28b061f8956f1809f0",
+    "mention_text": "Kirenaga Partners",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1d9f9aa4b92c7aef61abe3d4381b5e70e9c707c3d78a910862274abd6464d09",
+    "mention_text": "David Scalzo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71e36dec13388ea27259fdabedd4bbc30823a7617db30d5c376ad0aba4e2e308",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62b443e6d873f0a6b8e7f9b613885779b0362e1fa29e2238522bc60f39a3f847",
+    "mention_text": "Scalzo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c300ecb1fefbd9f3c2b30ca999c7b32363e12c12df83dac1714abb0415b5c47b",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b88e7dcbe9b38b32fa5515c71b4fcb136d848b61554388ee252b6b16ee331cb",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d089aed629635fa4c58d7d26f5f4f6428c439d298b97273008b64b797c47d314",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a4ae62bb4e28e3971d3957aea0de82b440f65c3c13fed79248f988b306a6ed3",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f3e4a1f1636482e95cb00e1b94ef7b8f3ecb757c435fff933bb48156b8a63cbb",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1d9968ed5d6cd4a0ae28e7dce9dfdb53495254cab5d82a00c6d6dcbe463cc27",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b38f31b0cb1301bbecb7442b006629189466150e2103c0081357c62fd9fa67b",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae5bc3b88cb1294943e0bdeac5a3713304b8f0ae58dac3e30f8d15e1f618926d",
+    "mention_text": "Schwartz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51ad33b88bcd0a163bfc17c9793cebc6190d69510b8b8aa60e9892e61e6d5d24",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21ff6536098d05aa6cf333af075860e68105c043679e36577e7a25d7f2e334be",
+    "mention_text": "Manhattan Institute",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0d4a59f7186c4fe4bc05f31ffade678afa98eef642db95a49e5c177a99fddc7",
+    "mention_text": "Schwartz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f19e984916b916f020527bd8d3bfe1ded284e87ef78bd357b6bf2396c3119e1",
+    "mention_text": "Giuliani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39f11430687de2526b4e1f61bfc51c38425d850317aa8b5bf221f40df5abb602",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdd7f9d6dd0f8f719869c096c8fa76b12e0e4ba199ab4893945d0b8d3c4cfc48",
+    "mention_text": "Schwartz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0789316d6ed77bb12bd3efa2ea6c441a866e16026aa0801df9342ce5b78c3a36",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ed458b69bd92d649c87b1358f475696c80a2244c519063ae4de926c361aecbc",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4569f1d75258ed2b7a63d50ad80a18f831d17ac9ab336f3012ac23ade0c5cf93",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d3f0d7e09f5d4d79750581571554b6a3d7f8de31a2aee81125d356fe932bbfe",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc1a5bf6b1d407819a4e0fb996eb5b7075f8a9f21a33ce62ffd474ffb8bf7d99",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25f85136f6d0bfb36db929f023b9f85c412f838126ecf4830e538fb25f8ed3f1",
+    "mention_text": "Pitchbook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "164a45c0e2e3a3062460ba977c267e3ada2d09793bf71dab4f5bfe2ab2758ee3",
+    "mention_text": "Indiana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39e3f53ea3987cb26e574774b4b7f2bd67a0ab904c865123c09bb603689036cb",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1624d9861c053846c544fb3a22a6128458b3a2617a8ecbec7a2967b2769c1a93",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46740b252622eb8c5b06937661efe918b648f93c6faeb4831e889c17c06b4c89",
+    "mention_text": "Chuck Cohen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b483c6f36439a70355f6ebbcb851375b7e8f79e13df4f4a0fb3aa5e81658d162",
+    "mention_text": "Indiana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9947a56b72e4dfeb51962de0499879a50bd79930ffc35e12969e50ce33089dc3",
+    "mention_text": "Cohen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e99db654958aa43015ff7ef57b19fe009745b411157bf8df142ea3d2e938f425",
+    "mention_text": "Indiana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "48fccc1a93fbf5dfdff41238fed429b41ba5f9f8ba5167ff4fc93960be2414cd",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7874b1d71a0c2b04c491b26f8b2f4a75e018d0687f3ab288a3985934e5a1812f",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3cebecf63ee9db0802236d860cf8dbe7d8d4e611c2f983ef9fac62e67a94190",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e966d552909f283a45c2aa97713c1c5d8a2ccc3cebc0c486278535e51caad2fd",
+    "mention_text": "Serviço Federal de Investigações",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa66c656a285bbcf11a6ade6daef28adf797644556ee9ae8b7c777a08d079e15",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c837cdb15970ec0152f4db36e795f7b5f5c8fc43b50b7358a70df30615dfc90a",
+    "mention_text": "Departamento de Segurança Interna",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b10222b00fc736cc6fde9f2b1cf7facd6d1a11d517c149a2c6a96c56948a076",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a02e19ebb7a83254e63a9816a3309bab9aba4fa3fde2496cb6c2088718246d70",
+    "mention_text": "Ton That",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a99af23e3bc073b096e7d9023fe2d9679a744cb0af42d57c7d95205ee57899fc",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0ad7cf125534f6ce70f9e8453523bcf4b8b5f4260d5bcca3be0079538be945c",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eff5fe4285ec31ce10dd01b8c7bb3fc9067d28451ad8fedf2bf4bec4321232d0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bababc1ce0d72debb139861d951bbf63ff464a8f2a51589c3e455f8cbac23416",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4b46218f7b2a994b20b43529bfef886b25a216106a2852fcb5547f3b894e16a",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2b07101d6750ea4087241b4ea6a58b8b010460da4fcecf9216e204691c92ebeb",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75505130dd537f609e4a8f5fa1775751e30a211326f3415aa1df3e5025594601",
+    "mention_text": "Paul Clement",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b34b4c873121794532e5e429818e68455423cefeeaf96afb8e7add0c0c145022",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "21816546684efea48d216814af2ab81de285b5c252edbf78793a6e688135f8e6",
+    "mention_text": "George W. Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64bfd8b88807ed1d0ccfc3909a64ae0df59c21d99f0eed85d71cb6dd6b3d98a5",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb0a0db4b0a04d5efdb3e395840a21506700f254ac348b78958fea8424aa1d7b",
+    "mention_text": "Atlanta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4879b968e1d03d0ea71b225533cb38863ac55a6487181ecc3f45ab3ff1f886c2",
+    "mention_text": "Pinellas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c77b8cb63e585ccb88bc3acf23c6b9d9cd104e98f6607fe4497bc1be776248a6",
+    "mention_text": "Flórida",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb69a92903f704af0ab70be15ac8e15457da2ff2d94d9aa8c5c61e8489ededc7",
+    "mention_text": "Clement",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c0c17b6ab0facb059fe9c7096d577a676d557a42a4cc9203fe385aed113b37f",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9afd4d6693f69e30e9e83e42f4474db2e4885f85d7006cf3a3fe0311b24872c4",
+    "mention_text": "Clement",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5979d103291b12ee7ec8903cd49e3670faf825f5eadcafc7880115461b8e48b",
+    "mention_text": "Kirkland & Ellis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddc2a8c665e9694c37c41d8f31bc677c51fd15d3f490f1dfba5f64afef379e27",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b097c46e5b51b331d44f1a6ce3ec1d642f5490b900639c26d23d415643fd2596",
+    "mention_text": "Clement",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac1f7baf36c230c8fa157b34ae114242adcc5088fdd8fd3a6c949689540b4bed",
+    "mention_text": "Atlanta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "603ced000a088cced861450235f873bc5e6562429cd2f6e9a77ef0320a98edb3",
+    "mention_text": "Pinellas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a4ffc56370ea73636664899b33638a1e3de2f402c8f48fa295b78414b93ce3b",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc714e9128f0ae8533560e43a911d980f7a9b72ef4b48b6e1a7098f6bb77bce9",
+    "mention_text": "Woodrow Hartzog",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3893b2756b1ebd446e6fa41c3cb70cd73f3636debff6dfc53b8cfd238afa07f",
+    "mention_text": "Universidade Northeastern",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3bcd3758f83607eab4b236851a81cbf1bea49f0e0705f591355453f56b89e19b",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb89627e9550bd5b1faf837dddafc03837eeb2e7a752bc21ccd67de3d5b8a2d8",
+    "mention_text": "Clearview",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9beefb3b82cc2f7bb63602e244a89460ec4f30a366a85610454136325b2e2339",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f11ce4a5da48f166a12a1196906dbec4aa9ba247e47d09b89b71e084f0f58977",
+    "mention_text": "Hartzog",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92f51bd61a5349a75f2572d0864c5ba024e5ae74f0d5082efd4813573eaefcc8",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "411c886ace7f3fbebabe3684147fdc1a232e944242e17b82c0fdf3ad8f28dbf3",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  }
+]

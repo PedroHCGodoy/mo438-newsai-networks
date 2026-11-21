@@ -1,0 +1,393 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 15f17d3633b07ede7376e27546ca40bd0a57f071aced088414d5cff6faf1ca14
+
+TEXTO:
+Diretor de 'Blade Runner 2049' discute motivos de retomar história de 1982
+
+Em 1982, "Blade Runner" dividiu a crítica e não fez sucesso nas bilheterias. O filme néo-noir, visualmente eletrizante ainda que distópico, falava de androides (os replicantes) e do "blade runner" que os caçava, um personagem existencialmente perturbado (vivido por Harrison Ford).
+Dez anos depois, a "versão do diretor" foi lançada sem narração em off e o final feliz acrescidos contra a vontade de Scott. Tornou-se uma influente obra-prima. (A versão definitiva só saiu em 2007.)
+Nesta quinta (6), a continuação "Blade Runner 2049" estreia com Ryan Gosling no papel de K, que persegue uma nova geração de replicantes.
+Harrison Ford retorna como Rick Deckard e Ridley Scott volta como produtor-executivo. A direção coube a Denis Villeneuve ("Sicario" e "A Chegada").
+Em entrevistas separadas, Ford, Scott, Gosling e Villeneuve discutem o legado de "Blade Runner", os motivos de retomar a história e a duradoura discussão sobre se o caçador de androides do filme de 1982 é ou não um replicante.
+*
+The New York Times - As críticas iniciais não foram ótimas, mas o filme se tornou cultuado. Quando o sr. percebeu que o filme passou a ecoar?
+Ridley Scott - Assistia muito à MTV e subitamente vi que havia imagens de "Blade Runner" em circulação no canal. Estava influenciando cineastas, roqueiros. Bob Dylan me ligou e conversamos a noite inteira porque ele adorou "Blade Runner". Percebi que o filme havia deixado sua marca.
+O que "Blade Runner" significou para vocês, como fãs?
+Ryan Gosling - Eu o vi aos 14 anos. Foi um dos primeiros filmes em que não ficava claro como eu deveria me sentir no final. Faz você questionar a ideia de heróis e vilões, do que significa ser humano.
+Denis Villeneuve - O filme está ligado ao nascimento do meu amor pelo cinema. Nunca havíamos visto aquela combinação de filme noir e ficção científica. Foi a primeira vez que alguém tomou cuidado ao criar um futuro. Eles tentaram projetar os anos 1980 e pensar do ponto de vista sociológico, demográfico, tecnológico.
+Por que uma sequência agora?
+Scott - Sempre achei que era hora. A base da história é que a inteligência artificial está ganhando emoções. Isso pode se tornar muito perigoso porque um ser com inteligência artificial se rebelará em um instante assim que perceber que é superior ao seu mestre.
+Essa ideia é ainda mais relevante hoje do que em 1982?
+Villeneuve - É a história clássica de um ser humano tentando fazer o papel de Deus, como a história de Frankenstein. É imemorial. São as mesmas questões, mas somos cada vez mais híbridos. Nossa relação com a memória, fé e comunicações evoluiu muito.
+O que diferencia o novo filme?
+Villeneuve - Tentei manter elementos do original. Ritmo, atmosfera. O novo filme se desloca mais, vai aos subúrbios e ao entorno de Los Angeles. O primeiro se passava em 2019, e todo mundo sabe hoje que não existem carros voadores. Não havia um Steve Jobs, não havia celulares. Tivemos de criar um futuro para o primeiro "Blade Runner".
+O sr. estava preocupado em macular o legado do original?
+Scott - A arte é como um tubarão: você precisa continuar se movendo ou se afoga.
+Villeneuve - Quando fiz as pazes com a ideia de que aquilo que estava tentando era insanamente difícil e minha chance de sucesso era mínima, me libertei. É o meu melhor filme. Sei que será comparado ao primeiro e me preocupo. Ainda acordo pensando que "meu Deus, fiz uma continuação de 'Blade Runner', em que merda eu estava pensando?"
+Há divergência sobre se Deckard é um replicante. Scott diz que sim, e Ford, o contrário.
+Villeneuve - Vi uma dessas discussões. Você não ter certeza se ele é real, um verdadeiro ser humano, ou uma criatura projetada, cria uma tensão interessante. Não me importo com a resposta. Gosto de os filmes não tomarem partido.
+Ford - O tema sempre surge, por volta do segundo drinque. Quando rodávamos o primeiro filme, a conversa envolvia só Ridley e eu. Agora é parte de diálogo mais amplo. Mas creio que as opções da história ficam de alguma maneira preservadas para o público.
+Scott - Deckard é um replicante, porra! Harrison não pode mais discordar, agora, porque toda a premissa da nova trama é a de que ele é um replicante. Isso mais me diverte que qualquer outra coisa.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "601537f6c60f6460ba6bbbb4f73d5490230f55d1e53ed5f902bc9b121d7b5ea5",
+    "mention_text": "Harrison Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b55ed6c267e765078f4c11b85d11b4c653def6798e31cb0fee66fc764faebba6",
+    "mention_text": "Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "126b91764e64b9d15844c7724d02da9c5017358df3ec95aec6c78e41e389ea7d",
+    "mention_text": "Ryan Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "427095f21816d0c341b2e5b9ab72e6a4c53f10530a89d1a6a3a3fc82c1bd90b3",
+    "mention_text": "K",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a017febff5e2c3421b1dd1390eb4c6d6176e8dff7f1bb323607daf9206717b5",
+    "mention_text": "Harrison Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d619793b6dea1e7f236a3c7f4c7f55355c5992b8cef9b084a9cc25cd39488817",
+    "mention_text": "Rick Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99f8542f5fb67563c09371cd588794bb716bafe9bf187e787ca56623397420e8",
+    "mention_text": "Ridley Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0566d69434421d2f3ebd12737d7bb3d34ba769eb37e57f935bcbf1302519606f",
+    "mention_text": "Denis Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c47cd07b451b2fc4fc83e5377e8da10f0393890500f88402eafd84e1f2b91327",
+    "mention_text": "Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "521c7abb5611d22678ec1eceaab6950cc4d4b2a5a2e38506c7f7b2f603ef24c9",
+    "mention_text": "Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0b514d052012d6b32e5508f58a7697c753f308af8eb70f5d9807a9e9e23136f",
+    "mention_text": "Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3a4bea040e3f6f787fa6b26a1d058aee684550fa95feb44bede26fdb68187c0",
+    "mention_text": "Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37bbebd8a36e26d1736192bb8f08e037a25dbaba408161ae3b8efcec2d02cdd9",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0533fa06a85a5b151d9448305373b35ae395719fb5d31b8c41265ad6b6554e24",
+    "mention_text": "Ridley Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d99d4ac5730e591b27653524ca2b0f5bc661c4ddd918ff321bf41df800e3f7a9",
+    "mention_text": "MTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f8be8215b9289fcdba330aa97e3b3dc0c65eaf2b79a3ca1e04be717937e97ec",
+    "mention_text": "Bob Dylan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1b4835499962eb983e5dec1f743349475f50cbfaecf59ce319b88b1d80cb315",
+    "mention_text": "Ryan Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eba26aa01630b92f149af7b6ae0c0e388a62de81c82339bfb12b2da8aa6e7c53",
+    "mention_text": "Denis Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "efb78e1ace46ba8878e28e0cc21cae681494e964c55e537ffdc42f865b7caa7f",
+    "mention_text": "Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b2e9c03fbd23ac9874ab2df61769fe0a05b3bbc38ad84e19f7d3ef10e37ad90",
+    "mention_text": "Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8ef8cec61cb0f3cbf0430a3efc8ccc000cee17023223c1a4535c62cba5a4b1b",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23dcccbfe86f7f3687e7d1900e8f5a0b4bfeb77e611e5ec70a8a229e54fa342f",
+    "mention_text": "Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eefc8e233a8db0c71b605a702c4e9d28bf80799dab4b0bf71b97438c069c7a3d",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bb657a38bc22a97a3388fef604ec28a95cfffe546a8b55ae3d2e81b0f4661633",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "026d42a226b38d2edbeb8a43aaf4e55b1d0fcf4f6915c84908396ab66a5a94e6",
+    "mention_text": "Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f53c1f43af6378d7411a2f999fc3795ba6c830489b49515cf28359e5519a295",
+    "mention_text": "Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46c9465bc670badb78ed190bcd54eb107b1f163ef717c90eaa0f915305a0b58d",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77a5377e9316d078d24aca57c2e70cb44665d119bc0e0a4d3bddc8f4fe9800a9",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aecaf1d9913ab0e3189e45c4e3f02f107897b119e7643fd1b5c00ec54e85c68f",
+    "mention_text": "Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "289b38b78f2740e189303d4b7a1f211c52f24e801f81eadd4271a5e0571e94ea",
+    "mention_text": "Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5ef2f71595895bfc972b65fc4923bea9f979ea6a72feed4b559f2cca4e6f636",
+    "mention_text": "Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3bfc8eaefc5a3407b7723cdd0c56497df7a6446d3219e67df7718b56c266768",
+    "mention_text": "Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c378cec27e4bd4ff4120cee4c84ddfd4800d85b4e7b222773e68cb178c6e4deb",
+    "mention_text": "Ridley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cea40fdb1bba44593e891fb71ede66b5fcb33e3b6cb7dee15b8a5b80091a9869",
+    "mention_text": "Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b78262340835291f9ff118cb4c9e2b55180073186c56a4b115613c49a5721b5",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85383888b1b5d216d8260bc8221a459a2b9315e562b039bc1f3fcee4d468d254",
+    "mention_text": "Harrison",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd802597cc614b42501744baf1f3ae6df88f3053cd64b40532828afb6c797bd0",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

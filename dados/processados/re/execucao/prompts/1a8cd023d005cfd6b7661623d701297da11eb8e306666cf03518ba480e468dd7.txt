@@ -1,0 +1,557 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1654e2cb41b01ace0bab48d068671fe365f30d791c3eab0bb7fdaacc19e0f603
+
+TEXTO:
+Emissão de título de dívida corporativa até setembro já supera patamar de 2017
+
+O valor dos títulos de renda fixa corporativos e Fidcs (Fundos de Investimento em Direitos Creditórios) emitidos até o fim de setembro superou o acumulado de 2017, segundo a B3 (Bolsa de São Paulo).
+O montante foi de R$ 157 bilhões, R$ 7 bilhões a mais que o total do ano passado.
+A alta das emissões na primeira metade de 2018 contribuiu para o resultado, afirma Fábio Zenaro, diretor de Produtos de balcão, commodities e novos negócios da Bolsa.
+“As empresas anteciparam a captação de recursos por precaução, já prevendo um segundo semestre mais volátil  por causa das eleições”, diz.
+A instabilidade do mercado externo que afetou os emergentes (como Argentina e Turquia) aumentou o custo da captação fora do país, de acordo com Zenaro.
+“Neste momento, os investidores estrangeiros estão menos propensos a aceitar riscos, o que eleva os juros. Emitir títulos lá fora sai mais caro”.
+Os cortes na taxa de juros e a menor disponibilidade de financiamentos do BNDES (Banco Nacional de Desenvolvimento Econômico e Social) também influenciaram a escolha por esses produtos.
+“São fatores que já observávamos no ano passado, mas que se acentuaram nos últimos meses”.
+A perspectiva para o restante de 2018 ainda é incerta, afirma o diretor. “Se tirarmos o cenário político pós-eleições da equação, a tendência seria de crescimento suave”, afirma.
+Tribunal do Cade analisará compra da Transfederal pela Prosegur
+A aprovação da compra da Transfederal, de transporte de valores, pela Prosegur, determinada em setembro pelo superintendente-geral do Cade, Alexandre Cordeiro, será revisada pelo Tribunal Administrativo do órgão.
+A decisão de Cordeiro contrariou parecer da própria Superintendência, que recomendou que o negócio fosse impugnado e analisado pelo Tribunal devido a seus efeitos nos mercados de dois estados.
+O conselheiro João Paulo de Resende determinou revisão do caso nesta quarta (3).
+Um dia antes, o Ministério Público Federal havia recorrido do despacho de Cordeiro. Foi a primeira decisão do tipo tomada pela Procuradoria.
+“A determinação do superintendente foi atípica. A regra é que se siga a recomendação técnica”, diz Bruno Drago, do Demarest.
+“Entendemos que o MPF é parte legítima para [protocolar] o recurso, a questão afeta a coletividade”, diz o sub-procurador Sady Torres Filho.
+“Haverá um conselheiro relator e o Tribunal analisará o negócio”, diz Denise Junqueira, do Cascione.
+A Prosegur diz aguardar o desfecho do processo. O senador Eunício Oliveira (MDB-CE), sócio da Remmo, controladora da Transfederal, afirma estar afastado da empresa desde 1998.
+Aos candidatos Milton Rego, presidente da Abal, da indústria de alumínio
+A simplificação da emissão de licenças e certidões exigidas pelo Estado às mineradoras é uma das principais demandas do setor de alumínio aos presidenciáveis.
+É necessário buscar aprovação de mais de oito órgãos, afirma Milton Rego, presidente da Abal (do setor).
+“O ideal seria um balcão único com prazos pré-determinados. No Canadá, o tempo médio é de um ano; aqui, é de ao menos cinco”.
+A tributação de itens produzidos a partir de alumínio reciclado também é questionada. Cerca de 40% do alumínio usado no país vem da reciclagem, afirma Rego.
+“A sucata e o metal bruto têm a mesma tributação. A prática, que contribui para reduzir as emissões de carbono, acaba desestimulada.”
+Principais demandas da indústria de alumínio aos presidenciáveis
+R$ 65,4 bilhões é o faturamento do setor* 14.877 são os empregos diretos*
+*Dados de 2017
+De óculos escuros
+A varejista de óculos Chilli Beans vai terminar 2018 com 40 novas lojas em sua rede franqueada. A previsão inicial era de 70. Para 2019, a estimativa é de 50 novas operações.
+“Este ano tem sido difícil por conta da economia lenta. Apesar disso, nossa projeção segue otimista. Vamos crescer ao menos 10% neste ano”, afirma o diretor-executivo da marca, Caito Maia.
+As unidades de rua são a prioridade no plano de expansão da empresa, segundo o executivo. A empresa também prevê a abertura de pontos de venda no exterior.
+“A unidade do Catar abrirá em duas semanas. Teremos inaugurações na Arábia Saudita, no Omã, no Peru e na Bolívia no ano que vem. Nosso plano de expansão continua e mira outras regiões.”
+A região do Oriente Médio concentra hoje 20 lojas da companhia brasileira.
+R$ 550 milhões foi o faturamento em 2017
+19 são os países onde a marca opera
+805 são as lojas
+Investimento gelado
+A fabricante paulista de máquinas de gelo Mac Total Ice recebeu um aporte de R$ 23 milhões de investidores americanos, segundo o presidente, Alexandre Laino de Luca.
+A empresa vendeu uma fatia minoritária de sua operação e utilizará os recursos para modernizar as linhas de produção e desenvolver novos produtos, afirma o executivo.
+“É um investimento que será concluído em 2019 para produzirmos modelos mais compactos, com consumo menor de energia”, diz ele.
+A companhia também deverá ampliar a exportação de equipamentos.
+“Além do Brasil, atendemos hoje países da América do Sul, Angola e Gana. Agora, vamos trabalhar para estarmos em mais mercados africanos no próximo ano.”
+Pé atrás Cerca de 80% das empresas no Brasil temem que o uso de inteligência artificial prejudique a relação com seus funcionários. No mundo, o nível é de 57%, segundo as empresas de tecnologia SAS, Accenture e Intel, que encomendaram um estudo à Forbes Insights.
+com Felipe Gutierrez, Igor Utsumi, Ivan Martínez-Vargas e Diana Lott
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4e6c1d19cb1d960d9b7bc9d17cad72f08ff531a42eeaa885ce5df5f6587b5e41",
+    "mention_text": "B3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e64019bc9964aaa77e7a5dd1a3ac45bf3476bddb4bf93ddb17843dd87de5333e",
+    "mention_text": "Bolsa de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5b67f08bef70ca7d0d6e4b603f0c1880b5785f1777f6e6dc8b19e90c0dab5e0",
+    "mention_text": "Fábio Zenaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb24a142b0b378d5e06b0a235071d0bb17e048c819d2534926536888d7bf8636",
+    "mention_text": "Bolsa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05dc5b704a68f923ac7bc97c976ee70bdb26777a8bc5e7a72ab39b75c4e92909",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74464eb4827de6472cd5fb0e2a41c39582e845d3598b1726de93b74eb6bd385e",
+    "mention_text": "Turquia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38d56e3b24efe10639851c9966d603fff4110af8915cd2aae16b617656abc3a7",
+    "mention_text": "Zenaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e676bd397b6bf596f1757fa228bb90ffca71800d604c34fa95a9e37c84096c9",
+    "mention_text": "BNDES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c1aa2a317a953c276e10f57f4a654bdc0ea898e518ee0908ac3405f6614380d",
+    "mention_text": "Banco Nacional de Desenvolvimento Econômico e Social",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a46e829d24503c58792908f47c9288d26a4cb11b85adfcc82e937d1ea03914cc",
+    "mention_text": "Tribunal do Cade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6cc10f008be1c2155ac0412446a57756327c25ab34822a578926e34e08d2020",
+    "mention_text": "Transfederal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab4b3909f236d8b3ffffe3a90ffd067b6b188275bd76773e1b7bd924659676a1",
+    "mention_text": "Prosegur",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e68104004208811265db7dd4331d7fa77aab7430eb6236c728c6d11b4726d68",
+    "mention_text": "Transfederal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4217e0f51f517cc60d8cec7aaa52c8a83459a101a827739dd773a2da51f958c7",
+    "mention_text": "Prosegur",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d512c37e2750c5f92e8d040424cf2f830d2ac4c0d6dbee9a0791c20d955a719",
+    "mention_text": "Cade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08b51c7b7e587d5fa11e44247d48a07bf2b64c5784578c4dd2a6326a237d8ea9",
+    "mention_text": "Alexandre Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fc95379805c901bed75372d134f7d7e8cba5a2241cf82dc9d0f59937fc78c62",
+    "mention_text": "Tribunal Administrativo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b42bda71cfdc71067ef103091c29badfe679d6c18e0e8dea1d22c6461aff812b",
+    "mention_text": "Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "572fa1f934bcf4413cc824339445f054a6938861c16cdc5532589bb7dc34035c",
+    "mention_text": "Superintendência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26eba69da1875ebfaaea7eed5fa6c3bcb13d885e043ec89723a5a28176823426",
+    "mention_text": "Tribunal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94b7390d18a8c71783015b21620b4c2770082695c96666d13406a63103c61fd9",
+    "mention_text": "João Paulo de Resende",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9ccd2ddbfbfb0eca0eeea393002f52ee34735773b15a5de8e4848c6f5738900",
+    "mention_text": "Ministério Público Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6203977892cecfdd42ef4c0c185789b3e4872435869584e971e7dfa8592d2196",
+    "mention_text": "Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13ad89074a939f87187a35b6332c5e05702dfa057bbfa7d9383f24281989309a",
+    "mention_text": "Procuradoria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bed1c8a159a3d136fdc48bee83536445c385629d5c33629652c5f33d79f39dca",
+    "mention_text": "Bruno Drago",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ee97bad65e59c7494115c77b5e0c1632bb8e08be420167a568d169085ceb372",
+    "mention_text": "Demarest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20c191936ee075a66959182b4f866a1b3ccc4c001f498564a186d5c8b5a86e65",
+    "mention_text": "MPF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0b40079b376d07ae80602be6baba226b802e33597c9053daa1b771dd3223ec6",
+    "mention_text": "Sady Torres Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f9d4a06f7f15862c09af31e1d72e24326b10e30bbf3b71bc9981caa8316fa87",
+    "mention_text": "Tribunal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a259b2f3607d0374d37e13b493d6da09d5f850fc9f433b226ec70ea465b34560",
+    "mention_text": "Denise Junqueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ed975bfd213a97b5ee33f77bea76242108b977aa6b734f83a135f245c8056d0",
+    "mention_text": "Cascione",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ab5afb9267d63b7690f389c7187e4958406fbede8bd2761c03fb7b4a372c13e",
+    "mention_text": "Prosegur",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "55bc09aaac4278275f5bf4d25babff0681bb05b99b4c2d4245c0e832d5fa1dbb",
+    "mention_text": "Eunício Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8a7c8f8dcbe75ea19dae60c5c2c5b395973ec6ef4d10d42229bf551eb0d5585",
+    "mention_text": "MDB-CE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c77df6fb4184bd9694299227154c1aa7af9e768d858dc8abdba458dd06fa273d",
+    "mention_text": "Remmo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4904b12c8b5cd83a35db27f56f64e52b1753f74d1a26f306756290c64ccec7c",
+    "mention_text": "Transfederal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7216e160f4b880094944cfaa066daad816a7286e4ac8b7ed1989491ab5ef0488",
+    "mention_text": "Milton Rego",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59e647dfe2f320afebaccac4b9358e004313fbf7ccf550862ef75ec8beaeb629",
+    "mention_text": "Abal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3127c187cb0086570699e4d7a817a2d7cd63caa9225e8f8e0f5c86dccbfd897",
+    "mention_text": "Estado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f04061569e0ee6c0d79914d286c969d7e6c6f53f7df3fbdaab26f6c69897c7d6",
+    "mention_text": "Milton Rego",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebc8ebb24130ce858d8ec79605ab0377167b86317dd51ac2369858a8afb49e0e",
+    "mention_text": "Abal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbb92041bb3c9c6c079b4269d6bac617f7532efc47843aa3304e98b81780551a",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3ae3b85826e2ed8a3b492ebd273f98e9202104e41ec8b235ba63fc0510a95ad6",
+    "mention_text": "Rego",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c4b86afca75656dabe2cbc565be18f687de64ea0a4d562bfe7b5cb1523fd928",
+    "mention_text": "Chilli Beans",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9eb2d40a768a6d49f70b6e52a054dd360e1ecefde4de96de9cecf976e8cb5239",
+    "mention_text": "Caito Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85855d8f5c44c514bd402229c31176191995714c2c313fa676433202a154ad0e",
+    "mention_text": "Catar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56bf3fade5bce45839ffd946f4d6e33592f50f1de9819dabf1f53f6df0a30911",
+    "mention_text": "Arábia Saudita",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53f2dbcc768db3ed9fb9c2a2917dd92087924552b7030a7221c50ad2cfa50c83",
+    "mention_text": "Omã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c023d374886c6ef7ebdd331638bdc42de9dd2e139ae768977a91a117c353701",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5833f6060164d54ae0a74124e5b83091de31702215d85655a323d7005ad12803",
+    "mention_text": "Bolívia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "92e526ea18d8debf332bc9aa1417dd8702a821e05f6390bac2713cae265c5fe5",
+    "mention_text": "Oriente Médio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "195f3de3a3ba410fe5cb0f647fcc0647d05e01865ff4e0a198e6d2e2622f23eb",
+    "mention_text": "Mac Total Ice",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d6fba98cd414b0c76694e82b1e0a41a3bd26cf4be7fa70eeed9a00d24602b3a",
+    "mention_text": "Alexandre Laino de Luca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54866d7c1d463b4b3fa0c2c13c8a3cb0cef1817fb933f00c18adca16fd020c57",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc981b84d1d08db2f2514096efbbe6d99e0ed7ba1770b14eb7f77244a4ca55b2",
+    "mention_text": "América do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c4be8bced187575bc5247331aa161d12f2b1bcbfaa789191a436788db0f077ec",
+    "mention_text": "Angola",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f98fa1635fed1677c5d14d6b6ff91ea524fad146fe3296df66ccfd8f837774dc",
+    "mention_text": "Gana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "78f72003e0a0bfd63b966e1c7bbae62b1c03b62e8fc1b32645bb718184d90d3c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30bc61c4ea360eafe3194f3423524772b66448aad2acf1740bbae1f2dd259edb",
+    "mention_text": "SAS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d53a65b1358dfdf5dc1891541704706d27af6e0b1ecccc391f736a6bd1ea143b",
+    "mention_text": "Accenture",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b4f329be4c4a50e1d0320eeeab3a351c39f2822c2565a8d07eeeae1ab874c02",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0618ddf25958cad031531b909993d8ca8b3f05355dfd53565fd6745f1e3c9fb9",
+    "mention_text": "Forbes Insights",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b2e7a8b323d92e01792b4b2c3bb46834e701dc3c5b1949a6e35d6b0bba59c598",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23347771e9ada0764726b062cec74816d88fdcb62802fb8eee447b2aeeb0e79c",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b922d2b37d0b0f9f0f77dc09471555b24e30938f3f3e70cd1b7eb41f621b3053",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e21ddf0f994d768390d94f8eb216aa5e31e368e410e374f583d3e1ac6c520ef",
+    "mention_text": "Diana Lott",
+    "categoria": "PESSOA"
+  }
+]

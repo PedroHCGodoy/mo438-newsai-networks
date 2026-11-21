@@ -1,0 +1,374 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: fc50557926381b6809a56863fb0f1045fe6a279724b15b547631fbb8aa3dbb30
+
+TEXTO:
+Salários ou princípios? O que pesa mais na hora de mudar de emprego
+
+José Luis Peñarredonda
+Você deixaria seu emprego por motivos éticos? Em maio passado, um grupo de funcionários do Google fez exatamente isso.
+Eles abriram mão da carreira na gigante de tecnologia por causa do envolvimento da empresa com o projeto Maven, que fornecia e processava dados para drones militares dos EUA. Acrescido a isso, houve ainda um desentendimento sobre a forma como os diretores lidaram com questões éticas.
+Muitos de nós também enfrentamos dilemas desse tipo: você recusaria um salário atraente por não concordar com a posição de uma empresa sobre, digamos, meio ambiente, testes em animais ou pela forma como ela trata os clientes?
+Se você respondeu que sim, dados sugerem que provavelmente você é um millennial, nascido entre os anos 1980 e meados dos 1990. Estudo após estudo tem apontado para essa tendência. Mais do que as gerações anteriores, os millennials são comumente motivados a "fazer a diferença" por meio de seu trabalho. Muitos daqueles que deixam o emprego buscam compromisso ético ou cultural, mesmo quando isso envolve um corte no salário anterior.
+Mas será que isso é mesmo verdade? Na realidade, quem é que pode se dar ao luxo de fazer essa escolha?
+CUSTO DE VIDA PESA NA DECISÃO
+Millennials são muitas vezes descritos como a geração de profissionais que constantemente muda de emprego. Diversos estudos sinalizam que eles não buscam trabalhos estáveis ou caminhos previsíveis. Por isso, algumas indústrias tradicionais estão tendo dificuldade de manter seus funcionários mais jovens: um estudo de 2017 do Instituto para Empregadores Estudantis mostra que 46% dos graduados no Reino Unido deixaram seu primeiro emprego depois de cinco anos.
+A percepção amplamente aceita é de que muitos largam o emprego para "perseguir seus sonhos" ou fazer um mochilão ao redor do mundo. Mas rejeitar o plano de carreira corporativo para viajar ou dar o pontapé em seu próprio negócio é uma decisão bastante drástica e cara. E apenas alguns podem realmente se dar ao luxo de tomá-la.
+Pesquisas têm consistentemente mostrado que ter "lacunas de emprego" diminui o salário médio (para alguns, em milhares de dólares por ano), e isso pode reduzir a qualidade e satisfação no trabalho futuro.
+Christian Byfield, um ex-banqueiro e consultor de investimentos colombiano, contou, em um TedX Talk em Bogotá, que largou uma série de empregos bem remunerados, mas "sem sentido", em bancos e seguradoras, e começou a viajar pelo mundo.
+"Muitas coisas começaram a acontecer porque eu comecei a seguir meu coração", disse Byfield. Depois de alguns anos de insegurança financeira, ele acabou se tornando um influenciador de viagens com uma enorme audiência na internet.
+Mas Byfield é um caso raro –a maioria de nós ainda precisa pensar no dinheiro quando toma decisões profissionais. Muitas ligadas a "fazer a diferença" são apenas da boca para fora: evidências mostram que o principal motivo para a escolha de um emprego ainda é o tamanho do contracheque.
+Uma recente pesquisa da empresa de consultoria Deloitte destaca que 63% dos profissionais da geração millennial consideram a recompensa financeira um fator muito importante na escolha do emprego –é o fator mais alto no ranking.
+Outra pesquisa da Triplebyte, start-up de recrutamento de talentos para empresas de tecnologia, revelou que 70% das pessoas que recebem duas ofertas de emprego escolhem a mais bem paga, exatamente como a geração de nossos pais teria feito.
+A desvantagem financeira de se fazer esse tipo de mudança não faz muito sentido para a maioria de nós. "Não é verdade que os millennials não querem estabilidade", diz Lee Caraher, autor do livro Millennials & Management.
+Na realidade, precisamos de estabilidade financeira mais do que nossos pais. Em muitos países, profissionais jovens têm que lidar com a crescente dívida estudantil da formação. As consequências da crise financeira de 2008 atrasaram ainda mais nosso avanço econômico e nossas decisões financeiras mais importantes.
+HÁ REALMENTE UMA MUDANÇA DE COMPORTAMENTO?
+Algumas pesquisas recentes até questionam se os millennials estão realmente largando empregos estáveis a uma taxa maior que de seus predecessores. Estatísticas recentes do Pew Research mostram que, nos EUA, as chances de os millennials permanecerem no emprego é a mesma que os indivíduos da Geração X tinham na mesma idade. Outra pesquisa realizada pelo Instituto IBM sinaliza mitos comuns sobre os millennials, entre eles o de que a alta taxa de rotatividade em empregos não é uma novidade dessa geração.
+María Reyes (nome fictício), de 26 anos, é gerente de categoria de uma rede de lojas na Colômbia. Quando começou como trainee, ela logo sentiu que a cultura corporativa entrava em conflito com suas expectativas e crenças. "A empresa não se importa com as pessoas."
+Mesmo assim, ela permaneceu no emprego. E assinou inclusive um contrato de exclusividade de dois anos em troca de um curso de treinamento no exterior, cuja matrícula cara ela teria que bancar se deixasse a empresa.
+Por fim, ela foi promovida a sua posição atual, o que aprofundou ainda mais seu conflito interno. Sua função é estabelecer relações com fornecedores e "tentar ganhar dinheiro a todo custo, sem qualquer consideração pela outra parte".
+Reyes diz detestar brigar por cada centavo, especialmente quando empresas menores realmente dependem das decisões dela. "Acredito que ambos os lados deveriam ganhar em um negócio, e não apenas um deles."
+Mas o problema é que Reyes tem um posto relativamente alto para alguém tão jovem. Se se candidatasse a um posto parecido em outro lugar, ela acha que não teria sucesso e duvida até se conseguiria uma entrevista. Ela ainda explica que não há muitas vagas de emprego em seu setor, e uma mudança poderia ser uma insensatez.
+A situação se complica ainda mais quando a geração millennial envelhece, tem filhos e contrai dívidas de hipotecas. Marcela Cardona (nome também fictício) começou sua carreira na indústria farmacêutica na esperança de ajudar pessoas por meio de seu trabalho. Logo, no entanto, sentiu-se consumida por vários dilemas éticos e situações questionáveis que testemunhou. "O objetivo desse negócio é apenas fazer dinheiro, e não ajudar as pessoas", afirma Cardona.
+Ela começou um mestrado em bioética justamente buscando compreender melhor as implicações do que ela faz –e talvez como forma de abrir caminho para uma nova carreira. Mas as coisas mudaram depois que ela engravidou.
+Com uma filha para sustentar, ela não podia mais se dar ao luxo de mudar de direção. Ela trocou de emprego algumas vezes esperando que as coisas melhorassem, mas encontrou os mesmos problemas em todos os lugares em que trabalhou. Ela continua completamente infeliz em seu trabalho, mas prefere "ser prática", afirma.
+ALGUNS SETORES ESCOLHEM
+Mas alguns setores têm mais flexibilidade. Parte das especialidades é mais requisitada, o que significa mais empregos para se escolher. Engenheiros do Vale do Silício, por exemplo, são altamente valorizados e se tornam exigentes em seus locais de trabalho, diz Ammon Bartram, co-fundador da Triplebyte.
+Ele explica que profissionais de áreas não técnicas, como relações públicas ou serviços jurídicos, não têm tantas opções quanto os programadores, por exemplo. E quando se trata de tirar um período sabático, o custo disso é menor para engenheiros talentosos. "Se eles são tecnicamente eficientes, engenheiros arcam com algumas desvantagens no 'avanço da carreira', mas geralmente conseguem voltar ao nível de onde saíram."
+Ainda assim, em outros setores, como nas ciências sociais ou em comunicação, onde os salários são mais baixos e os empregos, mais escassos, torna-se muito mais difícil tomar uma decisão como essa. Em geral, a rede de segurança –poupança, ativos ou qualificações que a pessoa tem– facilita a tomada de decisão que envolve corte de salário.
+FAZER A DIFERENÇA?
+Para muitos millennials, uma solução possível é alinhar, desde o início, a carreira com os valores. Pesquisas acadêmicas e corporativas sugerem que essa geração quer trabalhar para empregadores éticos, comprometidos com a diversidade e fazendo sua parte para tornar o mundo um lugar melhor.
+As gerações anteriores "nunca perguntaram o motivo do que estavam fazendo e apenas realizavam o que era ordenado", explica Caraher, autor do livro Millennials & Management. Os trabalhadores mais jovens, no entanto, querem entender os valores de seus empregadores e seu papel na organização.
+Psicólogos têm apontado que a compatibilidade entre os valores do funcionário e do empregador tem um peso crucial na satisfação com o trabalho e até no lucro da empresa.
+Algumas empresas, particularmente as grandes, se empenham para comunicar seus valores. Ter uma marca forte facilita a atração de profissionais eficientes para a empresa, diz Bartram. Já as companhias menores "têm que fazer algo para se destacar, e uma das estratégias mais eficazes é enfatizar o impacto social positivo de seu trabalho".
+A boa notícia é que a pressão dos funcionários pode provocar mudanças tangíveis. Muitos grandes empregadores buscam atender a essas demandas por meio da filantropia e da responsabilidade social corporativa, assim como por estabelecer um posicionamento ético mais explícito. Oferecer "uma bússola moral", diz Caraher, é cada vez mais importante para atrair talentos jovens.
+O resultado do caso do Google, pelo menos, traz alguma esperança. A empresa não renovou o projeto Maven em meio às críticas dos funcionários e parcialmente abandonou um contrato lucrativo com o Pentágono porque ele não se alinhava com seus "princípios de IA (inteligência artificial)". Tratou-se de um sacrifício, mas que a gigante da tecnologia pode se permitir fazer.
+Alguns de seus trabalhadores, ao que parece, também poderiam se dar ao luxo de colocar seus valores em primeiro lugar: suas subsistências não eram tão vulneráveis, e eles tinham boas perspectivas de emprego em outros lugares.
+Mas para a maioria daqueles que sentem que seu trabalho está em conflito com seus valores, a má notícia é que "fazer a diferença" e "seguir sua paixão" são decisões financeiras. E essas são mais bem feitas com uma cabeça fria e os números realistas na sua frente.
+BBC News Brasil
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b3f26123fb2e94e675fe7e896e883985fb2c0bcf1289289981816049e544a443",
+    "mention_text": "José Luis Peñarredonda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c8ed69ce977ac56452eccb1adbf2ef696baf14017a12fc4d3e6c90c822609dff",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13f2677aac95d92aab7ac45dc4cbe7e5431ad328bcc1e55440201527b6293836",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9f254c9f270f90507fa90a8cb4cd21c07ff450db6a64b3779cfe7f0a5e85e2e",
+    "mention_text": "Instituto para Empregadores Estudantis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c25bab84c6bfb7225c49c4f9537b5e73510f29cbe8f5a36d0d4d7272db17540c",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "575aac63e1d71ffd49188e773b98cae22d109d2074ba9b2f11cd83f59af3f408",
+    "mention_text": "Christian Byfield",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de32015e9907b66bb681c0f06b3948e313ce0d7340e1913d5058afc5be74e64c",
+    "mention_text": "Bogotá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74c84697f1a134f9dabc57366149743d5a87a893b8cd2cfe864b904eed7ddfca",
+    "mention_text": "Byfield",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "678bccc87b0588f8607e50c4c1fcd351167732f740c0a08b198f64bd6644385b",
+    "mention_text": "Byfield",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd8ae249657d8e44662207f7f20683c6383e5c3ca3112109bfa8412f0eba1d37",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6fb0b8b41da8051acb6b6497e0364e9a58853dce6e48a9548d549736ec5253c6",
+    "mention_text": "Triplebyte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "934310b50fcaf8b8320b81db30c580d7e4580ead3279e2d52b49cec7bec5cf52",
+    "mention_text": "Lee Caraher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1dfa60be9f390952a4ce9ed8d8b9e546402e65fdc09d131dc1d92575fc12e128",
+    "mention_text": "Pew Research",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a44e40eae587939b24abeb1fdfafce9d7351dd268752b8f06bfc3b6b42ab4c3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d72fa483a8a4e965ab245828851bfd12070a983b791a82c0f3e1dc0491f96c2a",
+    "mention_text": "Instituto IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa7c8aad0388089495c5703071b33a23910f0bf9c726fd021d32770e9efbfab8",
+    "mention_text": "María Reyes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dba88b24c841e2b7456aa60366d08ac1dfb7d668fa5a53f6423c9b77057f4e89",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "67ff35cb350639a366ad8ffd1d62c9368b58ac49e85952bf74ac115ac8360965",
+    "mention_text": "Reyes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b10f3a0b4f9ceaa764737074dd4f06ff77bc59aa28fc47ffb1f23c3c58351ac",
+    "mention_text": "Reyes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99117308f437c470223e81817b2494e22fada6c64668b49294828fa79357ab4b",
+    "mention_text": "Marcela Cardona",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8313c1f181d094a6828cbf820b2094ca6379b53bdce2b836f642aa2ef25e33b0",
+    "mention_text": "Cardona",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b57991db14f8a5c8c32224fca66243605f0df125715096d31d30079f002be14",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ba8ca79c49188a4635b85fd9aaed4fec165497f1bc73e071bcf42e99ed6ed25",
+    "mention_text": "Ammon Bartram",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6a0b23ce3460a71a783882f7f249e3c77933937897c74b6abc6e936eea84bab",
+    "mention_text": "Triplebyte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d21e43e5300c831b7755ac21be570995b9e5d4c2368426a44db306f164695d2a",
+    "mention_text": "Caraher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a16bfff2a68f4a393864656c18971d36adbc77c7393841019d0609a25e8cd23b",
+    "mention_text": "Bartram",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "498cc257a43061beee143ef2e93ec383bfdce1f9670b36978c552d111e69c263",
+    "mention_text": "Caraher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d52d963b5fc69eb589daf779d87c0714db110ccb889d47e1924c0a7fe8f708d4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "429d867d29712f82748fbdab40550fc2e4023506e0c3082a5229a1d11743eb2d",
+    "mention_text": "Pentágono",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f5981ab55e4d6e960182872c5e98a1dfc9a6dcf5a353f1997f8cb1f506ef4cf",
+    "mention_text": "BBC News Brasil",
+    "categoria": "ORGANIZACAO"
+  }
+]

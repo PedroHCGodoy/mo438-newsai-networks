@@ -1,0 +1,326 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 84843d05f94cbc971e02d5e6f16396505e580544c4ba92040f2b04d9b075c39a
+
+TEXTO:
+Crise no Brasil freia expectativas de editoras na Feira de Frankfurt
+
+Menos títulos sendo comprados e ausência de tendências literárias definidas. Assim se desenha a próxima Feira do Livro de Frankfurt —que abre a sua 70º edição nesta quarta-feira (10)—, para editoras brasileiras.
+De acordo com editores e agentes ouvidos pela Folha , o cenário político conturbado pré-eleições, o real desvalorizado frente ao dólar (moeda na qual são negociados alguns contratos) e a crise no mercado editorial brasileiro , que se arrasta desde 2014, vão tornar a visita anual aos pavilhões da feira um tanto morna.
+Tomás Pereira, um dos donos da Sextante, diz que o evento é uma oportunidade de comunicar ao mercado internacional sobre o que está acontecendo no Brasil, “para que eles entendam que estamos passando por um momento difícil e por isso adotamos uma postura mais cautelosa".
+Ele afirma que sua editora não está “em um momento de arroubos” para a compra de novos títulos, e cita um fator complicador em relação ao ano passado: os problemas financeiros pelos quais passam as principais redes de livrarias do país, a Saraiva e a Livraria Cultura, que se intensificaram em 2018. “Este é o elefante na sala."
+A Saraiva, que responde por cerca de um terço das vendas de livros no país, está atrasando o pagamento a editores, bem como a Cultura. As duas redes somadas chegam a representar 50% do faturamento de algumas editoras. Para piorar o quadro, a Cultura comprou as operações da Fnac em 2017 e logo em seguida iniciou um processo de fechamento de lojas da rede francesa, o que significa um canal a menos para o escoamento de títulos.
+O publisher Otávio Marques Costa, da Companhia das Letras, afirma que a editora tem um bom estoque de direitos adquiridos e está sem necessidades urgentes na área literária. Diz ter comprado “três ou quatro títulos” nas negociações que antecederam a feira e que o momento é de cautela agora e de incógnita no ano que vem.
+Mais
+O achatamento do mercado no Brasil parece acompanhar uma tendência mundial. De acordo com relatório divulgado pela Feira de Frankfurt recentemente, na última década houve encolhimento do mercado livreiro na grande maioria dos países, com exceção da China. Só na Alemanha, sede da feira, o número de consumidores de livros diminuiu mais de seis milhões entre 2012 e 2016.
+Em paralelo a um cenário de negócios desolador, os editores não enxergam tendências editoriais claras, como foram os romances de suspense na linha do sueco Stieg Larsson há alguns anos ou as obras a respeito do “hygge”, o suposto segredo dinamarquês para a felicidade que fez sucesso no ano passado.
+“Saber o que deve decolar por lá é um pouco como descobrir como ganhar a Mega-Sena”, brinca Ana Paula Hisayama, responsável pela área de direitos autorais da editora Todavia. Ela afirma que “as tendências vão e vem e acompanham ou são ditadas pelo que faz sucesso no audiovisual, como ficção científica." Diz ainda que tem visto com frequência títulos sobre árvores, o excesso de informação, inteligência artificial e questões de gênero.
+Para Sônia Jardim, presidente da Record, títulos de não ficção, autoajuda e desenvolvimento pessoal devem ser os mais procurados, já que figuraram na lista de mais vendidos de 2018.
+Otávio Costa, da Companhia, também afirma que “não consegue identificar uma onda, embora haja muita coisa sobre o governo Trump e política interna americana” sendo publicada. Segundo ele, apesar do interesse crescente por livros de não ficção que tematizam ameaças à democracia, não haver um nicho comercial claro pode ser bom, pois evita que a editora “entre pelo cano” ao investir em modas que podem não vingar por aqui.
+Evento mais importante do mundo para o mercado editorial, a Feira do Livro de Frankfurt reúne anualmente, em outubro, cerca de 7.300 expositores de mais de cem países durante cinco dias. Este ano, a Geórgia é a nação homenageada. Em 2013, foi o Brasil.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e67f58e9cb91eae5689759905cdc62464cf893fe2d6028dde12176410558575b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2d83c72577a7c1e86102d0157e93be999e5e943eaecd54f1fcf9dcff3fc5986c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dfdd82e1ae6ea0bdaf04081c07df6f8ea77e9e4ec12db113d544d4636e512889",
+    "mention_text": "Tomás Pereira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cabd2f37c7b8fc811b1ec0dd53a8ab351dfe71cb2f1c72c75cb7ea78c14418b",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a6205500eaf355d641554795248d6f28552b0fd3f48c9602036d779219fa1fb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f5f1d92b4903cdcde8a27ee53aef21f692c78c43a76930a56c4e0d6921b2577",
+    "mention_text": "Saraiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f81626f63da89204ea6fe0690ee5a8ae1b678648c0b2585e20423f3e04bfa7ce",
+    "mention_text": "Livraria Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96f13a367571eefa5ee094f3a25068f90eb75d9c1a53d3922cb9cc7bce5363d7",
+    "mention_text": "Saraiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0978a2e4a808ab3c4d9614aad7e8087c76a6e01e3052840e3cac6e5e1a4f7120",
+    "mention_text": "Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d440b57d61352544f04de2736d0d66f3bf1a42cb30b39310aaef15712d31a95c",
+    "mention_text": "Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "538036d5a2e48e59a3d8594ecdf3ceeba14bc95bbe099140eef40aa23a21bb28",
+    "mention_text": "Fnac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a86bf49f685fd86739231a34b57aa2ca190411726ae88f3101d16b79f4c01e9",
+    "mention_text": "Otávio Marques Costa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52f30d337dd69031ed8216baebaff29d290d8be6e9d9e69ab1695363bd13bc71",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "190726b846447f194e7ae2935d724e379bef8dfcabcebfa2b996b3fc0a5bac7b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "978225d37b56146281ccaa17ba7969176ed007228e7fb254aef5efe6a57fee90",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e4aea59a5f36e0107cc0ab3fa742971b5523bed270aa23a8405817c0ce04452",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b465c3f3b7aaff80f8c4663177dc631389e99d150f19b43da4227a82d715aad",
+    "mention_text": "Stieg Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b2a4e44546f54ca8129c6335fa5e9085ff8e0e2af01a2b152ea24f14cb4858f",
+    "mention_text": "Ana Paula Hisayama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f34eaea80cd7bdb384d6beecd9780becd0c71a4362b00b1bf68320a2ad075c15",
+    "mention_text": "Todavia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0cac7d9869d2c3b76b9c9b2e9de5c7e16dd3ba0c627b069102b2b8ee2d66ee0a",
+    "mention_text": "Sônia Jardim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6368ac52baeab46043dbc07dbaf784c28e5f61221d148d5498f1e7de51c04094",
+    "mention_text": "Record",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b67df77fe537a4ce39f09a1d2f26111cce50c01010fb57f5a038e879adb329f",
+    "mention_text": "Otávio Costa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a9c0fb9e0f054f0eb2f92a79d44323f6499fd0f40c6924eca3099a86002bcd0c",
+    "mention_text": "Companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17661713b3c30adbf977713038848f190e5432abcd1675aeec35b452fe0b1a11",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e14f630ea5f983bb60913c64f306c57f5c99ade783b26e709ccd311616b52f46",
+    "mention_text": "Geórgia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "669dafb2a8146a429bb635026a6a5101734e6806f01fa0a1ea9eb6e941d1a470",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

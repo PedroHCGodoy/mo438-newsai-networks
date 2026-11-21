@@ -1,0 +1,565 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2217c72e22ef57476a2a843d2a77af0dc2e7d346f7138d82170b471fce54f961
+
+TEXTO:
+Após operar crânio, brasileiro põe cérebro a serviço de revolução médica
+
+"Uma doença maldita virou bendita.” É assim que o físico Sérgio Mascarenhas descreve uma hidrocefalia tratada inicialmente como mal de Parkinson. “Quando fiquei doente, abriram a minha cabeça para fazer o diagnóstico. Resolvi que precisava melhorar isso na saúde, que era muito atrasado.”
+Isso faz 12 anos. “É arqueologia”, diz o senhor de 90 anos que carrega no crânio uma válvula para evitar acúmulo de água e inchaço que podia comprometer suas funções cerebrais.
+“Na vida, você tem duas atitudes básicas. A primeira é a indignação. A segunda, se conformar. Estava inconformado e comecei a trabalhar ao sair do hospital.”
+Desde então, o pesquisador e professor aposentado da USP, ex-presidente da SBPC (Sociedade Brasileira para o Progresso da Ciência), usa o cérebro privilegiado para desenvolver a tecnologia médica não invasiva.
+“Tive a sorte de pegar coisas que aprendi na engenharia, na física e na química para conseguir fazer um medidor da pressão intracraniana (PIC) sem furar o crânio.”
+Registrou patentes nos Estados Unidos e na Europa e pretende tornar o novo método um novo sinal vital tão corriqueiro como a medição da pressão arterial.
+Para atingir o objetivo, o cientista brasileiro fundou e 2014 a Braincare, ao lado de colaboradores e ex-alunos.
+Três anos depois, a startup, que une ciência, tecnologia e impacto social, foi uma das 7 entre 500 empresas do mundo a serem escolhidas para aceleração na Singularity University.
+O centro de tecnologias exponenciais do Vale do Silício, na Califórnia, aposta que a descoberta científica do brasileiro teria potencial para ganhar escala e impactar 1 bilhão de pessoas nos próximos dez anos.
+Mascarenhas explica como tudo começou. “O neurocirurgião que me operou disse que não tinha técnica não invasiva disponível, mas eu sabia da engenharia, onde era professor, que se pode ver a deformação de uma viga com um chip especial que mede deformações muito pequenas.”
+O mestre diz não se tratar de uma descoberta de grandes gênios, tipo Albert Einstein. “Era simplória até.”
+O cientista aposentado continua dando aulas de pós-graduação, orientando mestrandos e doutorandos em várias instituições. “É um suicídio me aposentar.”
+Virou empreendedor social, junto com meia dúzia de sócios, entre eles dois dos quatro filhos e dois ex-alunos da engenharia responsáveis pela modelagem do negócio.
+Plinio Targa, por exemplo, virou sócio e diretor-executivo da Braincare há dois anos. Deixou a Ernst Young e ganhos de seis dígitos mensais. Aceitou o convite de Carlos Frederico Bremer, colega de faculdade que vive em Atlanta nos Estados Unidos, para investir no produto criado pelo ex-professor de ambos.
+“É uma história que começa num acaso maravilhoso e acaba na quebra de um paradigma de 200 anos na medicina”, resume Targa.
+O que o físico brasileiro fez foi provar que o cérebro não é uma estrutura rígida e criar um mecanismo para detectar esse movimento.
+“Ele desenvolveu um método de monitoramento que permite só encostando um sensor na cabeça mostrar um perfil da complacência cerebral”, explica o diretor-executivo, sobre o aparelho, que cabe na palma da mão, ligado a uma cinta em volta do crânio.
+Era preciso também botar a cabeça para funcionar e achar formas de fazer do achado um instrumento da medicina.
+“O professor nos pediu ajuda para transformar a descoberta numa oferta para a sociedade, mas não sabia como fazer”, relata Targa.
+Inicialmente, a ideia era montar uma empresa de equipamentos médicos para fabricar monitores, sensores.
+Tudo mudou após dois meses no Vale do Silício, quando os parceiros de Mascarenhas entraram em contato com a fronteira da inovação em saúde.
+Logo no primeiro dia dentro da Nasa, em Mountain View, onde fica a sede da Singularity, Targa começou a tecer o futuro da Braincare.
+Depois da troca de 2.500 emails, 110 reuniões e conexão com uma poderosa rede de mentores nos quatro cantos do mundo. ”Criamos ali uma convicção de que estamos diante de uma ruptura gigante.”
+Decidiram vender um serviço e não um equipamento médico. “Transformamos a descoberta em um software e disponibilizamos um sensor wireless para leitura do sinal vital. Desmaterializamos tudo para deixar a tecnologia acessível”, explica Targa.
+Com o propósito de atingir o maior número de pessoas em um menor tempo, apostaram em um aplicativo e inteligência na nuvem.
+O modelo de negócios é disponibilizar a licença de uso do sensor e a leitura dos dados para hospitais.
+O primeiro a utilizar a tecnologia em sua rotina será o Hospital Sírio Libanês, em São Paulo.
+O método Braincare de medição da pressão intracraniana poderá ser usado para auxiliar o diagnóstico em casos de hidrocefalia, AVC, doenças hepáticas e renais, pré-eclâmpsia, hipertensão, meningite e trauma.
+Outras duas redes hospitalares no Brasil estão em processo de assinatura de contrato com a Braincare, que já disponibiliza a tecnologia para pesquisa em outros centros de saúde no país e no exterior.
+As entidades pagam uma licença, com assinatura mensal de R$ 3.300. “Não cobramos por número de utilização do sensor, pois antes de ser um negócio, temos um compromisso gigantesco com a humanidade”, explica o diretor-executivo.
+A Braincare está captando US$ 5 milhões junto a investidores brasileiros para começar a ganhar maior escala.
+“Vamos perpetuar um sinal vital com uma tecnologia que vai salvar vidas para sempre”, empolga-se o executivo.
+O diretor-executivo e o fundador da Braincare tiveram um encontro emocionante com Maya, 6, que nasceu prematura, desenvolveu hidrocefalia e se tornou uma das primeiras pacientes beneficiadas pela tecnologia no Brasil.
+Em outubro de 2017, em sua 22 a internação e diante do impasse de mais uma cirurgia, a neurocirurgiã da garotinha decidiu usar o método criado por Mascarenhas. Ressonância magnética não era opção nem o método tradicional de inserir um sensor por meio de cirurgia no crânio da menina para fazer o diagnóstico.
+Passou-se a monitorar a pressão interna do crânio de Maya com a tecnologia Braincare na UTI e depois em casa.
+O caso que mostra os ganhos em velocidade e facilidade de diagnóstico, com melhora na qualidade de vida do usuário, ilustra documentário sobre a startup, a ser lançado até o fim do ano.
+Mascarenhas se vale de dois clichês para resumir a história de sucesso. “Você não faz nada sozinho. Trabalhar em ciência, tecnologia, educação, inovação tem que ser com equipe. Sempre tive alunos maravilhosos.”
+E pede desculpa para citar o que considera um outro clichê: “Professores bons são aqueles que têm alunos melhores que eles. Se não tiver, falhou, não fez a árvore de 800 anos como em Cambridge, na Inglaterra, com Newton, Darwin, a descoberta do DNA.”
+A árvore de Mascarenhas tem várias ramificações frutíferas.
+Um dos galhos é o próprio neurologista que fez a análise do cérebro do professor. O sonho dele era trabalhar com ressonância magnética, que ainda não existia no Brasil. “Na época, eu estava na Itália, dirigindo um curso de física médica e tinha acesso a uma máquina novinha. Consegui levar esse jovem pra lá. Foi ele quem diagnosticou minha doença usando ressonância magnética. É um negócio lindo.”
+Mascarenhas passou 12 anos na Itália. Foi convidado pelo paquistanês Abdus Salam [1926-1996], ganhador do Nobel de Física em 1979.
+Com o patrocínio de um dos mais brilhantes cientistas modernos, o brasileiro teve carta branca, prestígio e dinheiro para fazer biofísica molecular e física médica com cientistas do mundo inteiro.
+Mascarenhas diz que fez um Carnaval na Itália, mas sempre voltava para São Carlos, com a visão de criar uma base global. “Se você faz ciência caipira, não entra no mercado. É uma Ferrari dentro da garagem sem gasolina nem motorista.”
+Saiu da torre de marfim da universidade. “Foi uma sorte tremenda, porque eu sou incapaz de fazer a governança de uma empresa. Meus ex-alunos na engenharia fizeram a bola de neve das coisas que eu não sei. Tive muito apoio, de muita gente, da Fapesp, da Finep, do CNPq. Colaboradores são fundamentais.”
+E faz questão de citar um em especial, Gustavo Frigieri, diretor científico da Braincare, que conheceu ao telefonar para farmácia em São Carlos para pedir um analgésico para dor de cabeça.
+“Tenho a mania de perguntar o nome, o que a pessoa está fazendo, de quem é filho. Aí, a vozinha do outro lado disse: 'Sou farmacêutico, bioquímico'. Respondi: 'Caramba, é uma profissão maravilhosa. Você não gostaria de fazer pesquisa?'”
+Diante da negativa do jovem, de que precisava trabalhar para sustentar a mãe e a tia desde que o pai tinha ido embora, ele o convidou para visitá-lo na USP e conseguiu uma bolsa para Frigieri fazer pesquisa.
+Hoje, a dupla faz história como inventores do kit de sensor, fita e app que promete revolucionar o diagnóstico de várias doenças.
+Mais um lance de uma trajetória de um professor pardal, que há 50 anos inventava um bisturi criogênico para o hospital do câncer em São Paulo.
+Ao se aposentar da USP, com o apoio do amigo Adib Jatene, ex-ministro da Saúde, Mascarenhas decidiu criar uma empresa, para que após a sua morte um filho esquizofrênico tivesse um ganha-pão. O negócio vai completar 40 anos ano que vem. “Subiu feito foguete. Tem 90 mil clientes, 3.000 hospitais trabalhando com ela.”
+A empresa é dirigida por dois filhos de Mascarenhas, que adotou outros dois, fruto de um segundo casamento. O herdeiro que tinha esquizofrenia morreu.
+“Continuo pesquisando a doença que matou meu filho. É uma promessa de morte, não de vida”, afirma o cientista nonagenário. "Além disso, estou trabalhando em um projeto que usa inteligência artificial para tratar do Alzheimer”, emenda, empolgado com a revolução do terceiro milênio.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b4d7118ec9e59966a78aedd99ba69a0486684feeda5137e98a7c9cd3b1520232",
+    "mention_text": "Sérgio Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "665567e5f867c6bd1cfb9997bea40c297418c3dd16f51424047643562def2d33",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b84217ffeab27b2b1764d72c264a180158b1c6dde3f2d5170f87b718c18f563",
+    "mention_text": "SBPC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac890657350c1a4a6cf140c438886d43df1725ff287e5acaa08b3efb0589bee4",
+    "mention_text": "Sociedade Brasileira para o Progresso da Ciência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "655c11badfe88825b461f754cc49d694804295ad1f1d7b8a6d6407684bd85d27",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ddb16070cc04326e5be399581e721465062a7c68be869fa5e28e612e4199bca",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79cfae949d979bc28ee5c6daed06adb7f31c91998c35be7805ae78e1146f53ee",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f9dea237b7066197ffccd0c66615dedc192225a93534e8a37c34895251b67c3",
+    "mention_text": "Singularity University",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ea6a5d43009c494aa60cf8ca00cb07a47b6dd3ac95534411f60c05324a04a7e",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ae027e91e1fef56d04a7296b889e63e83d0137a6e8c593ff9d058f1f8758124",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6fbb81e9fb533b0cf9cebb9f9e962d41ea77bb607f2c1a2aeb60d04d137a65fe",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77689f44ee3752b8ce62f7b434f962fbf5c190079cd5693e8787e61e3ecfa8d2",
+    "mention_text": "Albert Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "950fc65f15388653d86a708bf415fc13164db54141c63b1c52a7c9b9e2c4d321",
+    "mention_text": "Plinio Targa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "109bb02accd31bfa17d2cafacaf210cb4bc765c88c435db06f92dc1755204661",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a0dd56cc650e3852481b793780ebadb55d375960166c4ca287d4459bc123d71",
+    "mention_text": "Ernst Young",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7c8d7546048dcb185336dae5b556dafd211576cc5723593216321b1afcacb98c",
+    "mention_text": "Carlos Frederico Bremer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a865ce70d1abc96b7e30f4ea96394eaf77716a2ecd36545a45691e289a3cc5cd",
+    "mention_text": "Atlanta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "efbc37a1f4fd120274bc39ab08a827570240304bd35ca6c795fdb127e920e847",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12ed990fef6128b6cda3403b7a3c4575b206344470094d3d58fc1a7455bd3ab7",
+    "mention_text": "Targa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8af8b34afdafbe50a84a1a285318e79e9fd82acad36881e9123a7f2a7803a51f",
+    "mention_text": "Targa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f821c21ec88ae4b9b1c71a6dbdda5fa76782243196610fabe46e9de896ec9c1a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff0e2407a3b5c9874b096494939a70a18b42084e8f94d88d6595f387807ba0c8",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09ede67dd924b7f66a128e7f6984c6baa0c82f2fb4670dd1cda76d2fb62900d4",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba5ab0ae74549256490fe83bb41f2e08f118413b39d5dc418a783ca81c79f624",
+    "mention_text": "Mountain View",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e0a4208c084a2e05ea88c9bf785fd909523390986bfe52701f22e760c294750f",
+    "mention_text": "Singularity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "867ee9348cad0660b0d7d65ade201409a15f8e32ea435ab21af1d0ed5a944aab",
+    "mention_text": "Targa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "629c18f46c254a2d03952c3b095f8a7f89087e8e27459f0beecc80886e7550d8",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c45b89570259904e8b24517483d7b8dbeff146255316106dfb2007bcd699f8be",
+    "mention_text": "Targa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e824bf1f3a1b684ca53d99bba580ef418e5b3be0e0b57c2e7d635b24ec3ecb7",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f1a67a52e71d6ebd446b3f4fdb00fdc2362c3a12d817506283c4cb32e87a29e",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b56060c0af349d386bbc0f7c096254c58f12d690d42800ef2bf4100aa9d160fd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "61e98b1fd3683514bda67e231c5673572b69aad82cd0acbe2dcc674fc6eccbb3",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "544ad790d9c3e4890b0b87261bd7631757f10b6918ee8d7dd5b90bed58a552df",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "003b8455a6c7193a7e17dc670eba1280bf60005a7c2a7bcd0a57d712942d500e",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "743a9d91d203b7fa076b2c41c1dfcb8224314c731f210ef628af3a6d17690092",
+    "mention_text": "Maya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1223df77f15fbcbb18a7657b6842a13492cee28c462ddd046df5df809597ba16",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "97325267f074599ce0faa564dfd530437d861402ee9a2a07eecb530ef4c441d0",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d54758111dac74240a6b3d65419b4da1cf99413f0ce1490e855eabb1c5716e00",
+    "mention_text": "Maya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6711ad58ca9779572b607e70ebaa836fb4252e364a7fc1e84e1a60a565087927",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "104e6f4116bca5324ad955990290b4c2d45726900a68e53385a4f16deb6b8e04",
+    "mention_text": "UTI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77403c40f9c44ab184f74a8f245b38d11219f8961bd477f33f6dbdf7c7bf8b2f",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "852b03c83901e3443a2905f1278f3c4b3422d654df4c7e8ead5491e3280d55e5",
+    "mention_text": "Cambridge",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19e585a95ba0a307d05d49018dba41f0b4413172b289c2ba6bd99f9f87d03605",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a51b471341376159ba799a2739b7b9ee052b0116d0e982a1cccae67e0b287bbd",
+    "mention_text": "Newton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31060bd1d10828b470ae101810dc86612ff23099b2100c54b079ecef8b9b5e55",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c145b56dc117e4005fc17025c696656e15539af340554969fca360a49c010ff",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e2a9a9b177f46d7c14204dd2c0c99332464a7c96463de177bcfcf47c283a21a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6c61d3b0d51e931029e51d6b31092a176466736cc86cc51079e7227423c7b68b",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff7d91b9f09d10173432c904f1d0666099ef8cf5c34dbb663b40a234cba98aa2",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "277ec29562caf37880223402ae33382d1c074325dc66b6e2e7e37231ade82551",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f9dea7beb9d1dcb7cbbaa7ce5a1cd66f29bb87cdb8d9e2ee98df7c4c70bd9cb6",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0b7acaf984226c81752c5d531b3601f3c13219940a014701dd47cc31baef4ab",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "588f30fe6a310c59f75b03f98ba3c0db63f71118d42dd6d4a688e57799b6de29",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75c2fa0946b82ec8257aa601f5d353fbdf66ea028d777f96829b0273476c0e63",
+    "mention_text": "Fapesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f95b6f2607e8587730d681298af8b195b958718e282922373ec9e723568a834e",
+    "mention_text": "Finep",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f24352770bb4e2e781f2f83dc481f7b58f13dd836107afb95c17dc5ef029ed85",
+    "mention_text": "CNPq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "03dbf449b1c44537b25e569096da9fb590e120e5ef2f99ac63fcba47eeb2f5f7",
+    "mention_text": "Gustavo Frigieri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "548739c4836954b1135aa0352614e468dc2a14b5d1ab157f9c437661b70fd997",
+    "mention_text": "Braincare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "30a70487865c37212c1cd003245e2e081e12ebd6dbbd06ef675e3f044bf6df1d",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "68d2c32e28a2116b1f9c5afcc1d9aa7a81d43604b331c61900903e64393dca18",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00088cd5f0a3bee98b30ef3fae713cd858bd60ed21b51344a3108a42e79e4ce6",
+    "mention_text": "Frigieri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f40e4f276c845faee0af588d943e4ca7c11b9177f03584e1674c7c63c4ba2a7a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e1717aa9e8eaab5ac3981ff8226f173eaa6f185fc3651639a3cd457750d9263",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46d3bd786978a070d9339541ec0842cf186e3863126649855521854dd50d5177",
+    "mention_text": "Adib Jatene",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f0a42ba9c467d4eef363df5a862f85b789a46c36ba371817a1e20427508fe26",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd91f6ac43f3fedcefa9db4da1e536992b804f012b44f42d34bbc91e808b69e7",
+    "mention_text": "Mascarenhas",
+    "categoria": "PESSOA"
+  }
+]

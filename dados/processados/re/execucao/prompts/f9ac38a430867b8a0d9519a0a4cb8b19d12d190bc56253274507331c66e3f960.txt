@@ -1,0 +1,409 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 715cc74ceb5a979636a91b6386c0b1952ab3eb5a997079a3825187d0e996043b
+
+TEXTO:
+Aplicativo Roamz ajuda a descobrir eventos por perto
+
+31/10/2011
+-
+15h17
+Aplicativo Roamz ajuda a descobrir eventos por perto
+Publicidade
+DA REUTERS, EM PERTH (AUSTRÁLIA)
+Em vez de procurar no jornal local ou nas redes sociais, um novo aplicativo permite que o usuário elimine lacunas quanto a eventos locais e o que está acontecendo por perto.
+O aplicativo, chamado Roamz, reúne dados de redes sociais sobre o que está acontecendo em estabelecimentos locais. Jonathan Barouch, fundador e executivo-chefe da Roamz, disse que a explosão de conteúdo social em redes como a do Twitter serve perfeitamente a essa finalidade.
+"Digamos que eu esteja caminhando por uma rua de Sydney e esteja acontecendo uma feirinha gastronômica no Hyde Park. Como descobrir a respeito? A menos que eu siga alguém que decida postar sobre isso no Twitter ou no Foursquare, ficarei sem saber," disse Barouch.
+O aplicativo recolhe dados abertos ao público do Twitter, do Facebook, do Foursquare e do Instagram sobre um evento local, criando um feed personalizado de acordo com os interesses dos usuários, classificado em dez categorias que variam de atividades para crianças a atividades que envolvam animais de estimação, passando por restaurantes, atrações, comércio e vida noturna.
+"Nossa visão era filtrar milhões de posts e itens de conteúdo para identificar os sinais realmente relevantes para um usuário no momento em que são relevantes," explicou Barouch.
+Usando inteligência artificial, o aplicativo vai se tornando mais preciso ao aprender sobre como um usuário classifica determinados locais e ao estudar os tipos de conteúdo carregados ou visitados frequentemente. As informações assim obtidas são usadas para refinar os dados apresentados.
+Lançado na conferência Web 2.0 em San Francisco, na semana passada, o aplicativo já teve 8.000 downloads. Mas ainda restam dificuldades a resolver.
+"Lançamos como qualquer boa empresa nova faz --um pouco antes do que deveríamos", disse Barouch. "Poderíamos ter trabalhado por mais seis ou oito meses no desenvolvimento."
+A companhia planeja ampliar o conteúdo disponível, que é escasso para determinadas regiões no momento. Enquanto áreas densamente povoadas, a exemplo de Manhattan, contam com conteúdo atualizado em intervalo de poucas horas ou minutos, em cidades como Perth, na Austrália, há menos conteúdo e menor frequência de atualização.
+O aplicativo, gratuito, está disponível para iPhone.
++ Notícias em Tec
+Irmã de Steve Jobs escreve artigo emocionante sobre o irmão
+Internautas ajudam a implantar inteligência humana em robôs
+Randi Zuckerberg, irmã de Mark, agora em carreira solo
++ Blog de Tec
+Veja foto do Motorola Droid 4
+Microsoft imagina futuro em vídeo-conceito; veja
+Assine o feed do Blog de Tec
++ Canais
+Acompanhe a Folha Tec no Twitter
+Acompanhe a Folha no Twitter
+Conheça a página da Folha Tec no Facebook
+Conheça a página da Folha no Facebook
+Livraria da Folha
+Giallo - Vol. 4 (DVD)
+Vários
+De:
+Por:
+Comprar
+Coleção Pixar 2016 (17 DVDs)
+Vários
+De:
+Por:
+Comprar
+Coleção "Cinema Policial" reúne quatro filmes de grandes diretores
+Sociólogo discute transformações do século 21 em "A Era do Imprevisto"
+Livro de escritora russa compila contos de fada assustadores; leia trecho
+Box de DVD reúne dupla de clássicos de Andrei Tarkóvski
+Como atingir alta performance por meio da autorresponsabilidade
+folha.contextual_ads.init()
+Comentar esta reportagem
+Termos e condições
+folha.sharing.ads = ''; //fallback antigas
+folha.sharing.ads_before = '';
+folha.sharing.ads_after = '';
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4d6de8b9c1a4c7723ecbd64cbb33fc5f0ee29d5698db485b6c16b90cd2f6ebdd",
+    "mention_text": "REUTERS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12493719ec348f538cdb2b97eb19b2fbd8a70e86be8837d38fe6153472a454ba",
+    "mention_text": "PERTH",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "628d597c98c50939b5ec40001d55128d81e532f8c3922a810fe4f0acce37955e",
+    "mention_text": "AUSTRÁLIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09eacbddbe9c1345351821ddc12d316ede3d65235c08e87d964936b45bb15d22",
+    "mention_text": "Jonathan Barouch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85e5ac6290b0dbd8fcf22dec40229643ee646e031f10237ecd08430d4741d66d",
+    "mention_text": "Roamz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b8e865d0eafaf5c9001b340b50d0486c772d6533870e5c5ce9dcce78438964e1",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "76c413a911a8734615ab6caf6b074d18954e8fd7d776e980f7071ae20408837e",
+    "mention_text": "Sydney",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "13c349df836a0494245ed4585cbb45c6ae2467a96043e12a32ab1705c412f5d0",
+    "mention_text": "Hyde Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f159b310b76b5336ff7582b9b19cc53ec475b1dd954e067ea1acd6547f6b0173",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29b1f40f96dbeb80fcc7e10eca19cd1a6b5b0ab04d4135bc7cefc45d1c2fbfd6",
+    "mention_text": "Foursquare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "830aa19a1339c60bab63fead616afcec5a28f9f141dd7f26290bfb26d5246a46",
+    "mention_text": "Barouch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5528f8c2e595152743891da58aa72ab356d97cea343fdfad62e1d06ba08bfa06",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93dd44a6c165be86b29a8ca72b7006eb9c5ff5eedb1157555860e918baa34ed4",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1023c2224c715a6454112af5387611083be0bdf503d7d331f6f09f7a74f7a7dd",
+    "mention_text": "Foursquare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65a2140905ead619f65f474f18fd81bed05a7963ae7f2f4c4ce094048348771b",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5362ee284dceeccb0b97f74a6be9c4d8edbb8e063a377f6eb754eff90e66ff56",
+    "mention_text": "Barouch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3dbd1ee57d13738e4e99652935442d18963376b3aee9c29a91a4cc647a8fcf5e",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1366256b1c7da5bc2bd2deb9a4874c7a3165a18ee69cfa7618505d06dbe86411",
+    "mention_text": "Barouch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f45b57a19275d552603decb27ebed320ebb9fb36560f56ad8a71183ccc527af3",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7aea1cc8a4f35f8241dc475d5628a162cc984a25e2b89f01c21d8ce4661b6134",
+    "mention_text": "Perth",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "91e0113856939637d554443d2aafaa010e22431b79f4e6c878b8de76353ab0c1",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "29652f96f4d528ef159c2f93eb246a8aea833814a39fa4a42f0e1751050de48a",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb7bf18146e472b06c76808b3bc1759abd01ca3ec305658c25119efae08fec37",
+    "mention_text": "Randi Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7687a0ae781895b7e5204f4d159cb91989b5e905ffe8ded20bf963aacec7124f",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71921d459a385ce10795b72af26724a61eba52b10cc9f8ef4e50b32d6f889cee",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "517ea9577f62084e394b561fe9e9b6913fde1dd4b94d63cc2ea417b99ff2a5a7",
+    "mention_text": "Folha Tec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9f6e51f46b0b1e6cb71780c36828d1e252b493ec2f7fdeba02ccc724c9e6675",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c783e444f970ec183ce40b435d27e30379255e687d3cc96b3e316f25657947af",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a43fbc5f230db3c0e120f6ec734bc0055b99a938b2764514dd5cd1733c00e7b3",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e3dc2c5bdf14f35e5e25e41e3f4bf6cb548d59b4e48747d35bcf639869d7a9d",
+    "mention_text": "Folha Tec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "981ee4a446277f184340468371a31f3e1fa83f24f4d7958a2b650980c234443b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a7af123784ea86921586a205074f31bdb2a4e4739e389295d6e63765d5a25df",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a7989e16db79577d0a24f93e8cf1aa7bf997a99d80bd25edbb14b2cbd53273e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f509aabe56bf629441ac7baf15154f1b3cd0480b32bf168678841938ebd6804",
+    "mention_text": "Livraria da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93ef30bcaca83b40a40873efa349cfa504a6db5e0735d3f7eb5a636ad1749c7d",
+    "mention_text": "Andrei Tarkóvski",
+    "categoria": "PESSOA"
+  }
+]

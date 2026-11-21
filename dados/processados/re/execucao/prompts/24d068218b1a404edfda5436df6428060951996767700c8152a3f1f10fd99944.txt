@@ -1,0 +1,389 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 476da78552b7e005809886b27f2b4f6d8f162b6240753b168a0d3e905505d2cd
+
+TEXTO:
+É uma falácia dizer que bancos brasileiros são muito eficientes, diz presidente de consultoria
+
+​​O presidente da consultoria alemã Roland Berger , António Bernardo, é um crítico contumaz dos bancos no Brasil e do papel deles na preservação das altas taxas de juros e de spread (diferença entre as taxas de juros que o banco paga e as que cobra) .
+Mesmo reconhecendo que o ambiente local é adverso, o que exige que cobrem mais pelos empréstimos, Bernardo afirma que as instituições financeiras instaladas no país estão em uma posição confortável e não têm pressa em fazer o dever de casa.
+"No Brasil há uma concorrência soft entre os bancos, o que leva a uma enorme desvantagem: gera ineficiências."
+O Banco Central, avalia Bernardo, já está tomando medidas para corrigir esse comportamento. "A pressão sobre os bancos está crescendo. E eles já estão sentindo. A mudança agora é apenas uma questão de tempo", afirma.
+Por que a taxa básica de juros está no menor nível desde o início do Real, mas não vemos a redução dos juros no crédito nem dos ganhos dos bancos, o chamado spread?
+As taxas de juros para o consumidor final estão caindo, o spread também, mas a redução vem de forma muito gradual, o que é negativo para o investimento, para o consumo, para a recuperação da economia. Essa inércia dos bancos em reduzir as taxas ocorre por várias razões. Uma delas é o fato de o Brasil ter uma grande concentração bancária.
+Mas a concentração bancária ocorre em outros países que não têm taxas elevadas. Dá mesmo para afirmar que essa é uma causa?
+Há concentração bancária em outras economias, mas em economias pequenas, como a Holanda e a Finlândia. Entre as grandes, a concentração é bem maior do que no Brasil . Estados Unidos, França, Reino Unido, por exemplo, são grandes economias com concentração bancária bem menor do que a brasileira. E a experiência mostra que setores muito concentrados têm mais propensão ao que chamo de concorrência soft.
+O que seria isso?
+Não estou dizendo que os bancos fazem algo ilegal, que organizam reuniões a portas fechadas para combinar juros. Estou dizendo que a concentração leva à redução na concorrência —e não é fácil explicar essa redução na prática. Os bancos fazem propaganda do crédito hipotecário, do crédito para automóvel, e fica parecendo que há concorrência. Mas isso não é concorrência. Na concorrência verdadeira ocorre uma pressão grande sobre os preços, e, para conquistar clientes, é preciso baixar o preço —no caso dos bancos, baixar as taxas de juros. Não há pressão sobre os preços no sistema bancário brasileiro.
+Há quem defenda que concentração pressuponha bancos mais robustos e eficientes, o que dá segurança ao sistema. Esse setor já foi mais pulverizado no Brasil, teve problemas e exigiu saneamento. O país não está mais seguro assim?
+De um lado, sim, é verdade. Instituições maiores e mais fortes dão mais segurança ao sistema financeiro. Mas também traz essa concorrência soft que eu falei, o que leva a uma enorme desvantagem para todo o sistema: gera ineficiências. Ao contrário do que se pensa, os grandes bancos brasileiros não são tão eficientes assim.
+Mas é recorrente o discurso de que os bancos brasileiros estão entre os mais eficientes do mundo.
+Isso é uma falácia. Basta comparar os números. Para medir a eficiência, os bancos usam várias métricas, uma delas é o CIR (taxa que mostra a relação entre os custos de operação e a renda). O CIR dos bancos brasileiros está abaixo de 50%. Por exemplo, o Santander tem cerca de 42%, o Itaú algo como 45%, o Bradesco, 49%. O CIR dos bancos na Europa está ao redor de 62%, e o dos Estados Unidos, 59%.
+Mas essa é uma maneira simplista e pouco rigorosa de ver a eficiência. O CIR aqui é mais baixo porque o spread é absurdamente mais elevado —tem mais income, renda—, não porque os custos sejam baixos. Os custos dos bancos no Brasil, aliás, são muito altos.
+O sr. está dizendo que o spread encobre ineficiências?
+Sim. Encobre ineficiências e mantém resultados. A rentabilidade dos bancos brasileiros vem do spread excepcionalmente alto que cobram. Nas análises que fizemos, identificamos que há mais de R$ 50 bilhões em custos que poderiam ser cortados e estão sendo cobertos pelo spread.
+Que custos são esses?
+Estruturas organizacionais pesadas, com gente demais, processos de middle e back-office (áreas internas responsáveis por transações financeiras e obrigações regulatórias) ultrapassados, excesso de agências. Há outro indicador mundial para medir eficiência: despesas administrativas e com pessoal sobre o ativo total (peso dos custos sobre os ativos). Entre os maiores bancos no Brasil, essa relação é de 3,5%. Na Europa, 1,5%, menos da metade. Nos Estados Unidos, 2,5%.
+Os bancos alegam que os spreads são altos por outras questões, alheias às suas operações, como a alta inadimplência. Não é assim?
+Os custos com inadimplência no Brasil são três ou quatro vezes maiores do que em alguns países da Europa. Mas, no que se refere à inadimplência, pesam diferentes fatores. Recuperação de garantias, por exemplo, é um indicador importante. No Reino Unido e na Alemanha, a capacidade de execução de uma garantia em caso de inadimplência supera 80%. No México, 70%. Sabe qual é a capacidade de recuperação no Brasil? Cerca de 16%. Pesa também a questão do prazo: quanto mais tempo se leva para recuperar a garantia, mais pressão vemos sobre a inadimplência. No Reino Unido, um ano, um ano e meio. No Brasil, quatro anos.
+Há, então, problemas do arcabouço legal que não depende dos bancos, correto?
+Sim. Questões legais e outras distorções particulares do Brasil pesam, mas é preciso ter em mente que esse não é o aspecto mais relevante. Uma questão fundamental que afeta a inadimplência está no modelo de análise de risco dos bancos. Eles precisam ajustar e melhorar os modelos. Emprestaram altas quantias a clientes que depois se mostraram arriscados. Há novas tecnologias que podem ajudar nisso. Fintechs (empresas financeiras baseadas em novas tecnologias) já usam inteligência artificial para melhorar a eficiência.
+Que medidas podem acelerar a redução do spread?
+O Banco Central tem agido nesse sentido. Está ajustando a regulação dos bancos médios e das fintechs para elevar a concorrência. Essas instituições, mesmo sendo menores, podem fazer diferença. As cooperativas de crédito são um bom exemplo. Têm taxas de juros mais baixas do que as de grandes bancos e estão ampliando o crédito. O Banco Central também reduziu os depósitos compulsórios (dinheiro dos clientes que os bancos são obrigados a depositar no BC para controle de circulação de moeda), liberando recursos para o crédito.
+Mas bancos centrais gostam de trabalhar pelo convencimento antes de tomar medidas radicais. Chamam as instituições e avisam: "Olha, com esse juro e essa inflação tão baixos, não faz sentido esse spread". A pressão sobre os bancos está crescendo. E eles já estão sentindo. A mudança agora é apenas questão de tempo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f8c2ae0f7ad5f690b1d85144c541e72f4ac62e7e71190c0bb2135e616ae1178c",
+    "mention_text": "Roland Berger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83a9328b7a19fb05fbfbd293e02d8fdec032ca7ef8dc31276626171f3f49c007",
+    "mention_text": "António Bernardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9672d4f3b65623b6fb6166f35cd00a93dd2b6103f829849f4fde8a51529be2ef",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f61375a8090cdca46c512bc0a80b638d417b2e94d4013769581c800759cb300b",
+    "mention_text": "Bernardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f4fad087e8fbf2ea4d38c64b0bebc6f9c05e2b588446b07be78d5914cf4752d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aff119c4f625350d205526eda5ae6698b78272cec04f6d3aed2abeec69da62cd",
+    "mention_text": "Banco Central",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d524577e41903826f4dd2aee59b9a1028f13ffd31fea776fe7b876a4ca113923",
+    "mention_text": "Bernardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e349ce77e4c74798b93dbaa4c0bb6bd19ee3d183ed32f9b7dfe9340d09210acd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d68db256beefda7e2a4e01cbcaab700b79838e6c4e5fbd613a3b5b4509b1d87",
+    "mention_text": "Holanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cce15c5ae139a1f09917c84af66f097cb53d30c7f9275c8aaf14669da05a54a8",
+    "mention_text": "Finlândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "962949293382717ed79527982f57319b33a6fdebae733397ce87396720b08521",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed17c06be135410928382fda5cdd3afa4a06cfaab885673d236b1ff8b1f0c5c4",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb065ce9bd5df35fa6df952932c17288e6816e6ac4e6d6f5c3ee19dbce2212bd",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c8ddfc02d07d4974cd12e6d6cf4d6bcffcc51e58263f859474a87a8879851341",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "55a3c47bc6c5ff7ca68be4f53299fa0d3e9f946da3053cb759b88f664002bb1f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ed04e9278a0bfddd62c7637643a5edad18ead2cc019becab866475ab1cd8438",
+    "mention_text": "Santander",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d9ca43a80fc4588d2c5dd8ce0e6dda2eaf28baa25424fcca99f61feddc639df",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e16950c0a9869075e0f7a458fd591d4643631cb16ffad617010109b9effb047f",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9df51674eacead71dc424af36c8d48e7a87bb64f1a0032819d2d99e2057e482f",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "61211c4b601063b4c00a8022f194054882f699edd40ad78399693d354be1c5ba",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fdb194af28a84ddae23b91c517cf259a7ab7eb79751151117afb9c976f5998cb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1c9091b21665bb3a3c055900d24abe1c9dddd0a8bfdd9996eca3208e1df4022",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "510c2e1e96ef59aff96f9427c1d122d8fe7448480894408291dd64e2e84ba5db",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "afa5addad3d4b98881d5a9c3cb9626b511409d9c6c48c1ea5d1af28c83aa0b95",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0857f93dba4e546dd4886f77d8b3cee02f294653fbe3e18b914e6461ff9f317a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9aad4420ccd3e16d7de783512caa15592ca87066040f0b478c4d93af4638828d",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7fd792d1c97e90d4ded46f1c2ebf041acac7cc9d98f10361d377a556c89c3b37",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cc88b858f5bcec55dd98e94128d9e8e9c7d370f18ed1ba98ea8653338ad2163e",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd3fe7f0ef75183a1b72b10b9f1dff569a6a490816fb990b2b787d79bbd540d2",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30fd41b3863a1a5262ae39a00635edf1450118945a0d0ef8b197704be4216086",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76f0b2ae07fbe3fb9c4c189f98f0752ee583f021127b148a327e932815aaee9e",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "670e97236a2c9fed80739c6d87a095054432ce2c82ddc0b3e69ebee6734980a5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01be350629fb678b00a2703e44f0d3ffec285d56b8b14efe977ac0e47f937a96",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "736ccf86eadad85107039cf4398bf18bfaa44dabd1abbcf8a7426a1be945feb7",
+    "mention_text": "Banco Central",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3617faf0420567da0e54eafbcf0d1813c3bd5ce13ddf90c4c155321512e1bc6f",
+    "mention_text": "Banco Central",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fab98b6fc6e1a7c4e12aa70cb4f290e38231b01aad7692f603d47941beb63c7d",
+    "mention_text": "BC",
+    "categoria": "ORGANIZACAO"
+  }
+]

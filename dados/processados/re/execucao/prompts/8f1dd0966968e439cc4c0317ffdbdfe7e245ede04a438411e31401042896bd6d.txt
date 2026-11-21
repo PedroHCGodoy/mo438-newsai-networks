@@ -1,0 +1,729 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ec55ee589f9a075986b40a688f91fdacf70b365d0019abd4a4ff71b97da14c07
+
+TEXTO:
+Literatura: Infante diz que Carter quer o Nobel da Paz
+
+LITERATURA
+O escritor, desafeto de Fidel Castro, desqualificou a ida do ex-presidente norte-americano Jimmy Carter a Cuba
+Infante diz que Carter quer o Nobel da Paz
+SILVIO CIOFFI
+ENVIADO ESPECIAL A LONDRES
+Guillermo Cabrera Infante está 
+convencido de que "Jimmy Carter 
+está é querendo ganhar o Nobel 
+da Paz". Com sua verve de metralhadora, o escritor desqualificou a 
+ida do ex-presidente americano 
+Carter a Cuba. Para o principal 
+desafeto de Fidel Castro, "Carter 
+em Cuba é realmente como o papa em Cuba: o papa se encontrou 
+com Fidel, disse que Cuba iria se 
+abrir para o mundo e que o mundo se abriria para Cuba e a verdade é que isso não significa nada".
+Mestre dos jogos de palavras, 
+Cabrera Infante, 73, apoiou Fidel 
+contra Fulgêncio Batista, tornou-se diretor do departamento de 
+Cultura pós-Revolução de 1959. 
+Foi nomeado adido na Bélgica, 
+entre 1962 e 1965, de onde partiu 
+para o exílio em Madri e, depois 
+de 1968, em Londres, onde vive.
+Autor de "Mea Cuba", "Havana 
+para um Infante Defunto" e co-autor do recém-lançado "Diez 
+Autores en Busca de una Ciudad", 
+sobre Nova York (297 págs., Editorial Planeta, de Barcelona), o escritor falou à Folha:
+CARTER -
+"Jimmy Carter acreditou que tudo vai bem em Cuba, 
+que não se produzem lá armas 
+bacteriológicas: mas o que iria dizer Fidel Castro? Que tem? Carter 
+deu sua opinião sobre o assunto, 
+sem ser físico, nem químico, nem 
+biólogo... Ele não significa nada, 
+mas está tentando dar uma legitimidade "americana" ao regime. E, 
+quando era presidente, se meteu 
+no Haiti e fez estrago. Fidel, aliás, 
+o atacou nos anos 80, no episódio 
+dos refugiados de Mariel, e quando houve a crise do Irã. Até o chamava de "el manissero", vendedor 
+de amendoins [Carter produz 
+amendoins na Geórgia, sul dos 
+EUA". Agora virou "o grande 
+americano, amigo de Cuba': amigo de que Fidel se mantenha no 
+poder até que tenha vontade, ou 
+até que morra, ou que o matem."
+FIDEL -
+"Ele é um mentiroso, 
+promete tudo e não cumpre. É 
+um grande ator fazendo o papel 
+de Fidel Castro, já que Cuba vive 
+uma revolução de 43 anos sem 
+nenhuma mudança. Carter está é 
+alentando uma gente dissidente, 
+mas de uma dissidência permitida, gente ligada ao projeto Varela, 
+ao sistema Arcos, a planos de reformas permitidas. Se fossem 
+opositores de verdade, seriam enviados à Sibéria, à prisão. Cada 
+vez que vem gente dos EUA, Fidel 
+tem preços para presentear, como 
+já fez com Jesse Jackson. Antes 
+dava charutos e frutas -hoje dá 
+de presente seres humanos."
+PAPA -
+"Como disse, Carter em 
+Cuba é como o papa em Cuba. 
+Deram ao papa um espaço que ele 
+queria e, em Cuba, deram à igreja 
+um espaço que a ela interessava. A 
+Cúria Romana não liga a mínima 
+para Fidel, mas se preocupa com 
+o crescimento do que se lá chama 
+"santería" -esses ritos que combinam iemanjá, xangô e tudo isso 
+ao catolicismo, igual, aliás, com o 
+que ocorre no Brasil. Fidel não 
+tem religião, a não ser a religião de 
+si mesmo: ele é o papa, ele é o rei, 
+ele é o presidente, uma figura como a dos caudilhos sul-americanos, se fez marxista e já não é marxista, fez uma revolução que já 
+não é revolução, porque a União 
+Soviética que o subvencionava já 
+não existe mais. Mas, enfim, é inegável que o papa deu legitimidade 
+católica a Fidel Castro."
+DIPLOMACIA -
+"Questionam 
+porque os EUA mantêm relações 
+com a China e com o Vietnã. É 
+simples: Mao Tsé-tung e Ho Chi 
+Minh morreram. Depois disso, 
+não sobra muito nesses regimes 
+autocráticos, impostos por uma 
+só pessoa, como ocorreu também 
+com a URSS de Stálin. Fidel não 
+morreu e já dividiu tudo com os 
+irmãos, um é ministro das forças 
+armadas, outro da agricultura, a 
+mulher de Raúl Castro é chefe de 
+não sei o quê, uma dinastia que 
+reina para tentar se conservar no 
+poder. Raúl Castro, por exemplo, 
+é uma espécie de ditador paraguaio, não é simpático, nem fotogênico, nem tampouco inteligente como o irmão -porque Fidel é 
+inteligente, é um mestre da propaganda. Em Cuba o que funciona é a propaganda, para o exterior, e a polícia, para o interior."
+NOBEL -
+"Carter não significa nada. É candidato ao Nobel da Paz, 
+em Oslo, como de resto escritores 
+medíocres ganharam o Nobel de 
+Literatura. Queria estar na televisão, como esteve, e Castro queria 
+as primeiras páginas -e conseguiu isso, quer se passar não por 
+ditador, mas por um sujeito benévolo, "pai dos cubanos" . Não podemos esquecer que Joseph Stálin 
+era chamado de "Tio Joe". Um "Tio 
+Joe" que matou 50 milhões de russos, o que se soube só depois que 
+ele morreu. Quando Fidel morrer, 
+ou sair do poder, saberemos de 
+todos os horrores que fez, respaldando guerrilhas na América do 
+Sul, ajudando esse Hugo Chávez 
+na Venezuela, que é uma caricatura de Juan Domingo Perón na 
+Argentina, saído das forças armadas, populista, prometedor. A Venezuela está hoje pior do que era."
+LIVRO -
+"Estou escrevendo. Termino um livro iniciado em 1995, 
+"A Ninfa Inconstante", porque 
+houve um filme famoso, aliás foram feitas três versões desse filme, 
+que se chamava de "A Ninfa Constante"."
+CINEMA -
+"Gostei de "A.I." ["Inteligência Artificial", de Steven 
+Spielberg", que me pareceu bom 
+até a meia hora final. Vi fragmentos do "Homem-Aranha" e me parece que o filme é uma festa! Sou 
+um fanático dos "comics". Quero 
+ver como ficou o filme depois do 
+11 de setembro, pois na primeira 
+versão havia um clímax entre as 
+torres gêmeas, que foi eliminada."
+Silvio Cioffi, editor de Turismo, viajou 
+a convite do British Tourist Authorithy 
+(BTA) e da empresa aérea British Airways
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c8667c2f817a590f5d68e1208c9e22ee01a2195695d25c01483abccce1c29cb6",
+    "mention_text": "Infante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b58381efccfdfdf66a7bd66ed160568d3b66fa027a82e63009c654860642f4ea",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "27a8a14223960a6bb0f2c410ff92746e95ca928da3f7d4877d35566cd3941bf8",
+    "mention_text": "Fidel Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6345d723e27b996678010d2f3f40204781c5859a17e3bd105cb0dd88b718fb4",
+    "mention_text": "Jimmy Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17ba91f93406c950d7e629fe2d0929289e10ae3ebb6158e7d7c978ed34ea2ee7",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c6720976abb22748baf2f4e86ad1f2ef6b593aa6971b15150851e0984796a247",
+    "mention_text": "Infante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "239f8df871d6af6c73ed84aa9cc7b0ebe4b481e948a1b4c71fe65c5c713d765d",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "379f2d893acbf938d8daa316400a3b3b1c058186d27160a30c4d26c2d5bbaeca",
+    "mention_text": "SILVIO CIOFFI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f5cf6f8671ef3300f40643e3d31eba350684b646a852ace502ed0506b728a2ed",
+    "mention_text": "LONDRES",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be0cc2bd870ca1851bc7fdee871c79b2e58626787751075d4c0fe3b5edd185b7",
+    "mention_text": "Guillermo Cabrera Infante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e941e1d5e4367358d5f5f7be2a410e2f945d11cf719a3b524faf009a65fa74db",
+    "mention_text": "Jimmy Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78584e5d229b361cdd7c50bc7adfd5c82cbdc1f673175b461ba30819c66deea0",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a0017c4c8f955e4279c6d6de6733d805ee5ec395440fa1d9702c3f01cef9f1d",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1dbdd08af5435010a4a7e966fe9bef005a26a5623772ba697f09e9d7f977ae79",
+    "mention_text": "Fidel Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a22044e0228b00edefb7d669b84626f67eebdb046b658c8813857979bd713b1",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b7145e9aa36fd4f21d0cf674324189115ed4d5124f8af7457a460ffa657ce0c",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8fcb86d765ed89600d31da9bd516fb21bdc5320092f00aa520e3a40c31eac81f",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e10bb2af8cea6869e35ea9b6a4a600826aec95b53f1ce4ee0a554304e5f82cc7",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f583441db41e490e2bd65306d75602fb905a18476e3705097ac20f6a4945987",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "745e59dbc15d65639b3fbe18c94ce58d07805d67c638fbb6017ea56377835c98",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28d59383c3f251a0d120e11f593b499c976c33ba0f33b72b23aed82300073d16",
+    "mention_text": "Cabrera Infante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87b7da89c07fac8a145b055e06a5e1eaed9aa1232525e876c00e78ab97c39b2e",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5e853903f65da20d103ca2691914e628995dedb0baf328112155224524bacae",
+    "mention_text": "Fulgêncio Batista",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99f4a3358ff4f5f76113d49e84fe0f5b10632e20a64b9b37ed40841c5fbebb29",
+    "mention_text": "Bélgica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d1c18e5366d21e5e88c957bec66c8debfc8701b108adfd5725cb7e5748d49ffa",
+    "mention_text": "Madri",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5d2415b4892f81ecc99ca74af156ed6335e6eadc3fdd2451cc7a64388e29f51",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f318192d8deafe4f1208776693cbda14f755c17a793f851ba926ab0d8d74ad73",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04f188581f3808696f684f5b94fdebf4444c5fe43a87a6a6923689d9c65caf4c",
+    "mention_text": "Editorial Planeta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35b143a7e7f27c504a5f715a21a4febc96eaa6e447331e4d4f29fd416d222508",
+    "mention_text": "Barcelona",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a86431fb95317726ae208a039f1084ff9ca8f302f8de481c68cb1eab49d03a36",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08a04df44edab2a21885bbe24f37edb39f17dfb0808c4bb67628996e2a8128b8",
+    "mention_text": "Jimmy Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "970b59af5c657bf24a040ec1e7b0bc23838cab02f0c83ce7153b5ffb9eade538",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f644085f6d6b136db2d0c9fada8016cd5c9234fe7364f41ef172566161feaae",
+    "mention_text": "Fidel Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df888517bba1ccf79f74f2cc695001aa7a3dbdf38bbd9b2cf49c1f0d4745f6c2",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f274c4b8209cbf68904c4ecf234a036dad6e15666be8c71a6631b778303a3e93",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56fb77c84eb4b0a6605c85357333c411346061f9203cb42928348f924ba86b02",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ec347b67c10b10e43a2d7772e10579e1d548425e0a5dd3acfe34d9f7d33f415",
+    "mention_text": "Irã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a0e858bc408a4fe38f58e75a2751d182633e03c3d02939b7b28fed361c0cf5c",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2aae242bc55428c8a2976197bd6061654759c456a1a481211c4ebf5f70e6f4fd",
+    "mention_text": "Geórgia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2294c0ebbdad618d0a0ffdc824f6d9bc56682a8dd45fd5b4a2039c353562d298",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39bc0a59a652e2f33dd8ed8b22a8ffdd8151fc084c0e123fb08a71e7b58c40a4",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "41534fc9addcb7a408e349a800d0001ed4b44f2f0ace514ea95e32f411e7bd9e",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb2124db17330d234f112e8adb2be137f77288d9ab156a1c872f66b65fa9b162",
+    "mention_text": "Fidel Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72c1e400c7789452a5bf62fb21db499b05db1fa52642c444f6081793c117a4b9",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bab9a57a156530078238e6790175cbaa40dd7486fc2cb99a91a7182b65143100",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3923fa98e8a675a9eed08aef5ad0fbeb3ca64b41f266cbb08712d947023fdabf",
+    "mention_text": "Sibéria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1a212d66d1ec025cf954eb77e92871dae1d44aa2b13155b9e870d2dce544371",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eac4dcd64bd1319ab1120a7aed391ed0e1d25cbccc12320f0d3c176e5d85eb87",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11cb12917534ad7ddc937b8202295a061f0c9f361d8007b48f3e9aa2370bd61b",
+    "mention_text": "Jesse Jackson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0542d109bf5ee5551b5c469b177d4c21fd1ab694d56b17ed3b23a04b66ce803",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "822db85d8456e1ea5c9d40319ccc7481bc039f8d75af98cb8a355cdccc1032d6",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a3718539f03c8bbfcf2c9033a9afbdedcf7f5c8bceab958e86822ea4f2d1c6fc",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "57f2b757c0e012cf2b7fee548348f26fab2552535002f79db6158a623dd47e5d",
+    "mention_text": "Cuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e8145b762b4cacfaa9442ecef1309f8855b0838b5503a80aaa6151d7d13c967e",
+    "mention_text": "Cúria Romana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f48c4097af676d02227e57c76b5e15306e2bb1bc61ad5906dea1c36e9c8be89c",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b69f473474bab02e965c304e9177e4e99986620e18ac85da5de940531525ff9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "45d98239ab99d501c09a1177953d6ccd591b1c98a82a0436d2c55c6365e90c5a",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb3adc7706be3074125692b01fd2da64a28b5d19289ee73d918a8665378d5080",
+    "mention_text": "Fidel Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "03bc41588fbac8609913b94d5fe61d3a044426e911b7d62d3a128b1ae7058c84",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b834e9a27821f93f85d2bd5bd2eaa5a040b9dcdfa0947a0408cf74b4c6c3adc3",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43ca44624c9a5744dec7e7d8d8548a666338645c2c927c92fd0a2e6895bcd0a5",
+    "mention_text": "Vietnã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f737aca900c7f83a147e1937a982468e18f5e5a402422fa68dc2978ff654667",
+    "mention_text": "Mao Tsé-tung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "362e416a0038629a45e9ade05912244763960580e754a8f5ea87e8c5e1cde81e",
+    "mention_text": "URSS",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8618494281174d5aa77a26e8b2ea9ca6b02c927ea8490632a4cb270c0f8b454",
+    "mention_text": "Stálin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab547c2bf79384110c7912953582b51684f3c55a4b84139923063c9c33a812fa",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40350c7ba375fbdabc6779b89e9c57f9f80ae563407cb40d7f4217a0d0bc9b36",
+    "mention_text": "Raúl Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2de563109046c8686716c6222555d6709947ae835ab44a36190d543fc15f1014",
+    "mention_text": "Raúl Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b943d0f003766743cadda62c841b60e66c53110232dadafbe1c5adfeb440f0c",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd702338a202d5c050d8001cad1961bb46721c3feaac9bfc014085c3a4f663a3",
+    "mention_text": "Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99531e73ed973639754cb56376d196ae193d483ed9efba857dd83c07c5f2b26e",
+    "mention_text": "Oslo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac9af79d09ba9a9119633a57646e843aca1f3f00ba0577c8a1a27f094f860ac1",
+    "mention_text": "Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8d83396b932fd984b7e512f74a0b5eea4c1d3e73880e0cdfc456533815ba358",
+    "mention_text": "Joseph Stálin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97b0a4d147f58b29cd1eb67f3a584053babfeb1ff93357fbb19d3e9588dee7dc",
+    "mention_text": "Tio Joe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3077b2dc7a490c8895932c8a35a4b756da82b0bf79be2c3956b4ded9abf75836",
+    "mention_text": "Fidel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56bdd662fdb26c48eec278de51acf993d44e7db92c4b768b3857a4028a304f42",
+    "mention_text": "Hugo Chávez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8eab362719a181a1e4c207d47ba3549f41185f74eebf2de921624051f9d2daa0",
+    "mention_text": "Venezuela",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a99974d776cc11a19eca725525d7ade451a5b6dde5946d6f9d40714ed37fc659",
+    "mention_text": "Juan Domingo Perón",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2eeb744a7cc3dd96e1b098fce3a2c50207a9e5366eee56bd362c73651f19579",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "15d4ab486bb0194376eadf84fc55235ed9e9820c7762467e6feb35dfb9f4c59e",
+    "mention_text": "Venezuela",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52202fe60378e2716f93c18a0339498b8f79e67e37eeb8a57e62921faa25a7cd",
+    "mention_text": "Silvio Cioffi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17307e877866401163f442ecec05dd2abe343ea91044260a091ae2ed0a5ffee8",
+    "mention_text": "British Tourist Authorithy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52d183385d45f2acf6b974797231e3f5f170992fa40707170e25c6c14845e0c2",
+    "mention_text": "BTA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2c91c3a5c6e396e47aed5a0a02842138bfa14e57ae3558526910903411b8850",
+    "mention_text": "British Airways",
+    "categoria": "ORGANIZACAO"
+  }
+]

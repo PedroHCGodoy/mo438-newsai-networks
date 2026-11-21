@@ -1,0 +1,592 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 34e8f67fee401f1b5731040ef920741be6994d30a9f880ade72dd3cdc0e27d3f
+
+TEXTO:
+'Fifa' está mais perto da perfeição do que 'Pro Evolution Soccer'; leia análise comparativa
+
+A rivalidade entre as produtoras Electronic Arts e Konami nos games de futebol existe desde meados da década de 1990, quando "Fifa" (com Janco Tianno) e "International Superstar Soccer" (com Allejo) começaram a disputar a preferência dos jogadores na era dos consoles de 16 bits, dominada pelo Sega Mega Drive e pelo Super Nintendo.
+Em termos de qualidade, a competição foi disputada no início, com a Konami levando certa vantagem, pelo menos para quem priorizava o realismo. "International Superstar Soccer" e "Winning Eleven" tinham um estilo de mais "simulação", enquanto "Fifa" oferecia uma alternativa mais "arcade" --ou seja, com uma mecânica mais fácil e simples. (Essa oposição simulador vs. arcade é usada em diversos gêneros --em corrida de automóveis, por exemplo, "Gran Turismo" seria um jogo simulador, e "Need for Speed", arcade.)
+As séries da Konami consolidaram-se na liderança isolada (sempre em termos qualitativos) na geração de consoles que teve o PlayStation 2 e o primeiro "Pro Evolution Soccer" (ou "Winning Eleven 5"). Não era mais apenas uma questão de simulação vs. arcade, mas de diversão mesmo --"Fifa" caíra muito nesse quesito.
+A EA voltou a ser mais competitiva na atual geração de consoles, com o estancamento de "PES", que evoluía de uma maneira preguiçosa e pouco inovadora. Nos últimos anos, "Fifa" melhorou de maneira impressionante e ultrapassou seu concorrente.
+A Konami reagiu, e agora a batalha entre as duas séries está mais disputada do que nunca --até mesmo mais do que no início. "Fifa 13" e "Pro Evolution Soccer 2013" são dois ótimos jogos, e muitas das diferenças entre eles não necessariamente tornam um melhor ou pior do que o outro. Eles simplesmente oferecem estilos únicos, que devem agradar a públicos diferentes.
+Basicamente, deve escolher "Fifa" quem prioriza realismo e um jogo mais automatizado, e "PES" deve ser a opção de quem prefere ter maior controle sobre os atletas e a equipe.
+Nenhum deles é perfeito. Um jogo com esse adjetivo (ou quase) reuniria elementos das duas séries --e algumas coisas ausentes de ambas. Quais? Veja abaixo.
+1) O controle individual de "PES" sobre os jogadores de "Fifa". O jogo da Konami oferece maior controle sobre os atletas, com maior variedade de comandos --os passes e chutes, por exemplo, podem ser direcionados manualmente apenas quando você quiser-- e mais precisão sobre os seus movimentos. Mas isso tem um efeito colateral: os jogadores ficam algo robóticos, funcionam de maneira muito mecânica e previsível.
+Em "Fifa" os atletas digitais parecem mais "humanos" --são mais imprevisíveis e realistas, com uma variação maior de erros e acertos. Todo o contexto do momento --os atributos, a condição física, a posição e a velocidade do jogador; a direção, a força e a velocidade da bola-- parece refletir mais dentro de campo. É mais fácil dominar uma bola rasteira que chega lentamente do que uma pelo alto que cai com força. A diferença de habilidade entre um Messi e um Barcos é evidente não apenas quando eles têm a bola nos pés, mas também antes, ao recebê-la. Isso também ocorre em "PES", mas, em "Fifa", o efeito é mais pronunciado. Aquela história de a mente querer uma coisa e o corpo não obedecê-la é mais presente no jogo da EA do que no da Konami.
+Até por isso, porém, os atletas em "Fifa" às vezes parecem automatizados demais --você sente que fica com pouco comando sobre eles, o computador é que joga para você, com grande peso sobre os seus erros e acertos. É nesses momentos que um controle como o de "PES" faz falta.
+Ao buscar a imprevisibilidade nas ações dos jogadores, "Fifa" diminui o seu controle sobre eles. A imprevisibilidade parte do computador, não de você. Isso pode irritar alguns, mas ela é, talvez, o elemento mais importante na sensação de realismo proporcionada pela EA.
+Fifa 13
+2) O controle coletivo e a inteligência artificial de "PES". O jogo da Konami mantém a tradição da série de oferecer maior número de opções táticas e inteligência artificial mais aprimorada --que se faz notar na movimentação dos jogadores controlados pelo computador (incluindo os do seu próprio time).
+Em "PES", você tem maior poder para gerenciar o seu time em campo, com mais variações de tática e estratégia e maior controle sobre os atletas que não estão com a bola. Os jogadores controlados pelo computador agem de maneira mais realista, com bom equilíbrio entre erros e acertos de posicionamento.
+Assim como no controle individual dos jogadores, o desempenho geral do seu time em "Fifa" é pesadamente determinado pelo computador. A movimentação da equipe, de maneira geral, parece mais programada, o que às vezes lhe dá a sensação de ter pouco controle sobre ela.
+A inteligência artificial desequilibrada deixa os jogadores controlados pelo computador eficientes no ataque, mas deficientes na defesa. É normal ver os atletas do seu time procurando espaços ou fugindo de zagueiros para receber a bola que está com você, mas o posicionamento deles quando a posse é do adversário costuma ser muito falho. A retaguarda do time é muito dependente do desempenho do jogador que está sob o seu controle --seus companheiros de zaga, controlados pelo computador, frequentemente são pouco eficazes, deixam buracos e batem cabeça.
+3) Os times, campeonatos e estádios dos dois games. Desde os primórdios da série, o jogo da EA tem como um de seus principais atrativos as licenças oficiais de uso de diversos times e campeonatos. Enquanto o fã de "Fifa" recebia tudo prontinho, o de "Winning Eleven" precisava usar uma versão editada, já que a original vinha com nomes falsos de times e jogadores.
+A Konami melhorou muito nesse sentido, e seu último lançamento tem até algumas vantagens em relação ao concorrente, como os 20 clubes brasileiros da Série A (em "Fifa", muitos times, como Botafogo, Internacional, Palmeiras e Vasco, aparecem sem nome, brasão e uniforme oficiais), a Copa Libertadores da América e a Liga dos Campeões da Uefa--, mas ainda está muito atrás da EA, que tem licenças de um número bem maior de times e campeonatos.
+Os dois games oferecem um bom número de estádios, mas "PES" novamente leva vantagem quando o assunto é Brasil, com a inclusão do Morumbi e da Vila Belmiro. Essa situação deve se inverter no futuro, quando a EA lançar o jogo oficial da Copa do Mundo de 2014, que deverá conter todos os estádios da competição.
+4) Um visual com mais variação e detalhamento. Os gráficos de "Fifa" e "PES" são bons e seguem a tradição de ambos: visual mais espetaculoso no primeiro e mais sóbrio no segundo.
+O estilo mais vistoso de "Fifa" às vezes parece até exagerado, como se tudo fizesse parte de um filme, com cenas e movimentações dramáticas. Mesmo amistosos pouco importantes podem parecer uma final de campeonato. Em "PES" ocorre o efeito contrário: sua apresentação mais discreta faz jogos importantes ficarem com uma atmosfera serena. Sempre gostei mais desse visual, que mostra um ambiente mais próximo ao da maioria das partidas de uma temporada, mas o ideal mesmo seria um game que incluísse os dois estilos, variando conforme a situação.
+As animações dos jogadores são mais fluidas em "Fifa" do que em "PES", que apresenta movimentos mais bruscos e menos naturais. No jogo da Konami, os rostos dos atletas são mais realistas, com mais detalhamento e melhor modelagem. Nesses quesitos, porém, os dois jogos ainda ficam atrás de séries como "NBA 2K", da 2K Sports, e "Madden NFL", da EA, que apresentam um visual ainda mais próximo à realidade.
+Pro Evolution Soccer 2013
+5) Trilha sonora mais variada e narração mais sofisticada. "Fifa" inclui uma seleção musical extensa, com 50 canções, mas a maioria delas é de bandas moderninhas, como Crystal Fighters, Miike Snow e Imagine Dragons. Em "PES", há apenas oito canções --incluindo "Ai Se Eu Te Pego", de Michel Teló--, além de temas de jogos clássicos da Konami, como "Frogger" e "Castlevania". Em ambos os casos, falta variedade.
+A narração e os comentários dos dois games é genérica e repetitiva, mas, pelo menos em português, "PES" leva a vantagem de contar com Silvio Luiz e Mauro Beting, que conseguem divertir mais do que Tiago Leifert e Caio Ribeiro em "Fifa".
+É questionável, embora compreensível, a opção da EA pelo apresentador da TV Globo. Leifert tem forte presença na mídia e em redes sociais e alguma influência sobre o público jovem, além de ser um grande fã de "Fifa", o que, em tese, faz dele uma boa escolha. O apresentador, porém, está longe de ser uma unanimidade --nas próprias redes sociais há muitas reclamações sobre ele, e muitas delas revelam não apenas uma preferência por outros profissionais, mas uma forte rejeição a Leifert. A proporção entre admiradores e detratores parece favorecer mais Silvio Luiz.
+Além disso, é curioso ouvir Leifert narrando uma partida. Uma escolha mais conservadora e menos midiática, como Milton Leite (atualmente o melhor narrador esportivo da TV brasileira) ou Nivaldo Prieto, que já apareceram em edições anteriores de "Fifa", certamente dividiria menos o público e causaria menor estranheza.
+6) As variadas opções de jogo de "Fifa". O game da EA ganha de goleada em recursos extras. Seu modo on-line, por exemplo, inclui partidas com até 22 jogadores on-line (um para cada atleta em campo), enquanto em "PES" ele é limitado a oito jogadores simultâneos.
+Em "Fifa" há uma interessante integração dos mundos real e virtual. É possível atualizar o game com dados baseados no desempenho dos times e dos jogadores na vida real --uma fase ruim do Manchester United ou uma ótima sequência de partidas de Bojan Krkic, por exemplo, podem ser refletidas no universo virtual do jogo da EA, se você quiser.
+Há inclusive um modo de jogo que lhe permite disputar partidas baseadas em cenários do momento. Na semana passada, uma das pelejas em destaque era Flamengo vs. Fluminense pelo Campeonato Brasileiro --o game informava todo o contexto da partida, destacando a situação díspar das duas equipes no torneio.
+"Fifa" oferece também uma série de minigames que supostamente podem ajudá-lo a melhorar suas habilidades. Mas, de modo geral, tanto o jogo da EA quando o da Konami carecem de modos de treinamento mais úteis, principalmente diante da quantidade de comandos que eles oferecem.
+RIVALIDADE HISTÓRICA
+A rivalidade atual entre "Fifa" e "PES" tem algumas diferenças significativas em relação às das gerações anteriores de consoles. Na década de 1990, ela se caracterizou, entre outras coisas, pela oposição entre os estilos de simulador e arcade. As duas séries eram divertidas, mas diferentes.
+Isso terminou quando a EA resolveu dar à sua série mais características de simulador, o que gerou resultados desastrosos --a partir daí, como eu disse no início do texto, "Fifa" deixou de ser divertido. Os últimos grandes jogos da série antes de sua renovação (já na atual geração de consoles) foram "Fifa: Road to World Cup 98" e "World Cup 98", que tinham um estilo bem de arcade, com um ritmo de jogo extremamente rápido e dribles de fácil execução.
+A geração do PlayStation 2 foi completamente dominada pela Konami, mas isso, aparentemente, levou-a a uma acomodação. "PES" parou no tempo e, para piorar, demorou para voltar a evoluir e para se adaptar às novas tecnologias. No começo da atual era de consoles (PlayStation 3, Xbox 360), as duas séries apresentaram games relativamente fracos. Esperava-se mais dos jogos da então nova geração. A Konami levava a melhor apenas porque a EA não melhorava seu produto significativamente --mas, quando isso ocorreu, em "Fifa 10", muitos fãs de games de futebol não hesitaram em deixar "PES". Agora, a Konami esforça-se para reconquistá-los.
+A rivalidade entre EA e Konami vive hoje sua melhor fase para o consumidor. Nunca, nem mesmo na década de 1990, os dois games estiveram tão próximos em qualidade e diversão. E, diferentemente daqueles tempos, agora as duas séries têm foco em simulação.
+Nos anos de glória da Konami, seus games eram melhores do que os da EA mesmo oferecendo menos licenças oficiais de times e campeonatos e, em algumas edições, menos modos de jogo. Hoje, "Fifa" continua a levar vantagem nesses quesitos e ainda oferece uma experiência mais realista. Está mais próximo da perfeição, mas a vantagem é mínima.
+Os jogos foram testados no PlayStation 3.
+-
+TECPÉDIA
+CONSOLE No mundo dos games, é o dispositivo que roda os jogos eletrônicos. No Brasil, também é chamado simplesmente de videogame.
+XBOX 360 Console lançado pela Microsoft em 2005. Utiliza DVD convencional e é fabricado no Brasil desde 2011.
+KINECT Sensor de movimento lançado para Xbox 360 em 2010 que funciona como controle.
+PLAYSTATION 3 Console lançado pela Sony em 2006. Utiliza disco de Blu-ray e é sucessor do PlayStation 2, ainda hoje o console mais popular no Brasil.
+WII Console lançado pela Nintendo em 2006. Utiliza drive de DVD e popularizou no mercado um controle que funciona por movimentos.
+WII U Sucessor do Wii que será lançado em novembro. Tem um controle em forma de tablet.
+INDIE Abreviação de independente. No mundo dos games, refere-se a jogos construídos com pouco investimento e por pequenas equipes.
+EMULADOR Software que simula as funções e características de um videogame no computador.
+8 BITS/16 BITS Termos usados em referência a consoles de videogame antigos, que tinham processadores de 8 bits (como Sega Master System e Nintendo) e de 16 bits (como Sega Mega Drive e Super Nintendo).
+PIXEL Menor ponto que forma um tipo de imagem digital. O conjunto de vários de pixels forma uma imagem inteira.
+JOGO CASUAL Game simples, geralmente com enredo superficial e gráficos leves. Permite a realização de partidas rápidas e costuma utilizar pouca memória.
+JOGO HARDCORE Game complexo, com enredo elaborado, mecânica complicada e gráficos pesados. As partidas são mais longas e exigem mais dedicação.
+MULTIPLAYER Significa "múltiplos jogadores". O modo "multiplayer" ou "multijogador" suporta vários participantes simultaneamente.
+MMRPG "Massively Multiplayer Role-playing Game", jogo que reúne milhares de jogadores em um mesmo mundo virtual.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "3413676f0c17e1b91c8dc52b89dd88f8be794fdd49ce1efb2380ee594ae99bef",
+    "mention_text": "Electronic Arts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53a81e0ec79ae401da6e150f28558fd07255cafb53a7918f70743cab3585f184",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5c24836b4417ec10594991084f62f119123f3678c962d5bc6ae80c1a539e392",
+    "mention_text": "Janco Tianno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "761c078b4b41b39ff3024c6c0aa2d66bd493b8ed4a4b4ea940bcf7febd8e93e8",
+    "mention_text": "Allejo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ffa295a6aaed1066ba181336eda5015e5bbe4bc34efa2e15d2740487acc98d9",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2411e676f8f17630496ae7cae4715538f0e4dda071276eb176aaea09be318ca",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8c7751730d98b9d8585c81ee25a8138233e9c46af9319cb3563630bf15ded13",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00da6192b69ec15871e072912dc928cc159f230c9e29ecc5e60610b548b900de",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8b7a1460c47fdd8509a0f1b5ad6a741181b7c41344cc65a212ba773e1a97770",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbef047b1c207a64d99a60915781248684f09415f405d0e6ededa04f8b98d6d3",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "289d9fa17e0a7a7912e0a922f089ae7dc1d43ef20dd92beeaa91785e01adaccc",
+    "mention_text": "Barcos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8cae87b8f442b2d8cb55a53d059be21eaf4660d3a3d8219a7fdb0a920c842f2",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63a437fcf0ee6010cd8022bd135e3b139323211f82beecf8cd030bb9f7b7949a",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "052636d78cb224c3798dc57ac53ff1aa11b4c2d93aae9e993062ebe07806b659",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eadd72a5bac868689b450394d26c589e55e344177cbb1154b00dbdf169f6117c",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5aec305ffcd400119a2c32fce0b29a7ecdc60819375b2721c10c767a4738f37",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9711b9ef411cd95880380c8093c17bc219e49417d767df5e29a3fd22b0b98e5",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "636c01d967f12ac70f85e555a56c94457ce5d9df975510e0596b0aac57cb3ec3",
+    "mention_text": "Série A",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2c4a0bd3d61ea9492351ba4f3d464eafc3a79f709f7b5524410d7ef70b6209c",
+    "mention_text": "Botafogo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04ab368bc1fbe1940601616c1d299e2b2842bbd6eeebbe1115455ff11b7e7fd2",
+    "mention_text": "Internacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9da7958df470bed9adf69949a398f58ff457a99468b3f5736999cf855855d84f",
+    "mention_text": "Palmeiras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd1faabd4ce3bd55296477022d0b6593a997ed2eb9fc50d5eacc497c3d17d646",
+    "mention_text": "Vasco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea59767286bf413740a1f8270a8f1211c84c9c0a9927d438d97205e61c3d3c96",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6fc1c01a81fda6f4ccf232248a818b3a9b4fa2479a8cad41903a4edba1a564f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c891e80b539322b4ea99cb1adfbe790fb4b8237fbbb96b328c1ee01a9f422625",
+    "mention_text": "Morumbi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f681af80736602cf038840fd837a919a5edd7ad62e2365936470ccf9f5c9b0aa",
+    "mention_text": "Vila Belmiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f54f6e00454f30cd07db993874218923cb6307a67fcc2624a0278ddf66271146",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "209c65fc535e8ef1d482214bb4551cad3a4d405531ac5c6ac6c544e3ad477215",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cc61e0b8947be67b3b20bce0124c5464e8f52518c293dfa8c60d976a4f14fc3",
+    "mention_text": "2K Sports",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfe988d52a403e5eaeccedd7d034f84c2a3901f9f24d9a4b75d904d2ec78867d",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15359ef5f3d13852518c79b5392e27c445e4033cc675587cd1b64c46796d0051",
+    "mention_text": "Crystal Fighters",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ec4f2fb6e321cf1f01cfe6fc1843a84aa08acbe44f80f5e7210b84b509f76b4b",
+    "mention_text": "Miike Snow",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99386b2ea29f415f84f3f52a296ac1c15fbcdf8c322d8fb08712810133e615c6",
+    "mention_text": "Imagine Dragons",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa714b13cd8e8fdb9927e800127e12d128652969b01733052b04cb84d9f838c9",
+    "mention_text": "Michel Teló",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "744fc3f4fe3dd743724cbf048cfac922e6d35ad7054ea7348e2e0801a6ab4cc0",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "981ba41b3deeb9f7929f56b6263123b7e2e7b14d3da4b4f6342c8598bbc1d2d1",
+    "mention_text": "Silvio Luiz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e340d5ed082199f7f51c7ceb40717c648006782bfea7c44223fa7ddf05045f93",
+    "mention_text": "Mauro Beting",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04d2551879fdb8d53183a69eeb0f778cd6c153c4498df9ee7a3731cd2eaee747",
+    "mention_text": "Tiago Leifert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e608492bd4e90cc5c989888d13647c071c1ea555a86e487dd46e9b1504e892ce",
+    "mention_text": "Caio Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee1461dc83bf90f6a34a8a1fea053f8bc8b292427b04ee32927583b7ce3ecd61",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b19bb864f794516bd68cd23021888148a12b323eaecc2011e0256f1142ce5852",
+    "mention_text": "TV Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2c4c755fdbdbbd8af9744996829104faf04f4eacbd7a5d42c2816af016aa7f2",
+    "mention_text": "Leifert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be058231b39bb44aa553571d4a96eb1d5dc3443154ca31b3dea3f74c5d74c28b",
+    "mention_text": "Leifert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e1fbf852970bb57b8da1c3d1756c1e85365fe917c32ae62d19400d900dc5a24",
+    "mention_text": "Silvio Luiz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2782cc864baa90951981825b3bb2569218b6c5c06d1f766422ef317d13ac0250",
+    "mention_text": "Leifert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa4c20306dbf1480566a55da469350dac9e43ea81aa305310e92d68ccfee22ff",
+    "mention_text": "Milton Leite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5fff56f2b8874d8ee1e92c0c219025408fe2a422975cc5ece25302d242a95e99",
+    "mention_text": "TV brasileira",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8965ce484ada7c4c3d5b5aec0374b8b368525d374ee392b0e07a91765a157ea",
+    "mention_text": "Nivaldo Prieto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ea8d5a48eacb271e8f97d41c6f11123e58d4d1bc25c3ad6955f3f008befc9ee",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f2de82393a3783afc4c19ad5f5f7b283d58cef166a86853dd0a504b5bee4814",
+    "mention_text": "Manchester United",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffd60df6927207380ef14eeb477d603b9c4c91d7f0a7e42c3227b8651829dd05",
+    "mention_text": "Bojan Krkic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34719144f544f26391b9ee111db6c1783c9662760ada16b07d4e557105629512",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0da9be92ef688ec18667d0993ffb7bf2e6dc5b2a9e564d2977fffdb3f9f5b17e",
+    "mention_text": "Flamengo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7200ce3dd88b3a44a028deb36cc9a5fe0a9c4800f35844ecf3efd66953fa5ce7",
+    "mention_text": "Fluminense",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d137571618ec668c23aad8259836ddeb6df8ea932ea0a494523a679b3f18adc8",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "939cd17bb37603efec208b44a2a713adf30c7778fa4a610a7fbed91c17e98305",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a2cc941e6da1b83e7470aa3a6abd7d5bd897547a499905a0a23667778909981",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04e2c8931799c76cc665413d96abfaa81c4bd7b8a200154f08bf076b87cf4850",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce8f4f4d92107d34874f467a0ef2c0b3748b5e97a5f09ebbd22ad6ebdb5ec8bf",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63aaaa4e97b857069d259a6ca86c3f404c25fb957cbd7ac9d024c0b8bafd9fbc",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72facca99f8496dcd0f4412a6f46bda1cfea6833afd731065489169f25d30b15",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47deb4f91437f8511fe75fe7d3f252ccbd043ad4ef73d08d968a76bbf5eb24d6",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31b0705fffabbc5a20225c8aa4fd55c2eb9e9bdc58acba2e45311420c0aad23c",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e457eccc37d59e74744122a6e39629607e7de58662aa47c2a67ae15001a3ba6",
+    "mention_text": "Konami",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffe208b1e6cccd2b2012b31093f077f23533e118264696eec6d2311d2a91abde",
+    "mention_text": "EA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34b54a4b3b834353056cab3252e2ea6d73c91613fa4d6e5d6e783c522c686cd5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02d3c36449740bf9d893fb3935466dfa1e5cc7c2eb8126d9130bc5cbedb7ad4a",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22c5a789e5f403fcf06b28c35e0376d178e643f8b42f340065ad907afc1054fe",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "823f974bda06144bd7784fdad2ef987235b725ae0f6319676ce1d8bceb0bdcc4",
+    "mention_text": "Sony",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4332fe5c4dc8cb9253d0fadaa741a16090f34e32823a95e6505b485441354836",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6685fa5fe9214b8485480aa82bd665ddf0ee3bbdd5dc7475cda354345490cf5a",
+    "mention_text": "Nintendo",
+    "categoria": "ORGANIZACAO"
+  }
+]

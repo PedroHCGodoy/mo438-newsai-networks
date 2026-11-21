@@ -1,0 +1,488 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: afc83ebe33d1d83daaf2fe9056b8aec22bed4b4d8b81053680d845c7b8e80cfe
+
+TEXTO:
+O bailarino virou soldado
+
+O bailarino virou soldado
+Na contramão de outros astros mirins, Jamie Bell, 20, vai além de "Billy Elliot" e constrói carreira no cinema
+NICHOLAS BARBER
+DO "INDEPENDENT"
+"Clint daria de dez a zero em 
+todos nós juntos", diz Jamie 
+Bell, 20, entusiasmado, e, caso 
+alguém esteja em dúvida, ele 
+está falando de Clint Eastwood, 
+que o dirigiu no épico da Segunda Guerra Mundial "A Conquista da Honra". "No primeiro 
+dia de filmagens, estávamos no 
+mar da Islândia rodando a sequência em que os marines desembarcam em Iwo Jima, e 
+Clint estava conosco, saltando 
+de barco em barco. Ele tem 70 e 
+alguns anos, mas pilota helicópteros, dirige utilitários 
+enormes. É espantoso."
+É espantoso sim, com certeza. Mas mais espantoso ainda é 
+que Bell tenha sido escolhido 
+por uma lenda americana viva 
+para representar um soldado 
+americano, Ralph "Iggy" Ignatowski. Para quem não lembra, 
+Jamie Bell é o adolescente de 
+orelhas grandes que viveu o papel-título de "Billy Elliot". Ele 
+pode ter feito um trabalho ótimo nesse filme, mas a verdade é 
+que era um adolescente do nordeste da Inglaterra que adorava 
+dançar que representou um 
+adolescente do nordeste da Inglaterra que adorava dançar.
+Não chegava a ser tão difícil assim, e a aclamação que ganhou 
+por suas piruetas no filme não 
+era garantia de que sua carreira 
+no cinema teria continuidade.
+"Depois de uma coisa como 
+essa, não há como subir, apenas 
+cair", concorda Bell. Alguém 
+que tivesse projetado o percurso de sua carreira em 2000, 
+quando "Billy Elliot" foi lançado, teria previsto mais um filme 
+britânico comovente, misto de 
+comédia e drama, seguido por 
+um seriado de TV britânico 
+também comovente. O que Bell 
+fez, entretanto, foi o que não se 
+esperava dele.
+Desde "Billy Elliot", o ator 
+vem cuidadosamente e sem 
+alarde erguendo uma carreira 
+sólida, tendo como alicerce alguns projetos independentes 
+experimentais e alguns blockbusters de destaque de Hollywood. Exemplo disso foi a passagem direta do colossal "A 
+Conquista da Honra" para o independente "Hallam Foe", a 
+seqüência dirigida por David 
+McKenzie do polêmico "O Jovem Adam". "Hallam Foe" é 
+um "filme de doce vingança" 
+ambientado em Edimburgo, e 
+Jamie Bell o considera "a coisa 
+mais instigante e interessante" 
+que já fez. Passados alguns meses de seu 20º aniversário, a 
+pergunta obrigatória que se coloca é: como foi que tudo deu 
+tão certo?
+Sem pressa
+Sua primeira decisão inteligente foi evitar a pressa em fazer seu segundo filme. Bell só 
+foi visto na tela grande dois 
+anos depois de o circo "Billy 
+Elliot" ter deixado a cidade, e, 
+quando isso aconteceu, em 
+2002, ele surgiu como coadjuvante nos elencos de "Guerreiros do Inferno" e "Nicholas 
+Nickleby". Nenhum desses papéis chamou muita atenção, 
+mas os dois provaram que ele 
+era capaz de fazer personagens 
+que não fossem o de um filho de 
+mineiro com jeito para dançar 
+balé. Dois anos mais tarde, ele 
+apareceu em "Contracorrente", de David Gordon Green.
+Em seguida, na parábola poética de Thomas Vinterberg sobre 
+o amor dos americanos pelas 
+armas, "Querida Wendy". 
+Esses dois filmes foram totalmente diferentes do que Bell já 
+tinha feito. Ambos eram produções ousadas e originais que 
+não estavam destinadas a atrair 
+um público grande. E o ator 
+mostrou ser capaz de adotar 
+um sotaque americano convincente, algo que lhe abriu portas 
+para interpretar um soldado 
+dos EUA no elenco de "A Conquista da Honra". 
+Seriam esses papéis tentativas propositais de evitar ser rotulado como ator de um papel 
+só? "Com certeza. Sou incrivelmente grato pelo sucesso de 
+"Billy Elliot". Mas, dois ou três 
+anos depois, você começa a se 
+afastar do que fez antes, e é importante fazer com que as pessoas saibam que está mudando.
+Fiz esses filmes por uma decisão de me implantar no mundo 
+de cinema e me despir de qualquer rótulo que "Billy Elliot" 
+possa ter fixado em mim."
+E o que dizer do sotaque 
+americano? "Isso leva algum 
+tempo", diz. "Com "Contracorrente", passei quatro horas por 
+dia, durante duas semanas, numa sala, lendo e relendo o roteiro em voz alta, com o sotaque. 
+Acho que funcionou."
+Antes de estrelar "Billy 
+Elliot", Bell não tinha pensado 
+seriamente em ser ator. Depois 
+disso, com dois prêmios Bafta 
+em sua prateleira, ele ainda não 
+tinha certeza de que iria continuar a fazer cinema. "Alguma 
+coisa dentro de mim me dizia: 
+"Não, eu realmente gosto deste 
+trabalho"."
+Longe dos flashes
+Sua preferência pelo trabalho em lugar do glamour ficou 
+clara na época, especialmente 
+quando a entrega dos Globos de 
+Ouro foi televisionada. Há imagens impagáveis de outro astro 
+mirim, Haley Joel Osment, falando em 
+tom emocionado sobre como 
+"Billy Elliot" comoveu pessoas 
+em todo o mundo. Depois a câmera corta para Bell, que traz 
+uma expressão de ódio no rosto. "Foi um olhar de sem jeito", 
+corrige o ator.
+Após seu trabalho precoce 
+em "O Sexto Sentido", Osment 
+teve atuações irregulares em "A 
+Corrente do Bem" e "A.I. - Inteligência Artificial", o que fez a 
+decisão de Bell de seguir um caminho menos direto até Hollywood parecer mais esperta.
+Além das produções já mencionadas, ele aparece no independente "The Chumscrubber", um filme sobre angústia 
+existencial suburbana americana, liderando um elenco que inclui Ralph Fiennes e Glenn 
+Close. E não nos esqueçamos 
+de "King Kong".
+Não surpreende ouvir Bell 
+dizer que ele espera dirigir filmes ele próprio. "Tenho sido 
+abençoado pela oportunidade 
+de trabalhar com essas grandes 
+pessoas", afirma. "Não há como 
+não se sentir inspirado por elas 
+quase todos os dias. O estranho 
+é que, quando trabalho com esses diretores, parece que começo a receber o espírito deles em 
+mim. Isso é bacana, quando se 
+trabalha com Clint Eastwood." 
+Será que o garoto bailarino pode um dia se tornar o próximo 
+Clint Eastwood? Alguém que 
+estivesse projetando sua carreira hoje não poderia excluir 
+essa possibilidade.
+Tradução
+CLARA ALLAIN
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "53ae1d380ee3e9f09c0cf864990cd33db4eae53f8223f0c25f110c71b53dd330",
+    "mention_text": "Jamie Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "121e7d441c46cd088f1f4cf2d1942ee6df0811ab51bb592ee564592aec4654ad",
+    "mention_text": "NICHOLAS BARBER",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "000a7b2a2da2f38d11e0be43ad01885b1bf5e710b45c5df915b7b0e4d4530800",
+    "mention_text": "INDEPENDENT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d75990d55f557721edce83463f73915c8f019332d09f2d87b3dec179ab59984",
+    "mention_text": "Clint",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a282178d29097e6d9ab5aa7973c801a343364a36934eee03cc1325116011fb8f",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a064460bc447b4c10a430c5bb0ec60117e48b0d26f2fe7dd4a180134191dbb39",
+    "mention_text": "Clint Eastwood",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84c53cfc521b1c18e372f0ce26f295d0a81ca92b652dd07bc858d776c3b94610",
+    "mention_text": "Islândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec6b635ad7d2181cb2b7c4e65abaf472f31fb90675e93a8f6068b035bfc8c968",
+    "mention_text": "Iwo Jima",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6e8eec3ba6adb469e152959a03e5525432869a75a9470c96585e23311a65874",
+    "mention_text": "Clint",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb557f9cd2f53bf40d2d315f607d5f1303e8cf0f09d4b9ad1bbfc85e6930ec96",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01d23b37912e95ecfa2c76d34639433eb18e06337815eee2d52e825eae38efdd",
+    "mention_text": "Ralph \"Iggy\" Ignatowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aef7aed544d4bde8fc76df5663ecc505bd0f7d59d6197bcd7e8c33f07e7935f2",
+    "mention_text": "Jamie Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a7b8c32884012ca568c129dad3343ad16745bdadb46426b0f950b3d4f14788d",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e28ea61c2b80b5a8100421b39b627fe22dd6668d256a3fbff642bdf05a95103a",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bf98c677d3eb3aa0927a028f036dea6e6faefbee79457c64fb5d636078f4cf11",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2703aee36169931319f944fefdd39ceb4eec446a2e568e767c3e5010278fdeb8",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8946f3ece1f5093510d54cdf9ca5280e6e7f0e4c853ed3eba1e936a1f2ff24b8",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7237e2db46693e94becde1cb4a386d2ef97d9f6421eab0f36ebb471153308516",
+    "mention_text": "Edimburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "039b9a35afb56b9e7d09f6946eec554109802e1b1be73ab29cd97bffb2b27a18",
+    "mention_text": "Jamie Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e27aacf2c1ede8d1e2d0b7f5cbee7ee4c810b6167757444ba8c04c860271f55",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4951a3662fc11987f80a718419e9c27be93dadb3f8501c830f1ba75940800e24",
+    "mention_text": "David Gordon Green",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f52419100131b63d7ab65d7d9b53d27f534c7788dc7a6872bacf2840d4f9f81",
+    "mention_text": "Thomas Vinterberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7dfe1050fde14f5d975cfe82a1e56ea47f1094bc6996101ed478b2bfedb2b32",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c07d26b8e0ff2a63394edf86d7e350e04fae66c04488c378866ae37c01bf536",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7db7abbff4bff03b8b5d251483ea738dcbe60a270e1e226220c422c296a92022",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06ac1b5c94235ca9e88a1167ac104edd1e840a36639d7bd5dc45c48ac7dd7099",
+    "mention_text": "Haley Joel Osment",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ae766079f4acbe862b9a11a48e8fb33bcee8493a209bf46300e3be664d2d2649",
+    "mention_text": "Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ad86539157ae29b76238290f9bf89e3b01089775e444843365ca66bc0523432",
+    "mention_text": "Osment",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f4f11cdb2ad7f2d4bbca07786ebf51831ef6e5857c847e9068071a06cbf8886",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d7456d74d3714d4b4f0bc7a81f54bc870e2141b2b53516e69b80e6ccdc49bfd",
+    "mention_text": "Ralph Fiennes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "330e662ef5cf8823e6f83f0135fe62b54c8819930a8f852c95d546ac7b89321b",
+    "mention_text": "Clint Eastwood",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b4249e09ec9c0761be0f866b8a1977446d901262abb09b60db731c613b02156",
+    "mention_text": "Clint Eastwood",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c31531d015fe0e877761b3e68e66e9148d6241371b6ad8c1c85f1a3b12fbc38",
+    "mention_text": "CLARA ALLAIN",
+    "categoria": "PESSOA"
+  }
+]

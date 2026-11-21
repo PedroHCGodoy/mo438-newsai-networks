@@ -1,0 +1,340 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ab47903833e7b45c126319afe903c0c7ee7170bd1f02e879a44a29daf427cfcf
+
+TEXTO:
+35 anos depois, Pac-Man vira filme e ainda faz sucesso
+
+O Pac-Man, herói de um dos jogos de videogame mais populares da história, chegará às telas de cinema na quinta-feira (23), no filme "Pixels".
+O longa, porém, não traz o personagem simpático que tenta comer bolinhas enquanto foge de fantasmas coloridos. Na produção da Sony, que traz Adam Sandler no papel principal, o Come-Come será transformado, pela primeira vez, em vilão.
+A produção chega aos cinemas dois meses após o aniversário de 35 anos do lançamento do Pac-Man –jogo que foi criado pelo japonês Toru Iwatani para máquinas de fliperama da Namco e revolucionou os games.
+No primeiro ano após o lançamento, mais de 100 mil máquinas com o jogo foram vendidas nos Estados Unidos. Em 1982, foi a vez de o produto chegar ao Atari. "Foi o primeiro game que joguei no fliperama, aos sete anos", diz Marcelo Tavares, 35, diretor da Brasil Game Show. Ainda hoje ele joga Pac-Man em uma máquina no seu escritório, no Rio.
+A simplicidade do jogo é um dos motivos do sucesso. "Todos conhecem as regras, e ele atende quem busca só um jogo casual ou então desafios", diz Jason Enos, diretor de marcas e marketing da Bandai Namco para a América Latina.
+"Iwatani queria criar um jogo que não intimidasse as mulheres, seja pelo personagem ou pela dificuldade", acrescenta Enos –hoje, elas representam 47% dos jogadores de games no Brasil, segundo pesquisa deste ano feita pela produtora Sioux.
+O Pac-Man contribuiu também para a evolução do gráficos dos videogames, além de trazer recursos até hoje presentes, como progressão de níveis de dificuldade e inteligência artificial.
+Cada fantasma tem uma estratégia própria, que se ajusta em tempo real às decisões do jogador.
+"Ele se tornou um modelo para os games modernos", diz Noah Wardrip-Fruin, professor de mídias computacionais da Universidade da Califórnia, um dos principais pesquisadores do assunto no mundo.
+Segundo a Namco, mais de 50 títulos foram lançados desde a criação do Pac-Man. A partir de 1999, a companhia tentou modernizar o jogo com versões em 3D, mas não obteve sucesso. "Ele fez tanto sucesso em 2D que não conseguiram emplacar as versões 3D", diz Tavares.
+A empresa não revela a receita obtida com a franquia, mas afirma que "o game representa parte importante dos negócios".
+A versão mais recente do Come-Come, chamada de "Pac-Man and The Ghostly Adventures 2" está disponível para PlayStation 3 e Xbox 360. Nos smartphones e tablets, os fãs podem baixar a edição comemorativa de 35 anos do personagem.
+INFLUÊNCIA CULTURAL
+Nem só da venda do game vive o Pac-Man. "Ele se tornou um verdadeiro fenômeno cultural", diz Wardrip-Fruin. Ainda nos anos 1980, o personagem foi transformado em série de TV de Hanna-Barbera e inspirou a música "Pac-Man Fever", da dupla norte-americana Buckner e Garcia.
+Antes de "Pixels", que traz alienígenas que usam games famosos para atacar a Terra, Pac-Man participou do filme "Detona Ralph" (Disney) e estrelou a série de TV "Pac-Man e As Aventuras Fantasmagóricas", disponível no Netflix.
+Há ainda uma série de produtos licenciados. "Já existiu até cereal do personagem", diz Enos.
+Por que as pessoas querem tanto ter algo do jogo? Para Tavares, que tem almofadas, despertador, fliperama e ficou por dez anos com a música do Come-Come como toque do celular, a resposta é simples. "Ter algo do Pac-Man identifica você como um apaixonado por games."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8310f00427b0d73aee7ff66d78012ed5c6b9c89d1cc51a236cd5ac095ddff147",
+    "mention_text": "Sony",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27ce28c29c57bb8720885edb621ea0e939d751a6c7dc9634b74d392bf9e62211",
+    "mention_text": "Adam Sandler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc0445c4bd212fe2cb854ca2d6d815946266dde83478a7d9f3dde1b610bc1541",
+    "mention_text": "Toru Iwatani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78140aad415f0b5a08354cd1954e04ac3883f9da0aceb1d3c1f7f4a46b2b1937",
+    "mention_text": "Namco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f770ebf6ac9267fbcd0930ba6dfd9384c13f87f0f1aa472b50168ada8ff21e26",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44195c6d551f8df4c668509eea3c8da161b941b2b742fad1519a69ff5f2361f1",
+    "mention_text": "Atari",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f50a295f8fc9074bba759d7e2c4e94e57f667f8f9a9ca592ffd8cfdaf6b24a0",
+    "mention_text": "Marcelo Tavares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14509ed6400ec19ef12207b03cf6824395e9226a3ddbb06766d96cd536a0ebf5",
+    "mention_text": "Brasil Game Show",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0c3337e9e850ac96a25831410f08fa25215dd2be3c5f15a56e73f24b34149fd",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2900628c839e53c57fb484ae2dd0d5ef99a025b021c6fc0a81ffe8699fce1a5",
+    "mention_text": "Jason Enos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d74518d62003b4d83b6d23a2b93c6a5c862eb520890513ec5f8c3e251732b4ac",
+    "mention_text": "Bandai Namco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "979cd573c4d01cf87ef666f134ba03f5a928a9363a230877c7a9c33397960629",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "24338e9ffd664bfc9707cf2cf0ac2510351a4346928534162289d8d1a102fcdd",
+    "mention_text": "Iwatani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "030f49198950e4f10eea248ab3d4b8ad94d1efc3de6fe3b6b1f3580116f53afb",
+    "mention_text": "Enos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2e47b356153c4d1afac3f00fe199a42bbd5721bd8ee0e344f51e437c735cf28",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "efc858cb30dda17fd702daf60d1c575ace7e83544c4ec3c123ff37ce1823fcd5",
+    "mention_text": "Sioux",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61512e179141a9703c85a7f8f8632969cfb649c39931d071a3970493e6b96cc0",
+    "mention_text": "Noah Wardrip-Fruin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09d93f5437877ee45f8723faebd0321242887a703d7ee4e66c73c59f6b6df543",
+    "mention_text": "Universidade da Califórnia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63a4eab6f53275f1d6b7bfa893a361012e609ed5dd37408dc1a9d992ffd48222",
+    "mention_text": "Namco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3944a26eb514ef948613c07430ce68a1d6cf6130fe89e9fa3d290b2176ea227d",
+    "mention_text": "Tavares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ec174074e1b13f594cab9e29784f31ce1332cae09a0b9a3711cc99bfad365d0",
+    "mention_text": "Wardrip-Fruin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9780c69706305881595309cb895647007a92b0aefa152c03b7d1df3f5a78a5e",
+    "mention_text": "Hanna-Barbera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05de2e753bd90dfae81a5c769f307c6bd76b372061bfd5a9b1659b7e845435ad",
+    "mention_text": "Buckner e Garcia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77c09ae20c6b2b92a9227e8cfd998aaf3f546f695a7a9607072b35b75ecb07da",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d6068abd7e5c5144bf9d9c09cdf00cbac9df0fe679b6775f34e411b6c4c82fc4",
+    "mention_text": "Disney",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7936db592ac90d750df1b4d00da544398adc81a4be203ebba30e2fef034452ca",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "585596ca96945ec9785faa42fd36701b42275ae145f3636b40b8af44b5d62bf7",
+    "mention_text": "Enos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8f80b7329c9e002f47b2eae34746f6a43e751fc91c51517610da0bf682c9703",
+    "mention_text": "Tavares",
+    "categoria": "PESSOA"
+  }
+]

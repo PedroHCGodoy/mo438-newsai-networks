@@ -1,0 +1,420 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 99ce52e62a5dec432d792770a09c347c27768b2d07eefdf4993c2120687a653c
+
+TEXTO:
+Machover apresenta "Brain Opera" em SP
+
+"MÚSICA ELETRÔNICA"
+Machover apresenta "Brain Opera" em SP
+Divulgação
+O compositor e professor Tod Machover, criador da 'Brain Opera'
+PATRICIA DECIA
+da Reportagem Local
+Um parque de diversões um tanto incomum, com uma idéia por 
+trás. Assim é "Brain Opera", a 
+performance-instalação do compositor norte-americano Tod Machover aberta a partir de hoje no 
+Sesc Vila Mariana.
+Professor de música e tecnologia 
+do Media Lab do MIT (Massachusetts Institute of Technology), nos 
+EUA, um dos principais centros 
+de tecnologia do mundo, Machover tenta unir o mundo da música 
+erudita à era digital.
+Assim, criou hiperinstrumentos 
+nada parecidos aos que se usa comumente em qualquer tipo de 
+música. E colocou o público leigo 
+para tocá-los.
+Telas, "tambores", microfones 
+e até um guidão produzem e registram sons a partir de movimentos 
+simples como um toque.
+Tudo isso acontece na "Floresta 
+da Mente". No Sesc, estarão cerca 
+de 40 hiperinstrumentos de seis tipo: árvores rítmicas, árvores cantantes, árvores falantes, muros 
+dos gestos, pedalando ritmicamente e telas melódicas (leia quadro ao lado).
+Parte desse material sonoro será 
+reeditado por Machover e compõe 
+perto de 40% dos sons que ele 
+apresenta em sua performance, ao 
+lado de Teresa Marrin e Will Olivier, ambas norte-americanas. Na 
+terceira parte, o público também 
+participa em tempo real, via Internet (www.brainop.com).
+O objetivo de Machover é fazer 
+as pessoas pensarem mais sobre 
+música e produzi-la -sem deixar 
+de lado os padrões e sem necessariamente fazer música popular.
+"É difícil colocar o trabalho numa categoria tradicional. Mas as 
+pessoas que mais gostam são 
+aquelas que são abertas e têm 
+energia e desejo para experimentar", afirmou Machover, em entrevista por telefone, da Califórnia 
+(leia texto abaixo).
+Para fazer "Brain Opera", Tod 
+Machover entrevistou Marvi 
+Minsky, considerado um dos pais 
+da inteligência artificial, entre 93 e 
+96. Como resultado, encontrou 
+frases como "a mente é muito 
+complicada para resumir". Para o 
+libreto, reuniu 47 delas.
+Lançada em julho de 96 no Lincoln Center, em Nova York, a 
+"Brain Opera" já passou passou 
+pela Áustria, no festival Ars Eletronica, pelo Japão, no Nex Opera 
+Festival, de Tóquio, por Copenhague, Cingapura e Portugal.
+Depois do Brasil, será apresentada na Grécia e então passa a fazer 
+parte do acervo permanente do 
+Museu Nacional de Viena, também na Áustria.
+Atualmente, Machover trabalha 
+num projeto muito "lo-tech" (de 
+baixa tecnologia), junto com o 
+violoncelista Yo-Yo Ma, para a 
+criação de brinquedos musicais.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f639de82f64cf4f08623ea739eea49f4c89781c2db1d1617ab2e8bb78f69f1d4",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19595577484b81e9df54b9e491497da79d4105341119930a66047ebee2e33698",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b6d3ad2a7ac9c326ee1c51a13a359804064db7f59cf91cd697693ad5ba05d00a",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1a9f2accc2ef3301683f45777f3579f7d8b0464d14c49da3c92e13f1e40b37f",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5368f76cde1043c6869fe0db6bca2fd2254cbed467cf04fe812a033bec19a45",
+    "mention_text": "Tod Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab4e714f87ff2043b63a8264fb6b65ce62865354ccf5d10433179e00a22151c1",
+    "mention_text": "PATRICIA DECIA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68e70cd2ec5be03aae8e27369813e2a81f0be5b18a6339c09052f3428401c7bf",
+    "mention_text": "Reportagem Local",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc67719c8525a61214155d5a74d74307d541e5824cafb84bfe3e1ff72f4ac4d5",
+    "mention_text": "Tod Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7eb4795d578fc098581a96e68540d6f3ef90ec52d31c5ca0e205957241b74b9f",
+    "mention_text": "Sesc Vila Mariana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70de13190e7d8256c0be95359782d6379ab9aaf9ece116c4d162688c5e8f4da8",
+    "mention_text": "Media Lab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e30e0e0c79fabcd7d013a8d114b2c6aa86cbed22aa50591df0116bc652e850b",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fa276e61a19ece02e648548e43bf5379e30bf5a07282e679e50a1a7d868d7ad",
+    "mention_text": "Massachusetts Institute of Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e88bacc808b99d5d9cb2a1c59e36d64ac6ead037188ad78e69e188f6127b85b8",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b39a8644cd5e76b558ca7692b8d0300414ae3adce4ca8ae1758c694c1d047703",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e8faf07668763179da946a961942cf9a1290abaa5c556c0ccbfd49188e826cf",
+    "mention_text": "Sesc",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e9fa2bf24ab2695818d688058cca1ba87e07422f3f1f3d8edbe9015155e0718a",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff381fe74641d36aa4116a4f678976e568198018b516a09e8bfaac433e02f426",
+    "mention_text": "Teresa Marrin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dce75078bde0ba8a25a4426418e88d3d73521550b65bd17e48d0a4159b980352",
+    "mention_text": "Will Olivier",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fdf21cddaa09e315c84fd472fc3cf4cb5f5ea64be1be0a27564c85d0d0109353",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09c6ed9a0d97a8749ce1321723c5749a11f99def2b7532f7d49bee2a574f2a6c",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "407f9132c7cabebb7d760705b61e9cc2a213973e6f31b44f6236474ad0c2cb0f",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0cd2b62a197505cb8a1d55f5e90a9b0c1f5c278240796072cdcc42c5456175ef",
+    "mention_text": "Machover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e920fd30986caba1c1ff4df51deb6e71d474203ebdc9a3ad81e983b2e5edb47f",
+    "mention_text": "Lincoln Center",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3879219009cc43c1f40dcbb5dc9eca5e4365c9e982ce4e61c8fdc78046e8a22e",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c8eb9e7999f2c0cd66c22f225855b664a9039165434c7bb794ca0d8eecc0401b",
+    "mention_text": "Áustria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c258424daa99d548d604edb2d8fc70e28f838a7460eb75e891e5906a559043b7",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca0902035e587de0aaf86bffeb4826f4f60d0a930b31c0502b90f63fbbf95373",
+    "mention_text": "Tóquio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b42be05c4e3866f2e1cbe0c93c5db5583c7be28c39e70a72c912392c681557f",
+    "mention_text": "Copenhague",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dd2ec48ccbc08705ff8973f64b2826e02439dd1d3aa999c41ba8770e57ac4bcb",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "904272d09bcec899f8d11a88fe6a9824b6daae0bf5c309952367a40a3cb6b01f",
+    "mention_text": "Portugal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3242446dc55c987b2a28a655b8df1bfa82575cb61affb177757ed34a38d8a61c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "625ff491266d944998f519ff3f87b8ef75cb45482ac1d037a7eeba65aed96d3b",
+    "mention_text": "Grécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1fb89f012e19354cadd97bbbb236d43ddeba096f30f3892305c81e15d63ffa33",
+    "mention_text": "Museu Nacional de Viena",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb6305deb99487ea5bed862892ea12ad63e89c85e3d1a0c04129d87d9cdfc4d7",
+    "mention_text": "Áustria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "97732594d8f73bd8c1ee049fe650ac10a32b59ed40725ce1d5f4aa9e8d63d0bf",
+    "mention_text": "Yo-Yo Ma",
+    "categoria": "PESSOA"
+  }
+]

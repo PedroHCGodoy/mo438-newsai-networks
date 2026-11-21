@@ -1,0 +1,380 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 334be2254214a1205446f638f703d789525b5a78e04cfea899eecc765cf901ed
+
+TEXTO:
+Cobrança ineficaz de taxa do Netflix causa insegurança no setor e pode cair
+
+Uma indefinição sobre a forma de recolher a Condecine (contribuição para a indústria cinematográfica) que incide nas plataformas de vídeo sob demanda (como a Netflix e a Amazon Prime Video) tem criado insegurança no setor.
+Há, desde 2012, instruções normativas que determinam a cobrança por cada título que as empresas têm no acervo.
+O recolhimento da contribuição, no entanto, nunca foi feito, e não existe uma conta de quanto ele representaria.
+Há o entendimento entre as empresas e a Ancine (agência do cinema) de que essa forma de tributar não faz mais sentido —ela foi estabelecida quando os serviços de vídeo online eram ainda negócios incipientes.
+Trabalha-se para redesenhar a base de arrecadação —pode ser pelo faturamento, pelo acervo inteiro ou uma forma híbrida.
+Até que a regra seja alterada, falta clareza sobre o tema, o que dá insegurança ao setor, segundo pessoas envolvidas na discussão.
+O receio se agravou quando um diretor da Ancine entrou com um processo administrativo para, de fato, passar a recolher —inclusive de forma retroativa, de 2012 para cá— ou revogar a norma que obriga a cobrança por título.
+A entidade fez duas reuniões na última semana para explicar a situação aos agentes do mercado que disseram não concordar com a regra atual.
+Entre os produtores de conteúdo, no entanto, não existe consenso: há quem afirme que a Condecine deve ser cobrada da maneira como está prevista desde 2012, pois isso implicaria receita maior.
+Da luz ao banho
+A Lorenzetti, de chuveiros, aquecedores de água, lâmpadas, louças e metais sanitários, investirá R$ 175 milhões na instalação de uma nova fábrica na região da Mooca, onde a companhia já possui plantas.
+“Compramos neste ano um galpão e fizemos ali um centro de distribuição de 25 mil metros quadrados. Agora, vamos adquirir uma área industrial na região. Só em infraestrutura, serão R$ 65 milhões”, diz o CEO, Eduardo Coli.
+A nova unidade terá 27 mil metros quadrados de área construída. No montante total, também está prevista a encomenda de maquinário. As obras deverão ser finalizadas em seis meses.
+A empresa, que estima crescer 7% em 2018, projeta alta de 10% em receita em 2019.
+“Temos a intenção de comprar marcas que tenham expertise em áreas em que não atuamos. No nosso portfólio atual falta piso, por exemplo.”
+Mais
+R$ 1,28 bilhão foi a receita bruta em 2017
+4.600 são os funcionários
+Alta na demanda e eleição endurecem negociação com galpões logísticos
+A melhora na demanda e no humor dos empresários após as eleições tem endurecido as negociações por espaços em condomínios logísticos, segundo empresas que atuam nesse mercado.
+Não houve ainda um aumento de preços, mas os benefícios que eram concedidos para atrair locatários começaram a mudar, afirma Giancarlo Nicastro, diretor-executivo da plataforma de informações Siila.
+“O mais comum é que os locadores ofereçam agora três meses sem cobrar aluguel, não mais 12, ou reduzam o escalonamento [quando os contratos têm descontos maiores no início, retirados progressivamente]”, diz ele.
+“O locador ainda tinha poder de barganha maior no ano passado, sobretudo para obter carência e conseguir reduzir o valor pedido inicialmente”, diz Pedro Ribeiro, da consultoria Peers Consulting.
+O endurecimento é mais forte nas regiões com menor vacância. As áreas com maior demanda são as mais próximas à capital paulista, como Cajamar e Barueri, segundo Jadson Andrade, da consultoria Cushman & Wakefield.
+Jogo é jogo, treino é treino
+Empresas brasileiras ainda fazem pouco para reduzir a distância entre teoria e prática quando o assunto é inovação, segundo a EY.
+Cerca de 75% das ouvidas pela consultoria afirma que o atual modelo de negócio será colocado em xeque devido a novas tecnologias.
+Menos da metade (46%), porém, diz que líderes da companhia têm um grau de conhecimento alto ou muito alto sobre as mudanças.
+Foram consultadas 74 empresas, mais de 60% delas com faturamento acima de R$ 500 milhões, nas regiões Sudeste, Sul, Nordeste e Centro-Oeste.
+“Não adianta ter um discurso bonito sobre blockchain e inteligência artificial e não ter um ambiente propício para mudanças”, diz Marcelo Godinho, sócio da EY.
+“Na prática, o olhar ainda está voltado para o curto prazo, para reduzir custos, e inovação não se restringe a isso. Não adianta ter um escritório novo e falar em cultura de startup se o processo de transformação é desestruturado.”
+Um passo... O Centro Universitário Celso Lisboa firmou uma parceria para aplicar sua metodologia e gestão na Facha, do Rio. O CEO da Celso Lisboa assumirá o comando.
+...por vez A empresa negocia um acordo similar com outras 14 empresas. O plano é criar um grupo de pequenas faculdades e, após captar recursos, adquirir parte delas.
+Ginástica Uma em cada quatro empresas não oferece programas voltados a saúde para seus funcionários, segundo a consultoria Scaldelai, que ouviu 200 diretores de RH.
+Hora do café
+Mais
+​ com Felipe Gutierrez (interino), Igor Utsumi e Ivan Martínez-Vargas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8f4d3b44194f7b23c1567a0ebb5c2ccdce6f3a2e477d369e739649672599e1da",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9aa5296c4948c320151516f19cec9ceb1663b78cd2a27f25b51f7e4ed0d0fac",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73b6fa392bb0104a59ab976ca6456522a7563ee1f4630e9b7da8d72c8236f9e8",
+    "mention_text": "Amazon Prime Video",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f37c86a5ac161830a3c5aeb20f78034332ea7fe329688ab3f22613765ba65c8",
+    "mention_text": "Ancine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5db591a518ac5174e1ae4f4e279264e7ec903dffbb4f0338c9262f21d371522",
+    "mention_text": "Ancine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "278d1cc05af04c2576cebea991a7758c37403c7f3f1ca7df6bea2c24678f9ce3",
+    "mention_text": "Lorenzetti",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c0bd67b5923c9ec5c9a956bdf943df3b29f0823e32c02f6578d42cc6d839eef",
+    "mention_text": "Mooca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c78a2332fe3c81e8dea1f6ad5700d9332559066ddeaed93d78ff806ef3c9c3e3",
+    "mention_text": "Eduardo Coli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a83c802e8f4b85dfc6067e6b34253c3824b09a19f4edc8579b401b40c726396e",
+    "mention_text": "Giancarlo Nicastro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb09839ea52696d83cc12f4c594b5d55f0c533a94cf2e2cb9b61fe8564b56a3e",
+    "mention_text": "Siila",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8cc30ccc056fd8839e65ecd8ed29be93667bf52bc32b3193d5ab0a4de529c1cd",
+    "mention_text": "Pedro Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de4d0f55f6bd426e9b5e567fa75ebf88e1d808c1d8e26db1d9d3d0c8a8dc6ce2",
+    "mention_text": "Peers Consulting",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d19d7af006ac61c80bc230d7af9d96b886680030fa37ab4915acf080005fc472",
+    "mention_text": "capital paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af95f47ac16b8f11cf071f00cff9b52ce3e3f68c2a0ca062d652f8bd7c3636fd",
+    "mention_text": "Cajamar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d4ac9fa8c82df2603cb61fa5c35823c787262043ab3154ce3e41f569e6f1f1ff",
+    "mention_text": "Barueri",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2248c6638e546a710a5783e3145b20310569ae269a8f5e98e72998d5fd48810",
+    "mention_text": "Jadson Andrade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b88e29eb9c2daf2887ee82e2ac95df7517fed94c0b5c0cc66e7b0cc778f85a4",
+    "mention_text": "Cushman & Wakefield",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dfac538de4d9bae8f358be45c10d61a15f0cbbf4a3915aa5867470846a264613",
+    "mention_text": "EY",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a2a05c4c7b716d7bd35a0d841077eba37f6688ec2566358758a42a4cfec7e4d",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed6ed53900972db68483dd670802087994d2166f34602e005ded3f9fb7e7a687",
+    "mention_text": "Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "505aef78bdf9ea0166ef42f353ca088665d18d596f339268d45c7b7fb6bc3867",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "82ce4bb38d4edc7960868e2748b336a3ecc3fb9e135aa3ad4db22293b6fc8476",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "444a236d2d66acd423bf7e4f5dd31d8f16265b5fb59b0fce9f2a25f1ae7fcaf4",
+    "mention_text": "Marcelo Godinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2ea1c21287af98e100c857f2717b5fcfd8f5e456e067a0e776d97f8273b14be",
+    "mention_text": "EY",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3ea6ddf4e93de20860d961a1200a872274288cb3e10a77bc35b7ea4aa86a582",
+    "mention_text": "Centro Universitário Celso Lisboa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cab44b2d6cdc1e63c725b4093cd12243166aa568376fdcef1adfc9b6eee0b490",
+    "mention_text": "Facha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c609daac0889f4a101f82ea76f8a25d81eed1f3c69cc2f39e97904f27668c982",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "588c612939082f08f0ee9ead7ca96244fb651d0be09f763b26e789db19eb0ae3",
+    "mention_text": "Celso Lisboa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0a72640729563679771b3a52c3085dec6960a2a6d44140cfdfcd906592bdc8d",
+    "mention_text": "Scaldelai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67205919ce963b726a424434d5380ae135638b0804b1c9d3a1ea483fa286524a",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6924353f301801c3658f48985da49c16595ea077e8b7fe6e9cea5c3028cd1f7a",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c564a71860d377bed8d2fde81c0b8f597a398213498b9bb51a54864a6b8a4c7e",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  }
+]

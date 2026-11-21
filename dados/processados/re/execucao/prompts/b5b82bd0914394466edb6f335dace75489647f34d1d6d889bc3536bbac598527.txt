@@ -1,0 +1,385 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: dac1fa944f8b2a0e2c8648e78d1fcf5e06005fd594f1e239b6a9f155d012d41f
+
+TEXTO:
+Inteligência artificial individualiza ensino e ajuda professores
+
+​
+Todos os dias, ao chegar em casa após a aula, a estudante Júlia Toledo Alcântara, 14, faz o mesmo que a maioria dos adolescentes: passa horas no celular.
+No caso da aluna do 1º ano do ensino médio, esse tempo não é dedicado a redes sociais, blogs ou vídeos. Júlia fica conectada em um software que, por meio de inteligência artificial, identifica suas principais dificuldades de aprendizado e sugere planos de estudo personalizados.
+“Já cheguei a ficar cinco horas estudando. Eu me empolgo nas atividades e emendo uma disciplina na outra”, conta a aluna do Colégio Mater Dei, de São Paulo.
+Neste ano, todos os estudantes do último ano do ensino fundamental e do ensino médio do Mater Dei usam o Geekie One, software que reúne textos, vídeos e exercícios.
+A plataforma faz a análise qualitativa do desempenho de cada estudante a partir das tarefas realizadas. Fornece ainda recursos para ajudar o professor na correção de atividades e preparo das avaliações.
+“A ferramenta indica o aproveitamento da turma e do aluno, questão a questão. Além disso, elabora uma sugestão de avaliação baseada nos conteúdos selecionados pelo docente”, afirma o professor de português da instituição Renê Wagner. “É um jeito novo de aprender.”
+O software foi desenvolvido pela empresa de tecnologia educacional Geekie, escolhida pelo Ministério da Educação, em 2016, como plataforma de estudos oficial do Enem. Os simulados, que calculam a nota na escala do exame e montam um plano personalizado de estudos, alcançaram 4,5 milhões de alunos.
+No Liceu de Artes e Ofícios de São Paulo, o uso da inteligência artificial chegou neste ano à gestão pedagógica.
+O uso de uma ferramenta chamada Remark possibilita que o coordenador transforme o resultado de simulados em ações efetivas e pontuais de ensino.
+“Se vemos que muitos alunos optaram pela mesma alternativa equivocada em uma questão do simulado, por exemplo, pode indicar que o conceito não foi bem aprendido. A partir daí, fazemos reuniões com os professores e coordenadores de área para criar uma nova estratégia de ensino”, afirma o coordenador pedagógico do Liceu, Emerson Paes Barreto.
+Como nesses exemplos, a inteligência artificial na educação serve de ferramenta para auxiliar o trabalho do docente como curador de conteúdo.
+“A ideia é tirar o trabalho burocrático e braçal do professor para que possa dedicar tempo para conhecer os alunos e fazer o que só ele consegue: despertar o potencial dos estudantes”, afirma Leonardo Carvalho, sócio-fundador e diretor de tecnologia da Geekie.
+Apesar dos bons resultados, o uso da tecnologia ainda é incipiente no Brasil e engatinha até nos países desenvolvidos, afirmam os especialistas.
+“O Brasil e o mundo estão aprendendo. Por enquanto temos casos isolados até porque é preciso um processo de convencimento. A educação é muito refratária a métricas”, afirma Miguel Thompson, presidente-executivo do Instituto Singularidades, que atua na formação de professores.
+Thompson afirma que tanto a rede pública como a privada, salvo exceções, ainda não trabalham de maneira eficiente os dados coletados.
+“Para que o uso da inteligência artificial seja eficaz, é preciso acompanhar tendências de dados em longo prazo. Formar uma geração que transforme metas em diagnóstico. E isso não envolve só notas, mas as facetas cognitivas e comportamentais do aluno.”
+Em Goiás, a rede estadual de educação tem avançado nessa direção. Desde o início deste ano, todos os alunos dos ensinos fundamental e médio fazem uma avaliação bimestral.
+A correção, feita por um mecanismo informatizado, possibilita que os gestores monitorem o desenvolvimento de cada um dos 500 mil matriculados na rede e os direcionem a videoaulas e jogos educacionais em uma plataforma virtual também customizada.
+Por meio de um aplicativo para celular, os pais acompanham a evolução dos filhos em tempo real. Isso é só o começo. Um relatório publicado pela Pearson prevê que os sistemas de inteligência artificial vão fornecer soluções extremamente precisas de aprendizado.
+Em uma atividade colaborativa, por exemplo, a ferramenta poderá mapear a participação de cada envolvido por meio do reconhecimento de voz e perceber se o aluno está ou não atento por meio do rastreamento ocular.
+Uso da inteligência artificial na educação ao redor do mundo Espanha A Netex Learning desenvolve plataformas educacionais digitais para escolas e empresas. Uma das ferramentas acrescenta recursos multimídia, atividades interativas e exercícios aplicados à produção acadêmica, conforme as características dos alunos
+EUA A Carnegie Learning, empresa de educação focada em matemática, elaborou o software Mika, que usa inteligência artificial para personalizar tutoriais e avaliações em tempo real. O objetivo é reforçar o aprendizado de estudantes do ensino superior. No Estado da Califórnia, um ex-funcionário do Google criou em 2016 a Alt School, uma plataforma de aprendizado personalizado que apresenta vídeos, áudios, textos e avaliações em forma de “playlist”
+China O governo executa um plano para integrar inteligência artificial no ensino superior. Até 2020, o país deve ter ao menos 100 especializações, além de 50 faculdades de inteligência artificial e institutos de pesquisa interdisciplinares
+Índia A empresa de tecnologia Mindspark criou, ao longo de dez anos, um banco de dados com mais de 45 mil questões. A plataforma indica ao aluno materiais de apoio de acordo com as dificuldades que ele apresenta ao resolver os exercícios
+Inglaterra A britânica Third Space Learning atua com a Universidade College London em um sistema de aprendizado de matemática. Semanalmente, cerca de 3.500 estudantes fazem uma atividade de 45 minutos. Os dados de cada aluno seguem para avaliação de uma equipe de especialistas
+Chile Alunos de 10 a 12 anos, do ensino fundamental, têm acesso ao Brainy, uma ferramenta que tem uma base de dados alimentada de enciclopédias, textos escolares e portais educativos. É capaz de realizar um perfil cognitivo dos estudante, analisando comportamento, limitações e motivações, e, a partir disso, orientar as atividades mais apropriadas. Teve início em 2016 numa parceria entre Cognitiva e a Red Crecemos
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "153e4c06ddf52a3e208e5eda27c48db1d8bd149b45fdde3181dd72d29678e0d7",
+    "mention_text": "Júlia Toledo Alcântara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e89392fda3f49a5f4078778b506eb97e922f9472dbd4960a41336199652968b3",
+    "mention_text": "Júlia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "991805afa30c1ebfc002a6201e0db5e6f9f0f62a2ff5ec09692e9b4316cc643d",
+    "mention_text": "Colégio Mater Dei",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bc6ed8a27f90aa9149505e2fec51db5d3e8c38c3776d898c7ffb3e0ebe5af87",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6e07f9f3245688e064a1fd9642b0cb95164f4336ddc70a8da0501294a470cdf6",
+    "mention_text": "Mater Dei",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "536e6b79b88fb0a1f0b91bd86096646c49438a181e501958601403336e33132e",
+    "mention_text": "Renê Wagner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42f39cd83e2d323ea13331db2bee41833cde30402a5067bc16973fa842f9243e",
+    "mention_text": "Geekie",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0ed2fe86207ae3f73f5546a532d5ad73d05076046b9bd6aa90cd1f921e4c8a7",
+    "mention_text": "Ministério da Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c8374d1426d3a69329b5b629a08acddcab95f0365b39ac446c8ff6633601c63",
+    "mention_text": "Liceu de Artes e Ofícios de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ef848999f238551146f27bc52b82278c66f265caf0caf11ec444cbedce7c3f2",
+    "mention_text": "Liceu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e5d5e25668436f8f01e19ce1e6617ee72d72e3583225ad7e9730eeccb647e7c",
+    "mention_text": "Emerson Paes Barreto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11f091192bd7b648ea89b440e2fd2c35d543d7b2f1139822f54f00f8f83923e9",
+    "mention_text": "Leonardo Carvalho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4884209ec0a4c266033aebd5fcbceea122449c86d45d02f1890f6f3fec56eec0",
+    "mention_text": "Geekie",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "481b0c6efb6b8ec4c46dc45e904d153cdd717f9dd4c07552914a8e39f20d00cf",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fcfee0185aae262f480e6e3fcfd026d90a61703b9aab3965aa9b1f209065b7bb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb1c8152a09d9cb48249435e4fc4d9bdf6a4e33a88dc1cd5d07b7fa15bfebb05",
+    "mention_text": "Miguel Thompson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2091877ea7600c73603035b8964f646842c91f7fbf1e7222e0113e9b1b334370",
+    "mention_text": "Instituto Singularidades",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9312641adee8898d72a9761708b190d8097f287db9dab72dd7881cd4d03f9b28",
+    "mention_text": "Thompson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8681233c57feabf47dad62a60146b26feabda2131a0ed9def2fdeb204abfcc1f",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19d26d10a8aa21ed49ab248b20c66b658660148664a01ca6243e6eb9b321d92b",
+    "mention_text": "Pearson",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd1331c77922cc1223da9b8779d437aa0c0a90098e38b6203f362224fdae38ca",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8df7e0960593a66576e30bbcc7910478b0418e748a5dd4dcbcbd50e2a4a15d25",
+    "mention_text": "Netex Learning",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9bad9e2cca39102c5e54f5b4d487d2c15dffec8e8fc681d0987a85943018eb87",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e75adb6cef4a3dadafb920619d5951e069edd37df09c3ea86d70b84c18b833a",
+    "mention_text": "Carnegie Learning",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fac22b9478b2a0186b47bc82b1a60cf932264f9f68e8ffed77126a0bde6ced01",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36e211f3d5d04e01d60fb62d0e789c8f49aa2d5b83c72e47c6b03c67e45e676b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "519e2f729c45cde7af142eb5b6ddd9d44e6fb10d99f659baf4d8f24962f12835",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4b596662de05101a158cb243418049dd9b6b60bbfa06a8c80850ce8688fa5790",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9a7bcc3cfb82c682c20d1fe894a244413da8e631abfdc8663be849a51179979d",
+    "mention_text": "Mindspark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68426394b278bcd9e599b57f4a6b53211ed6cc2cf8fd31803d5e16e534e9281c",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b06862a762d4e4fb0e1231f95087d9dcd1a131bf49889319a8d32738a43cd7d",
+    "mention_text": "Third Space Learning",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d30c989deb4cb71fbeace77694924b70322fcf6d27e7f24414457737b1f3686",
+    "mention_text": "Universidade College London",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ac2fa41d22d1d86a4e7178dbadc03bd34b3dd71eacdfd39a2cc28642ffc435a",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e07a44128c1d2d11021d97ac84241a248a33280a66ff3ef807388648637b1e0b",
+    "mention_text": "Cognitiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3507fc1282587fae9d0986551d51abba77c09773ad74963b57d577a4873e273",
+    "mention_text": "Red Crecemos",
+    "categoria": "ORGANIZACAO"
+  }
+]

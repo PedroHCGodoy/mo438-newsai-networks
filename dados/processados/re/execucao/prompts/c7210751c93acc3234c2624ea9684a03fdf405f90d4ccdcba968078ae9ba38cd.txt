@@ -1,0 +1,463 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 48d3979077cf8261244d9cf0eb29d9f30b97a191c5e1a5ac4bd88dbbe3cb4f97
+
+TEXTO:
+Chinesa Didi Chuxing negocia compra de app de corridas 99
+
+A brasileira 99, dona de aplicativo para chamar carros particulares e táxis, negocia a venda de seu controle para a chinesa Didi Chuxing, que atua no mesmo mercado e que vem investindo em várias concorrentes da Uber.
+Procurada, a 99 disse que não poderia comentar as negociações e que se manifestaria sobre o caso em momento oportuno. Segundo o jornal "O Globo", a compra teria sido concretizada por cerca de R$ 1 bilhão.
+A Didi não respondeu a pedidos de entrevista.
+De acordo com executivos do mercado de start-ups, o valor da negociação pode superar os US$ 500 milhões (cerca de R$ 1,63 bilhão) e pode colocar a 99 como primeiro "unicórnio" brasileiro.
+O nome é dado para start-ups com valor de mercado superior a US$ 1 bilhão.
+Entre os argumentos para o mercado estimar uma transação de valor tão elevado estão o fato de a 99 ter levantado US$ 200 milhões em investimentos apenas no ano passado –metade do valor em rodada liderada pela própria Didi, em janeiro.
+Para que os investidores tivessem retorno satisfatório com a transação, seria preciso que se pagasse ao menos US$ 500 milhões, avaliou um investidor sob anonimato.
+O acordo também seria um caso emblemático de venda de start-up no mercado brasileiro, em que negociações que superam os nove dígitos são raras. O caso mais emblemático já tem oito anos: a venda do Buscapé para o grupo sul-africano Naspers, em 2009, por US$ 342 milhões.
+RIVAIS DA UBER
+A Didi ganhou notoriedade mundial ao comprar a operação chinesa da Uber em agosto de 2016.
+Em dezembro do ano passado, a empresa levantou US$ 4 bilhões junto a investidores para apoiar sua expansão internacional e desenvolvimento de tecnologias ligadas à inteligência artificial.
+Entre as rivais do Uber em que a Didi já investiu estão Ola (Índia), Grab (Cingapura), Taxify (Estônia) e Careem, no Oriente Médio.
+A compra da 99 faz parte de movimento da Didi para ampliar a atuação na América Latina. A empresa deve lançar uma operação no México neste ano.
+A 99 informa ter mais de 300 mil motoristas e 14 milhões de usuários cadastrados em mais de 400 cidades brasileiras. A maior parte delas é atendida por táxis –o app foi lançado em 2012 exclusivamente na categoria.
+Em agosto de 2016, quando se acirrava a disputa com a Uber, a companhia lançou a modalidade Pop, de carros particulares. A categoria funciona em mais de 30 cidades, entre elas São Paulo, Rio de Janeiro, Belo Horizonte, Porto Alegre, Curitiba e Salvador.
+Além da Didi, entre os investidores da 99 estão o fundo brasileiro Monashees e grupos internacionais, como Softbank, RiverWood Capital, Tiger Global e Qualcomm Ventures.
+RAIO-X DA 99
+Fundação 2012 Faturamento Não informado Funcionários mais de 1.000 Motoristas 300 mil Principais concorrentes Uber, Cabify e Easy Táxi
+RAIO-X DA DIDI
+Fundação 2012 Faturamento Não informado Funcionários mais de 5.000 Motoristas 21 milhões Principais concorrentes Uber, Lyft, Ola e Grab
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "bfbafc2fbf602d30257a81db41ad987a1cb261f5a406e0176ced735d3c652544",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "473035597185577d539edbf46bc4da0804604c648038f280836429185e460336",
+    "mention_text": "Didi Chuxing",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "112dafd8291caf6313995fa41076de1e9f8bb92d158d58660fa7d9db7296f1c5",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b6e413084c34c34b27cc18e8d2f6d1d0e5da8426512551ee64d03c196020a40",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f56ce68a8f20772745679785c88f673c3e3d76a5dde8949bc7d4e441ff614f8",
+    "mention_text": "Didi Chuxing",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a9071b866b3ffa7e1218c8c2d9900953de3f4b58f30a3a2da3ce9e41468f97b",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4562f93c73740884636ceae9236c72f0f089d588d6d823d84da48fa19a8850e",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3601815652936ed76ac3253fd2d0a450771cf1a0bdf7a6a96f289b56ea677486",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c92b18bad016fe682a3bc64386490a9e30a3ec163ec668cad36a9165f7781613",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d2a3f8629677c3a35f4092bbdf6939da6862afc16eb0de74af722e58e7f7a9c",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52f1270209c4033508a0fa4473bf3a0cd67ba269900a5c63d70bcda91eb070ba",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0d9f084495f34134829554efb59ff6a3985cdccd197b4da5b1d14003fe573ad",
+    "mention_text": "Buscapé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0729f6535b30a9c377bc4560ef8582b6eb42ead3d76e60830a51fa8d4b7f062",
+    "mention_text": "Naspers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0872b8d11cd2fa0b04447960ab6ea8486401d344e25a3a51b4a224d2e63b4195",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "237afde352cbcc7d22662f65bbb15a65f8ec2c99d8fb05d4cc0ff4bdfa20c43f",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da49a9c7efb8abc37197ea2cf37b6f5fcbba613d1d2ee8f6982c2087159fa155",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8364dcd5a06fb1cc93a8fda7fa5e90b3d6c51de07572096e26500b4a12d6548",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3850e56c8b5f5f07a55450e90a1dbfcdf1d6b3c69e226956699f7607a2503bf2",
+    "mention_text": "Ola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffd713675f5d20e60fe55955d6958384baa74881f1a4332f8c9e208b0aa48adb",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bcc20aa57c4532fea522105cea25d9f4eeb0a2adf1df27a449ff53675f44fbb3",
+    "mention_text": "Grab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "804b3ea2e59cd42d488fdd1d495d3d5a2a70ba37201fb54c80874575295e6771",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1af00d04be4b1d8d2ce12548b1ed74a25a8171a4aa4e370cd4d2ce7ae9a2bff2",
+    "mention_text": "Taxify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b3debb94f509a5521d52ab207b25d913432453c65d73c0b6927d67ed43499aa",
+    "mention_text": "Estônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f40cc1fe94b01e46f8cb26d5c9ab4c50fa63abce916b6b59558ce455cc17fb2",
+    "mention_text": "Careem",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6592301effccba26078ca5fcbf7759a7b165993561e5c242f52a4eadb67815fa",
+    "mention_text": "Oriente Médio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "240a5258af58a33ce2f6c85a9c1ecccaf4d004cba8d97833ca7e1ce9b41f7fff",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed63d7c6d8d1c4c84a39c82ce31400e4891438bc4738357a8919f7f44bf06a54",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35a45524bd64f9aff5b43988024296407a73a2a5e075f9f91793e12418560e40",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2a6ae32da62ad96d9723197e35568cec82d828b15ca69c4ee57503c6e583462",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "992eedbe3418c10b400d6dc888f3ce1da1a3f76f09decd308e8c60ea6c7e16b4",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d03fed9aac45cf26fe36b3258bcdf7ace3d89f10630d7c3d5ac2489107cf405",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b1e34a4a0b7fb842e5ffe8aaa894d585880185951ee7c206bae3c59dda13d15",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d07cc170064fab92b6678857a4653b0d75e522a8af4da7e66c5164c8f94d8378",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8e2e10808a80ad79ed5c1eecfca98876a84ca90cb5826d2f1ba9d98c375aa52",
+    "mention_text": "Belo Horizonte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c9629ed98aa67ff3ff8e3196445761345533b0851fe72e340c3085f84d13f3ba",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf757c26fedb3af0e3bb3b17d93409264f626e16ae1c2497e16471cca964d294",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bef486ddc5ab30d22bdaa75ef363ee30d69dfe793232366a092434f64f43bdb6",
+    "mention_text": "Salvador",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa767241ffc769bd64fd1162ad124b04a5ab40688b0ac7f3003cc24891ed3e6b",
+    "mention_text": "Didi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c1468c2eeffbc9502cd4052966eb27b9a33189822443b6c58d2673de0ed90d4",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e71ae44f71da1e75391a0ad43dd3c138f781e751faccb196d3d06814f501bee",
+    "mention_text": "Monashees",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4418aed254338cbd78a146b6652ba0defff07df86104d3b54aa6c239273a859c",
+    "mention_text": "Softbank",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c90ff92ff7cb08141db9731f4f068d10126376d8afb3f8e7be07ac7b033daca6",
+    "mention_text": "RiverWood Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1eb44b8c83a0fb5bc037160d4f801abda5a4862cd3e08686e6e24e92635fb903",
+    "mention_text": "Tiger Global",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d0a433622b77de61af3aefa2a3f77ab12ab3db877b9c726237c42833864e263",
+    "mention_text": "Qualcomm Ventures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac7fd2ba7ff02e583ec29391a392767edd33932a0cdb65dd9c445420749ffd22",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28951acadd2eef483222bbd65cd3d66ff65b7235ba7ec1db66c9960327f64695",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fdd9294395270618827a3563fff3705438d10c4815b3341c7b3ffeeed14207f",
+    "mention_text": "Cabify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "010fede05bf5eb091fe39eff3c354b9944503af69b2ce7b998a97413255a7622",
+    "mention_text": "Easy Táxi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df3e08511658ff5b04c28c9d4b2bcce364e500ba012c7e0709e8448be1a6c7a7",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7536850e1f6c57c8fe61cecbcffd15d1c85b08a18da39cdba3c96a9e4a8d6359",
+    "mention_text": "Lyft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e742fb9616b4b644e0842178649985599b1117d620afb6a44b93c8bbd2e0851",
+    "mention_text": "Ola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19822d9b82d31eb53c3e9a137ba5a07d493d24314f6d1787334d589ac79fbe2e",
+    "mention_text": "Grab",
+    "categoria": "ORGANIZACAO"
+  }
+]

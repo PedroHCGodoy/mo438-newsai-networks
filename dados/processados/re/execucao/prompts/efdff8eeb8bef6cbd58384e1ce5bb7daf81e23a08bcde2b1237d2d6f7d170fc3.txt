@@ -1,0 +1,476 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 46f83861b4d23be33359b4d41c9df5834a8b160c12703b785f52aa566300cec8
+
+TEXTO:
+Novas tecnologias podem provocar saída de multinacionais do Brasil, diz economista
+
+A quarta revolução industrial vai tirar o atrativo do custo baixo da mão de obra brasileira para as empresas, pois as novas tecnologias têm permitido que elas consigam “fazer mais do que antes, com menos pessoas, menos salários, menos dor de cabeça”.
+A afirmação é de José Pastore, 82, um dos maiores especialistas brasileiros em relação do mundo do trabalho.
+Segundo ele, há o risco de que muitas multinacionais deixem de ver vantagem em operar no Brasil, que, além de permanecer longe da fronteira tecnológica, sofre com precariedade educacional crônica e com excesso de burocracia.
+“Muitas multinacionais começam a apresentar sinais de volta a seus países de origem. E isso é um problema que preocupa bastante”, diz Pastore, que é presidente do Conselho de Sustentabilidade da FecomercioSP, que promoveu recentemente o seminário “Como será o trabalho do futuro à luz de novas tecnologias?”
+Há um esforço para mensurar quantas vagas serão criadas e eliminadas na esteira da quarta revolução industrial. Há um exagero nisso?
+Acho que essa ansiedade é mundial, não há uma família do mundo que não pergunte: “O que vai acontecer com emprego do meu filho, do meu neto, com a entrada de tantos robôs no setor produtivo?”. Na literatura, você vai encontrar resposta para tudo. Tem gosto para tudo. Você vai ter autores de respeito dizendo que [a tecnologia] mais destrói do que cria, e vai ter outros
+dizendo que mais cria do que destrói. E tem aqueles por quem tenho muita admiração que dizem: “A questão não é o que destrói e o que cria, o problema é o que é transformado”. A grande maioria dos empregos e do trabalho certamente passará por muita transformação em razão das mudanças tecnológicas. E isso aqui também tira o sono da gente, porque a pergunta é: “Será que o país, a escola, a empresta estão preparadas para fazer o ajuste?”.
+Por que o senhor disse admirar os especialistas mais moderados nesse debate?
+Porque, olhando para os países, você vai encontrar casos como EUA, Japão e Alemanha, que usam novas tecnologias em grande profusão e têm um nível de geração de emprego admirável, desemprego baixíssimo. A literatura mostra que na Alemanha, por exemplo, a velocidade de entrada de robôs é igual ao surgimento de novos empregos. Os EUA estão com 4% de desemprego.
+O Japão também. Então, essa questão de que só destrói não é verdadeira, acho que há empregos que são destruídos e outros que são criados, mas tem a grande maioria que se transforma. Então, eu tendo a ter simpatia por isso porque acho mais realista.
+Há diversas projeções divergentes sobre o impacto da tecnologia sobre o emprego. Isso tira credibilidade do debate e gera mais confusão do que orientação?
+Acho que as divergências que surgem só agravam a ansiedade que existe. Há muitas estimativas diferentes, mas também estudos como o da OCDE (Organização para Cooperação e Desenvolvimento Econômico, feito por pesquisadores da Áustria, que dizem que a profissão não some. Então, quem é médico hoje vai continuar médico daqui a 10 anos, 8 anos, mas o que ele vai fazer vai ser transformado.
+Outros falam que não é questão de olhar para o saldo, vamos olhar o impacto que tem na renda, que desiguala ou cria polarização porque destrói muitas atividades do meio e preserva as pontas, as altamente especializadas e aquelas que não podem ser robotizadas embaixo, que é o zelador, o garçom, a enfermeira, quem faz manutenção de equipamentos. A questão da polarização é mais importante que olhar para o saldo, porque demanda políticas específicas para lidar com suas consequências, como a desigualdade de renda.
+O senhor mencionou que as chamadas profissões do meio estão desaparecendo. O que mais já se vê de transformação concreta?
+Você vai ter mudança de funções de atividades a começar pela sua profissão de jornalista. A sua profissão está cheia de novidade. Tem coisas de ponta hoje. É possível escrever uma reportagem sem a participação do jornalista humano e isso tem sido feito de forma intensiva.
+Há advogados de ponta que fazem a petição deles em cima de um número monumental de informações [levantadas por tecnologia] para fazer o melhor argumento possível. Na medicina, há os médicos que confiam mais no diagnóstico feito por robôs e big data do que no seu próprio. São transformações visíveis.
+Isso também já é visto aqui no Brasil?
+No campo industrial, a CNI (Confederação Nacional da Indústria) tem algumas pesquisas mostrando que menos de 40% das indústrias brasileiras estão na quarta revolução industrial. Ou seja, a grande maioria ainda não chegou lá. E as que estão, entram lentamente. Algumas com mais velocidade, outras mais devagar. No setor de serviços, a coisa é diferente. No financeiro, que é um dos principais do segmento, a velocidade é espantosa, de automação e inteligência artificial.
+Hoje nos EUA o ecommerce é responsável pelo dobro das vendas do que há seis, cinco anos atrás e tem lojas fechando até na Quinta avenida porque ninguém tem interesse em comprar em uma loja e às vezes não tem condições de pagar aluguel caro. Aqui no Brasil também está acontecendo isso, a penetração do ecommerce é muito rápida e certos produtos, como material de escritório, livros, música, são mais comprados no ecommerce do que em lojas físicas.
+O risco de que a atual revolução tecnológica aumente a desigualdade de renda é concreto? Essa ameaça existe no Brasil?
+Esse risco é concreto porque aumentou a diferença da remuneração do capital em relação à remuneração do trabalho. A remuneração do capital agora está maior do que a do trabalho porque as tecnologias dão saltos de produtividade fantásticos e acabam dispensando certas habilidades humanas. Então, a remuneração do ser humano tende a ser postergada ou reduzida em relação à remuneração do capital e isso gera desigualdade. Gera desigualdade entre profissionais de vários tipos que são afetados pela entrada de tecnologia.
+Isso é uma coisa séria para o Brasil porque muitas multinacionais vêm para cá, assim como para outros países em desenvolvimento, porque o trabalho ainda é barato. Agora, com as novas tecnologias, o trabalho brasileiro, apesar de barato, se torna muito caro, porque você consegue fazer muito mais do que antes, com menos pessoas, menos salários, menos dor de cabeça.
+Então muitas multinacionais começam a apresentar sinais de volta a seus países de origem porque lá elas conseguem fazer mais quase sem trabalho, com muita automação, além de estarem perto da logística e dos consumidores. E isso é um problema que preocupa bastante.
+O que diminuiria o risco de o Brasil perder esses investimentos? Se o Brasil tiver condições tecnológicas de ficar na fronteira e pessoal qualificado, esse aqui é um mercado consumidor bom também. Há muita chance de ter empresas prósperas aqui, mas sabemos que há vários entraves nessa equação. A coisa é preocupante porque, ao mudar a diferença de remuneração entre capital e trabalho, isso pode gerar muito deslocamento de empresa ao longo do globo todo. Não digo que o risco é de debandada maciça, mas uma debandada de muitas empresas.
+O que o Brasil poderia estar fazendo?
+Para enfrentar essa questão de desigualdade de renda, destruição de emprego, transformação de trabalho etc., os países avançados, como EUA, Alemanha e Coreia do Sul, possuem conselhos especializados na formulação de políticas especificas para esse assunto.
+Cingapura foi mais longe e, além do conselho, tem experiência prática na difusão do ensinamento de novas tecnologias. Cingapura montou um Pronatec de exportação. E vários países estão se apoiando em cursos rápidos, por meio de internet a distância, para poder acompanhar a velocidade da mudança tecnológica. Então, o Brasil tem muito a fazer nesse campo ainda.
+No que tange à qualificação da mão de obra, não preciso dizer que nosso sistema educacional tem uma precariedade crônica. As burocracias também estimulam a automação, a inteligência artificial. Quando o empresário vê que é muito complicado, ele fala “eu vou robotizar”.
+Então, burocracia tributária, trabalhista, do ambiente instigam uma aceleração da busca de proteção do negócio via automação. E a gente está fazendo pouco nesse campo aqui. No campo tributário, Bill Gates acha que está na hora de pensar em tributar os robôs.
+E o que o senhor acha dessa discussão?
+A tributação do robô é muito controvertida. No meu entender, tributar robô é inibir a criatividade humana. Agora, por que é controvertida? Porque há um argumento. O Bill Gates fala assim: “Olha, se você não quer inibir a criatividade humana, tributa o lucro recorrente do uso das novas tecnologias e usa esse lucro para o sistema educacional”.
+Outra discussão importante é sobre educação continuada, que é algo que dá certo. O Japão e a Alemanha são dois casos de sucesso que permitem aos jovens acompanhar a evolução tecnológica.
+Em termos de formação, o que o senhor acha dessa discussão de novas competências e habilidade?
+Para acompanhar essa velocidade meteórica das novas tecnologias, me parece fundamental ter uma boa educação geral. Saber fazer conta, escrever, ler, interpretar e conhecer a lógica das ciências. Além disso, você precisa reconhecer as novas habilidades, as novas exigências que estão mais ligadas ao mundo da produção. Mas o que facilita a mobilidade de uma área para outra é a qualidade da educação básica, porque é ela que permite aprender, se ajustar às novas exigências.
+As mudanças que estão sendo discutidas na educação no Brasil nos fazem caminhar nessa direção? Eu acho que está longe. Nós precisaríamos ter outros esquemas. Uma coisa é você ensinar, outra é aprender. O Brasil está avançando na tarefa de ensinar. Tem mais gente na escola, os métodos estão melhorando, o currículo etc. Mas aprendizagem é o que você mede no Pisa [avaliação educacional], e o que você mede no Pisa está deixando o Brasil muito mal na foto até o momento.
+Raio-X
+José Pastore, 82
+FORMAÇÃO
+Bacharel em ciências sociais pela USP, mestre em ciências sociais pela Escola de Sociologia e Política de São Paulo, doutor em sociologia e doutor honoris causa em ciência, ambos pela Universidade de Wisconsin (Madison, EUA)
+CARREIRA
+É professor titular da Faculdade de Economia e Administração da USP e presidente do Conselho de Emprego e Relações do Trabalho, da FecomercioSP. Foi chefe da Assessoria Técnica do Ministério do Trabalho e membro do Conselho de Administração da OIT (Organização Internacional do Trabalho)
+OUTROS TÍTULOS
+Membro da Academia Internacional de Economia e Direito e da Academia Paulista de Letras
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "095d24fb76a8e9c2711c551a09a8652ae0eca8213570674f30d052f428bc9225",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e6131359b2d9c070256a5d17b147bb76622ef0655b18039deb17c96be25d555",
+    "mention_text": "José Pastore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1117ea9dafd5bed0b9e3c2d6a278068d494918b59b3c4c7ba1a6f05c62c7c13d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4470253387fd10c9a2e4a778ab30306bb4ed0a6664f981a14fabb33d0c812027",
+    "mention_text": "Pastore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ba1271404859a556053795dbf18e2e278aa48ed1bdeb89537f3434914fcce3b",
+    "mention_text": "Conselho de Sustentabilidade da FecomercioSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbd9678745e42bfd604180532a135cb6e8e082dd35886d572a2baceb7f169b9b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1c3935df1197b9f57cf2dcb96057119fa09386ae89f827a362aa92da340c2fb",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07cdcede09ba6aaeb561416a13fcd006c3c342e6c9c307b4b30f7346bb7c1b1f",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a3af108804afd048030c33ffc5aa348509ea18b91040729073b4b2612ed2d5a",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "72ecc6fd71af9ce48a6c0f3a9edc8be1ebecd90305e83f32433ec174cd581576",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01ae27f9a4e1bddfe61d45dcc862c28fd7017f77ec2458199f8302e8d96567cc",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "518524f034449da1e954431b69ccd462b8f4f2e122bea97465674d88cb6f103d",
+    "mention_text": "OCDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96e17637adbf2b333adbdce329e4cdc727619f672e08be6f348d38c29883d662",
+    "mention_text": "Organização para Cooperação e Desenvolvimento Econômico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf37222678ca6a8245ab6e3ada7394e6f2917b016f9497c124686a9235748472",
+    "mention_text": "Áustria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b321e17d4a7807727b09b7cbf8f910abc7383d2693bd454282f78be19e4f9a7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "800a077b04cfc83a79724378fc562bb926b8ba38013c8076f77bd084d2d741d0",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7838a4897ffef5cfea01ca825103128c149c4b92caccd060b9ad474a3403f2b",
+    "mention_text": "Confederação Nacional da Indústria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b61a0e6a6603ff81de354e15a297569a7c0e406d3b88554a689ab2e4c30692fc",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1e388f531a64180cee67616641ac75b72e45fe185f40f7943bedb4090d04511",
+    "mention_text": "Quinta avenida",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe6126e2b2129d755ee316acc4954c742dcb89a87387fcf6e40da965cbb4c70a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e44a0b9c3201c76422fe1db8858ae6a2bc7b8a2c2b9a613d5cd76f59dded92d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f77182bb020f50525c62b2502eb7648e7d713bf43b258f5e8973f7ac615d1182",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9e08923bcc33f6c7b639fcbe8f284534f78b2c1ab7ce13ec28c79870e1714a33",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3babaeef59c302aa615488b5fdfb9585ce4bc66e090344beff2eb8921263e643",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f99c51389517696f47c63291df9cc5badd1c3c8f0e4664abcd659e2f996a214",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f334f704a8e8021b0ed89efe74d3145d339aec731d2b1c03d89f38b83ca29cb0",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56bb22e34004d062b14260fff9063a2c0235153f85c9227da753ed7e10419903",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cdce442cc24c466514c737d993b665eb202d9426ee46a131efc1d1835872929d",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5769297f40629675482c74adb41d7ef4967793bab0a2e849be360161fc1a02f5",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "390f2cd698d2b6c3ba2177ba6918179c921a5fffd9c681f06b01e4b681e50682",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8151356797260cdd98ac4c9b7959e59277d8b79dcdcad656483dc5aa258530fd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2935b9691637410db2e0c4f5ad9409e9f3e544db4dd6961cf3d9c18cba7d70ab",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "00cf17d4b49c8b8b656f63952e98545a2a9d720fdd0f93e39b59073639003fad",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88aa1cc3d2be8a467a388fc91b7f82dcd2892d22263002faf0d8594f0f34b825",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "abc56fcc9eefa82a65f890e06d1603d3c22629d76e33249dc119d2dcc91c667a",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fff8fb00aae99893be58e274d83235f29a9dbd91d1d71e5539bce99f903fa53a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f80e75c36a84f2f1ad4788e562eb7c7aab5029798e6cb1a16373a7364b653933",
+    "mention_text": "José Pastore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc2585a90f1113a7228c0411352725c4f9f06685e64adceec88ab6ca6fa77cee",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95ad610fed76adf1742c442bd1779cb10210bef59ac1dae60ef52c3c7178349b",
+    "mention_text": "Escola de Sociologia e Política de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c882aa78173e5bce22b9885bd84fd4e0989cac61df35ae0b723d4a54c9639a1b",
+    "mention_text": "Universidade de Wisconsin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a007029707a2043573502a4f8e6e567b26b452dddba336698ce94195648c0bb5",
+    "mention_text": "Madison",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0eff4551a91faa8e7a1a092691d3504b54162673c3e94867c9ec45ff09053292",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74ba82eba43cc9381dfefd8476bed1b23510b0d791d51fc3a7e94552be2b1fba",
+    "mention_text": "Faculdade de Economia e Administração da USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b36d88266099c2ce42f174b3614bdc6dcbed810c0129ccc69a9fbaa1bd92b6c",
+    "mention_text": "Conselho de Emprego e Relações do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89ee16140aeb20c1cbb1d018a9e5acc1bcb9f0d790454e18032999a8d25b85ca",
+    "mention_text": "FecomercioSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ae2ec734e172916ffe5c1e89662a76c72c6e55439fc1d3a7b54e70433e65f02",
+    "mention_text": "Assessoria Técnica do Ministério do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edb7e5c2feb9a85c29d9941bb21a5ce08e2c61015d05fd49520193f7c62894d7",
+    "mention_text": "Conselho de Administração da OIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7477ffbedf37ceb57173c1f108eb81cac64850313e55dc90f76f23ea975bff22",
+    "mention_text": "Organização Internacional do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a1ef1f4ef10aea71d4192ee63a61f0b450dfae9c3592d7e2d3c68b7dff7cb6b5",
+    "mention_text": "Academia Internacional de Economia e Direito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf295a911031a3fc1401f74c38392513fcf7c047fca2023ccbfe55c5eec13b29",
+    "mention_text": "Academia Paulista de Letras",
+    "categoria": "ORGANIZACAO"
+  }
+]

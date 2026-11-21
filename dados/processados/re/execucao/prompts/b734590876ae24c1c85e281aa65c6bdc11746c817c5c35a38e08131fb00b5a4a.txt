@@ -1,0 +1,450 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 297090daa884cc3fb0b3579df594b6bcc5520cd91362a7f2df3a75d8ebbdf66d
+
+TEXTO:
+O que a ciência sabe sobre como memória é formada e transmitida
+
+[RESUMO] Stevens Rehen, curador de evento sobre neurociência que acontece em São Paulo na próxima semana, retraça o aprendizado de um século de estudos sobre a formação e a transmissão de memórias em humanos e animais .
+Planárias são diminutos vermes de corpo e famosas pela sua enorme capacidade regenerativa. Se cortada em pedacinhos dará origem a um novo animal completo. Em meados do século 20, elas estiveram no centro de uma controvérsia científica envolvendo memória e... canibalismo.
+Apesar de mais diminuto e menos complexo que o humano, o cérebro das planárias é organizado bilateralmente e seus neurônios são bastante semelhantes àqueles encontrados nos vertebrados. Além disso, dividimos com as planárias alguns neurotransmissores, isto é, substâncias químicas produzidas pelos neurônios e responsáveis pela comunicação entre eles.
+Não por acaso, na década de 1950, o biólogo e especialista em psicologia animal James McConnell, da Universidade de Michigan, iniciou uma série de experimentos com planárias. No início, seu objetivo era mostrar que os vermes podiam ser condicionados com choques elétricos. Em seguida, quis testar se uma planária condicionada, depois de cortada ao meio, daria origem a duas planárias que também retivessem a memória do condicionamento pelo qual a planária original havia passado.
+Após anos de pesquisa, McConnell conseguiu mostrar que mesmo planárias formadas após sucessivos cortes e regenerações cujo corpo não incluísse nenhuma parte proveniente do verme que fora originalmente treinado ainda retinham o condicionamento. Isso levou o cientista a crer que a memória poderia ser transmitida de um animal a outro por um caminho químico, mais ou menos como o DNA transmite características de geração a geração.
+Para testar essa hipótese, ele procurou formas de transferir partes de uma planária treinada para outra, não treinada. Entra a criatividade. McConnell tentou, por exemplo, juntar a cabeça de um verme condicionado à cauda de outro, sem treinamento. Não deu certo.
+Injetar um “purê” de planárias treinadas em vermes não condicionados também não funcionou, e alguns animais explodiram de tão estufados. Por fim, a forma mais bem-sucedida que o cientista encontrou de transferir material de uma planária a outra foi fatiar os vermes condicionados e dar de comer àqueles que ainda não tinham passado pelo treinamento —o que lhe rendeu o apelido de McCannibal.
+Segundo seu trabalho publicado em 1962, as planárias alimentadas com pedaços de vermes treinados podiam aprender com muito mais facilidade do que aquelas que haviam sido alimentadas com vermes não treinados, o que poderia indicar que as planárias “comeram” memórias umas das outras. A comunidade científica recebeu com ceticismo esses resultados.
+Apesar do fiasco, décadas mais tarde as planárias voltariam ao palco das neurociências. Em 2013, os biólogos Michael Levin e Tal Shomrat, da Universidade Tufts, em Massachusetts, decidiram retomar as pesquisas sobre vermes e memória e demonstraram que planárias decapitadas retinham memórias de longo prazo. De alguma forma, essas memórias persistiam em seus corpos, e eram preservadas no processo de regeneração da própria cabeça.
+Mais do que oferecer um resultado curioso —e uma intrigante retomada dos insights iniciais de McConnell—, o experimento de Levin e Shomrat teve uma motivação prática. Comprovar que as planárias dispõem de um mecanismo para guardar e recuperar memória que independe do cérebro abriria possibilidades para pensar estratégias de recuperação de lesões cerebrais em outras espécies, inclusive em humanos.
+Quando começou seus experimentos com planárias, McConnell acreditava que as memórias podiam ser armazenadas como sinais químicos no interior das células, assim como características hereditárias eram armazenadas no DNA.
+Outros cientistas já haviam formulado outras hipóteses sobre como os animais retêm suas memórias. O biólogo alemão Richard Semon (1859-1918) foi um deles, e cunhou, no início do século 20, o termo "engrama" para se referir a alterações bioquímicas ou biofísicas ocorridas no sistema nervoso a partir de estímulos externos. Uma linha de pesquisa surgida a partir dessa ideia foi a busca por onde estaria fisicamente localizado o engrama.
+Uma das interpretações possíveis para esse enigma foi a do psicólogo experimental americano Karl Lashley (1890-1958). Seus experimentos com roedores consistiam basicamente em remover partes específicas do cérebro, por meio de uma cirurgia, e testar se essa remoção impactava a capacidade de os ratos aprenderem a sair de um labirinto.
+Os animais que tinham perdido parte do córtex cerebral tinham desempenho pior que os animais-controle, isto é, que não haviam sofrido lesão. Mas Lashley notou que a região do córtex onde se provocava a lesão não era relevante. O que determinava um pior desempenho dos ratos no teste do labirinto era a quantidade de tecido que se havia removido.
+Por isso, o cientista concluiu que não havia uma área específica do cérebro onde a memória permanecesse “arquivada” nem neurônios dedicados exclusivamente a guardar informações. O ato de memorizar, de acordo com o pesquisador, envolveria literalmente milhões de neurônios, que por sua vez também estariam envolvidos em outras incontáveis funções.
+Seguindo os passos de Lashley, seu aluno Donald Hebb (1904-1985), um psicólogo canadense, propôs que a memória seria uma capacidade dos diferentes circuitos neurais. Assim, as regiões relacionadas a diferentes funções guardariam informações a elas relacionadas: a região ligada à visão guardaria memórias visuais; a relacionada ao olfato, memórias olfativas, e assim por diante.
+Já na década de 1970, o neurocientista britânico David Marr (1945-1980) misturou o modelo de Hebb ao funcionamento de computadores para propor uma nova explicação sobre a aquisição de lembranças. É de sua autoria o criativo conceito de redes neuronais, isto é, circuitos de neurônios capazes de aprender a partir do armazenamento, passo a passo, de informações que poderão ser usadas posteriormente.
+Esse modelo gerou frutos não apenas na neurociência, mas, também, na ciência da computação, onde vem sendo utilizado para a criação de máquinas dotadas de inteligência artificial. Criatividade, vale lembrar, é fazer conexões inovadoras, muitas vezes entre áreas distantes do conhecimento.
+Ainda segundo Marr, o cérebro humano seria dotado de um processador de memórias imediatas —algo como a memória RAM dos computadores—, onde as informações seriam trabalhadas no curto prazo, antes de serem transferidas definitivamente para o córtex (nosso HD), onde seriam finalmente armazenadas.
+Anos mais tarde, outros cientistas comprovaram que pacientes com danos no lobo frontal —inclusive epilepsia— eram incapazes de relembrar eventos recentes. Ficou demonstrado, também, que existem áreas nos lobos frontal e temporal envolvidas no armazenamento temporário e duradouro de informações.
+Conforme a ciência avançou, a busca do engrama ou das bases físicas da memória ganhou novos contornos. Permanecia a intuição de que a memória ficaria, de alguma forma, armazenada nas células.
+A hipótese mais recente posiciona o engrama justamente nos pontos de contato entre neurônios, nas regiões onde impulsos elétricos e sinais químicos são transmitidos de uma célula nervosa a outra: as sinapses. Nos anos 1970, pesquisadores relataram evidências de que, quando um animal aprende alguma coisa, essas conexões nervosas são fortalecidas.
+Uma nova reviravolta na história da neurociência veio a partir de trabalhos com outro modelo experimental pouco óbvio: as lesmas marinhas do gênero Aplysia . O neurocientista austríaco Eric Kandel, pesquisador da Universidade Columbia, observou, nesses animais, a relação entre a formação de memórias de curto prazo e a produção de neurotransmissores.
+Em seguida, dedicou-se, também, a estudar como as memórias de curto prazo são convertidas em lembranças duradouras —o processo requer uma mudança no perfil de proteínas produzidas pelos neurônios, o que pode levar a mudanças na função e na forma das sinapses. O conjunto da obra lhe rendeu o Nobel de Fisiologia ou Medicina no ano 2000.
+Outro experimento desenvolvido no Instituto de Tecnologia de Massachusetts (MIT) em 2015 pelo neurocientista e prêmio Nobel Susumu Tonegawa, complementou esses resultados. Tonegawa condicionou ratos a temer uma certa gaiola e marcou geneticamente os neurônios que, de alguma forma, estavam relacionados ao medo adquirido —as células-engrama. Como no experimento com as lesmas marinhas, também ficou evidenciado que as sinapses foram fortalecidas.
+Em seguida, os cientistas usaram uma droga para causar amnésia nos roedores e viram que as sinapses enfraqueceram novamente. A memória, porém, não foi perdida, mas silenciada. Ao estimular os neurônios marcados geneticamente, os pesquisadores ainda podiam ativar as células-engrama e o medo.
+Os resultados de Tonegawa sugeriram, portanto, que a memória dos ratos não estava armazenada na força das suas sinapses, o que estabeleceu um novo paradigma nas pesquisas sobre memória: o de que o armazenamento e o acesso às memórias não estão intrinsecamente ligados. Trocando em miúdos, pode ser possível bloquear o acesso a uma memória sem que a memória em si seja eliminada.
+Apesar dos avanços nas pesquisas, ainda estamos longe de saber onde a memória é, de fato, armazenada. Ainda é um mistério para os cientistas, por exemplo, por que certas memórias permanecem escondidas por vários anos e, de repente, nos surpreendem em uma situação totalmente inusitada.
+Uma possibilidade é que as lembranças estejam armazenadas nas sinapses, entretanto, independentemente de serem fortes ou fracas. Mas este ainda não é um consenso. Alguns pesquisadores acreditam que a memória possa estar armazenada no interior das células —como propunha o hoje desacreditado McConnell.
+Além das planárias e das lesmas marinhas, outros modelos animais ajudam cientistas de todo o mundo a desvendar a criação de memórias. Há pesquisas, por exemplo, com insetos que apontam como as memórias podem resistir mesmo quando o cérebro passa por uma completa reorganização. É o que acontece com lagartas e mariposas, ou com larvas e moscas.
+Evidências: as mariposas preferem botar ovos em plantas das quais se alimentavam na fase de lagarta; e as moscas-das-frutas evitam cheiros que foram relacionados a choques que receberam quando ainda eram larvas.
+Até alguns mamíferos parecem corroborar esta hipótese. O esquilo-do-ártico reduz as atividades sinápticas durante o inverno para poupar energia, retomando capacidades cognitivas —como reconhecer familiares— tão logo o clima volta a esquentar. Seres humanos também são um bom exemplo. Apesar de mudanças radicais no cérebro, bebês ainda são capazes de lembrar sons e gostos que sentiram quando estavam no útero materno.
+A transmissão de memórias entre gerações é outro tema que intriga os cientistas. Dados empíricos mostram, por exemplo, que filhos e netos de pessoas que sofreram traumas na infância, como abusos ou situações de guerra, tendem a apresentar comportamento depressivo, como seus progenitores, mesmo que não tenham passado pelo mesmo tipo de trauma.
+O neurocientista português Alcino Silva, radicado nos Estados Unidos desde os anos 1970, também vem se dedicando ao estudo da memória. Para ele, é fundamental o fato de que as lembranças não existem isoladamente uma da outra; ao contrário, são complexos emaranhados de informações, e conectá-las é fundamental para a sobrevivência, pois nos permite tomar decisões baseadas nas coisas que já aprendemos.
+Seus trabalhos se debruçam sobre o gene Creb, que, em estudos anteriores, foi associado à memória emocional e à formação de memórias de longo prazo.
+O papel desse gene na segunda situação é codificar a produção de uma proteína que regula a expressão de outros genes relacionados à memória. Sheena Josselyn, colaboradora de Silva e pesquisadora da Universidade de Toronto, conseguiu inserir cópias extras do Creb em alguns neurônios de camundongos e demonstrou que as células nervosas com maior presença do gene tinham muito mais chance de serem recrutadas para a formação de memórias do que as demais.
+Juntos, os trabalhos de Silva e Josselyn indicam que, em diferentes partes do cérebro, os neurônios com mais concentração da proteína originária do Creb são mais provavelmente envolvidos no armazenamento de memórias emocionais.
+Em coerência com o que já se pensava sobre a importância das sinapses para o armazenamento das memórias, verificou-se, ainda, que os neurônios com maior quantidade da proteína Creb apresentavam conexões mais fortes. Silva também demonstrou que a estimulação de neurônios geneticamente modificados para produzir mais Creb pode artificialmente ativar memórias de medo em ratos.
+Por fim, os experimentos de Silva indicam que, quando duas memórias envolvem o mesmo grupo de neurônios, ficam, de alguma forma, ligadas. Isso quer dizer que, ao se recordar as informações de uma memória, provavelmente a outra também virá à tona. Memórias criadas no mesmo dia tendem a ter uma ligação mais forte do que aquelas geradas em intervalos maiores de tempo.
+Relembrando o que disse Steve Jobs, criatividade é a arte de conectar ideias. Memórias são parte dessa engrenagem cerebral.
+Stevens Rehen é neurocientista, pesquisador da UFRJ e do  Instituto D’Or de Pesquisa e Ensino. Ele é curador do espaço BrainSpace, que traz painéis sobre neurociência na próxima quarta (20), na Unibes Cultural.
+Catarina Chagas é jornalista.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "82b16ca6d789f4063e3a28a508bcbb83ab521d033813d3b58fb3a0233228bcca",
+    "mention_text": "Stevens Rehen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "488148a42cf70539cf6dea253d1f2905d49af458e585e5cc3cdbb7983127ccfe",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "479e83041bf006c995d6d884c6c49e6fc43a6be880ac8632ceaa97575a3c6a89",
+    "mention_text": "James McConnell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdc79e95fd36c4fb9804fef8f15b1bee8320e6c627d99a1594ca519b16294153",
+    "mention_text": "Universidade de Michigan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f29b79fecd137ee75ef44c397f0bb75fd2b72052d40493caabdfef91eccbaf9",
+    "mention_text": "McConnell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8e637fdc882cdfec33b9c1b2480b60d4dd6829547b0dd971e9e2ba9e584a7c4",
+    "mention_text": "McConnell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "745cdaa23bdc093d0760919ff101625bcf8b8c4582c13189db9e0b4afa8e937a",
+    "mention_text": "McCannibal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "683cf843bfe4d137f16d713af101b6d8900db111d50a7f915a42088a44e04f53",
+    "mention_text": "Michael Levin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13c28fc720ca6bda0acdb5a4aa9c78242898ee86ae0cba893bf9276f22e9dae7",
+    "mention_text": "Tal Shomrat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55e94463dc6eb13ab8252fbbf76bec7a781f08e39b01e74eff435e5ab8b27bed",
+    "mention_text": "Universidade Tufts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "175e70992a571b6189673acfd63b131cece9a5f7f0426f686f54a989d4500aae",
+    "mention_text": "Massachusetts",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc30cce9bb90d8e320d6aaa48e2c0138cb74af6c9980fc2a7d8c54aa8c377c7f",
+    "mention_text": "McConnell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d3e2d3a0ffcc66ef9cdb90b753ca3d881002852e5de8d9d377c8deb5892a781",
+    "mention_text": "Levin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45a83769ef8b1dac7274adeae73780261860d12f879bfeec9adc95aa37a182fd",
+    "mention_text": "Shomrat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bbf1b47155adc87eaa394f9de7b1c873ff1fad93ee0f07776a8983a70b61e12",
+    "mention_text": "McConnell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b84fb1b92a6873c9b44d5d23d804f4005674c431e4ea5e7f616b54514c1f4dbc",
+    "mention_text": "Richard Semon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2baa075df03994fdf4dd402e319294dda504b4e2482aaaa724b4297a3ae1fe9",
+    "mention_text": "Karl Lashley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47f3f17e75e5f55849a67eff123080b1271752dfc375a1a3afb7ad93f5521202",
+    "mention_text": "Lashley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "487bbd4656af978436a6ec157a45eeb1b109bcba1f4877489dee561e2098fd5d",
+    "mention_text": "Lashley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6def062fb3b3b515323630ac6869edfe470e622d909929a57eeb081c5e7bc112",
+    "mention_text": "Donald Hebb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "743a8636dd03458099e39544fb7cf0e5d1d1821771eceef61ffa7cb0dcbeeabb",
+    "mention_text": "David Marr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7dd2978cd5602a81debfa251d8c039db786ce80d06c1bd6d8ec6ecee1b639f5d",
+    "mention_text": "Hebb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74298b236c9d128aab83203807102a1ac3c0ebaa864fb683d42d9b8e420e25cc",
+    "mention_text": "Marr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0684e78e64ff60feecec3d41f45391acf71a676495764dad33a65bb98210655a",
+    "mention_text": "Eric Kandel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "caf20eb611d5d0f35c0c9d1444572506517a09fc7be6346f922f58e554b21a38",
+    "mention_text": "Universidade Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b32e4078f28c44e0be5f662fca17c0f847b0d4e0d08ca7eae25afae0753f97a",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8caafc719ebec1eafc7b250d1a64321ce2a2b3db557e542196f52048b7fb0442",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e89ecc9e41652ce586024d30858d31d20916d8018e49058cf3ce0c3edb0c2068",
+    "mention_text": "Susumu Tonegawa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a108b6167002c6dc6565e7e104213ab69eb600462a6e5d208b3caaa4f63e49b",
+    "mention_text": "Tonegawa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c39c79073885bbedf1343238027e6f1afdc1ec1e275b1a009f01a2e91efb873",
+    "mention_text": "Tonegawa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "626061e7e7518692d7de239009cded90764f11075b7f730d3230fd06558902dd",
+    "mention_text": "McConnell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34e17403a7f498413802668d9e8159c316d2c05baa428c1adf682267eb2edbae",
+    "mention_text": "Alcino Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68907f4cc7a0e5e3e9f95c5237ffd52fab8dac68ad4e8f10515dc43a04a1c37c",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ecc2fed254a6340cb555e072dc32af5847f0ed0cb0dc29ad2d5e1e8a70d3b133",
+    "mention_text": "Sheena Josselyn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d543196d5d444455e2d8147d4d2613579afd03b4277a45527eeb9e98143a4e0",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7e78d51d9e883c8f04e22189f7240b0837f2aacf897d6cb2e1db0fa7e2a4393",
+    "mention_text": "Universidade de Toronto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a099e01814a435db4a75346177745fa633cf6bd6365b8f4d7b8a3e30458b30c",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35835fb3897c2f2c066bf85cc7b7b5a8d21db85958d66d18010e47435e26b2ec",
+    "mention_text": "Josselyn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8cbd57e95f3bf89d31eb6a74b1877eda8dec9f0ad2f8f959edee716f44801d4",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bf6ec2115e93a15dbb6e0da141d421059917352429a0e813feee5d6e9ff6ea4",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e36b343d0fc98c76adbfde79b9e38ab4e579de9ca4acb359c024f330aa93a080",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd8bc6777efea787b7f1af22afecbffeede79a1ea29d80f16358c860c22258ba",
+    "mention_text": "UFRJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "828aff5a9b254edf705ec96a240fb7ad48b86500afec7333058a83f7b0348d84",
+    "mention_text": "Instituto D’Or de Pesquisa e Ensino",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd77ebb3b08c163ced08c77cad92017386ca4f26c6a37d5532433c8099b2d0f0",
+    "mention_text": "Unibes Cultural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf1f516a0fd94201907e1ea10d2540c717765fbdf2623a46dbcdca7967cc0907",
+    "mention_text": "Catarina Chagas",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,482 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 224f22bb5f70ab89c45d871521c0458945886ce25a3d2dd193d4a58515d3c4fa
+
+TEXTO:
+Conheça alguns cursos na área de informática
+
+. Engenharia de computação
+Duração: 5 anos
+Currículo: base de matemática e física, redes de computadores, inteligência artificial, teoria da computação, disciplinas relativas a software e hardware
+Campo de atuação: semelhante aos do bacharel em ciência da computação. O engenheiro é capaz de fazer a conexão entre um sistema de computadores e as máquinas de uma indústria, por exemplo
+Mercado de trabalho: empresas especializadas em computadores e desenvolvimento de softwares, instituições finaceiras, empresas de consultoria
+Onde estudar: USP, UFSCar, Unicamp e Unesp
+. Engenharia mecatrônica
+Duração: 5 anos
+Currículo: o curso combina a formação em engenharia elétrica, mecânica e ciência da computação, com disciplinas como introdução à ciência da computação, cálculo numérico, engenharia de software
+Campo de atuação: desenvolvimento de projetos de automação industrial e equipamentos controlados por computador
+Mercado de trabalho: indústrias que produzem ou utilizam a automação
+Onde estudar: USP (São Paulo)
+. Ciência de computação
+Duração: 4 anos
+Currículo: semelhante ao de engenharia nos dois primeiros anos (matemática, física e computação). Disciplinas específicas nos dois últimos anos (linguagens de programação, gerência de centros de informática, eletrônica básica e digital, sistemas operacionais)
+Campo de atuação: estudo, pesquisa, desenvolvimento de equipamentos, programas computacionais e adequação dos sistemas de programação, visando a organização de modo racional e automatizado
+Mercado de trabalho: empresas de tecnologia, fabricantes de equipamentos de computação e software, centros de processamento de dados, universidades, instituições comerciais, de ensino e de pesquisa, consultorias e em qualquer entidade que use computador como meio de processamento de dados
+Onde estudar: Unesp (Bauru, Rio Claro e São José do Rio Preto), Unicamp (Campinas), USP (São Paulo e São Carlos) e UFSCar
+. Análise de sistemas
+Duração: 4 anos
+Currículo: disciplinas generalistas na área de humanas e exatas e específicas da área de computação
+Campo de atuação: estudo, análise e interpretação da organização, visando o desenvolvimento e a implantação de sistemas de informação
+Mercado de trabalho: pode atuar em bancos, estabelecimentos de ensino, universidades, indústrias, hospitais, comércio e empresas de médio e pequeno porte
+Onde estudar: UnG (Guarulhos), Puccamp (Campinas), Unimep (Piracicaba), USF (São Paulo e Bragança Paulista)
+. Processamento de dados
+Duração: 3 anos
+Currículo: disciplinas básicas (português, matemática), da área de humanas (noções gerais de direito) e disciplinas profissionalizantes
+Campo de atuação: desenvolvimento das atividades de implantação e operação de sistemas de computação, desde a operação dos computadores até a análise de sistemas
+Mercado de trabalho: empresas privadas, órgãos públicos, universidades, comércio, indústrias e empresas de médio e pequeno porte
+Onde estudar: Fatec (São Paulo, Santos, Sorocaba e Ourinhos) e Unicamp (Limeira)
+. Sistemas de informação
+Duração: 4 anos
+Currículo: conhecimentos de matemática, economia e mercado em administração de empresas, com noções em finanças, marketing, administração geral e contabilidade, informática (algoritmos, arquiteturas de computadores, inteligência artificial) e noções de gerência e relações humanas
+Campo de atuação: definição e planejamento de sistemas de informação, desenvolvimento de softwares e implantação e gerenciamento de sistemas de informação
+Mercado de trabalho: setores de informática de qualquer organização, incluindo empresas especializadas na área. É possível tornar-se consultor, prestando serviços de assessoria
+Onde estudar: Unesp (Bauru)
+. Matemática aplicada e computacional
+Duração: 4 anos
+Currículo: formação nas áreas de análise matemática, equações diferenciais e análise numérica e computacional (bacharel em análise aplicada) e formação nas áreas de otimização, pesquisa operacional e métodos probabilísticos ligados a sistemas de planejamento e controle de produção
+Campo de atuação: formulação e interpretação de problemas por meio de modelos matemáticos, desenvolvimento de métodos numéricos e algoritmos computacionais eficientes na busca de soluções numéricas dos modelos matemáticos
+Mercado de trabalho: em universidades e centros de pesquisa, como professor e pesquisador, como consultor em empresas e indústrias (bacharel em análise aplicada) e empresas de engenharia, departamentos de planejamento de produção, setores de economia e finanças (bacharel em produção)
+Onde estudar: Unicamp (Campinas)
+Vestibulares (inscrições):
+Fuvest (USP E UFSCar): até 27/9, Tel. (011) 210-2081
+Unicamp: de 26/8 a 4/10, Tel. (019) 239-7665
+Unesp: de 2/9 a 11/10, Tel. (011) 232-7171, r. 1232
+Puccamp: de 17/9 a 11/10 e de 28/10 a 8/11. Tel. (019) 251-8022
+Fatec: Tel. (011) 227-0105 ****
+UnG: Tel. 0800 158822 ****
+* Unesp
+** Puccamp
+*** Fatec
+**** Datas de inscrição não-definidas
+Fonte: CIEE, coordenadores de curso, guia de Profissões da Unesp e Revista do Vestibulando (Unicamp)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "88013b5b4e0c02e13475bce8c7b4d3da37455edf1bb140906b9407223d473412",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d735d768c11909e6c544024a2c6774c6c81502244882c5c6b4a1bb0487849c8b",
+    "mention_text": "UFSCar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1c5d60a7669704c74cea3476f97afa52f5fe38322c9405ff75451df3639a8b3",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b38cab07c43b499af865ac12a130843c5f02a3321ee882769ddde51adb6b89f",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26c2ba8ba5a02c1502aa98244bad495686511cfb525bded9af0bb880cf9630a3",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd71d08cd0e9fe926f9cec50b7e71a9eee5fac115b0b06f85ac3aac02e75935f",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee00d5b513be7a13266d57bb58d154045862bacfbaf18185f4c37ebd60dddb05",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bcec2cfb2a58aac5a28d09f853efd5f712c651f8b2691ff35751db693037843",
+    "mention_text": "Bauru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "267da0161e94404b76facecb8c09fa70a76f8e9aab49b0289259abace2700209",
+    "mention_text": "Rio Claro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "303d666a9d65431465ebaba6837e3b409750b7cbe3699c8afc2268e157ded26c",
+    "mention_text": "São José do Rio Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "892f71cf318725402ca23d8e98c2b615c255f6b0f34065c25d9d871886a47b8f",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41e814f146b6fdffeb9798fb2dddbca7d86061b1586d14cf90047fc0f7767bab",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "234c963ea446220556b35e9be839f8acd4e7147dfaf604ed6acaebdbf6a8bd66",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92ade490933a1a615e079dc3a009c3bb70af5eaa33e5437b37ee82999d2d2169",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "872f5926e36c64ce3274b3cbc7c2884dc07dcfea36bdb812014540f436a1c9a8",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bb9ba8d82dc827d468338e938184050bb424b2d5a592b0c41ec16a430344b82e",
+    "mention_text": "UFSCar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c7fa493ced7ce227ab3cadffb764f6fb416bd288818773d5912d298843c3f5e",
+    "mention_text": "UnG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac40537baafdbfd71044738ba493a236c7dfe7dfd6bddd217a765120a3a8f46d",
+    "mention_text": "Guarulhos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c6ace1462f4d83098e471f85bc61f21ccf86aa7ee47cba8fffa66d24ff16dfc",
+    "mention_text": "Puccamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "596b616cca8a8644909f5664c3ec3aeb92dbcffed3d86da16fd1a6cbe52503fa",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09b1faa996b995bf415970106f8db29e49724d4cfc923a7d53b169a75ce2845b",
+    "mention_text": "Unimep",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b10243c9768767071e340f9529eaca7caee1fd0fdb5b10f6a88629614707a82",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1cb44c9949ac4eadd169e515fff9a4a3ae142dd23d36ed2753a944aac17091d6",
+    "mention_text": "USF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f297ba1a86edcb44e247b8ed344e8ca089f22bd7fdd3d980364b8e690ef6c704",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fafd24a7e3a6d6dfd37692f2ed252a32ce7bef722ed1c17920e03af035023fb8",
+    "mention_text": "Bragança Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ba5309ef3524d8095ab2bfef694355054a494cf3c9baf18fc755ea50bc378e5",
+    "mention_text": "Fatec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61558a4a43b51c45d1deae3fb73f43fc295e3eff90afce089499caee0e3377ce",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7568bdbbab75d9a0b3d0f5f587b3d22445026b6b3a85ac02a36b906fe4970189",
+    "mention_text": "Santos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9c46628d77f4cbff745ba47d7295a5f49938ec2526adb337ac03593c77ef8714",
+    "mention_text": "Sorocaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0c30eaee00d800309f2ab52b458f98b269a8237b0da0fb08fd33f6be639ed47",
+    "mention_text": "Ourinhos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6cacd1ad1ab3058b707aef1ed4aa7d948cf47e7838e53214cbd5f41068d6e91f",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11c09c84a05695bb3798a308a175456fb720a8521c3759471cd7275ec040cb3f",
+    "mention_text": "Limeira",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b07a20b482fbe2a461e17c140ab8e4a25763a068315dc8749014b7fba676d14",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f843e7911aaa233e382e64a4bf9874f31d381ba1036293db3464e1cdfde7f6f8",
+    "mention_text": "Bauru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "134e4215ad68c1b3e87cb4862ecdb5284dc7c370adfe9e6881a019ebd2967d32",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac2b5989414f0d5df898af0d485888d6e054cfb515638ea7730d4d8b7805fcba",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "899736be30e59b4e28ce813faa6e7ecb74c5ea9b14a002b6f4d65accca2496b0",
+    "mention_text": "Fuvest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f06ea5aedf4257e744ae3b3ef98ca59408f1ace39ee53566158b58b0dc8703e3",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d3f84a5effa8293b842b82dff439c1f54de5e1e0578d40b8892f7eb91b312b2",
+    "mention_text": "UFSCar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e4b0b44398b97ee78611876ca7fd1c7fe494e1cc725ab320e4bd5b009237b23",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0656b4b09246b2a11c159bc943a2a47ca44d0ca8940e86bc1bc13be7effd05a",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5eb4cfd05b8bb95f708f19e075ddca9e5120282919dff829fc3bc2e88e0f62f6",
+    "mention_text": "Puccamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce81d88d8938f7901cea2dbba187a26fed2b8f9009c6a9b316e18f479732fd3b",
+    "mention_text": "Fatec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "241e9f7127fe13a5c0e7fa28e5eb2737f0c70b1b8f3ee964dea3bb542db4bbe0",
+    "mention_text": "UnG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "218331bb2b9a13d09721330df9a8051f802461895f0d65ec478807f2c3c000bd",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b5ac1a67e89fd4c472c5bcc6ae0cd89f492c75d12beb9fbf93b53ffc8220240",
+    "mention_text": "Puccamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2073164b83299831940cc17226cc0031571ec3f56ca5119f2d5d8694ece2241b",
+    "mention_text": "Fatec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b5aeb1b59f03db749c325553ee1950269ae35f2063234cd0c78fa7ab9bae5f8",
+    "mention_text": "CIEE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d118fdb850a9bd580c1297e9ca47378d1aff6898d115d3bb9459a127225bd5a",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  }
+]

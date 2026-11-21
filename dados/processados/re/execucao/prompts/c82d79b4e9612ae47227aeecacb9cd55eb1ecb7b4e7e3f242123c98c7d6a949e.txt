@@ -1,0 +1,320 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a65cf1c307dfad5cd89d72ed154164372d5a4a1b456148ea6db059ca908ecc15
+
+TEXTO:
+Shenzhen, inovação que vem da rua
+
+Na semana passada, esteve no Brasil David Li, um dos principais embaixadores da inovação que está acontecendo na cidade de Shenzhen, na China.
+Para quem não conhece, Shenzhen é hoje um dos principais polos globais de manufatura de hardware do planeta. São testados, projetados ou fabricados lá 87% dos celulares (e vários outros aparelhos que usamos hoje). Incluindo os iPhones .
+Só que a cidade não foi sempre assim. Nos anos 1980, era apenas uma vila de pescadores. Quem vê as fotos dessa época não acredita que aquele lugar humilde tenha se transformado na megalópole de 11 milhões de pessoas onde não faltam arranha-céus. A cidade ganhou até o apelido de “capital dos gadgets”.
+David Li é uma das vozes importantes nessa transformação. Em 2010, fundou o primeiro espaço hacker chinês, chamado XinCheJian. Mais que isso, hoje dirige o Laboratório de Inovação Aberta de Shenzhen.
+Sua tarefa é conectar empreendedores de todo o planeta com o ecossistema de fabricação de hardware da cidade, capaz de realizar praticamente qualquer projeto (por mais louco que seja).
+Em Shenzhen, é possível encontrar celulares que vêm de fábrica com sete caixas de som de alta potência instaladas no aparelho. O público-alvo? Trabalhadores da construção civil que gostam de ouvir música em volume alto enquanto trabalham.
+Ou ainda um celular que é ao mesmo tempo um fingerspinner (e custa US$ 7, por volta de R$ 26).
+Ou um trator agrícola autônomo movido a energia solar e ultraleve, que usando uma câmera de vídeo e inteligência artificial identifica e elimina pragas da lavoura uma a uma, usando doses mínimas de agrotóxicos.
+No Brasil, David conversou, entre outros tópicos, justamente sobre as possibilidades de cooperação entre o setor agrário brasileiro e o desenvolvimento de novos equipamentos em Shenzhen.
+A mensagem que ele geralmente costuma passar é que a inovação que vem sendo feita no Vale do Silício está concentrada em produtos que sejam capazes de agradar aos próprios habitantes do polo, transformando o mundo em sua imagem.
+Já David acredita que o futuro da inovação vem da rua. Ela precisa atender à realidade de cada país ou comunidade. Nas palavras dele (citando William Gibson): “A rua sabe encontrar seu próprio uso para as coisas”.
+Um exemplo é o celular Camom C8, que se tornou líder de mercado na África. Sua peculiaridade é uma câmera ultrassensível à luminosidade, com 13 megapixels, ajustada especificamente para fotografar a pele negra (capacidade que outras marcas de celular usualmente não incluem).
+David menciona que essa característica foi incluída no produto não por ativismo, mas sim por força do mercado. O C8 passou a vender mais na África do que todas as grandes marcas globais. E, claro, os aparelhos são fabricados em Shenzhen.
+Entender Shenzhen pode trazer inúmeras oportunidades para o Brasil. Depois de David, nesta semana estará no país Stephen Wolfram, um dos maiores pensadores do planeta sobre inteligência artificial. Vale ficar de olho. E torcer para que essas visitas deixem boas sementes.
+Já era Grafite só nos muros das cidades
+Já é Nanotecnologia que torna muros impossíveis de serem grafitados
+Já vem Grafite espacial, visível a olho nu no céu
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6e3e615f8f33ae7c47246dedcdedfb61a732c93ab32a1c6c621d2d79f50e3807",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19bceae16ca72846409c0a4ebb18447815a0b2f49688123317c8acb6460e27ac",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31e0a0c691d227d074b656272667d35a0221b9278617d85d2677f85dc665ee64",
+    "mention_text": "David Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c0c6847db4d3393bee31b767de9422a130b5dfe9e0d6dfe3153cf77abf2c2e98",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89dacffff9df3e2a1d96e68bd497cebb9d752dc864211d63622dcc2cfd7f04c6",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17f7af580314cfce01056ed7747fdec7ff7c50de112df1bb617650131602ea23",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f551ea54f2b14736ce9f313f9eea112ddc7dfe46501fd456c2a8b64973440ad5",
+    "mention_text": "David Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51efcbb509465a767a1523f9cfd25f2fe4b7277951ce78237c6b804452c56f3e",
+    "mention_text": "XinCheJian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e46271aa354c237b0d9665899600e99c9bb0aaf706c0d49e81ccfe36f23ec31",
+    "mention_text": "Laboratório de Inovação Aberta de Shenzhen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2908c8baa2db71870c77bf86f38695b7c4134bc67b3f03b4814e1679b94d83c7",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f3767e5ff4ced37f52420148580ef1c9d45c5b375f120ce54f061c25c0e68b7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e8061ceb6bd78bb8f4bb8469c536a7b8a7d146adbf368ce4b5f55d1cc6c08aaf",
+    "mention_text": "David",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a57d79a2603372bafbd20dcf7f4e45a5ceb56a42a9841620bc9fb4ca04a63366",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8f14a65a0ca1da0c71b4d59b22618cac477ff0d8baaec43b62d860d9d883d71",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ffdf99c9d589a51ea24d9335514a2828e790cafcd0f167c70241c3ee4aec64bf",
+    "mention_text": "David",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63a489a05000d337a06c3392524eac5a5b1b5edba42f943774ce8b912eead62c",
+    "mention_text": "William Gibson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0924b4e9e4456979a1d86adcf86b96d4ea41985e1ec0b136ca6c445bd32cf5f",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d61214770901d2efe11c44822383829b370094d42723ef195a93d56fc126fb1",
+    "mention_text": "David",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83d2365c9b037fe8107a9aaae28abf100b24b9da17e8583013f204f55f347952",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a07fc30d1ed2e18b59a290a6022004875e0f81fdd19009150eea8faf5629a403",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79ae09a1020290ffc28de7939b442cb79b02273ae02b2ce970c5e6e3e687a5af",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d80f8eee510b44a7e9d0f4a7ba4dfa786e15eab21e46d967a5a6ccbc1731b700",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03e3b005496fa1253cc61caac7fbe1aa730ab2ad764d0e6463d0314403151d21",
+    "mention_text": "David",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c250b9ae3cdd2f00149e4bef69c508c1a098bd86ed139a1be14c772ca1a92ef1",
+    "mention_text": "Stephen Wolfram",
+    "categoria": "PESSOA"
+  }
+]

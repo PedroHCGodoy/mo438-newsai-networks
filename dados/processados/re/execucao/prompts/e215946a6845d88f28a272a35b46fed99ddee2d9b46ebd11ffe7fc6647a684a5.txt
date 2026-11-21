@@ -1,0 +1,663 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 20f0d999a3f987bfa79db46f056d2e9cdecb6661a63698db6e99fd73c730dc23
+
+TEXTO:
+De Marx a Freud, entenda a obra de pensadores e filósofos
+
+19/10/2009
+-
+02h30
+De Marx a Freud, entenda a obra de pensadores e filósofos
+da Folha Online
+A Livraria da Folha oferece títulos sobre a filosofia e a obra de grandes pensadores. Veja uma seleção de sugestões.
+*
+Reprodução
+Para Jorge Grespan, o professor de Teoria da História da USP, o alemão Karl Marx (1818-1883) foi mais que um pensador. Sua obra, vista a partir da realidade atual, tem caráter profético. "O poder de previsão de Marx foi tão grande que o mundo em que vivemos acabou se tornando demasiado semelhante ao das tendências descritas por sua obra", diz Grespan. Ele é autor de "Karl Marx", volume da série Folha Explica que apresenta e analisa de forma sintética as principais idéias da obra do autor, incluindo suas "profecias", como a irradiação da forma de mercadoria a quase todos os produtos e relações sociais. Ao explicar Marx e seus conceitos --de alienação, mercadoria, capital, a perspectiva dialética do capitalismo, o fetichismo, a ideologia, a crise e a revolução-- Grespan faz entender o dinheiro, o capitalismo e as relações sociais. Leia a introdução do livro.
+Divulgação
+O austríaco Sigmund Freud (1856-1939) foi um dos autores que mais influenciaram a cultura do século 20. Os conceitos originais que elaborou, como "inconsciente", "narcisismo" e "complexo de Édipo", tornaram-se fundamentais não apenas para a psicanálise, mas para disciplinas como a pedagogia, a comunicação, as ciências sociais, a filosofia e a literatura, entre outras. No volume "Freud", da coleção Folha Explica, o psicanalista Luiz Tenório Oliveira Lima analisa a vida, a obra e os principais elementos da teoria do pai da psicanálise. Com linguagem clara, o livro descreve como Freud chegou ao conceito do "inconsciente" e à idéia de "mal-estar da civilização", e explica seus estudos da sexualidade infantil, da libido, neurose e perversão. E discute a evolução da psicanálise a partir dos seus discípulos. Leia resenha do livro e entenda como o tratamento de pacientes histéricas por hipnose revolucionou o pensamento de Freud.
+Divulgação
+O psiquiatra suíço Carl Gustav Jung (1875-1961) passou muito tempo na obscuridade. No Brasil, sua obra tem pouca repercussão nas universidades, se comparado às obras de Freud e Lacan, por exemplo, e, não raro, seu nome aparece associado ao misticismo, ao nazismo e à bigamia. Tito R. de A. Cavalcanti, analista junguiano formado pela Sociedade Brasileira de Psicologia Analítica, joga luz sobre esse importante pensador no volume "Jung", da série Folha Explica. O livro explica de forma sintética como Jung buscava compreender o universo simbólico humano, sem defender a adesão a religiões ou atividades místicas. O livro também trata da união de Jung com Freud, que durou sete anos e foi interrompida pelo fato de os dois não concordarem a respeito da teoria do inconsciente. Isto fez com que Jung criasse uma escola própria, ampliada e praticada por muitos desde então, ao redor do mundo. Veja vídeo com o autor do livro.
+Divulgação
+Os principais temas da obra do psicanalista Jacques Lacan (1901-81) estão sintetizados em "Lacan", volume da coleção Folha Explica. Autor reconhecidamente difícil, de poucos textos, redigidos em estilo elíptico, Lacan tinha tudo para ser esquecido. No entanto, suas idéias tornaram-se ponto de passagem obrigatório não apenas para os interessados na clínica psicanalítica, mas também para quem quer compreender a filosofia, a teoria social, a estética e a crítica da cultura no início do século 21. De onde vem a força dessas idéias? Como se desenvolveram? Para onde querem nos levar? Vladimir Safatle, professor do Departamento de Filosofia da USP, coordenador do Laboratório de Estudos em Teoria Social, Filosofia e Psicanálise da USP, responde estas e outras questões de forma clara e sintética no livro. Leia introdução do livro.
+Reprodução
+Melanie Klein (1882-1960), psicanalista austríaca, é conhecida como a responsável por lançar as bases e desenvolver a técnica da análise de crianças. Sua experiência com crianças possibilitou ampliar o campo da clínica psicanalítica para áreas tidas, por Freud, como inacessíveis ao tratamento: pacientes psicóticos, autistas e "borderline". A austríaca inovou também no atendimento de pacientes neuróticos adultos. No livro "Melanie Klein", da coleção Folha Explica, os autores Luís Claudio Figueiredo e Elisa Maria de Ulhôa Cintra, psicanalistas e professores acadêmicos, expõem didaticamente as idéias kleinianas e sua importância para o movimento psicanalítico. Leia capítulo do livro que revela que Melanie Klein iniciou-se na psicanálise para curar sua própria depressão.
+Divulgação
+Entre os pensadores modernos, Friedrich Nietzsche (1844-1900) talvez seja o mais incômodo e provocativo. Sua crítica cortante o levou ao submundo da civilização e sua inflexível honestidade intelectual denunciou a mesquinhez e a trapaça dissimuladas em nossos valores mais elevados e convicções mais firmes. Com essas palavras, o doutor em Filosofia Oswaldo Giacóia Junior abre o livro "Nietzsche", um campeão de vendas da série Folha Explica. O volume oferece uma introdução sintética ao pensamento do filósofo alemão, que permite ao leitor se familiarizar com seus conceitos, figuras e com a extraordinária clarividência de Nietzsche sobre os temas que afligem o homem moderno. Leia capítulo.
+Divulgação
+A obra inovadora de Gilberto Freyre insere-se numa tradição da qual fazem parte brilhantes ensaístas brasileiros como Joaquim Nabuco, Euclides da Cunha e Sérgio Buarque de Holanda, e é leitura obrigatória para todos que pretendem entender a produção cultural brasileira contemporânea. Sua obra inspiradora e polêmica projeta-se como uma sombra sobre a vida intelectual do Brasil moderno. Desde a publicação de "Casa-grande & Senzala", no final de 1933, até o presente, Freyre não deixou de ser celebrado ou duramente criticado. Em "Gilberto Freyre: Uma Biografia Cultural" (Record), Enrique Rodríguez Larreta e Guillermo Gucci analisam a obra de Freyre no período de 1900 a 1936 e traçam a genealogia intelectual de suas principais idéias, mantendo constante diálogo com os diferentes contextos culturais e as obras produzidas.
+Divulgação
+Influente filósofo do século 20, o alemão Theodor Adorno (1903-1969) produziu uma obra que faz contribuições enormes à filosofia, à sociologia, à crítica de artes, à psicologia, à educação e a todo o espectro das ciências humanas. Seu pensamento pode ser melhor compreendido com o volume "Adorno", da coleção Folha Explica. O livro contextualiza a formação e a produção crítica de Adorno, joga luz sobre as "constelações" do seu trabalho, como seus estudos sobre os mecanismos da indústria cultural, e indica pistas para os leitores interessados em iniciar sua própria caminhada pela obra do pensador. O livro é escrito por Márcio Seligmann-Silva, doutor pela Universidade Livre de Berlim e professor da Unicamp. Para o autor, "a obra de Adorno é daquele tipo raro que, com o passar dos anos, torna-se cada vez mais atual". Leia capítulo.
+Reprodução
+Marcelo Coelho, colunista da Folha, oferece caminhos para conhecer e entender o pensamento de Michel Eyquem de Montaigne (1533-1592) no livro "Montaigne", da série Folha Explica. De forma clara e didática, e com olhar de ensaísta, Coelho comenta temas instigantes da obra do escritor francês, identifica Montaigne como um precursor da antropologia contemporânea e faz uma "interpretação saborosa das astúcias de sua obra", segundo comenta, nesta resenha, o mestre em teoria literária Manuel da Costa Pinto. O título apresenta ainda uma relação comentada das edições dos "Ensaios" (principal obra de Montaigne) e os estudos sobre o autor em português e outras línguas. Leia a introdução do livro.
+Divulgação
+O filme "Matrix" está no topo de diversas listas que reúnem os melhores filmes de ficção científica dos últimos anos. A visão de mundo sombria apresentada pelo filme levantou discussões acaloradas sobre pós-modernismo, realidade, inteligência artificial e ficção científica. Estaria a humanidade ameaçada pelo avanço da tecnologia? O livro "A Pílula Vermelha", da Publifolha, oferece uma coleção de ensaios de pensadores sobre as questões lançadas pelo filme, envolvendo conceitos de ciência, filosofia, cultura digital, psicanálise e religião. Destinado ao público geral, a obra é também uma ferramenta interessante para despertar os jovens para a filosofia. Saiba mais sobre o livro.
+Reprodução
+Escrito pela filósofa Márcia Tiburi, participante do programa "Saia Justa", "Filosofia Em Comum", da editora Record, é um livro para quem gosta de filosofia e quer se aventurar um pouco mais em suas possibilidades. Fugindo do lugar-comum dos manuais de introdução à filosofia e dos livros de história da filosofia, Márcia Tiburi propõe um caminho diferente ao leitor iniciante. Para ela, filosofar é assumir a própria ignorância --no melhor estilo "só sei que nada sei"-- e combatê-la incessantemente com questionamentos. A proposta da autora é instigar a discussão, a discórdia e provocar a troca de idéias para chegar ao livre pensamento e à compreensão do outro e do mundo em que vivemos. A mensagem é clara: o leitor pode filosofar mesmo que não seja um filósofo e não acumule conhecimento teórico sobre a filosofia.
+Divulgação
+Ainda pode haver democracia? Essa é uma das questões levantadas e debatidas pelo filósofo e professor titular de Ética e Filosofia Política da USP Renato Janine Ribeiro no livro Democracia", da série Folha Explica. A partir de um revisão histórica, o autor constrói um panorama da história e da evolução do regime, discute o que é a democracia moderna e analisa a sua organização como sistema representativo. O volume faz par com "A República", também da coleção Folha Explica. Renato Janine Ribeiro contrapõe os ideais republicanos originais a seus "inimigos" --a monarquia, a corrupção e o patrimonialismo-- e questiona qual república é possível de ser vivida e experimentada no mundo de hoje. Leia capítulo do livro "República" e capítulo de "Democracia".
+Divulgação
+O "Pequeno Dicionário de Filosofia Contemporânea", da Publifolha, é uma obra compacta de referência que apresenta os temas fundamentais da filosofia e ajuda os iniciantes no tema a dar os primeiros passos sem susto ou medo. De "Abdução" a "Wittgenstein", os verbetes do volume definem e comentam os autores, as correntes de pensamento e os temas fundamentais para a compreensão do nosso tempo. O autor é Oswaldo Giacóia Júnior, professor de filosofia na Unicamp e doutor em Filosofia pela Freie Uinversität Berlin (Alemanha), também autor de "Nietzsche" (veja acima). Leia mais sobre o "Pequeno Dicionário".
+Compartilhe
+twitter
+delicious
+Windows Live
+MySpace
+facebook
+Google
+digg
+Leia mais
+Livro ajuda a entender como funciona a república; leia capítulo
+Entenda os princípios do regime democrático
+Márcia Tiburi explica tudo sobre filosofia em livro
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7d87ba4a59e3b2445ec85f42caf1c45c7818d19b8b23004449edabbef3efa08a",
+    "mention_text": "Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "468ec48cebbd6d4f3d47a0a865e23cb2f2af7621113c07850058fd3077c91e99",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2993779469d26de93ecd3389919ca69eb3e2cf85f7eabca86c29771d41cbbcd6",
+    "mention_text": "Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19a2bf787efc5b42a0ff841832bf8267d6fb3247ab8816d11f7a8ac72fc51bbd",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc8d645afb2dbe0025018bfdc55f1e80c1be711c4c0381cf2d82f06db46d6e1c",
+    "mention_text": "Folha Online",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87bfe4e5aa26a79dc7583cf954307cae25f82c52997a7bd65d43406efccc5c0a",
+    "mention_text": "Livraria da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6661793cdbed5a57aed1fbf2362558d76bbf7136e1f8e16073bc2e9886963bf2",
+    "mention_text": "Jorge Grespan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "595e296f7dc76d5f940bf55053d74a6744b2c107193f8c61e2c94cd8c5b8374e",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a724b968fb8d78ab94ffaeb1193ad7a51274ef2d731db9ae794264d357523bab",
+    "mention_text": "Karl Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c58fd6cabd9162ad41baed876b99e106e9c79c5c3876960c2bc4a02028d3671",
+    "mention_text": "Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65f741a17185dfcae00682ac3c2f3cf9ed55a4c358863c196e707f0cb05ffab4",
+    "mention_text": "Grespan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b5fc97caf20ae51a44a8604b65fa19b1bd3fae41f3a3983bbca45415e48122a",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0933b9b57854f09da3e5b2117940945be696130e01164415d95a87ea0593b5a",
+    "mention_text": "Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa506c85834fe9e3d08b11222af2ee7e7a85500785e0870c891bb77a5961c2f7",
+    "mention_text": "Grespan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23d205c09dd3c6b85c56a8009916bb89804ea58449300bb3123d2134d8ad9f97",
+    "mention_text": "Sigmund Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd8c0038b954278ffcb8c379e32a4b45e9f4ce83904a8ea766fdcde811577b0a",
+    "mention_text": "Luiz Tenório Oliveira Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b776772087aae0103afe522db720433fc24d8c4c4565ede8c8d9f20694929392",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "843b516b7c66c9ad407247e2b7b8e7aea5f078cafbb36deff84fe3d95f225fce",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec949a1be6bc4c778fc14d07d4cb71b485e39ebdfb892f41ae1119bdb5e4fc80",
+    "mention_text": "Carl Gustav Jung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46aec45944f7b3d440bfef3f0a3c1b6d41b5fe8880a02698d247fefa122d2b0f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d137d2cbc4109d305d11fbc50e6344b6d10862f99344720bb28103e037c3573",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b07001e1ca3e1ef9f275361b29bea500752b6133943a6e10b62e169f3505e158",
+    "mention_text": "Lacan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b6332ed853f24c1acb22f0ee893b468e93487cd18ee4ce53a343b1eb41e0121",
+    "mention_text": "Tito R. de A. Cavalcanti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3cece1657a0e903a67420367e0de73176dfb582c688214d7c0408165c6a9d7bf",
+    "mention_text": "Sociedade Brasileira de Psicologia Analítica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3682d447286e3d6cc48da5de696b08ec17a0ce7a1286a789c9ed83d926808f5a",
+    "mention_text": "Jung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4b8bb5288c623d674e3b97171cf306fffd70804895596f92d0572239f930e3c",
+    "mention_text": "Jung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ff690c04f822483e814638f3aa55fa6cef3fe01d99276e96cc8df4593a9ebe2",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf9ebde3ce3bf4a273d9f61a92abb606f1188f32bdda0d9f5845668da27e3e55",
+    "mention_text": "Jacques Lacan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcc9232c22e532d9f6c42256cfb0cb4d73b6878d2a90d040f4b9f17f5d00e9de",
+    "mention_text": "Lacan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da5df7c582c3cdf1a782408a58368d354824938747479b0abc7cf0ae0c120490",
+    "mention_text": "Vladimir Safatle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afe1b1d4a9e6981909712a0d9abfeb4aed9088825028f178483700125033d118",
+    "mention_text": "Departamento de Filosofia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2757b4cbfb4ee57f74e1bdaef0025e05b31555cf1e48963e265bdae3cdf0966a",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52db2ddc00b1b49b1073dd3f258a7d2760d22881683b2223934dc6f15a91206e",
+    "mention_text": "Laboratório de Estudos em Teoria Social, Filosofia e Psicanálise",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a895622044604adee21d75d27901b3dcfb7e79447490b9584fb9b48180623f7c",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24fd0804632e8c05f6cf16bd808d5494e19757517a6ddbecc39a7bd322cb9d8b",
+    "mention_text": "Melanie Klein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db8a643fa15aadaa8a2cdb2477cf141e92f0e85f35f8c2809e9a4e78562e16a2",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf9f46a6c940363a5a5a7198b18244caba5bb1be5a0c870f45ce983f450c6319",
+    "mention_text": "Luís Claudio Figueiredo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b541beeb8be219c907419beb7c854cd5ce3fdf04b237443a9e734648a3d55f2",
+    "mention_text": "Elisa Maria de Ulhôa Cintra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "819ed8160f5eebc826973b702e2e6207107263c67c0ff84abb55185cd75f2d4b",
+    "mention_text": "Melanie Klein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6acb7ce9542a9e0dfe06e314612af76a99eb88f2871e257dfaece370d28a19f1",
+    "mention_text": "Friedrich Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d940afe6579be2dc7c94e3be3022c739e19dbeb60468b554ee5728985a16d0df",
+    "mention_text": "Oswaldo Giacóia Junior",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55526c9837b99ac0bda9e72086b928e0b561f852e56ce2db5d7b43f79876eda9",
+    "mention_text": "Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30449e791282f1d7b0fcd3d46cf2304fc511ecdb3ad43765a8688ecbbc6ba752",
+    "mention_text": "Gilberto Freyre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d7b1f072df8d108dd1a42512121afb9074a797e6e87947c127263bbb00dfa5b",
+    "mention_text": "Joaquim Nabuco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5727f0a56b44016ffff5f7e9a4c0422a57344366e219cbd97c472d124d6396a",
+    "mention_text": "Euclides da Cunha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50118597279ec5b726bd6b8eb2baed9c44806636366e97501ed312134ce1ffab",
+    "mention_text": "Sérgio Buarque de Holanda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19ce8cd722df7a235b755f67c296241e666cc4d250c27ec95f1877bc8cef40bd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20ce4ca7d501c6b0a4c2875ef59cd9042e6d7e4aa8a7c0cea49fb56836c2565c",
+    "mention_text": "Freyre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7bfef18b38775aa1b28f303fac505303b11a65e5f0066817d8568d5575416505",
+    "mention_text": "Record",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffa54872a0aa250e95ed4d65c4056a69a007335c264267fb5cf502cd2f32c8a7",
+    "mention_text": "Enrique Rodríguez Larreta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5e71df065a11f56a0bf12dff0c269aeeca1b84b70126f88496a2d8df928f7b6",
+    "mention_text": "Guillermo Gucci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3aa5a9fc2214c453fd4d4d1783e430c642bbcec92d484e3ccc7d11b87a48759a",
+    "mention_text": "Freyre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16fd1a6fb27d98ed8166649c891f9b455b507bf10305a1246445f0756ce6b507",
+    "mention_text": "Theodor Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3dbcfde8232e5b3d4c3f736f3be4480751a25cdf78110b65a4b60d7bc20e013b",
+    "mention_text": "Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f214bab1a5b640ea1a7851cde5aedded8eab690e1f6725be117ce4ccde23b439",
+    "mention_text": "Márcio Seligmann-Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19d26bb2fe3ea5d5375294d992a6c1afe2d405c608f52d9ec6c75fbf85a87ff1",
+    "mention_text": "Universidade Livre de Berlim",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f865cbd30c34154a426c7f9747270fb63a46b60b172782423f68e9f26900300",
+    "mention_text": "Berlim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "401a74ca8059eebd5c6fcf0febded784696af601979ad09d1de82961d4c7bc6e",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9580ad28ceae839a1fda98d7c74fd2ff5e80887d9c171d7e15c1016509f5a99a",
+    "mention_text": "Adorno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6b36908e0c7c7632a209fba47fe207f8c16b28e50cbecf8f754a187f87bd9e9",
+    "mention_text": "Marcelo Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac811222d4e1f7ad2024182f22a4ef7ab29d3f71ba5b523f02ce7cf049422625",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a0c8a7ce76f499b307033bd353cf3561e4741a47531ebfbce9bb8b7f8b9ab17",
+    "mention_text": "Michel Eyquem de Montaigne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8877065312f333b631b94298db1da63d7d0a2c28f25daf97f131f1e128bf69c5",
+    "mention_text": "Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6526a7ed0a12d722dda5c4492753e6514959b53bccd15082a07e3fc395243b18",
+    "mention_text": "Montaigne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2ca63b876edb79e8c6e3e3107c33331cdea1308ebba37521e61acb14a3909b4",
+    "mention_text": "Manuel da Costa Pinto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57b23123e39fe79874d4d800c467e590a3486bb579d25e5f42123f934e39ef9c",
+    "mention_text": "Montaigne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05f61c7edb2eb0da4886f875571b256edce53b07e9dd36bda37c4d2a77908468",
+    "mention_text": "Publifolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd10502edf2b2bd36579615d8bfd94e122c2d6e5bbab8aede86b095988868977",
+    "mention_text": "Márcia Tiburi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aaba8dba172f8ab39bd078c0ceac41c9543c023e03d3251c155f8f648d4065c5",
+    "mention_text": "Record",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39f50b8a009522a34b5d3e14855dccb8ba8f5d488ca6cd0470f15acdfac8b006",
+    "mention_text": "Márcia Tiburi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78b594b95092fe5aa9f43c1c818219f4ab0d19273d34387cecea4043ae565240",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94cfdcee8b6d5ce54901eeecc190e0ee2d89d34ef8ab73fea9ca929a7c6462ce",
+    "mention_text": "Renato Janine Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "064d8de7f2bb5289a1e1af6a8ca75ba0a3ac1714f6d6a9e255a0718af165f6b6",
+    "mention_text": "Renato Janine Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca87d0a62567848789605e5ac056696b8b913f2351d95634e318b6f24b61a392",
+    "mention_text": "Publifolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8484d21bc386971902f7966d8704a6ce36f2ab3bada0bbc6c3df733f628f923b",
+    "mention_text": "Wittgenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f64dbb55229c5fedad94c4bd2ac128028970d7d8e21272d7152dc2f59ed0557",
+    "mention_text": "Oswaldo Giacóia Júnior",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9fd8c20b22116ea3d2ce248f3d62934c0591d64c2d294b2385a1ad6072673e1d",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12e212890d3f9b50d32efe68e8e1335554b6266daddf81038cd1643a6ba7458e",
+    "mention_text": "Freie Uinversität Berlin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f013582b85e968f9682982badd9d22e277f6dbacea521c160bc7abb2a11e9ff8",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d60ba5a340b419e449f21c5de201a85fb034f0298b55e68cd77420e7b0128686",
+    "mention_text": "twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a28aee8734cf42dd17db1004c1bb9e2bc81d81ed3cb39c572371ad3b789b4584",
+    "mention_text": "delicious",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28dabb5b8f1d2b2a27bf27b66690763be4f3c670814763afc36a8a43ff9acba4",
+    "mention_text": "Windows Live",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "940fe0cd0aae538984d0973ca22466a9a5cb509936a0b04f33951b714a368f11",
+    "mention_text": "MySpace",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "139d74b6acee63f1063b82358e5ad6aa99294c2bde0b9a9fd3da9f623348e308",
+    "mention_text": "facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d497ddd473579f3475601848ff13b6e62a9d2cbd1ea2885f6b6471506fd7d862",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46b6ac5a4554f584fc4d48c9c289f56876d79211bb0e6eb3313931125bc4e16e",
+    "mention_text": "digg",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "565143c64ed7d182c16a1a89d80f73e062645b82798d07917ad9c98801a3eb0f",
+    "mention_text": "Márcia Tiburi",
+    "categoria": "PESSOA"
+  }
+]

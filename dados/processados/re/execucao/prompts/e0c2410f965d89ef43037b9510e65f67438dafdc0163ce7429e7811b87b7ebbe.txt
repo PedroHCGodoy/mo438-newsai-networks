@@ -1,0 +1,513 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 32bc09c4ecc203878fec48fa1e4c643855e5d33fa6994aa28e7c60ae2e418979
+
+TEXTO:
+Exibição de 'Um Estranho no Ninho' (1975) e visita ao edifício Martinelli são destaques de segunda
+
+Nesta segunda (6), é possível subir ao topo do edifício Martinelli, cujo terraço, fechado desde 2017, foi reaberto para visitação . A visita ao mirante do prédio, que garante uma visão do centro da cidade, é gratuita. Interessados devem se inscrever com 30 minutos de antecedência.
+Outra opção é conferir os filmes exibidos na retrospectiva do cineasta tcheco Milos Forman, morto em 2018. Nesta segunda, o Cinesesc exibe os longas  "Um Estranho no Ninho" (1975) e "Valmont" (1989).
+Também vale conferir a mostra de Sofia Borgesm, uma das artistas-curadoras da última edição da Bienal de São Paulo, cujas obras evocam figuras mitológicas e grandiosas, como esfinges, para discutir diversos aspectos da linguagem fotográfica.
+Confira essas e outras atrações selecionadas pelo Guia para começar bem a semana.
+Retrospectiva Milos Forman Todos os 13 longas de ficção feitos para o cinema pelo diretor estão na programação do Cinesecs, que ainda inclui dois documentários, um curta e um making of. Algumas cópias vieram direto do Instituto Nacional do Filme Tcheco, emprestadas especialmente para a mostra. Entre esta segunda (6) e quinta (9), o crítico de cinema Sérgio Alpendre ministra curso sobre a carreira de Forman. Quatro títulos são exibidos em 35 mm, sendo eles “Os Amores de uma Loira” (1965), “Procura Insaciável” (1971), “O Povo contra Larry Flynt” (1996) e “Sombras de Goya” (2006). Também ganham projeção os vencedores do Oscar “Um Estranho no Ninho” (1975) e “Amadeus” (1984). Cinesesc - R. Augusta, 2.075, Cerqueira César, região oeste, tel. 3087-0500. R$ 3,50 a R$ 17 sescsp.org.br.  Sala única: Retrospectiva Milos Forman. Valmont, seg.: 17h. Um Estranho no Ninho, seg.: 19h30.
+Tchékhov É um Cogumelo A Cia. Lusco Fusco reestreia o espetáculo que comemorou os dez anos de atividade do grupo. O espetáculo parte da peça “As Três Irmãs” (1901), de Tchékhov, e une ficção, neurociência e memória para abordar a história de três mulheres que se sentem perdidas em um mundo em transformação. Teatro Sérgio Cardoso - R. Rui Barbosa, 153, Bela Vista, região central, tel. 3288-0136. 835 lugares. Seg., sex. e sáb.: 21h. Dom.: 17h. Até seg. (6). Ingr.: R$ 30 a R$ 50.
+Sérvulo Esmeraldo: Linguagens Múltiplas A mostra exibe maquetes, esboços e outros projetos desenvolvidos pelo artista cearense quando viveu em Paris, período marcado pela intensa experimentação em diversos suportes. Foi lá, por exemplo, que desenvolveu seus “excitables”, obras de arte cinética acionadas pela participação do público. Instituto de Arte Contemporânea - R. Dr. Álvaro Alvim, 90, 1º andar, Vila Mariana, região sul, tel. 3255-2009. Seg. a sex.: 10h às 18h. Sáb.: 10h às 16h. Até 1/6. Livre. GRÁTIS
+Diversidade A exposição reúne 30 obras, entre pinturas e esculturas, dos irmãos ingleses Julien e Liam Porisse. Os trabalhos utilizam materiais como acrílico, madeira e alumínio. Centro Brasileiro Britânico - R. Ferreira de Araújo, 741, Pinheiros, região oeste, tel. 3039-0500. Seg. a sex.: 10h às 19h. Sáb. e dom.: 10h às 16h. GRÁTIS
+Museum of Me Apresentada no edifício do Banco do Brasil na avenida Paulista, a instalação usa inteligência artificial para interpretar a vida digital dos visitantes. A partir de uma análise das redes sociais do usuário, o dispositivo projeta em uma série de telas de LCD as palavras, fotos e hashtags utilizadas. Edifício Banco do Brasil - Av. Paulista, 1.230, Bela Vista. Seg. a sex.: 10h às 20h. Sáb. e dom.: 10h às 18h. Até 20/5. GRÁTIS
+Imagens do Sangue Inspiradas nos contos de terror do escritor americano H.P. Lovecraft, as gravuras de Ulysses Bôscolo expostas nesta mostra retratam paisagens escuras, cabeças, corações e monstros. Gravura Brasileira - R. Ásia, 219, Cerqueira César, tel. 3624-0301. Seg. a sex.: 12h às 18h. Até 8/6. Livre. GRÁTIS
+Reflections on Space and Time Em parceria com a galeria francesa Kamel Mennour, a Nara Roesler articula obras de nomes como Daniel Buren, Anish Kapoor, Alicja Kwade e Julio le Parc para discutir questões como o espaço e a fugacidade do tempo. Galeria Nara Roesler - Av. Europa, 655, Jardim Europa, região oeste, tel. 2039-5454. Seg. a sex.: 10h às 19h. Sáb.: 11h às 15h. Até 11/5. Livre. GRÁTIS
+Sofia Borges Uma das artistas-curadoras da última edição da Bienal de São Paulo, Borges trabalha cor, perspectiva e linguagem nesta mostra. Produzidas entre o ano passado e este ano, as obras evocam figuras mitológicas e grandiosas, como esfinges, para discutir diversos aspectos da linguagem fotográfica. Mendes Wood DM - R. da Consolação, 3.358, Cerqueira César, região oeste, tel. 3081-1735. Seg. a sáb.: 10h às 19h. Até 18/5. Livre. GRÁTIS
+Mais
+Dia Internacional da Língua Portuguesa Ainda em reconstrução, o Museu da Língua Portuguesa promove, na estação da Luz, atividades para a comemoração do Dia da Língua Portuguesa. O evento acontece a partir de domingo (5) e até terça (7). Neste ano, a programação tem como objetivo integrar os estudantes da região, com apresentações musicais, slam, teatro, performance e oficinas de hip-hop e grafite. Saguão da Estação da Luz - R. Praça da Luz, 1, Centro. Dom.: 10h às 12h, seg.: 9h às 17h e ter.: 9h às 17h. GRÁTIS
+Mais
+Edifício Martinelli Inaugurado em 1929 pelo empresário italiano Giuseppe Martinelli, o edifício foi o primeiro arranha-céu de São Paulo e, até 1947, o mais alto do país. O prédio refletiu o boom econômico da  capital no começo do século passado e já abrigou um hotel, um cinema, restaurantes, clubes, sindicatos, partidos políticos e até jornais. Av. São João, 35, Centro, tel. 3116-2777. 15 vagas p/ período. Seg. a sex.: 11h às 11h40, 13h às 13h40, 15h30 às 16h10 e 17h30 às 18h10. Sáb. e dom.: 11h às 11h40, 12h às 12h40, 13h às 13h40, 14h30 às 15h10, 15h30 às 16h10, 16h30 às 17h10, 17h30 às 18h10 e 18h30 às 19h10. 40 min. Livre. GRÁTIS
+Mais
+Parque do Batman No ano em que o super-herói da DC Comics completa 80 anos, o shopping projetou um parque em sua homenagem. Entre as atrações, há um museu com oito ilhas expositivas que resumem cada década de sucesso do homem morcego no mundo. O espaço tem também uma área com pinturas para crianças e o jogo Caça aos Vilões. Há, ainda a Armadilha Maluca do Coringa, em que os participantes procuram por brindes escondidos —única parte paga. Golden Square Shopping - Av. Kennedy, 700, São Bernardo do Campo, São Paulo. Seg. a sex. das 14h às 22h. Dom. e feriados: 14h às 20h. Até 19/5. GRÁTIS. Armadilha do Coringa: R$ 40 a R$ 50. ​
+Biblioteca e Gibiteca Sesi Com curadoria de Álvaro de Moya (1930-2017), um dos maiores teóricos brasileiros de quadrinhos, a gibiteca reúne desde títulos de autores famosos, como Will Eisner, até álbuns raros, como as coleções da Ebal, editora brasileira de HQs extinta na década de 1990. As obras só estão disponíveis para consulta no local. R. Carlos Weber, 835, Vila Leopoldina, tel. 3834-5523. Seg.: 7h às 16h. Ter. a sex.: 7h às 18h. Sáb.: 10h às 16h. GRÁTIS
+O Fantástico Mundo Marinho A atração é composta por 12 robôs em forma de gigantes animais que emitem sons, como golfinhos e baleias. Há, ainda, uma sala sensorial para os pequenos conhecerem os cheiros, texturas e sons do mundo marinho. Shopping Metrô Tucuruvi - R. Paranabi, 218/224, Tucuruvi, tel. 3198-0451. Seg. a sáb.: 10h às 22h. Dom.: 12h às 22h. Até 19/5. Livre. GRÁTIS
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "eae705419e8bc5d8c309fbf5668f691b6c7883c326db9a30ed8795a8d06c23f3",
+    "mention_text": "edifício Martinelli",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fbf86a47843c6231201fc2b8531bc4718ea92521f23c636569267d44eaece669",
+    "mention_text": "edifício Martinelli",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28bf71db867617e3c8f7c226f130a4bbdf9ffa484fae5fa720e58253a17cd217",
+    "mention_text": "centro da cidade",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd11f58e9b0e636855586a3309c5a21bbaa74fdef2608c5b5a0899d17fdcef12",
+    "mention_text": "Milos Forman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3f6113602d14639e428a0c33cb2f5e1611c4d50b50c3d6f7bae5d0f03b51fd3",
+    "mention_text": "Cinesesc",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65a06f7bfa99d0b34815176de82acd4fdbc423f9feb61728206e4ad95fb0bc36",
+    "mention_text": "Sofia Borgesm",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e413408605ef9f5f2b6fad0b2c59078e7f1e6b97af4685407c7816dff820ee7f",
+    "mention_text": "Guia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4397de917a09390ec8e650721177d3f4c1e3c579a6d1a556a555ed0ad69f5dc",
+    "mention_text": "Cinesecs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee44778de5e99630350e4513a940939f7644e2f03b4f0d103eca320c4c2b72dd",
+    "mention_text": "Instituto Nacional do Filme Tcheco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "686b31ccd4ef16ec55ee62e3b9d12af3256c1640f01d4e1fdb3518b8ac0548ba",
+    "mention_text": "Sérgio Alpendre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0fc074e25f16e3f31908b482546ce70bdb2be9e88f4146bb8c4616311c6133b",
+    "mention_text": "Cinesesc",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15d87a1329eabc29d75eb32b4e2f2cf287a14c86607699408594932afa8699b7",
+    "mention_text": "R. Augusta, 2.075, Cerqueira César, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43e1d35498d4071afd55d52856da4cb11ce79589eb2bc1d429ef868eb228d842",
+    "mention_text": "Milos Forman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dedc1ffc3ed75ec599445891db6e7abbdf358d9fd0735cc631142c339f558ef0",
+    "mention_text": "Cia. Lusco Fusco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd59ab18a13c1177f497c31c7b7f96f340d8f14891f995cb6446a861aeb92c36",
+    "mention_text": "Tchékhov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a4659f31bc9f91fe77cfbe3fe4a5f4caa4f60ec5143f136bd1f5868c50bc8a3",
+    "mention_text": "Teatro Sérgio Cardoso",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d4371bdbf5d4e866f19a1b65793bb02a6533d3a6fb777a480d297272b6f8c99f",
+    "mention_text": "R. Rui Barbosa, 153, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "baa974599932f3cc03c164ca21cbfef501463c8ea7192c052a9b7098345af000",
+    "mention_text": "Sérvulo Esmeraldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22bd6dc73ee9e7cbb76aa7e38e810e41c0871535abd7d3a281425265039cd627",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75f62a5862f2b237728defe98fa10a1e1dba85ffff9d5bae22e8482dd8019f3c",
+    "mention_text": "Instituto de Arte Contemporânea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5add851ea3e756ee7845a18e7fb4b993a95a261f2b41788393d90a6541806736",
+    "mention_text": "R. Dr. Álvaro Alvim, 90, 1º andar, Vila Mariana, região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "318be52855ecf94dc7fbaea3b9246ba49dba52c30f6f66b2fb9663e5fa1ed447",
+    "mention_text": "Liam Porisse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccd6d39a9f52bb037e8d2d0f01ad117bed174b8ec7552420dbff6755c1169b1c",
+    "mention_text": "Centro Brasileiro Britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "194b2bc5b5f7ea76e7c192de7b27edd1ca5736501ae3f3c19e49e1d7c8bf269f",
+    "mention_text": "R. Ferreira de Araújo, 741, Pinheiros, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a43293cc8020559f63f52c5d7ff62b6d81b2f4fa8cf0bab0674f365c58d34f20",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d9088c979a308bfb5b028107622c485a7a0fc931abca2d021fc55cb1fbf92b9",
+    "mention_text": "avenida Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b94207415b002e2575e4c82e22b7697527cace9e4baff24a6abbe72c203d6ff",
+    "mention_text": "Edifício Banco do Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27a2be4da257357ccc206b24e2f726a95f24759af98a3b6e14101225092dacde",
+    "mention_text": "Av. Paulista, 1.230, Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af45af17bbeb49069734639e8f10fb9f411e50cf21feba034cf1474e9fdc3ac6",
+    "mention_text": "H.P. Lovecraft",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2beb9904dcfaf39a498ed60ddfa7a935e159a33497798b1f60d63bc779114c73",
+    "mention_text": "Ulysses Bôscolo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cdaf45dd117c268822986de296f8622ba42c2857e65574f2e0301cd5557d603",
+    "mention_text": "Gravura Brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81174ca8529bce888a5bfb65b5c9e623f1d073de2b57ce4311e10a6951d94861",
+    "mention_text": "R. Ásia, 219, Cerqueira César",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdae22c0b197c3f17d8030144b61f34294c5cf99b9d1f7f56cfd1cc627974dae",
+    "mention_text": "Kamel Mennour",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8185f4183a3382cb0b30350171b5441ee1c4fd84f25b167dfd701ef58549934",
+    "mention_text": "Nara Roesler",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edc23c69b4fb8bff3d60ffd7b81044fc96b336e818a1cc537f54a7a72050e76f",
+    "mention_text": "Daniel Buren",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f40a2310f15863da760148191d5ebea083605bef731b0530a9ad6c59313a7e72",
+    "mention_text": "Anish Kapoor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "712acda60379fc4c12c4c258800d7d6127145371554fc919f6bd8e453dc747f3",
+    "mention_text": "Alicja Kwade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee83097834cf69385eb6fff81885a92b283d8a01c49762bd933e9cc2271b58a3",
+    "mention_text": "Julio le Parc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b331758ae78b7ef47bb43f41d9a551333c8003231ce1ee971f402d962ccb87d7",
+    "mention_text": "Galeria Nara Roesler",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c77ef5ad4245b6bb832ca479fd948823d412647e77828d3ec306f78576ef5ed1",
+    "mention_text": "Av. Europa, 655, Jardim Europa, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b4598906ba06670e3b4e76cab50c59282b14ebc8ac33e4d1863a60e53dda023f",
+    "mention_text": "Sofia Borges",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40d79e4832868a585fe0ccd1d9791acba766981b5adc50f7c15aed1f273834c0",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65023f8b1a0c75cda32fb491104a11bdbf29c1af348bf86c4833b5f7e682180d",
+    "mention_text": "Borges",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fd7bc76f9fab92bb90f9a09bd46def786e866a13cbc5aa77755faec5d8e9776",
+    "mention_text": "Mendes Wood DM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3623b23a520d277d5dc9f795847533c8115d9d39fcd4ed743a7e2de2abdf0c7a",
+    "mention_text": "R. da Consolação, 3.358, Cerqueira César, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1c9bc5f0ffdd3f4f86ba75a8fcfc215625e7365e089fafed4f26c3d66c97905",
+    "mention_text": "Museu da Língua Portuguesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc511490aa36fc8b4b4dbac7837009e29b852b0108297e3513c6d11d28c17c6e",
+    "mention_text": "estação da Luz",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac9da805f238d3ece556929c925531ef220adeff0514379fe4f212742d067560",
+    "mention_text": "Saguão da Estação da Luz",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1483dea85a944d95f04bbceb856065da5927d620b6d2a753aee58885ba26665",
+    "mention_text": "R. Praça da Luz, 1, Centro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "266e250483765784702aa6663988341ac134b19ec4f85b6bbf6b638f5b1df6eb",
+    "mention_text": "Giuseppe Martinelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ddbd6bffc8383dac5f3a1d0eb4e2faf31d591b9c6fb9b85d9d891c0a762c79c",
+    "mention_text": "Av. São João, 35, Centro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6db4bbe02bf7a76e1cb3db57e480156a855cfe9dd5d37f133c92a5ee31b4dce3",
+    "mention_text": "DC Comics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d56dd45e7a69a215f961b3c6440399e96a827e56443617f627847366cae349a",
+    "mention_text": "Golden Square Shopping",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7bea29432aaae1d108bfaa8b4505809f6fb897240986b2459f3dc9479cbd05f3",
+    "mention_text": "Av. Kennedy, 700, São Bernardo do Campo, São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46bd30a8456d99ff642564e92253de2c1a917d3162649508fa6e5727a5953427",
+    "mention_text": "Coringa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42d88e8f54b7a69731ca7d1972f840ffc3d90c825d3e1e92a8d291b44e9ce6e0",
+    "mention_text": "Biblioteca e Gibiteca Sesi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79fcef604065ea1ef2f91bf91f51631b2c79142bb6d32fe7064b31c24e2c3740",
+    "mention_text": "Álvaro de Moya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "061ac494f170ab143c1ffa9884306e766ad18ff9fcb758b28f9b920fe4e80360",
+    "mention_text": "Will Eisner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9221f7fa0e47a91a6153435bc97091f88961c68718c8055b14cc739e3f0ff4be",
+    "mention_text": "Ebal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e89953dea76fa95245ed46b4ba280fec009b103a10fb3d62493fc96cc7d546e2",
+    "mention_text": "R. Carlos Weber, 835, Vila Leopoldina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee64f57ba8efe99b222116c75b4d2ee2e7086434c8cbabdc0ff7070148da3817",
+    "mention_text": "Shopping Metrô Tucuruvi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78b1e7a1aa153cca6ce399ca57c914aecc2c93f6474b0984755db5d5bb1bd13a",
+    "mention_text": "R. Paranabi, 218/224, Tucuruvi",
+    "categoria": "LOCAL"
+  }
+]

@@ -1,0 +1,312 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 40e6f53410789ea9f0b5e17632fb228dbbfc17cb1a7a46b85784f9d0a97be40d
+
+TEXTO:
+Ministério Público abre investigação sobre vazamento de dados da Stone
+
+O Ministério Público do Distrito Federal e Territórios abriu nesta terça-feira (6) uma investigação para acompanhar as consequências da divulgação do código-fonte do software da Stone Pagamentos, empresa que opera maquinhas de cartão de crédito.
+Na abertura do procedimento administrativo, o promotor de Justiça Frederico Meinberg Ceroy cita o aviso que a Stone fez à SEC, (Securities and Exchange Commission, o regulador do mercado financeiro americano), sobre a "exposição indevida do código-fonte do software proprietário usado nas soluções Pagar.me, PSP Solution e Plataforma Stone".
+Na época, afirmou que começou a sofrer chantagem, com pedidos de pagamentos em dinheiro para que novos trechos do programa não fossem vazados. O documento informando o vazamento dos dados foi entregue à SEC nesta quarta (24).
+“Nós acreditamos que não houve acesso não autorizado, transferência ou uso inadequado de informações pessoais e financeiras ou de dados de negócios de nossos clientes e seus consumidores”, disse a Stone ao regulador americano.
+Na ação do MP, o promotor afirma que "após a autuação, determino à Secretaria da Unidade Especial de Proteção de Dados e Inteligência Artificial que oficie à Stone Pagamentos requisitando informações sobre o ocorrido", disse Ceroy, que é o coordenador da Unidade Especial de Proteção de Dados e Inteligência Artificial do Ministério Público do Distrito Federal.
+A empresa lançou suas ações na Bolsa de tecnologia americana Nasdaq no final de outubro e captou US$ 1,5 bilhão (o equivalente a R$ 5,6 bilhões).
+A Stone é a segunda empresa de meios de pagamentos brasileira a abrir capital no exterior. Antes dela, a PagSeguro —que pertence ao UOL, empresa do Grupo Folha— movimentou ao menos US$ 2,3 bilhões (R$ 8,6 bilhões) na Bolsa de Nova York.
+A Stone disse, via sua assessoria de imprensa, que não foi formalmente notificada pelo Ministério Público, de modo que desconhece o teor das investigações.
+Afirma que, se notificada, prestará os devidos esclarecimentos às autoridades, com compromisso e seriedade.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0751f68bf7ee25b0f0fd9824ab56c6ca6b5b4478a032b3e219c6ca87aadbbb83",
+    "mention_text": "Ministério Público",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0be0076ac01bdb559c5ac2575a4cab457b1faf6426c55405c5fa661e0b19bfaa",
+    "mention_text": "Stone",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79ae08dcb467b1a60b85dd0695727ba455c1fef21f514df99a8b2f6ec8de7e81",
+    "mention_text": "Ministério Público do Distrito Federal e Territórios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0c12e766cb78250f3d81771a0ad8ddf2e357efa1c8f781e59c0c8e522aa0dec",
+    "mention_text": "Stone Pagamentos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9e7fbdd8aa70896ecfc4fba3a10436cc39379b27debaf58cf069086189d4567",
+    "mention_text": "Frederico Meinberg Ceroy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed9f1f748d84b3b76adcda97dd4c6c670b1a08757ec12e7caba55e7b66724368",
+    "mention_text": "Stone",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16b77f3aef8450e0b366fe868f5501a033064b4bd1ad440bdebe86bc5cd03491",
+    "mention_text": "SEC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb16cbd7733959f8abbe7a885ec6dd347dd4030c03089daed41f33a832814b83",
+    "mention_text": "Securities and Exchange Commission",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bff4b5bef807cdc45eda468211fdebc2dc337453c8ad08098802ed2a0c5fd163",
+    "mention_text": "SEC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d4f0d89e23c2064b389785fe2564ff18393471b79efc91f34a7cd88a6421fc9",
+    "mention_text": "Stone",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69c639cc9c798623caf5abed026dc631076c1e11c3748bfca2f03cc949fc8348",
+    "mention_text": "MP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48cd3c2399db23405f999691ee6e70d7271de9575dd95c6afcbc950918e720c6",
+    "mention_text": "Secretaria da Unidade Especial de Proteção de Dados e Inteligência Artificial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9e1d04f151062dd9a5bc06c8a43668e462e38772ab080a463e46c4121b819c0",
+    "mention_text": "Stone Pagamentos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90376dbd0c5b6b3f930b2ef094af56200a8dd0c1ea0ff59878255976bd1cc8c2",
+    "mention_text": "Ceroy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "441c3f995f97226cab7b23610a6fa16455ac9720919faa4f3abcfc1145005b9c",
+    "mention_text": "Unidade Especial de Proteção de Dados e Inteligência Artificial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fa80fa4cc9c750ad9e0a9536258c65e16a9a13a8735940c5c2029c057b39aac",
+    "mention_text": "Ministério Público do Distrito Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c118d1718652e293e0900fc3855ee1e983b970cb342f3f5551e1fe4e2b04b59",
+    "mention_text": "Nasdaq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca6a9947da97169e0f604f1ca5fde59e8326c2eb0f57036fd0a32c11387d3b84",
+    "mention_text": "Stone",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8162a6269dfa3e8b3e07932e96bce2c4e453834a70ae9fb78fc2e10db49584e",
+    "mention_text": "PagSeguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "965ec0cb13bcae3fdfa94b51cf154b63f2c8b8f9d0c1c821a707ef521180c9dd",
+    "mention_text": "UOL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f20733c71b96321343cbcc43d7be9011c9aa35335cf8f9063154e9bb31c28ab",
+    "mention_text": "Grupo Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8662c790eee98d1f08b0d44e9d3ebdc86bf52d97b4c9f6e8b6e2a31d7b560a7b",
+    "mention_text": "Bolsa de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6046627b2b140072e0890c2cad96c80e7a570c8eb606ce4ea81273b5b0b8807",
+    "mention_text": "Stone",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4873eafb0fdf2113743d58cbbc4c29c5550cc678d6d560ae57a713aa0071273f",
+    "mention_text": "Ministério Público",
+    "categoria": "ORGANIZACAO"
+  }
+]

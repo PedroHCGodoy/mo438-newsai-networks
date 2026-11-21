@@ -1,0 +1,476 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 78c24c33ff32d8355efa6295bee5255e6af56680b401e59c4e1e5c93a9044249
+
+TEXTO:
+Fontes renováveis disputam entre si espaço no mercado de energia
+
+A falta de leilões para contratar energia renovável tem gerado uma disputa por espaço entre as fontes limpas.
+O setor de PCHs (pequenas centrais hidrelétricas), que pressiona o governo para participar do leilão previsto para o segundo semestre, aponta uma falta de isonomia entre as fontes, principalmente em relação à eólica.
+"Se houver espaço para todos, ótimo. Se não, pediremos prioridade. Desde 2009, nossa contratação é muito menor que a do setor eólico, e nossa energia é mais barata", diz Paulo Arbex, presidente da Abrapch, entidade das PCHs.
+O setor também se queixa de desigualdade tributária.
+MATRIZ BRASILEIRA - Participação das diferentes fontes de energia
+A expansão eólica ocorreu devido aos preços mais atrativos em um momento estratégico, avalia Elbia Gannoum, presidente da Abeeólica.
+"Essa falta de isonomia não existe. O governo distribui bem —agora, tem que ver a competitividade da fonte. Mas não há disputa no setor."
+O segmento de biomassa, que também pleiteia espaço no certame, se queixa que não participa dos leilões de reserva do governo desde 2011.
+"Foi uma decisão política: houve para eólicas, solares, PCHs, mas biomassa, não", diz Zilmar de Souza, da Unica, que representa a indústria.
+Para o setor solar, há espaço para todas as fontes no curto prazo, mesmo que a contratação não seja no nível ideal, avalia Rodrigo Sauaia, presidente da Absolar.
+*
+Juro menor faz clientes saírem de fundos exclusivos, afirmam bancos
+Alguns investidores com fundos exclusivos, sobretudo os de menor porte, têm optado por desmanchar a operação e migrar para opções com custos menos elevados.
+Esse veículo, em geral disponível para clientes com no mínimo R$ 10 milhões a serem investidos, perde um pouco de atratividade com a queda da taxa de juros, afirma Mauro Rached, diretor de gestão de fortunas no BNP Paribas.
+"Conforme os juros caem, o peso das taxas fixas sobre a rentabilidade cresce. Temos visto casos de quem migrou porque não valia a pena."
+No Itaú, onde esse tipo de fundo representa 35% dos mais de R$ 250 bilhões sob gestão no private bank, uma das sugestões tem sido opções condominiais, em que as despesas são diluídas entre vários cotistas, diz Luiz Severiano, diretor da área.
+"Os exclusivos tem mais valor quando se coloca uma parcela de risco maior e há mais recursos. Hoje, temos mais de R$ 8 bilhões em estruturas condominiais, com mais de 8 mil investidores."
+"Ainda não temos visto uma migração, mas com a queda da taxa de juros, fundos muito concentrados em papéis atrelados à Selic perdem rentabilidade. É uma conversa que já tivemos com clientes", diz Alexandre Gartner, superintendente-executivo do Bradesco Private.
+No CSHG e no BTG Pactual, o movimento não foi notado.
+Para chamar de meu -
+*
+MEIs devem R$ 1,7 bilhões, e poucos devem aderir a parcelamento
+A Receita espera que 300 mil MEIs (microempreendedores individuais) venham a aderir ao parcelamento de dívidas que o órgão abriu, apesar de haver mais de 2 milhões de empresários com débitos de R$ 1,7 bilhão, na soma.
+O governo vai começar a inscrever as empresas no Cadin (cadastro de inadimplentes com o fisco), diz Frederico Faber, coordenador de arrecadação da Receita. "Para que elas não percam o benefício de serem MEIs, há esse programa para se regularizarem."
+No começo do ano, micro e pequenas empresas puderam parcelar dívidas, o que deve render R$ 12,8 bilhões à Receita, segundo Faber.
+"Hoje, 72% das micro e pequenas indústrias têm dificuldade com impostos", diz Rogério Grof, diretor de relações institucionais do Simpi (sindicato do setor).
+INADIMPLÊNCIA ENTRE AS PEQUENAS - Evolução de MEIs e quantia de devedores
+*
+Reunião cancelada
+Com as idas e vindas da Câmara de Comércio Exterior, o conselho do órgão não se reúne desde outubro de 2016.
+No ano passado, a secretaria, que era do Mdic (Indústria), passou à pasta de Relações Exteriores. Em abril de 2017, porém, voltou ao Mdic.
+Desde então, a indústria de pneus aguarda uma decisão sobre a taxa de importação de borracha natural. O setor tenta reverter um aumento da alíquota, de 4% para 14%, feito em outubro de 2016.
+*
+Pé na água
+A Tuopu, empresa chinesa de autopeças, investiu R$ 30 milhões em uma fábrica em Guarulhos, onde produzirá peças que embalam motores e reduzem a vibração.
+Já há um contrato de fornecimento a um automóvel da GM, diz Flávio Passos, diretor da Tuopu no Brasil. "Esse é um investimento inicial, a ideia é aumentar à medida que desenvolvermos negócios com outros clientes."
+A instalação teve apoio da agência Investe São Paulo.
+*
+Inteligência A Intel, que planeja ampliar os negócios ligados a inteligência artificial, vai criar dois centros de ensino, em parceria com Unesp e Mackenzie, para formar mão de obra qualificada no país, diz o presidente, Maurício Ruiz.
+Mundo animal A rede de pet shops Petz investiu R$ 10 milhões em uma loja no Itaim Bibi, bairro nobre de São Paulo. O aporte na unidade de 3.200 m² é o dobro do que costuma ser gasto nas operações, segundo a companhia.
+*
+Hora do Café
+com FELIPE GUTIERREZ , TAÍS HIRATA e IGOR UTSUMI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "eaa0f2ee10155005588161fef1d440d4fc864cf1a2f3a6fae3ff671bf4100aa8",
+    "mention_text": "PCHs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35a81351074f716ea1971ba8e08a9e9223ca1af8bf73adb2daec22ed3cb1daa9",
+    "mention_text": "Paulo Arbex",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe0c963d2b65b7ea9043fe78d18abb5601275ef1e3fef5d0c117b006a03a8a0d",
+    "mention_text": "Abrapch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c289e756c1d7374a2ee869a119a3551df3c1de915885f7595aa597f4d851c7da",
+    "mention_text": "PCHs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "161ef6577aad5f30fcfdbc55c0522c097a39459e81ed8ac814ccdf8108c49451",
+    "mention_text": "Elbia Gannoum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1554ac640321a17467a29d84a2eefbd3178d60df240543cd681032895af3685",
+    "mention_text": "Abeeólica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cfc19ae6fcc4d47416c779ef734ae4e242d061cb15b115db3e8209b55d009b9",
+    "mention_text": "Zilmar de Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ccde0b33f7ecb6f215e83b4dd3fdf8a191f0944a6e5f301fe1d7df92d0ef51d",
+    "mention_text": "Unica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "301632a4b8c8d9a7afd90f0c1e0e08f14ea0d5bc0103fbbf76d0a91bd382640a",
+    "mention_text": "Rodrigo Sauaia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab344069c1b1d46691fb4c05b037bace84b0eb7a813340a842d0908d27b0b5cc",
+    "mention_text": "Absolar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "213f5957aa4f738fd1c85ae8d6e2a5a21858809c544b573e66559a07ff8964d4",
+    "mention_text": "Mauro Rached",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9775e2375c710e37f97a237ad53b62ca0f6476e77cbd07989b4ba326d1379723",
+    "mention_text": "BNP Paribas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5f0f8a9d945edd100672c8a34357315d83e17d06a9cddf3c8a2e3e238251569",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab47aaaebda9ff99702ec4751b398825834b8395d8d2317fe856062ac5ddc94f",
+    "mention_text": "Luiz Severiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6e613a21f407a1ba70b493d0ea761100b78342e6fac5386c4c839918cc9547c",
+    "mention_text": "Alexandre Gartner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef030edd0171af019411fb5ca53391d5599eaf577f967b7852824a23682e737b",
+    "mention_text": "Bradesco Private",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1d99991cb07e11abdf8e89d55fdc14bfe83e6f294b59d2a4a4924779e4e204b",
+    "mention_text": "CSHG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "445cd79776ae1c31d6f2a2616e860e9a0ca9c92e75b62c64b69013dd5dcf0311",
+    "mention_text": "BTG Pactual",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "425d29dcd83d68e495c3fb8b7f297b02738d13843a5b221d150185d914c973af",
+    "mention_text": "MEIs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "684de760515083233472d57d2d36f53bd841a13f3d32638fbd8a07391bc6ce00",
+    "mention_text": "Receita",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34bfbd89212d60f945533b7ebdf2a8099c37986a6fde0ad8ce6f7f19fc579dd5",
+    "mention_text": "MEIs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e307b7a5d3695d95fdbb863bde9116493675ed5bffd8af65ae774dd2c2060fe",
+    "mention_text": "Cadin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e115480c74377883a1ded90e2ef1d92d17d94dc4533aa551c9da8e59697744de",
+    "mention_text": "Frederico Faber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf36c1ed7f57fbea34906d693d0076d0143c9e23c19df0dfd7af06b40b342753",
+    "mention_text": "Receita",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b691c4f3e39e8742c6076c0b9589e409357fb5e0000514eb3c15037fe508e0b",
+    "mention_text": "MEIs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88e5f32b0d50615ff42739bfb08fda8af8d7712b0a4efbc8fe18345589f62d8f",
+    "mention_text": "Receita",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e1475bf550ce72f96c72d1947228d42e189d4b22a3772fe4ec1d66fd4bbd7de",
+    "mention_text": "Faber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97ceb47940ff83b625476b64e538caefb7db4824a4b5cc0070bf8f56b810ee4e",
+    "mention_text": "Rogério Grof",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6baf8ab5bb21fcd551d1c771870a1ee2f14dca116cf1ec12cef599c9c4a80019",
+    "mention_text": "Simpi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aec9c2147b89d271469ef940e852f00bf3864271044ad304bf3b2b7c35c0c169",
+    "mention_text": "Câmara de Comércio Exterior",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "646851dc6886bce2a114aad1d76d28389f1d56b25baa4f634e8b4cf4e0a436cf",
+    "mention_text": "Mdic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48ba392635b76c8aad9ffd7ad8494c27e053180a4cf81f65678c0fa5615cb307",
+    "mention_text": "Relações Exteriores",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a3d8ccac321ce505d0dc8b56b66ce4dc4ac315bd7cb145d328687e50b83f2b3d",
+    "mention_text": "Mdic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9f8c3c8537f63856e400c0ca7c22a9fda89ae8ac847ca0385e08015549cd752",
+    "mention_text": "Tuopu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02cb1d77618b174fe64f45fbb190e027817a83f2b90d291a353d690bee58e46d",
+    "mention_text": "Guarulhos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7456eb9962d8b09b0ca7d050ebd2e86e882130c6fdf81e90a595507083b943a3",
+    "mention_text": "GM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34895d7290666f2b4d82bf360b11846100182adcf4999d24c4c77000793f31e7",
+    "mention_text": "Flávio Passos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e6d1e6ecb79cdc44564ba9fd8d8f38d2383e0e72d09519f35f8217de1b9bce3",
+    "mention_text": "Tuopu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d8c07a4fbc45678ed83c12c497c492cbc50da4ea44143aa5d7088a10307ceea",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a345d1210f9615942a6a062b3d142b184504e09ac3271a2ac3aa600d2e0c07ee",
+    "mention_text": "Investe São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47f5e1bdf1d5e1c06d8a1f2704085708e49cc15af49fde2ece19fe2a359d6f86",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e5c0306d44a4096faba8345a2bca2bfb6426438d35b6f6eb39b7e89d0fdf8a2",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf1c8bec4de4dd9f96ca26e8eea19f1e240afa02bc5be82407fc8be958c64dbc",
+    "mention_text": "Mackenzie",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa4cbec21cd99cd17f892e4f224b93abcec56a006c7f1a24c55a7ad8cedadb99",
+    "mention_text": "Maurício Ruiz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0931298d114791364ea860d85146ff0d9c13f0b10e7a4a1e82d0041bc99b1781",
+    "mention_text": "Petz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63b1dc806c0cb8f21efc61f3bd32647d1d96ef07c679eb2e32962a46c997eeee",
+    "mention_text": "Itaim Bibi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd7a9135e89c1b21ce4125c0a9e53d7f94e6d613b6e2455985191f66ece19e8b",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1daec3281b32c614204dcf9c978975f0c72f34afff870f571afa7bd68a5f47e",
+    "mention_text": "FELIPE GUTIERREZ",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3d82ac585c0ad7375ec1759a2bd1cfa523d7b615a468b524eac33cdc28e2bb4",
+    "mention_text": "TAÍS HIRATA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b82e432d3a3c53b8c7e4252e53dedee2be2a4ee050240e2fc548bcd0b3674b3f",
+    "mention_text": "IGOR UTSUMI",
+    "categoria": "PESSOA"
+  }
+]

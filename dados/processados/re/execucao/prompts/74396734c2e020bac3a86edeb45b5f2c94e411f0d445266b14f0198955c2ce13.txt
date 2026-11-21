@@ -1,0 +1,380 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1ea2be11936482c75186d311ffe1c6d07bc3bb5b90b9989a30fa5d457b585df8
+
+TEXTO:
+Cresce oferta de cursos de MBA nas áreas tecnológicas
+
+MARCELO SOARES COLABORAÇÃO PARA A FOLHA
+Os cursos de MBA no Brasil incorporaram nos últimos cinco anos disciplinas tecnológicas de ponta, como ciência de dados, computação na nuvem, criação de games e projeto de aplicativos para dispositivos móveis. Esses cursos enfrentam o desafio de ensinar na prática técnicas que mal começam a fazer parte da cultura de muitas empresas brasileiras.
+"Muitos executivos brasileiros têm interesse nessas áreas, mas pouco conhecimento do seu potencial. Eles ainda não viram a tecnologia funcionando", diz Hitoshi Nagano, professor do MBA em Big Data e Analytics da FGV, em São Paulo.
+Por isso, as universidades dosam a oferta entre MBAs mais generalistas, voltados a quem gerencia projetos em tecnologia da informação, e específicos, como a criação de aplicações em Java.
+Muitos dos programas focam na mão na massa, com laboratórios digitais. Outros apresentam alguns temas digitais do momento sem aprofundamento técnico.
+"Creio que o mercado brasileiro, como já aconteceu lá fora, saberá discernir os cursos voltados à parte analítica daqueles que apenas dão noções sobre novas tecnologias", afirma José Luiz Kugler, coordenador do MBA da FGV.
+"Nosso curso é denso em seus tópicos, como também são densos os bons cursos de economia ou medicina", defende Kugler.
+Na Fiap, que oferece atualmente 16 programas de MBAs voltados à tecnologia, o diretor acadêmico, Eduardo Endo, afirma ter percebido uma mudança na procura do mercado nos últimos anos.
+"Há cinco anos, os cursos mais procurados eram os de gestão de TI e gestão de projetos. Hoje há grande demanda por big data, business innovation, arquitetura de soluções, business intelligence e marketing digital", diz.
+Em Minas Gerais, o IGTI (Instituto de Gestão e Tecnologia da Informação) oferece 17 cursos, muitos deles voltados à criação de aplicativos e todos com a modalidade de ensino a distância, que é mais barata.
+Há três perfis de alunos nos MBAs tecnológicos: os engenheiros, que já dominam as técnicas de programação, mas não têm conhecimento de gestão; os cientistas de dados, profissionais que já fazem análise de dados de negócio e querem sofisticar sua atuação, e os gestores, que buscam, sobretudo, saber o que é possível extrair dos dados para melhorar todos os processos de sua empresa.
+Para evitar que os engenheiros considerem as aulas fáceis demais e os gestores as julguem difíceis, MBAs incentivam o trabalho em equipe.
+"Quem sabe bastante de técnica só vai se sentir desafiado na metade do curso. Já o outro grupo corre o risco de se frustrar achando que nunca vai usar uma técnica", afirma Kugler, da FGV.
+*
+ONDE ESTUDAR
+INTERNET DAS COISAS temas abordados nas aulas Experiência do usuário, arquitetura para dispositivos móveis, segurança digital, design thinking, desenvolvimento na nuvem, arquitetura de software metodologia Muita prática e aulas expositivas para quem é indicado Profissionais de TI, já que há muitas disciplinas focadas em programação onde estudar Fiap duração Um a dois anos custo R$ 23 mil
+TECNOLOGIA DA INFORMAÇÃO temas abordados nas aulas Arquitetura de TI, gestão da inovação, auditoria e segurança, métricas de negócio, governança, gestão de projetos e serviços, análise de viabilidade de projetos, negociação e administração de conflitos metodologia Aulas expositivas e técnicas para quem é indicado Profissionais que atuam em desenvolvimento, infraestrutura, operações e projetos de tecnologia onde estudar FGV, Fiap, IGTI, Ietec-MG, Impacta duração Um a dois anos custo R$ 10 mil a R$ 23 mil
+ENGENHARIA DE SOFTWARE temas abordados nas aulas Arquitetura e projeto de software, plataformas inovadoras, regras e processos de negócios, engenharia de software para novos negócios (blockchain, machine learning, internet das coisas) metodologia Aulas técnicas e expositivas para quem é indicado Analistas de sistemas, desenvolvedores de software, profissionais de engenharia de software, analistas de testes onde estudar Fiap, IGTI duração Um a dois anos custo R$ 10 mil a R$ 23 mil
+BIG DATA temas abordados nas aulas Estatística, análise de dados, métricas de inteligência de negócios, análise econômica, inteligência artificial, modelagem preditiva metodologia Aulas expositivas e muita prática para quem é indicado Profissionais com conhecimento em TI e experiência em gestão onde estudar FGV, Fiap, ESPM, Impacta duração Um a dois anos custo R$ 9 mil a R$ 36 mil, dependendo da instituição (e do nível técnico)
+SEGURANÇA DE DADOS temas abordados nas aulas Cibersegurança, segurança física e ambiental, normas técnicas, hacking ético, perícia de computadores, inteligência e espionagem, gestão da continuidade de negócios, defesa cibernética metodologia Aulas expositivas e técnicas para quem é indicado Profissionais com experiência na área de TI onde estudar Fiap, IGTI, Impacta duração Um a dois anos custo R$ 10 mil a R$ 23 mil
+COMPUTAÇÃO NA NUVEM temas abordados nas aulas Arquitetura da internet, infraestrutura de data centers, plataformas de nuvem, segurança, bancos de dados, automação de serviços metodologia Muita prática e aulas expositivas para quem é indicado Profissionais de TI, já que há muitas disciplinas focadas em programação onde estudar Fiap, Impacta duração Um a dois anos custo R$ 23 mil
+DESENVOLVIMENTO DE APLICATIVOS E JOGOS temas abordados nas aulas Programação de games em 2D e 3D, apps móveis, inteligência artificial, modelagem de animação, design thinking, storytelling, design e usabilidade metodologia Muita prática e aulas expositivas para quem é indicado Profissionais de TI, já que há muitas disciplinas focadas em programação onde estudar Fiap, IGTI duração Um a dois anos custo R$ 10 mil a R$ 23 mil
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6ab470135fca1b2d17fec0bb74468d7286f7a2abcc52f69a41d070db383ca46f",
+    "mention_text": "MARCELO SOARES",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7b539ef7e59e8fa756aaa287e7e07f2b5e5e2ed909455255265eee2b5b1dbd2",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ded5f4647ce5f4c7f0263b28b7ded0dc895c9f2ea76ceb8e762dfed27d4de2f5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "51165263b6e6d8676a214e346bc80c9b5ca10fe9b919cecb5ed4eb9a61181984",
+    "mention_text": "Hitoshi Nagano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6229769338efaa48a5407879cada29e5fd19180d0a28a10f665ee40f3b8b1930",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86d6a1d07d2151047ee7a0febdf11581a9832cb55cc5290d82b182c9e07f3da8",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02c3ac4a726c21ac6c4229111f21eb3e69b98f70344bda618a6a0f9c603f1e93",
+    "mention_text": "José Luiz Kugler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0fa2e4e161bf740cfc8770fba522d88fd327e2a5f3a6f58d95852ad8b39416fb",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74fc1a6b395fd4e8b63c1cf5205541810139ddfb39a2808f80bfa950d4bc0ad6",
+    "mention_text": "Kugler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19017931fb294c5981fac420c0ea4ce561e4cec98b6687cf28282056c8d41a40",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7f8c6ac199b42b4bfb53c159eaaf056db340bdc386dfaf6bbbae795cdd7863c",
+    "mention_text": "Eduardo Endo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dce837f73dd72724889016544702587751496ea5710437230ceac7f4a213f3b2",
+    "mention_text": "Minas Gerais",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b88cb733523d5e9a663b83ea885239aa6031f114c8a40141fdbbed36fc3cd2fd",
+    "mention_text": "IGTI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b1e634de79c10d39d0fd68ec241f79e065a9d0585a8e129ebc6e98e49060215",
+    "mention_text": "Instituto de Gestão e Tecnologia da Informação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7cf17980eaa76812fc595da4866ab35236fc50afc1940f069ea5b77cc5759ee",
+    "mention_text": "Kugler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3375218b15c5ea35a277dd4b9b86af8652eb52b0ce3077c2cc52b92ac447b15",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a561e399c0a5964a567e2c247f70633a021ca1e2b3b2d2ff9c3a708b119ad75",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba3a65016d153c8369f046e68cf88c299c4eb2fe1ddad045ca6a2642970318be",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7da6a825f7161de6b37c05d37e0a4629aa74a83e767094a12e6989f3f5c34520",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4a24c65e0ddd1b6e87da310a1c2ea152722df021d8a5cb4e5f5e0deabf286f2",
+    "mention_text": "IGTI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e693e3052643133b39756fddcb668b85edf0bce98731d9ddac87bccfe7a43a1",
+    "mention_text": "Ietec-MG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89e0dd04d75f57af4bb498351bd43201fa689263e4e2e7f186e8e6cea93cba72",
+    "mention_text": "Impacta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "813c0db4079b0737b6130897972b847c01b1b8ed0aeb56796b5ce9127f8f1445",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02adc49ac2f2ef17554c525bac8e2a51297783926516378d127e5435232189fe",
+    "mention_text": "IGTI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c73c9fd7e0ff66ab8253ae52454c411c44dac396a5d08e59edeb28cb1c50f63f",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b4bc7e668b9763bc32cd49d8aa11b232ffbcdd5d13ef07c65ffa0eb2ecea1b57",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e2207e4dd56d48c770f07b571de727fe8ec574c40758605168c5f657345d4f7",
+    "mention_text": "ESPM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b49e990fb2d7d725efe86e2b8d72c7a57b7a17258ca7411dd3a2379bfe2d7902",
+    "mention_text": "Impacta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e201d502d538c7a19baf177215440475fb79aa3c4d98a9eaf86b7b082276fd0",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89819ce3ae63f902f1c34df291c0b354eaefbabb72c9b0421bd1ed49b0bca98c",
+    "mention_text": "IGTI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ddfff845c9ff3b059185149fff5c944157da841e1e207d9285710a3aa9ada2c",
+    "mention_text": "Impacta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3df8af40579d0dd108126706708f4b1f9c71dbaa7286b67fd133580a06d9be90",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3df16553ccbb037faddb070f40c8e655f5aad94f14b3d89e06873f91dc44cd86",
+    "mention_text": "Impacta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a96fc37b6c31e47b68730f16ae5acf174415e6d87b33b4d253aa9a943c103eb1",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c67a22c54820e9a75b32025eb1b26f5a43908dfbc3652291fc47bb30bb17d5fd",
+    "mention_text": "IGTI",
+    "categoria": "ORGANIZACAO"
+  }
+]

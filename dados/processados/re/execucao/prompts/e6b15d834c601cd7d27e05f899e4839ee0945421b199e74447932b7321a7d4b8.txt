@@ -1,0 +1,407 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9080a6bf22becad2f93831fbf041d8b78e293a47a171e50474ad09028022bee9
+
+TEXTO:
+Tecnologia transforma o trabalho e leva faculdades e empresas a repensar qualificação profissional
+
+O avanço da indústria 4.0 levará a transformações profundas no mercado de trabalho, diminuindo os postos em atividades repetitivas e que podem ser automatizadas.
+Profissionais fazendo trabalhos manuais, encaixotando ou montando produtos ou coletando dados manualmente serão cada vez mais raros. Em seu lugar, estarão robôs, sensores e tecnologias baseadas em inteligência artificial.
+Especialistas e executivos preveem o surgimento de novos empregos no lugar dos que serão perdidos, muitos deles  relacionados à tecnologia e com novas exigências de qualificação profissional.
+Ganharão espaço novas ocupações, como técnico em impressão 3D, mecânico de veículos híbridos, analista de internet das coisas, especialista em segurança de dados, especialista em rastreabilidade de alimentos, diz Rafael Lucchesi, diretor-geral do Senai.
+A amostra faz parte de lista de 30 novas profissões criadas pelas transformações tecnológicas que foram identificadas pelo Senai para orientar o currículo oferecido aos alunos. A instituição recebe 2,3 milhões de matrículas por ano.
+"Acompanhamos em todos os 28 setores da indústria de que maneira se dá o deslocamento da fronteira tecnológica. Assim, não preciso esperar uma mudança para atualizar o que estou fazendo na escola."
+O tamanho e o tempo em que acontecerá a transformação no Brasil podem variar dependendo de fatores como custo da mão de obra  (quanto menor, menos incentivo para substituí-la) e capacidade de investimento das empresas, diz Ana Karina Dias, sócia da consultoria McKinsey.
+Segundo ela, 5% de todas as profissões devem deixar de existir como resultado da adoção de tecnologias de automação. Entre 60% e 80% serão afetadas em decorrência dela.
+Para o Brasil, a consultoria espera que 15,7 milhões de postos de trabalho sejam afetados até 2030.
+Dias diz acreditar que, com o crescimento econômico resultante da automação e do ganho de produtividade, haverá mais demanda por novos serviços, permitindo a renovação do mercado de trabalho. Porém ainda não há clareza de quais serão as novas atividades.
+"Isso é uma pergunta de ouro. Ninguém tem certeza. O que se tem mais clareza é que, aumentando a produtividade, haverá mais oferta de serviços, com mais coleta de dados, maior necessidade de interpretação deles."
+Para a especialista, o desafio que as empresas já possuem hoje para contratar profissionais qualificados, mesmo com o desemprego alto, vai se acentuar caso não se ampliem os investimentos em qualificação.
+Segundo ela, para os profissionais, a busca por conhecimento deve ir além das informações a respeito de tecnologia.
+"Considerando a velocidade com a qual as coisas estão mudando, vai ser mais importante saber se adaptar do que especificamente a profissão que você vai ter."
+O desafio já leva faculdades a reverem seus currículos e empresas a investirem em capacitação.
+Segundo Allyson Faria, diretor de marketing para a América Latina da Siemens PLM, as companhias precisarão de profissionais com conhecimentos em áreas como inteligência artificial, robótica, engenharia, simulação, nanotecnologia, impressão 3D, big data e internet das coisas.
+Ao mesmo tempo, ganham importância habilidades como capacidade de comunicação, de se adaptar a mudanças, de analisar dados e de colaborar.
+"A pessoa que está desenvolvendo um novo veículo, avião, tênis, a partir de simulações feitas em software, vai precisar conversar com a engenharia que está na ponta, com o chão de fábrica, com quem cuida do maquinário, quem cuida dos custos."
+Ainda é um desafio para empresas encontrarem profissionais prontos para essa nova realidade. Por isso, a opção tem sido investir em formação, diz Celso Placeres, diretor de manufatura da Volkswagen.
+Para desenvolver sua produção dos modelos Polo e Virtus  na fábrica Anchieta, em São Bernardo do Campo, a companhia enviou 36 profissionais para estudarem tecnologias da indústria 4.0 na Europa. Depois, o grupo ficou responsável por transmitir os conhecimentos internamente.
+Também houve troca de informações com o Senai, que ajudou a disseminar os conceitos dentro da companhia, diz  Placeres .
+Na empresa surgiram novos postos de trabalho, principalmente de especialistas em digitalização que passaram a estar presentes em várias áreas da companhia, como processos, concessionárias, produto e relação com fornecedores.
+"Contratar esses profissionais é bastante complexo. Eles são raros e cada vez mais valorizados. Por isso estamos qualificando nossa mão de obra."
+A Mercedes também faz treinamentos dentro da fábrica, inclusive com a criação de linha de montagem automatizada e um simulador de logística dentro de unidade do Senai na fábrica da companhia.
+Fernando Fontes Garcia, vice-presidente de recursos humanos para América Latina da Mercedes,diz que cerca de 2.000 profissionais da empresa participaram de treinamentos relacionados a indústria 4.0 e 1.200 acompanharam palestras sobre o tema —a companhia mantém 5.000 pessoas na produção.
+Nas universidades, a percepção é que atividades práticas devem ganhar importância para permitir aos alunos uma formação mais adequada às necessidades do mercado.
+Fernando Madani, coordenador do curso de engenharia de controle e automação do Instituto Mauá de Tecnologia, diz que a faculdade vem buscando mais parcerias com empresas para que estudantes trabalhem em problemas reais.
+A escola conta com 100 laboratórios para uso de equipamentos da indústria 4.0 por alunos, o dobro do número de salas de aula, diz o professor. Eles foram criados a partir de doações ~de empresas ou aquisições com desconto.
+O desafio para o profissional do futuro, segundo Madani, é conseguir analisar as muitas informações geradas por sensores e sistemas autônomos para tirar conclusões, propôr novas soluções e criar modos de apresentar os dados que sejam facilmente compreendidos pelo restante da empresa e pelos clientes.
+"É mais difícil a pessoa se formar hoje, tem muito mais coisa para ela prestar atenção. É preciso ser mais inovador, pensar em soluções diferentes."
+Alexandre Massote, professor do curso de engenharia da produção da FEI (Faculdade de Engenharia Industrial) Também destaca a criação de laboratórios em áreas como internet das coisas, robótica e manufatura avançada feito com apoio de empresas,
+A faculdade também está em fase de revisão de seu currículo para dar mais destaque a tecnologias da indústria 4.0 e aumentar o peso das habilidades comportamentais na formação dos alunos, diz.
+Entre os planos, segundo o professor, está fomentar que alunos que se especializam em diferentes tecnologias trabalhem em projetos feitos em grupo, como acontecerá no mercado.
+"Para formar um engenheiro que conheça a fundo todas as tecnologias teríamos de ter um curso 10 vezes mais longo. Por isso, ganha importância o compartilhamento e a colaboração."
+As diretrizes curriculares da graduação em engenharia, que indica as premissas que as universidades devem seguir ao montar seus currículos, estão em processo de revisão pelo CNE (Conselho Nacional de Educação).
+A CNI (Confederação Nacional da indústria) ,a partir de um grupo de trabalho para o fortalecimento das engenharias, foi uma das organizações que deu sugestões para o documento, que esteve em consulta pública entre agosto e setembro.
+A entidade propôs a valorização de competências como criatividade, trabalho em equipe e empreendedorismo, aumento de atividades práticas e maior participação de profissionais da indústria no ensino, diz Victor Teles, coordenador da FestoDidatics (braço de educação da empresa de automação industrial Festo) e participante do grupo.
+"É preciso que a tecnologia não seja o único foco do curso.  Conteúdo ficou mais fácil de ser obtido com o avanço da internet. A grande questão é como pesquisar, como avaliar a informação que estou colhendo e como aplicar ela a prática."
+Luiz Roberto Liza Curi, conselheiro do CNE e presidente da comissão que trata do tema, diz que a inovação é um dos fatores de competitividade da economia e a engenharia tem papel de destaque para que o país possa superar os desafios de sua adoção.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2e2d7befb5686af5fb6381065c81458e37af2221e120d0662e1d43e362949ad1",
+    "mention_text": "Rafael Lucchesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1e0715aa082d124ef30739bec7bf900778a09a42b26fe1ba7fc3d728ab336d8",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba4ed4bf36a161366216f065cea3951d225421e1353c288fa584f5d68a80fc91",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "374e3868e79c7350902cb95deec1e8258908a7cf4674b8d91dd652614eaa649f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2108e07081687f078129ee41af03caf09cfd50ac4b066a23a84a10fc3644825b",
+    "mention_text": "Ana Karina Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a06304f5b77e7abf88799c5e4ff9c4a1f83bcf53f0852897968509617b12065",
+    "mention_text": "McKinsey",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "848636dac643810dc8cefcbe2ec68eb054707d22a60f630b707495bdaa0093e2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ca1894bfb8de2a00636d1a2c00700fe8981ee576ef36ec46adaeadb2942c0fd",
+    "mention_text": "Allyson Faria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42148657678c8a59708825ce019ba178f0a904116ac02b68288d6d7d65cf3f06",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c960b506ce5c0507f3d915bdf68fbac22ace7759ff5367223418f3f4820a115",
+    "mention_text": "Siemens PLM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b62e1b0d58a2475cc7a3089935c7e35712bea945ba584e4511511f2e0f5949f8",
+    "mention_text": "Celso Placeres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0246eada8c69d5cc8c147829b87c3fbb1ff89990a101f9a0735a4972d02b066",
+    "mention_text": "Volkswagen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82c9465b476db3f8f238b9d9ebccad96981e539447ff7c4bd51182212c39774e",
+    "mention_text": "Anchieta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "58fe4a42cd5f66b6af446e5f8eddc4dadf733654a16f50019e4b65cc65da3572",
+    "mention_text": "São Bernardo do Campo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b460fb00eb0855278d4983a7729215d78e86f9eac98a1b3e1fbc1dd7545f83df",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "607cea4b93abb46bb7f45167b8e05b0d5f854185d4bb2631f60199d5268ce143",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddbc6bf43876d9c86ece56314b42d1acdba1291fb4713aad1292d9400e3281bf",
+    "mention_text": "Placeres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "676352900ba12e2893ac9dc11c5320fe849c2e3c3cfd22f9880d2ca5d6ef3f60",
+    "mention_text": "Mercedes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d54e59c1f79c2a8274e0cd3035b44e75c0981a41330d51155fad9f36139a0dab",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c404b814dba57e2ddf027ca3f60a1d23c1bef0d5ac4512efb72cf227f6cdf57",
+    "mention_text": "Fernando Fontes Garcia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9cd91804fd3c2bc3021afaa545e6b3909bc795bd71b884e61962f2163e0edaaf",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "222a57d8af025ef20e6d90abb152497d85facb66e87140c6839b9f5cb8347ecf",
+    "mention_text": "Mercedes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "277591645c2bbaaa28ff3edbf7dbb6bb3bef8128fc8bf60b0ddeddf059f3162e",
+    "mention_text": "Fernando Madani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a09d9bd2535c652c7a1fd660fec1d4f5240669673626b42d6c50f2bf5090505f",
+    "mention_text": "Instituto Mauá de Tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c22aec24aba1ab7ec982f4d1d586ae6ecece06cb0a39fb530717c00c306e64a1",
+    "mention_text": "Madani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "647aafc60c8690ad1b16592117ace598c89f868e05b5ae9aee0891675f56b59c",
+    "mention_text": "Alexandre Massote",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "728d3f09d30cd899a41b8e81e7be765f1a0dc479f7e6e14c8c837cbcf449de4e",
+    "mention_text": "FEI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19073c93de0006adc3c084b89b39803583c7bcad03d3157c0e28e16fa3767b6e",
+    "mention_text": "Faculdade de Engenharia Industrial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f62f6c62efdc5fb83babfe13edb791a800e77038ed53d4a033178a82df2930de",
+    "mention_text": "CNE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "caf3a1d0139b39d788a40b50934bd4d1a5daf7e5be10c48bfdf29b5effc0f54e",
+    "mention_text": "Conselho Nacional de Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bb720c500723dd2f97e09a83409606e40a14d6069fd9a67854afe236052b9af",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b30eb9a7e5c1496432eaddae6f506d36d39df29c7d188cb9f40691dff50574a5",
+    "mention_text": "Confederação Nacional da indústria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af008b1cf7184101065b2bb98c3932b0a36d6f60b42f7987ef4b4deb4ff3b87c",
+    "mention_text": "Victor Teles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f6d921edacd1a1b635b74a8cd7711e962cb3209559436dbf5da0c0b4be6fd5b",
+    "mention_text": "FestoDidatics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ed42daa8f66517a6ade95c84488ef7a67a5a9f1fba15935e3b2069093ed2257",
+    "mention_text": "Festo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "293f66c34786da9501f64271ce00825da83edce4617ffb8413aa6fdf5b4ceba4",
+    "mention_text": "Luiz Roberto Liza Curi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13ac852427277a15365395533b49d9d1f011003a040ec37375bf42bdc3d5578b",
+    "mention_text": "CNE",
+    "categoria": "ORGANIZACAO"
+  }
+]

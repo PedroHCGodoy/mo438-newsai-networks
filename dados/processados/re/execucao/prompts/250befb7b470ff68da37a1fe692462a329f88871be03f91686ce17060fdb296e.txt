@@ -1,0 +1,360 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ef419867ba270eaee6a627a0c90e2d3f385a4df89897f07fc1a8cd689a8dee88
+
+TEXTO:
+Crédito fácil por meio de apps vira problema para consumidor chinês
+
+Como muitas pessoas na China, Bai Shichao tem dívidas maiores que o seu salário comporta. Bai, 30, é entregador em Pequim e tomou muito empréstimo de empresas chinesas de crédito online.
+Em um país onde não existem métodos confiáveis de dizer quem é digno de crédito, essas companhias recorrem à inteligência artificial e a dados pessoais exóticos –como a velocidade de digitação do solicitante em seu celular–para determinar que credores têm maior probabilidade de pagar em dia.
+No caso de Bai, os métodos fracassaram. Ele emprestou dinheiro para abrir um negócio. Quando o projeto fracassou, tomou mais crédito para investir em carvão, sementes oleaginosas e açúcar, nos mercados futuros chineses. Não demorou para que fizesse novos empréstimos a fim de pagar velhos credores.
+Hoje, a dívida de Bai supera os US$ 5.000, e ele ganha menos de US$ 600 por mês.
+"É como ser viciado em jogo", disse Bai, que abandonou a universidade e teve diversos empregos braçais, como segurança ou garçom. "Você começa a apostar e logo se vicia nisso".
+Com mais de US$ 100 bilhões em empréstimos, e diante da crescente preocupação dos consumidores com sua privacidade, Pequim está agindo para controlar o boom dos empréstimos online, segmento pouco regulamentado e muito capitalizado.
+Em novembro, o banco central da China proibiu novas plataformas de empréstimos pessoais online. Em dezembro, uma comissão regulatória anunciou medidas de repressão a essas empresas e limitou suas taxas de juros.
+Os pequenos empréstimos chineses estão se acumulando. Mais de 8,6 mil empresas dão alguma forma de crédito, e cerca de US$ 145 bilhões em empréstimos ainda não foram pagos, segundo o banco central chinês –ou US$ 392 bilhões, de acordo com o Boston Consulting Group.
+"Estamos preocupados por, em um ambiente no qual não existe um sistema de crédito efetivo, as pessoas tenderem a se endividar demais", disse Bai Chengyu, executivo da Associação Chinesa de Microfinanciamento.
+Essas empresas surgiram para dar empréstimos a quem não tinha histórico de crédito –um total estimado em cerca de 1 bilhão de chineses.
+A China recorreu ao setor de tecnologia, que opera com rapidez, para resolver o problema, e hoje há milhares de apps que oferecem empréstimos ou financiamentos, muitas vezes em segundos.
+As maiores empresas da internet e das finanças chinesas bancam esses projetos.
+Dois anos atrás, o BC chinês solicitou que as empresas de maior sucesso –entre elas divisões de grupos como a Tencent Holdings e o Alibaba Group– criassem sistemas de classificação de crédito.
+Mas se negou a dar licenças que formalizariam esses sistemas, e o governo deu a entender, segundo a imprensa local, que o projeto ficou aquém do esperado.
+No mês passado, uma associação de financeiras online ligada ao banco central anunciou planos para um sistema que avaliaria dados fornecidos pelas grandes empresas de tecnologia. Poucos detalhes foram revelados.
+LOCALIZAÇÃO
+As novas plataformas também despertam questões de privacidade, área de preocupação nova para a China, mas cuja importância vem crescendo. Muitas plataformas que acompanham o uso de smartphones têm acesso a dados de localização, listas de contatos e registros de chamadas, e isso tudo pode ser usado para localizar e perseguir os inadimplentes.
+"O governo vem enfrentando dificuldades, porque percebe que informações pessoais dos consumidores estão disponíveis em toda parte", disse Liu Yue, sócio do Boston Consulting Group na China. "Mas não sabe como mudar essa situação porque os dados já estão em uso".
+Bai Chenbgyu, da Associação Chinesa de Microfinanciamento, acrescentou que "algumas das empresas usam formas de intimidação para pressionar os clientes a pagar os empréstimos".
+No mês passado, a província de Guangdong, no sul da China, alertou que uma dúzia de apps tinham lacunas de segurança que permitiam que as empresas roubassem informações que eram usadas para intimidar devedores, seus amigos e familiares.
+Um dos apps em questão era o Paipai, cuja produtora, o PPDAI Group, abriu seu capital recentemente na bolsa de Nova York. As autoridades de Guangdong disseram que o app transmite dados dos usuários sem autorização. A prática "expõe seriamente a privacidade dos usuários", disseram as autoridades.
+Um devedor do Paipai diz ter acumulado mais de US$ 75 mil em empréstimos de 30 plataformas diferentes, para cobrir suas despesas e investimento em uma loja de sapatos. O homem, que pediu anonimato por medo de represálias dos cobradores, disse que costuma receber muitas ligações diárias de cobrança.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b0b4d20fb6aa0ddf1be616b14560aa05f568e7047f73b08b376e90d8e7aec6fa",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "057a6e57b9eaed59db1062bea5d0d150c70122517531c98f790c7b2d547a52ec",
+    "mention_text": "Bai Shichao",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0cec30dfdc89c826d955ec0e4af55b5661c21065d35cab7e07128c44516f43a",
+    "mention_text": "Bai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7c4de3f291e5852648fbaa392f891559d5d9cc6745271e35ecf85eb65d29347",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0cb3ee2471edf6a716cde3440a920c2fab468488847f252f8821bffe93a54c2",
+    "mention_text": "Bai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e447723ee9e87694195e1e619407a8234abf135f472915e58e8d07825fc8ec89",
+    "mention_text": "Bai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "465144114b113de626b3403a105d35b93d8b1d5bb60e39b8b80c5a0455867218",
+    "mention_text": "Bai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfdfec1e067b65c2a2f9261a46ba756aab4bc7005d6914f65ff9d7fa4bd69241",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bb99c7191743e6471f0851837fccf4b02f430a3c15d35aebe9e3f8b81f9c391e",
+    "mention_text": "banco central da China",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fabc70c2847f9d7e894b24cac3ee59c4a74caca56b81eb2db2eea0f4e7235a4",
+    "mention_text": "banco central chinês",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67484aba719c439befa2e3e2ae90804dc0771ab9c2817ae34d5b362e02ef1481",
+    "mention_text": "Boston Consulting Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef8e6d720ec5b75dd416dfac6afe0e3dabc7578d6f2758d30bcdef7e18339a94",
+    "mention_text": "Bai Chengyu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69e83bcd5989096fd4213bc7fb5210f797651fb07f38aea2d0b1be4818bba479",
+    "mention_text": "Associação Chinesa de Microfinanciamento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c86fa4fa71cd0301316dd32ddd0c6bc9dbe4c2c5728e2c29a91ee5e952c8a404",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f9da394bcc5a34163ca3f3cbca1d1af606befc7931739d008294e2527b4fee3",
+    "mention_text": "BC chinês",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c8cefc35533eece55ceb7a99f2e38154ead5068d082644c90668ae9a050c17f",
+    "mention_text": "Tencent Holdings",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf8a0b8d2590b53f14a23033d4a1fed4123760cd256175c0f9de0152858325c4",
+    "mention_text": "Alibaba Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6078b422088206c69d858c91a6dec0b5d637a982069208d5a2223b3b10a0bb4b",
+    "mention_text": "banco central",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b81576d3744c0ea1ac6f9229bdeda1d9df13b7139e2a86fcbf55cfee46b515ed",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bcd3f8ec48ec6ea8b2721e6034b65c24da78b81356448439675acd2707a3e92",
+    "mention_text": "Liu Yue",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb447735e4869f10acd06e2c645115c375ce166b2b3ad25369e86c6f24c6c00d",
+    "mention_text": "Boston Consulting Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92d0f62fed46d94a6f24c8429dfc356b3942c512fefcc9c0bbb197123b3d7cfb",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae292c715033b8ae01a0fdefd4f0f84419efaad22ae19b1f396b837b593fc03d",
+    "mention_text": "Bai Chenbgyu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c6b709bcea5521e7c27ada3f5a827d1f146dbff432d6ebfe4d5fdb84fa084b7",
+    "mention_text": "Associação Chinesa de Microfinanciamento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad8832d35ba3a81e0ee84d9c8774fcc7d22f78468edcc7705a25a962efece80b",
+    "mention_text": "Guangdong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d28ee01c8531b4ddedaa85583a1f5cf96fa05fde2034b35c5b7e4af026d46635",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a3dadb0c11208187a90780c8b66aa00acfceb644b6e167b9b64e7b0b67ae2409",
+    "mention_text": "Paipai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29d9eeeca91ecfbe34b1fe232f78482e2a1dd6a657add233a0bf0bd1837e0a13",
+    "mention_text": "PPDAI Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0430a4f935c2002431879dbb157e706feab2998aef3a4673b1e70dfb24c18e8f",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40f260e47a3a454f2398967a55193c5c6c8cfa61981610ce606ac3a94bc7a6fd",
+    "mention_text": "Guangdong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bb82477308a19ea09b07aeb0127af0264ab55178fb78b00a3f09e1bb90bb8ab1",
+    "mention_text": "Paipai",
+    "categoria": "ORGANIZACAO"
+  }
+]

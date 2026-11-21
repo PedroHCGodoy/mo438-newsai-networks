@@ -1,0 +1,567 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c2ed4427c4277532553c0daeab74a81e8693d22be149859b3ef6f5935ca581f0
+
+TEXTO:
+Veneza se rende ao mundo
+
+Festival começa hoje com 20 filmes na mostra oficial 
+e premiação dividida pela primeira vez; Brasil concorre a Leão de Ouro com "Abril Despedaçado", de Walter Salles
+VENEZA
+se rende ao mundo
+Christian Cravo/Divulgação
+José Dumont em "Abril Despedaçado", adaptação de Walter Salles para livro de Ismael Kadaré e único filme brasileiro em competição
+LEON CAKOFF
+EM VENEZA
+Pelo telefone, de Paris, onde finaliza seu novo filme, Walter Salles parece aflito. Perfeccionista, 
+diz que se tivesse mais dois meses 
+seu "Abril Despedaçado" ficaria 
+melhor ainda. Falava igual há três 
+anos, quando foi a Berlim e ganhou o Urso de Ouro com "Central do Brasil".
+Na corrida contra o tempo e a 
+pedido seu, "Abril Despedaçado" 
+terá estréia mundial nos últimos 
+dias da competição do Festival de 
+Veneza. Será no dia 5 de setembro 
+para a imprensa e no dia seguinte 
+para o júri do 58º Festival de Veneza, presidido este ano pelo cineasta italiano Nanni Moretti, recém-laureado com a Palma de 
+Ouro do Festival de Cannes pelo 
+sensível e lacrimoso "O Quarto do 
+Filho" ("La Stanza del Figlio").
+Depois de muito tempo de convulsão, há três anos o Festival de 
+Veneza vem sendo dirigido por 
+um cinéfilo de carteirinha, o sereno Alberto Barbera, saído do impecável festival do Cinema Jovem 
+de Turim. Com Barbera, o festival 
+deixou de ser a vitrine insipiente 
+da temporada do cinema americano pós-verão europeu. Voltou a 
+ser do mundo e da diversidade.
+Veneza abre hoje com 20 longas 
+em competição na mostra oficial. 
+O filme de abertura é o esperado 
+"Dust" (Poeira), o segundo longa 
+do macedônio Milcho Manchevski. O cineasta consagrado em 1994 
+com o Leão de Ouro de Veneza 
+pelo belo e incômodo filme de estréia "Antes da Chuva", ficou este 
+tempo todo sem filmar e cercado 
+por muitas intrigas sobre o seu 
+temperamento, suas disputas e 
+rupturas com produtores.
+Pela primeira vez dividido em 
+duas premiações, Barbera diz 
+querer experimentar uma nova 
+fórmula para que a imprensa não 
+seja unicamente motivada, como 
+era antes, pelos filmes em concurso, que naturalmente parecem ser os melhores de uma seleção.
+Apesar de o Leão de Ouro estar 
+prometido também para a seleção 
+paralela Cinema do Presente, a 
+categoria em que se encontra o 
+brasileiro "Abril Despedaçado" 
+continua com as honras de ser o 
+principal evento de Veneza.
+Honras que Walter Salles divide 
+com "Address Unknown" (Endereço Desconhecido), de Kim Ki-Duk, o mesmo coreano que chocou na temporada passada com 
+"A Ilha"; "The Navigators", do inglês Ken Loach; e "Loin" (Longe), 
+do francês André Téchiné.
+Para os americanos, Veneza 
+2001 reservou apenas três espaços 
+nas duas seleções. No concurso 
+principal estão "Bully", de Larry 
+Clark (de "Kids"), e "Waking Life", de Richard Linklater. "13 
+Conversations about One Thing", 
+de Jill Sprecher, concorre no Cinema do Presente.
+Em nome da cinefilia, a produção americana continua fazendo 
+bonito. Veneza guarda a primazia 
+européia dos novíssimos de 
+Woody Allen ("The Curse of the 
+Jade Scorpion"), John Carpenter 
+("Fantasmas de Marte"), Steven 
+Spielberg ("Inteligência Artificial") e David Mamet ("Heist").
+Mas o mesmo balaio das apresentações especiais também honra os últimos trabalhos do decano 
+português Manoel de Oliveira, 
+com o documentário "Porto da 
+Minha Infância", e o egípcio 
+Youssef Chahine, com "Silence... 
+on Tourne!". Sem protecionismos, a Itália também fica restrita a 
+"Luna Rossa" (Lua Vermelha), de 
+Antonio Capuano, e "Luce dei 
+Miei Occhi" (Luz de Meus Olhos), 
+de Giuseppe Piccioni, na competição principal.
+O país também compete com as 
+co-produções com Israel e França 
+de "Eden", de Amos Gitai; com Irlanda, Inglaterra e França, no filme iugoslavo de Goran Paskaljevic "How Harry Became a Tree" 
+(Como Harry Virou uma Árvore); "The Triumph of Love", da 
+inglesa Clare Peploe, e com o Irã 
+em "Secret Ballot" (Cédula Secreta), de Babak Payami.
+Mais uma sessão, chamada de 
+Novos Territórios, é a reserva especial para as linguagens radicais. 
+Nela estão o brasileiro Julio Bressane, com "Dias de Nietzsche em 
+Turim", o italiano Tonino de Bernardi, com "Farelavita", e o americano Spike Lee, com "A Huey P. 
+Newton Story".
+Um seminário e um Leão de 
+Ouro especial honrarão a carreira 
+do francês Eric Rohmer, que mostra a sua polêmica versão da Revolução Francesa em "L'Anglaise 
+et le Duc". Fazer um evento público com o arredio Rohmer será um 
+dos grandes momentos deste festival, que contempla na gestão de 
+Barbera o cinema sem fronteiras.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6cd79682398745b3f7985510cd1b5ffb5748f25976fddf99834e29b898306338",
+    "mention_text": "Veneza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cfc44b510b8f4f2f5654f2444d7d0cc724fc2a188fd24ea673d3d7e488dd4bf4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "513531d72c8c8682e4719ae3a53037181597866919951fe3b7e907909c8eca0f",
+    "mention_text": "Walter Salles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98196ba2f52a962fc5d2afa3dca1ff6b30457503e2157342c27f092af3634988",
+    "mention_text": "VENEZA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b468dcfe76b7263618719e0fac652760a5d14508512992af90556bdc86df53c3",
+    "mention_text": "Christian Cravo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1184132a78bd5d5755934c697218d57cc6ca8a29f21cfec0fe2a10a564bdcc92",
+    "mention_text": "José Dumont",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "323b1f4ffadb537a1783ed8aaf858c33656cfd03ad97e87e42bd51e3ecb512af",
+    "mention_text": "Walter Salles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd9dcfc785c9293a0177a5c4f7a636e9f3fe91382ec00d45afe32f988a889e62",
+    "mention_text": "Ismael Kadaré",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a33c8fe2fdb296b510ca1e796a5fee760d96a5b86a9ad8268ecf2ef488c2b7be",
+    "mention_text": "LEON CAKOFF",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57a4eab83c6ee7bf3d21f012abbda3ad977298abb4138a83bd2e43ecb9291ef1",
+    "mention_text": "VENEZA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f447473ee98e507c7d7690fd1f85ac4aa2caa47d8a755cb1f434b9b8f0a5f50a",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "307c20bffbab6e67bef2773bce6f30e3bf32304259a693564fe02006026a2912",
+    "mention_text": "Walter Salles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2dacbc0d8d70b96a940fa4a755c5d96fab20b2dffbbd6ce27038363ebbc2ec8",
+    "mention_text": "Berlim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2400abe33c6fcbfbd002e08f210a118efeb1633034eda430258b85899a01e0ef",
+    "mention_text": "Veneza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a87963b3ed0be90abbfb5e4d3b5df245b68a2e6b0ef3edbfa7a2901210428e26",
+    "mention_text": "58º Festival de Veneza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ed0240cc1a392a84f8d64f91329915e800e9cf79b22fbdf2335526a9c15039b",
+    "mention_text": "Festival de Veneza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9c1fd1ef1f3a9c2bca3bd66db199d8f484174b167a8cfa2105fab27e7aa6a5c",
+    "mention_text": "Nanni Moretti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37bee4837496d198f7c65479690d61a26f8a6e6dfd9f5a2cb63cf9c0b4d17bf2",
+    "mention_text": "Festival de Cannes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6cb27f6a12dba58ef1c37c3405d1ced4dee6ebb30405d2d6b4bbef0d83f1a55",
+    "mention_text": "Veneza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "afd482ac5828bb3c88574bb45ec99108d1a2d29b5c0e6320a1f7d7b88bb345a0",
+    "mention_text": "Alberto Barbera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1256948351cd70e746ee1c0411b1a1ab39b13307376f95aab2273b0ceb83321",
+    "mention_text": "Barbera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dffc228013cefd020ca432327b3e4d4721c0b71800daa396c6d73aa14fc8222c",
+    "mention_text": "Veneza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "630de15d0ee8dfe098b5a161cc6413a9f8288a58d53c1bd641ef6f1fed8026ca",
+    "mention_text": "Milcho Manchevski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d3a849839c260437b74d4f9e02f2f2d50520f43601a4c1cea50f6168b9881a5",
+    "mention_text": "Barbera",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02088bed6a1840cc6d7061377fb11748aaebba5fdd5cb8fdc4fa9b27af93e6e1",
+    "mention_text": "Cinema do Presente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7847831b6631c601e797ecc552de3ffc36353a16cb0204d00ee381fea2fc2a92",
+    "mention_text": "Walter Salles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3a244cac5b74cbdbe8ed7eff53bf739e77b0892f92abc1181db1382c233d6f3",
+    "mention_text": "Kim Ki-Duk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df46be2871da9d54c61efdc5bee1c450a07803a6516220fbfae49e681f0530e7",
+    "mention_text": "Ken Loach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5df085862c44203c7e2cbe59632c5e81ccd895b62c44c5eb8052e0b130045298",
+    "mention_text": "André Téchiné",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e7806bcb22f1e670410ee961564c33de62cd6b719102087fc08b9f4baf47ebe",
+    "mention_text": "Richard Linklater",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50db7ea72295286b2b316b65e02624c6892bc2466fc166af958aa3653acfe9b1",
+    "mention_text": "Jill Sprecher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf79e12c085efc885f60a60a0fbbb65dd7a70cf8d66438b8da52ccca71d611be",
+    "mention_text": "Cinema do Presente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ce7a597c99f2e7f9eee409a28d3a8d166a64d3fb134e7fdcf21b3a788ee3b53",
+    "mention_text": "Woody Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4352eabed8f27d6c80b47cfb428130d59dd9bdd94fcefaa717c204c8f4970112",
+    "mention_text": "John Carpenter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45defb86c670ae654390512f6a301278e8f4af3e3f406f0a8bc88cf721b08f57",
+    "mention_text": "David Mamet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f66712d76ed373f36d5b27c0c5ce62f125a094597564a8b6a1b788589d5b478",
+    "mention_text": "Manoel de Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4444da4aa617a0287265ca858703d8dac16358489a68f768c28fd970ae079524",
+    "mention_text": "Youssef Chahine",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62c0ec6f1f71d46c4187e136867ad909ea38537d2aaff01ffb5239c3595492cd",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "16ebbae03ab9d303ebe25cadbf10db0a4f916fccb686c143bb436e384d2ee5ec",
+    "mention_text": "Antonio Capuano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "166070ff28d28ac12072ae9e06e44de73af980ee3fdd313598dc8ee6c6114d0b",
+    "mention_text": "Giuseppe Piccioni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a67537697ba880a4926d2c4549267b3b2d544ce1ede65e8ee4b527ea2e75442",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eecd749026d71a797fea39728693b90660224f0d101257be5dad30cced9d2ad8",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2277492ff61cf2bae4f2ffe1c70744ee3e7746a53500860d26d7c287e6e0c741",
+    "mention_text": "Amos Gitai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72c93b3eac51a54cf0f21923ed06f3897a2d57b205f1a809d09e9a35d7c4bac0",
+    "mention_text": "Irlanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94c0fe991da63ed47871958952c65bed11cede871e4b4db683b2c47647e6e1f8",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "22fdc8af698dbb011ae163a9a0b6a513a30a0b6be96ef636d89256bef5ad81c2",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62e8194799cbbbc41ed772892dd5ebe1f8521492edf2e9155809486591be85fb",
+    "mention_text": "Goran Paskaljevic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73f4b08e5231eb6193ff1549844bbed4b88f60e5d9ad44b6777b19df2da26196",
+    "mention_text": "Clare Peploe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80e768a2d1a90b4a7438c61049b82c15bc55b6ad258c10c1a3e0df24fc5b90bd",
+    "mention_text": "Irã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4aada0fe1fe2930beb964cd0ed8356ad11dd5ba19156c80a41e126cf7735085a",
+    "mention_text": "Babak Payami",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b42ecca58ec26b900bf9db17689a53c125cec46e1cca71973881c8e2c283c024",
+    "mention_text": "Novos Territórios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9661e2e5153fcc3f38000c695d5efe7c89ac4b261d133c8962d48cd62df889aa",
+    "mention_text": "Julio Bressane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44d7468bbda1dcc34393aaa6e6cb80f68debe99a19f89d1005e45355a816f05f",
+    "mention_text": "Tonino de Bernardi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ab929c0163bab048721378293b81f2c9f453e4e95a8ebbc0200c8d6b7ef7258",
+    "mention_text": "Spike Lee",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e1a5b6344ca7f636fd70f8df4a4004d7f1e9305628efd75020b797f03b903d1",
+    "mention_text": "Eric Rohmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15ff13f92839a311dd497fdc20ceb42ad0bc0e3fac89d8d9b6d911e1f0704662",
+    "mention_text": "Rohmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5780cf28e057d4f94bdbd667edbf8482b6f3b8507934cb63ed1ec43f6ffec23a",
+    "mention_text": "Barbera",
+    "categoria": "PESSOA"
+  }
+]

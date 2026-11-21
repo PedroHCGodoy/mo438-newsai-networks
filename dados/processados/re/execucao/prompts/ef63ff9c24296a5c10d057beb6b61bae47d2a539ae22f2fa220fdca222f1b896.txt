@@ -1,0 +1,402 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c167909ad24ecb5453167c0c5a6c16af0e1ce3f17dfee6ca8837584a2b9e80eb
+
+TEXTO:
+Preocupação com vício em celulares coloca setor de tecnologia na defensiva
+
+Na edição deste ano da Consumer Electronics Show (CES), havia poucos problemas para os quais a solução do setor de tecnologia não fosse "mais tecnologia".
+Assim, quando os fabricantes mundiais de eletrônicos acorreram a Las Vegas nesta semana para seu maior evento anual, o momento não poderia ser pior para que dois acionistas da Apple, que juntos detêm cerca de US$ 2 bilhões em ações da fabricante do iPhone, lançassem uma campanha sobre o vício em tecnologia e a saúde das crianças.
+Ainda pior, os investidores fizeram de uma questão social que vinha ganhando ímpeto lentamente nos últimos 12 meses uma ameaça aos preços das ações do setor, argumentando que "a saúde dos jovens e da sociedade e, longo prazo" está "inextricavelmente ligada" à "viabilidade em longo prazo" de companhias como a Apple.
+Ver o assunto de volta às manchetes no momento em que a CES estava começando apanhou o setor de surpresa. Ao contrário da inteligência artificial, dos robôs e da realidade virtual, o vício digital não estava entre os tópicos quentes da feira, nesta semana.
+Muitos executivos de tecnologia vêm lidando com o problema em suas vidas pessoais, e número crescente de pais do Vale do Silício limitam o uso de smartphones por seus filhos.
+Mas o impacto que encorajar os clientes a usar menos seus produtos teria sobre os lucros torna difícil discutir o problema, para as empresas de tecnologia, desenvolvedores de software e operadoras de telecomunicações.
+"O pessoal das companhias que desenvolvem aparelhos estão cientes disso há algum tempo", diz Fred Bould, fundador do Bould Design, um estúdio que já trabalhou para empresas de tecnologia como a Nest, GoPro e Roku.
+"O ônus fica para pais, mas seria ótimo que as empresas de mídia social e os fabricantes de aparelhos criassem controles fáceis de usar, acessíveis e transparentes. Não acredito que isso exista agora."
+Em carta aberta à Apple publicada no domingo (7), a Jana Partners e o Sistema de Aposentadoria dos Professores da Califórnia, um fundo de pensões, apontaram para "as provas cada vez mais substanciais" de que o uso de smartphones e mídia social pelos jovens "pode ter consequências negativas imprevistas. Elas podem variar de perda de atenção na escola e perda de sono a depressão e perda de empatia".
+Os investidores citaram pesquisas que apontam que metade dos adolescentes dos Estados Unidos afirmam que se sentem "viciados" em seus smartphones.
+"Existe um consenso cada vez maior em todo o mundo, o que inclui o Vale do Silício, de que as potenciais consequências em longo prazo das novas tecnologias precisam ser pensadas desde o começo", escreveram os investidores, "e que nenhuma empresa deve terceirizar a responsabilidade para os designers de apps, nenhum dos quais conta com massa crítica."
+Até mesmo alguns dos indivíduos que ajudaram a criar o iPhone concordam quanto à crise que se aproxima, e dizem que os adultos também estão em risco, não só as crianças.
+"O vício em aparelhos é uma realidade", disse Tom Fadell, antigo executivo da Apple que ajudou a projetar o iPhone e depois criou a Nest, em uma série de tuítes sobre a questão esta semana.
+"Apple Watches, Google Phones, Facebook, Twitter —eles se tornaram muito bons em nos fazer clicar mais uma vez, em nos dar aquela dose adicional de dopamina. Agora têm a responsabilidade e necessidade de começar a nos ajudar a perceber e administrar nossos vícios digitais", afirmou Fadell.
+"Teremos regulamentações sobre isso algum dia apenas se as empresas de tecnologia não se manifestarem."
+A Apple respondeu estar "sempre pensando no bem das crianças" e que a empresa já oferece "controles familiares intuitivos, que são parte do sistema operacional".
+Em entrevistas durante a CES, executivos do setor de tecnologia defenderam o impacto social de seus produtos.
+"Acredito que a transformação criada pelo smartphone na sociedade provavelmente seja tão significativa quanto a criada pelo carro e pela eletricidade", disse Cristiano Amon, presidente da Qualcomm, cujos chips têm papel central em muitos aparelhos móveis.
+Yang Yuanqing, presidente-executivo do grupo de eletrônica chinês Lenovo, adotou posição semelhante. "Os smartphones definitivamente tornam nossas vidas mais fáceis e mais convenientes."
+A Motorola, fabricante de aparelhos móveis controlada pela Lenovo, é uma das poucas a lidar com a questão abertamente. Ela oferece um teste on-line para que os usuários avaliem seu "equilíbrio fone/vida"; uma das perguntas é: "Você é dono de seu celular ou o celular é seu dono?".
+Mas a empresa também recomenda mais tecnologia para enfrentar o problema —apps como o Offtime e o AntiSocial, para ajudar os pais a limitar o uso de smartphones pelos filhos ou a bloquear notificações que os distraiam.
+Simon Segars, presidente-executivo da Arm Holdings, empresa de projeto de chips para aparelhos móveis, disse que o ônus de garantir que crianças usem seus smartphones responsavelmente "é das pessoas", não da tecnologia.
+"Às vezes é preocupante ver uma criança pequena de olhar fixo na tela de seu celular, mas o problema vem dos pais, da criação dessa criança", disse. "Antes de existirem os celulares, ela estaria distraída com outra coisa."
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "87c568fedb45c390ce886ea1e31c4617482a4e7b8e5e1e17fde323ffc56252ac",
+    "mention_text": "setor de tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1cd8473f6608d90fd63e35038430c88ae0e01094fd86e390150fc0ebb9834c06",
+    "mention_text": "setor de tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38a88a59c6ecf121e85e67695d66be296c5e56cbeb7956e8fec902ed80d1523e",
+    "mention_text": "Las Vegas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6c3c53270f06cd894eb872666cfe630e15867c1cd0cbe264272f88d3fee771d7",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f862db9b98aa6445d137d632403e1005ab6ecbeecc360cdf2ebdd6ebf1504ffa",
+    "mention_text": "setor",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2705374d49fd53924db1a145badb75c39ba34b706d51ef147e136618aca57a01",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9855168ccb6a82bfec4ffd5480a7a4a9035d001aee01c1a31341391b176b073",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf7bd779947c25b061ae8a3528318a61815540c2d1e262fb774bb7a97b7a5f3c",
+    "mention_text": "empresas de tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4eb72f698fac992f93944dc59ca949253516c7eac2f45d44db8a6ee7817bad2",
+    "mention_text": "desenvolvedores de software",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe0036244065e24855d0cea8911b1d277889121262511ec5fc099a18ba22efc1",
+    "mention_text": "operadoras de telecomunicações",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6aa852c673730c2fef4f2b3088c6e176ee71834c8fb36bf0fccea5cb228f3a16",
+    "mention_text": "Fred Bould",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b2d9271cd1a524facc2cf7d41f77543bba2fcafd130f1553bdb7a4820b6253d",
+    "mention_text": "Bould Design",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5042b71bb03eba4539cbd5fb261fd887358f9b560e2bfab9b9ccfa280b68c98f",
+    "mention_text": "empresas de tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98d8a765f9be2edcde6adee53c02addd730af1a6fd62c44bdd815680be05713d",
+    "mention_text": "Nest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27e242c34ce0884fd575b85989eb2e6db19f0485c12967bb3b4316dce2432a30",
+    "mention_text": "GoPro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1724cb9a78b08a462186baef0f4126964223fc4d760583d5846e42e713bda9a3",
+    "mention_text": "Roku",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "186bfa5b78da77b72bf075caa45bec6db95b345b7bd97ca3201315e16951d5ca",
+    "mention_text": "empresas de mídia social",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebab88c1f0c1ca69d0416cb7888d53f9ebce89c394858db73c3e897ebe9def1a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "608e1c07b4b7fbea612b1cf11fd3de2fb8a65f5ef03dd637d6e03c560e26328d",
+    "mention_text": "Jana Partners",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0730a11c39f96400da00e6cc3eb1b933ebb1bd9c1ba09db6c1b65c432d5beaa6",
+    "mention_text": "Sistema de Aposentadoria dos Professores da Califórnia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f4ff07351dcc2eef8e4cd613c7996dcbfb2d4c5245cb419000895a2c8da0a71",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8edde0714aaeff5b0b0c705241f4e5125f8db487ffdf2c26da32332461e04f06",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f10f174f3d12e9d15a35eb0f2add2709838de8afd92c5ba6b5f93793a5727cc8",
+    "mention_text": "Tom Fadell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4312ae3a05b29f9f78175de00476f2c83b62242c054104cb11fc8617a7c94a68",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "281c9922bbd6965b8433a1f0f0be4882170c46e44b58ec60a4296889ecd0039f",
+    "mention_text": "Nest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab4e20da2d10c323c37803eb5c00b0cfa46fbae7c72d160b8cbb81b0e2ebcec7",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a87e97571bceaba1bc005b53d85922eb6bce40344c3788cf0be6cc5380ade6b",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34c6c710d94b43b736e7b356f9beed6bc3dbdf1382097166c96deee6c3f8d747",
+    "mention_text": "Fadell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37396455e5764023070c204fc6917c189a5590179e731bd8467fde043a1b8574",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4aeda8cea8abbade029b339602aac3b6f625c5e8d271872cff462e724daaad1",
+    "mention_text": "setor de tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "703ce4df2b9f2285df47f9eb4bd9feb50c0aab74cdc8f2030351b896e500bcbb",
+    "mention_text": "Cristiano Amon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5237ba5343cd40944d552ad9f6c0ee22191b333a02d6a85b558af9501c70b3d",
+    "mention_text": "Qualcomm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8447ed53575ead14c38d8b3afdde0371bea4e63c4cc741beafc5239622e8cd33",
+    "mention_text": "Yang Yuanqing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bb6b9ed105de45124c7eace8b21cce2c8df307cfe0f3ac02b97d3fbcac5de69",
+    "mention_text": "Lenovo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92040c3a09ba8997c5c3e72d3fec3698fe4ac17182f4c0be70d95e9e87b6d6a9",
+    "mention_text": "Motorola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb3981ea1b4d87eb3a92b4ab0d9ed724f637513859729838a980b2d5f9b46a2b",
+    "mention_text": "Lenovo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "447772275e71cbf0c7caab24428244b78b8d129b9e54ba8ab888bee6a9dcc330",
+    "mention_text": "Simon Segars",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9bac4471379b406df2a8919bf4f0c53aa6bdd27069d0129f9caec755292aad3",
+    "mention_text": "Arm Holdings",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd151bc3a781105828e02413d5a3849f1005e0241318528f22ea9c3d848c8f85",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

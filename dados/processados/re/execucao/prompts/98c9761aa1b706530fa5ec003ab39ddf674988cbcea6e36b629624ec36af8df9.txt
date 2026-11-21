@@ -1,0 +1,519 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: fd179cadcf68dec00f1b3f25ee0f1a904d731f5301cb4c248efc17e461b36169
+
+TEXTO:
+Enxutas, empresas do Vale do Silício exploram novos campos
+
+Lee Redden, 26 anos, doutorando em engenharia em Stanford, decidiu dar um tempo nos estudos e ajudou a fundar uma empresa start-up. Suas habilidades se concentram em dois nichos efervescentes da inteligência artificial: visão computadorizada e aprendizagem automática. Só que ele não está aplicando seus talentos em busca na internet, comércio on-line ou vigilância inteligente.
+As ambições de Redden estão mais distantes --em fazendas, na verdade. Sua empresa, a Blue River Technology, está desenvolvendo um matador robótico de ervas daninhas para agricultura orgânica, para evitar pesticidas químicos. Segundo ele, o novo empreendimento é "uma forma excelente de levar essa tecnologia para a agricultura".
+A start-up está ligada ao mais recente estágio de evolução do Vale do Silício, o epicentro mundial da inovação. Ao longo dos anos, a região demonstrou uma destreza econômica sem paralelos ao saltar de um segmento com oportunidades para outro, de eletrônicos militares a wafers de silício, de computadores pessoais à internet.
+Porém, o negócio do Vale hoje em dia tem menos a ver em se concentrar numa indústria em particular e mais com um processo contínuo de inovação tecnológica, sobre uma ampla gama de campos. A tendência reflete a marcha constante da mais versátil das tecnologias --a computação-- à medida que ela abre novas linhas de frente em todas as disciplinas científicas e indústrias. Tecnologia limpa, bioengenharia, diagnóstico médico, tratamento preventivo de saúde, transporte e até agricultura fazem parte do mix hoje em dia para os tecnólogos e empreendedores do Vale.
+O ritmo das descobertas se acelerou, não apenas para as tecnologias como também para o processo de descobrir que empresas terão sucesso.
+"A diferença no Vale é encontrar um método quase científico de reinventar empresas e indústrias, não apenas produtos", disse Randy Komisar, sócio de uma das principais empresas de capital de risco, a Kleiner Perkins Caufield & Byers, e professor-assistente de empreendedorismo na Universidade Stanford. "A abordagem é muito mais sistemática do que há muitos anos."
+O novo modelo para abrir empresas se baseia em hipóteses, experimentos e testes de mercado, desde o dia em que a empresa é fundada. Trata-se de uma ruptura abrupta com a abordagem tradicional de traçar um plano de negócios, estabelecer metas financeiras, construir um produto final e depois lançar a companhia esperando que dê certo. Esse esquema consumia tempo e dinheiro.
+A fórmula preferida hoje em dia costuma ser chamada de "lean start-up" (literalmente, empresa iniciante enxuta). Entre os seus primeiros defensores estão Eric Ries, empreendedor e escritor que cunhou o termo e agora é um empreendedor residente da Harvard Business School, e Steven Blank, "empreendedor em série", escritor e professor-assistente em Stanford.
+A abordagem enfatiza o rápido desenvolvimento do "mínimo de produtos viáveis", versões de baixo custo que são exibidas para avaliação dos consumidores e, a seguir, aprimoradas. Flexibilidade é outra característica. Testar modelos de negócios e ideias, e, sem dó nem piedade, descartar fracassos e passar para o plano B, o plano C, o plano D e assim por diante --num processo conhecido como "pivô" (pivoting).
+A National Science Foundation está apostando no novo modelo para melhorar o índice de comercialização da pesquisa universitária que financia. Em outubro, a fundação anunciou a primeira série de subsídios do que chama de NSF Innovation Corps. As 21 equipes de três membros selecionadas em todo país receberão US$ 50 mil por seis meses para testar se suas invenções são vendáveis. Começa com um giro por Stanford e cursos lecionados por Blank, entre outros, seguidos por aulas on-line e orientação. Espera-se que cada equipe teste constantemente ideias e produtos com consumidores, fazendo experiências repetidas vezes, aderindo à fórmula de lean start-up.
+"A questão é aplicar o método científico à identificação de oportunidades de mercado", disse Errol B. Arkilic, gerente de programas da fundação. "E é justamente por isso que esse método foi selecionado pela NSF."
+Arkilic, que durante sete anos foi engenheiro de start-ups no Vale antes de ir trabalhar com o governo, afirma que a fundação planeja conceder 15 ou 20 subsídios Innovation Corps por trimestre. "Não podemos reproduzir o Vale do Silício em outro lugar, mas temos de descobrir uma forma de pegar suas melhores práticas e aplicá-las em outras localidades."
+O modelo de lean start-up do Vale está influenciando a formação administrativa tradicional. Nas escolas de negócios, há anos existem cursos sobre empreendedorismo e gerenciamento empresarial. Porém, em meados do primeiro semestre, os 900 primeiranistas da Harvard Business School devem abrir um negócio como disciplina obrigatória. Em equipes de seis estudantes, eles receberão US$ 3.000 para fundar uma start-up que gere receitas até o fim do semestre, explicou Thomas R. Eisenmann, professor que coordenará o programa.
+Eisenmann também é um dos diretores de um programa de imersão no Vale do Silício que leva dezenas de alunos para lá todos os anos para terem contato direto com as práticas e a cultura do viveiro do empreendedorismo. "Todos estão envolvidos com uma start-up", observou Eisenmann. "Presume-se que seja o comportamento normal, a coisa legal a ser feita."
+A cultura de start-ups, sem dúvida, deve muito à história do Vale e à influência duradoura de suas personalidades marcantes, como Frederick E. Terman. Professor de engenharia em Stanford durante muitos anos, onde foi diretor nas décadas de 1950 e 60, Terman encorajava os melhores alunos a pôr as ideias em prática abrindo uma empresa. Entre eles estavam Bill Hewlett e David Packard, que fundaram a Hewlett-Packard em 1939. Terman costumava investir dinheiro do próprio bolso nessas start-ups.
+"Sua mensagem era de que abrir uma empresa era tão importante quanto fazer doutorado", disse Blank, que leciona em Stanford. "Aquilo era considerado uma heresia na academia."
+A maioria das start-ups fracassa. Talvez mais do que em outros lugares, os investidores e tecnólogos do Vale costumam ver o fracasso com certa objetividade científica, como se os reveses fossem ferramentas heurísticas que conduzem à pesquisa e descoberta.
+"Ao longo de 70 anos, o Vale desenvolveu uma cultura que não personifica o fracasso", afirmou Komisar, da Kleiner Perkins. "Se você não for corrupto, burro ou preguiçoso, nós vemos o fracasso como aprendizado --aprenda com ele e reaplique o que aprendeu."
+E essa cultura de assunção de riscos e aprendizado perpétuo está sendo agora aplicada bem longe de software e hardware de computador. Existem empreendimentos famosos como o Nest Labs, fundado por Tony Fadell, ex-executivo da Apple, que contratou mais de cem engenheiros de Apple, Google, Microsoft e outras companhias de alta tecnologia e é apoiado por várias empresas de capital de risco. Seu produto, lançado em outubro, é uma reinvenção do termostato, combinando sensores, aprendizado automático e tecnologia da internet num equipamento inteligente que economiza energia.
+O Vale também está cheio de start-ups menos famosas em campos novos, como a Blue River Technology. Redden conheceu seu colega fundador e executivo-chefe da empresa, Jorge Heraud, 41, na aula de Blank.
+Heraud, engenheiro, decidiu voltar a Stanford para dar uma renovada na carreira, depois de trabalhar durante anos como gerente de uma empresa de equipamentos agrícolas.
+Ele conheceu Redden e, em conjunto, vislumbraram a chance de aplicar a visão computadorizada e o aprendizado automático à agricultura. Eles exploraram outras ideias, mas depois de conversar com possíveis compradores, decidiram por matar ervas daninhas em fazendas orgânicas --segmento de rápido crescimento que não pode usar pesticida e sofre com os custos trabalhistas.
+No escritório em Sunnyvale, eles estão montando a máquina e ensinando o programa de visão computadorizada a distinguir alface de ervas daninhas. Inicialmente, tentaram matá-las com raio laser, o que se revelou muito caro. Agora pretendem usar óleo (orgânico, é claro) superaquecido.
+O dispositivo, puxado por um trator, deve identificar ervas daninhas e matá-las em 200 milissegundos, um desafio formidável, mas atingível, declarou Redden.
+Se aplicar visão computadorizada à agricultura é tão promissor, por que os grandes fabricantes de equipamentos agrícolas não estão bem adiantados?
+"Elas não se preocupam com isso", respondeu Heraud. "Elas não pensam em visão computadorizada. Essa é uma tecnologia do Vale do Silício."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8ebebd06e1d0b1cff626fe3781a5a9abbfb70905aad2ee3d00e8a920bf22ceef",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ee0d2c3acaac5e9dc160134ffce05a40c940fbe3110a4939f90d913dba8d2bf",
+    "mention_text": "Lee Redden",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97022302b9308cc60ee75ee49e9a0c0591a634e3637569346e491edd02b70789",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2205b213e55a6de669d336de37564d57156b42321d494032d052c105a1611926",
+    "mention_text": "Redden",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "422ac3d928ea335c907da8f68f29b84df48e60a4bb4f7e61ee51c6cf22fafdcc",
+    "mention_text": "Blue River Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0da8cb1114015599ebb0c47fca12939551f604e5ab164093f4133d0a09934b34",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c0f2c90e5d9392ca551dfa28ef63fb9cf3b71fce7d6de0591eee80ca47572c5f",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a25cb5ace230c717e3d1f712a2970ae29b6b4236d399592c00e9ae7d1abcbadc",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "969e61153d629859fa078fd1aa5aa0f6d4566c513d949e29a7514aea4700cf18",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3fe789a74958c906e63b30eb433425094cc1c1371a02dacfbf04a7bbc8cca440",
+    "mention_text": "Randy Komisar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47d38be65e7f97a49d54f6c26b212bc6ffd23228cf42debb112caf3d2fac5d28",
+    "mention_text": "Kleiner Perkins Caufield & Byers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ba8be61cebe798bd18a7366191716f1919b9d35f6066067253690ec7738bf77",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26c530d237a2bab191bb21355bebafa3109673794940b0aff5d35a00c32c81ab",
+    "mention_text": "Eric Ries",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3cf68febf7e3cf270906501ff444289822998a9680d4835763e6875d1a5709a",
+    "mention_text": "Harvard Business School",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfed15d98564e13277e980811304fe1998011667502173c1824aad6143b01510",
+    "mention_text": "Steven Blank",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ae0d7ed810754f5d42bc6c302f2d2ac2e5c926dce933a05d2ac492980df9de0",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "092657f90330b68295314955c9109a410b3fc489dafb4ccc6c51546b6900f895",
+    "mention_text": "National Science Foundation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2310cd213defe6958078cb67b4aef73caafabe29c4d2e3ee196a44f6bc7d36d7",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3959f3520ad73b90b99626bd97a74cbb1326c0840452b59fa936553a33c953f1",
+    "mention_text": "Blank",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebe577c30d05b33b8e2c894d504017d9663f1b0bc28e5321689b7f6663226b2e",
+    "mention_text": "Errol B. Arkilic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4734a465f5ecca4f2a07938a1262902651cfdbe91e834671c8eaab6daef1584",
+    "mention_text": "NSF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d411dc99799c4b4eb89c289d7e7727b5c3acac968b64ca75e83f51f237b813d",
+    "mention_text": "Arkilic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa141e6d84ae1efca6b4cf297d9622be7a90342316cf945d7dcef78f33f81557",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01d720b2a8415247fd94610190a38235f81d185afbc3abe24297e80ba159384a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5a16f81dc2934be6669b05c78a25569901674563d54b8c1198b7ecf0dbd49ed",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53f940f6529dced7f86797dcd1cc03e26762dbd7a1e89478d7132dc9f53f8009",
+    "mention_text": "Harvard Business School",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c33c5931dbffd7d126d36bcbff050108db4984a8b01fcc171c93db117bad331e",
+    "mention_text": "Thomas R. Eisenmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5755a8dc90c5ffacfaf08067e296db21532f6ba8364763e03c4b22da4de36a4",
+    "mention_text": "Eisenmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3c9081ae2d8e59c823c3b9a93d938041a83b1647c8dafe78c5dc3894c93f0a9",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03ecfed9e5aee944713d8906e4363efd203752a9bf7f6e98ffb67112ac7ab886",
+    "mention_text": "Eisenmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98aaff4b6e20669b5919143f13edeca0e70a3bf5248ff010df5ad5f5aca1be9d",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8fd645a65116ad33a7621e88d21cda671925ac74e3bc081f90ca41959dc189f",
+    "mention_text": "Frederick E. Terman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e04192494f84f419d080b819508de1f37cae75f680b158d49f05798003f1be4f",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b912e6a9355d353171cb5bcd0b762ad4c1b532c5022d8aca4c302b430129db2",
+    "mention_text": "Terman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4a9b85c1368ec83ee89d7c3d869d03c55eaedcb11699b3c2b4434f357e0a933",
+    "mention_text": "Bill Hewlett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9850a51d8ff5c3fbcb5715be2f4a83379c9a86ea6f3c30e5bd2b4806728c2048",
+    "mention_text": "David Packard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e16b0b37752856eeba78ab0e110c3edd91f6a6f61dc661cd566d2f53ebe26c3",
+    "mention_text": "Hewlett-Packard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff0d5da7a55d27f338abcc6805e7a2ca0def79a0bbe4c52f8a9d5081c3059e5c",
+    "mention_text": "Terman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37d1c6df49e334e5499c2721885f17f22eae35efe5d9060bec3bdc832daf4ab8",
+    "mention_text": "Blank",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92622712bbe1880eb2c03e57bb4da124b3c7f3b841c46c57348a063bab2017e3",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b2946c299551b355be060f7416bf55888bf9932fb536eb24066b4b7b13d5af9",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed11714330474864423f04ad0da8067df2f57e0be90647719888269a9e67446d",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c7c665c19f0b03f0a10582003e314257208169e8bc1e39f66d547025928b2ec",
+    "mention_text": "Komisar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11c4aef42873285a91bd734bea0870ebdfb2c262251ffceb4f109a9bbca5920c",
+    "mention_text": "Kleiner Perkins",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d5e481e4e1260cb5b263f18722b3828b772f423f2129ff6293538e6272e2ea7",
+    "mention_text": "Nest Labs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5104eab300fcb1b01ce94580855704c57ce6b15d65271e7327a6be1caa6bfa1c",
+    "mention_text": "Tony Fadell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5140e1825cf3ec2308a704cb3ba3f257ba7ef80dfff592ba448200e40684c7bc",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6529052acbe3916dd4ef927379d265ffbe4938ac8b4d9918a457c035ba921d3",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "160d4e41d4138c445da9332193cee9609c07f43a927045cfa39c121c3ac237a5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "738784f8b12073b547654f4b3a6db8174d9a302853021c050ab375e2868cb396",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ba8c2d1ea68503f2ce616bfcc1a831c37242921f213df7a370b0098654004bf",
+    "mention_text": "Vale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0bb8e9b071873cfba170690122b7d70ce3a8c4f8987c0ea54cf510712732710",
+    "mention_text": "Blue River Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6633a467183d5c4fe43bb6d4dae227b2402e0826125953329720aa761e7aafd",
+    "mention_text": "Redden",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b529b437081eb5c6d30ef4ad163be1efd126afd04c141419661173162ea7ee8",
+    "mention_text": "Jorge Heraud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "402a25dadc0efd44985e30047c16ff6bec68cd80fd8186fe175208ce5811acce",
+    "mention_text": "Blank",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afde8b038eafbbe33ee0b177e3ce9ca4ad930d69628033cfaec168d0ec1bb2e5",
+    "mention_text": "Heraud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "358131221fba834754d8bb89f775b12b78c2e3ca74a6cd9ea79fabeb20b93676",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be3c882ade24b257469e80244f90574e7f8595800ae734b2fb8507068a39f339",
+    "mention_text": "Redden",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6747ef68f4cc915684f600b3c83f489e7959bafcbe8d8ea9594ae8d8d0ec3db",
+    "mention_text": "Sunnyvale",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2dc197d924e9ad1a59cdeabdda0da9c09128fdbea78c2433a2622b56a4dc7523",
+    "mention_text": "Redden",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ef8b7c15760487d5c221be64f974d7d6c8867e88ebbc5c341ff1482fe7c6c3d",
+    "mention_text": "Heraud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90144bfea3eb61bc7e926754f11333723a1eb64e33f53c59dfccbd9943b57c9f",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  }
+]

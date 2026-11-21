@@ -1,0 +1,594 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 13b6c3432c0c5c251c798ba3dfa6353fcff9d606497ca45279cae54aeeff6a62
+
+TEXTO:
+Como se aposentar antes dos 40, com US$ 1 milhão no banco
+
+Carl Jensen passou pelo que ele define como "um despertar" mais ou menos em 2012.
+Ele era engenheiro de software e trabalhava em um subúrbio de Denver, codificando software para um dispositivo médico. Era um posto de alta pressão. Ele tinha de documentar cada passo de seu trabalho e notificar a FDA (Food and Drug Administration), agência americana de fiscalização e regulamentação de alimentos e remédios, sobre ele; qualquer erro de código poderia causar problemas de saúde ou mesmo a morte de pacientes.
+Jensen estava ganhando cerca de US$ 110 mil (R$ 453 mil) por ano, e o emprego trazia bons benefícios, mas o estresse fazia com que nada disso parecesse valer a pena. Ele não conseguia relaxar com a família, depois do trabalho; passava horas no vaso sanitário. Emagreceu cinco quilos.
+Depois de um dia de trabalho especialmente brutal, Jensen fez uma busca na internet por "como me aposentar cedo?", e as respostas lhe abriram os olhos. Ele conversou com a mulher e os dois desenvolveram um plano: economizar boa parte de seus ganhos nos cinco anos seguintes e reduzir drasticamente as despesas, até que eles atingissem um patrimônio líquido da ordem de US$ 1,2 milhão (R$ 4,95 milhões).
+Na terça-feira, 10 de março de 2017, Jensen procurou seu chefe e pediu demissão, depois de 15 anos na companhia. Mas ele na verdade não estava se demitindo: estava se aposentando. Aos 43 anos.
+Ainda que a história de Jensen possa parecer excepcional, como uma versão mais modesta dos relatos sobre operadores de ações que fazem fortuna em Wall Street e largam tudo para velejar no Caribe, ele é parte de um movimento crescente entre os jovens profissionais, que se concentram em encontrar uma maneira de não precisar trabalhar mais.
+A geração milênio abraçou o movimento FIRE [sigla em inglês para "independência financeira, aposentadoria precoce"] e o vê como forma de escapar ao trabalho, destruidor de almas e devorador de tempo, e a uma economia alimentada pelo consumismo.
+Os seguidores do FIRE tendem a ser homens e a trabalhar no setor de tecnologia, engenheiros e tipos semelhantes cujas diversões incluem calcular tabelas de juros compostos em prazo de 40 anos ou o retorno de investimentos sobre fundos de índices de baixo rendimento comparado aos retornos de imóveis para aluguel.
+De fato, boa parte das conversas sobre o FIRE nos fóruns do Reddit ou em blogs como Mr. Money Mustache gira em torno de como ordenar as finanças: estratégias para elevar o índice de poupança ao sagrado patamar de 70%, estratégias para viajar a baixo custo aproveitando programas de milhagem, maneiras de economizar alguns centavos em cada compra de mantimentos.
+Alguns optam pelo "FIRE radical" (frugalidade extrema), e outros preferem o "FIRE gordo" (que envolve manter um padrão de vida mais normal mas ainda assim poupar e investir). Outros ainda seguem o "FIRE barista" (trabalhar em tempo parcial no Starbucks depois da aposentadoria, para aproveitar o plano de saúde da rede de cafés). "Firing" significa cortar as despesas para maximizar a economia, até que a pessoa consiga acumular investimentos suficientes para se sustentar. E quando ela atinge essa meta, diz que está "fired".
+"Muita gente acha que somos como hippies new age", disse Jensen, que vendeu sua casa com quatro dormitórios e quatro banheiros, foi morar em uma casa mais modesta, e maximizou suas contas de aposentadoria ao longo do processo. "As pessoas não conseguem nem começar a entender".
+Agora que ele se aposentou, Jensen, a mulher e as duas filhas do casal planejam viver gastando cerca de US$ 40 mil (R$ 165 mil) ao ano, gerados pelos investimentos da família. Porque a mulher dele trabalha, eles ainda não começaram a gastar o dinheiro investido. É um estilo de vida que propicia muito tempo livre mas pouco luxo: eles fazem compras na [cadeia de supermercados de baixo preço] Costco, e Jensen mesmo cuida de consertar a casa e o carro da família.
+"As pessoas sempre presumem que haja alguma circunstância externa. Acham que eu recebi uma herança", disse Jensen. "Mas na verdade só escolhemos viver abaixo de nosso patrimônio. E essa é uma ideia verdadeiramente radical".
+Igualmente radical é deixar a força de trabalho na casa dos 30 ou dos 40 anos, quando homens e mulheres em geral estão batalhando para adiantar suas carreiras ou, em casos menos felizes, se esforçando para manter as contas em dia até que possam recorrer ao seguro-social.
+Jason Long, farmacêutico na região rural do estado do Tennessee, se aposentou no ano passado com a avançada idade de 38 anos, e conta que seu pai não conseguia entender por que ele não queria continuar trabalhando e recebendo seu salário de US$ 150 mil (R$ 619,5 mil) ao ano.
+Mas Long disse que estava profundamente infeliz com sua carreira, na qual ele testemunhou uma disparada no preço dos remédios, disputas entre pessoas doentes e operadoras de planos de saúde, e o uso excessivo de opioides vendidos sob receita, que resultou em uma crise de abuso de substâncias. Os clientes dele, zangados, desgastados financeiramente, muitas vezes reagiam atacando o homem do outro lado do balcão.
+"Havia dias em que eu trabalhava de 12 a 14 horas, nem tinha tempo de ir ao banheiro ou de comer, de tanto trabalho que tinha", disse Long.
+Como Jensen, ele passou a maior parte dos últimos 10 ano acumulando uma boa parte de sua renda, e ele e a mulher quitaram o financiamento de sua casa e acumularam uma carteira de investimento de pouco mais de US$ 1 milhão (R$ 4,13 milhões). Por que continuar dando duro?
+"A realidade é que os números me favorecem", disse Long. "Ir a um trabalho que só causa sofrimento a cada dia [...] não faz sentido se é só para engordar ainda mais a conta bancária".
+Deixar de lado a batalha pela sobrevivência não é um conceito novo. Dos shakers do século 18 aos hippies dos anos 60 e 70 que pregavam voltar à natureza, sempre há uma vertente de americanos que defendem a vida simples. Uma das bíblias do movimento FIRE, o livro "Your Money or Your Life" [seu dinheiro ou sua vida], foi publicado em 1992 e ensina os leitores a reduzir seus gastos e a dar mais valor ao tempo (ou à "energia vital"), de preferência ao ganho material.
+Mas Vicki Robin, que coescreveu o guia financeiro com Joe Dominguez, disse que a turma do FIRE é diferente do pessoal que abandonou a vida corporativa nos anos 1990. "Nosso objetivo não era só convencer muita gente a deixar o trabalho", disse Robin, "Nosso objetivo era reduzir o consumo para salvar o planeta. Atraíamos pessoas dedicadas à vida simples em longo prazo, pessoas religiosas, ambientalistas".
+Os adeptos do FIRE, em contraste, "se orientam muito pelos números, e vivem fascinados por minúcias tributárias e contábeis", ela disse.
+Eles também se beneficiam de uma longa alta nos mercados de ações, e, em alguns casos, de privilégio associados a classe social, raça, gênero e antecedentes. É muito difícil se aposentar aos 40 anos se você ganha salário mínimo, ou tem uma montanha de dívidas educacionais a pagar, ou não teve as mesmas oportunidades que outras pessoas, por ter se criado em um bairro pobre e sujeito ao crime.
+Mas se, como disse Robin, os adeptos do FIRE "não compartilham das mesmas aspirações" das gerações anteriores, porque eles estão tão determinados a deixar a força de trabalho? Muita gente da geração milênio trabalha há no máximo uma década, se tanto.
+O motivo é o poder de agência, ela disse. "O trabalhador, na economia atual, tem pouco senso de controle sobre sua existência. As pessoas são descartáveis. Se você é jovem e olha para o futuro, vai se questionar sobre o que existe para você".
+Isso descreve com precisão os sentimentos de Kristy Shen e Bryce Leung. O casal, que vive em Toronto, se tornou célebre (e atraiu perseguidores online) ao anunciar que se aposentaria de seus empregos no setor de tecnologia, em 2015, para viajar permanentemente por todo o planeta. Os dois tinham pouco mais de 30 anos, naquele momento.
+O despertar surgiu, para Shen, quando ela viu um colega de trabalho no ramo de tecnologia desmaiar na mesa, de tanto trabalhar 14 horas por dia. Por anos, antes disso, ela e Leung, seguindo o caminho ditado por seus pais, estavam batalhando para comprar uma casa no mercado imobiliário de Toronto, onde os preços dos imóveis não param de subir.
+Mas, disse Shen, "não importa quanto dinheiro tivéssemos guardado, a meta estava sempre subindo. E eu via o estresse das pessoas para pagar suas hipotecas".
+Ainda que os dois tivessem bons diplomas e empregos bem remunerados no setor de tecnologia, que não para de crescer, Shen e Leung estavam sob ameaça iminente de terceirização ou substituição por sistemas de inteligência artificial, e não tinham esperanças de uma pensão associada ao seu empregador; ou aliás, de que o empregador ainda exista dentro de cinco anos.
+Ao mesmo tempo, o trabalho deles devorava todo o seu tempo. Em lugar de se aferrarem a uma hipoteca dispendiosa, e portanto a empregos de alta pressão, o casal decidiu que colocaria todo o seu dinheiro em uma carteira de investimento e buscaria a paz.
+Ao deixar de lado uma grande cidade, Shen e Leung exemplificam outro motivo para a popularidade do FIRE: o preço muito alto da vida urbana, especialmente em lugares como Nova York e o sul da Califórnia. Os preços da habitação são insanos, os serviços de creche são caríssimos, e a tentação de buscar um estilo de vida mais e mais dispendioso é forte.
+"Estávamos pagando quase US$ 3 mil (R$ 12,3 mil) por mês de aluguel e as pessoas achavam que era um bom negócio", disse Scott Rieckens, 35, que até recentemente vivia com a mulher, Taylor, 33, e a filha em Coronado, Califórnia, do outro lado da baía de San Diego. "Nossa renda combinada era de US$ 160 mil (R$ 660 mil) ao ano, mas mesmo assim não conseguíamos guardar dinheiro".
+Depois de ouvir um podcast de Mr. Money Mustache, ou Pete Adeney, definido pela revista New Yorker como "o guru frugal" (ele se aposentou aos 30 anos), Scott Rieckens se entusiasmou. Ele disse à mulher que deviam cancelar o leasing de seu BMW, e parar de jantar fora com tanta frequência. Mas mesmo com essas mudanças, eles não foram capazes de elevar seu índice de poupança substancialmente; para isso, precisariam se mudar para um bairro mais barato, uma tática de redução do comprometimento de recursos que os adeptos do FIRE chamam de "arbitragem".
+A ideia, disse Adeney, é "colher o salário alto" de um lugar como o Vale do Silício, "e depois se mudar com suas economias para uma das milhares de cidades bacanas e acessíveis que existem nos Estados Unidos, e começar o segundo estágio de sua vida nas condições que você ditar".
+Taylor Rieckens, que trabalha com recursos humanos, inicialmente relutou em abrir mão do BMW e da vida na praia, e do prestígio que as duas coisas lhe conferiam, até que fez as contas com a ajuda de um software de cálculo de aposentadoria e descobriu que sua família poderia se aposentar em 10 anos, caso adotasse o FIRE; já se mantivessem o estilo de vida sofisticado que tinham na Califórnia, só conseguiriam se aposentar aos 90 anos de idade.
+"Nunca liguei para finanças. Achava que tudo se arranjaria", ela disse. "Depois que tive um bebê, me estressei sobre como fazer para passar mais tempo com ela. Eu era quase escrava de meu emprego, por conta de nossa forma de vida".
+No ano passado, eles deixaram o sul da Califórnia, em busca de uma comunidade que lhes oferecesse mais liberdade financeira, jornada que Scott Rieckens, que foi diretor de criação em uma agência de publicidade, está registrando em um documentário chamado "Playing with FIRE".
+Eles foram parar em Bend, no Oregon, onde não há imposto estadual de vendas e era possível comprar uma casa. A gasolina para o Honda CRV que eles compraram usado (com quase 300 mil quilômetros rodados) é US$ 0,25 (R$ 1,03) por litro mais barata que em San Diego. Eles agora só têm um carro, e Scott Rieckens muitas vezes se desloca de bicicleta pela cidade.
+"A ideia de me aposentar cedo não me importa muito. O que importa é ter mais controle sobre o meu tempo", ele disse. "Se você decompuser a definição de aposentadoria, o que você está abandonando é o trabalho compulsório. Ninguém precisa ficar na praia bebendo piñas coladas porque se aposentou".
+Long, o farmacêutico aposentado do Tennessee, talvez tenha deixado o registro mais detalhado e reflexivo da vida de alguém que usou o FIRE e conseguiu se aposentar. Em uma série de posts no fórum de independência financeira do Reddit, ele relatou com humor seco e lacônico seu primeiro ano de aposentadoria.
+Um mês depois de deixar o trabalho, ele escreveu sobre a culpa que sentia em gastar dinheiro (com videogames), e sobre a preocupação de que isso causasse um estouro no orçamento da casa. Os dias dele eram vividos em companhia da família, na academia de ginástica, fazendo exercícios em casa ou cuidando de pequenos consertos. Ele não tinha arrependimentos, até ali. "Tomei a decisão certa. A vida é isso".
+No segundo mês de aposentadoria, ele registrou alta de 2,8% em sua carteira de investimento, mesmo descontados os gastos com a casa, e fez uma lista de realizações: mais leitura, aprender a cozinhar, trabalhos voluntários e "resolver mais rápido do cubo de Rubik". O estresse era muito menor, ele escreveu. "Um amigo disse que a expressão de pavor que eu tinha no rosto desapareceu".
+Nos meses seguintes, ele assistiu de novo à minissérie "Raízes", perdeu o interesse em conversar sobre o FIRE, por já ter conseguido seu objetivo, teve medo de um crash nas bolsas, e teve pesadelos de que "voltei a trabalhar e estou discutindo com cretinos". Ele marcou seu melhor tempo em uma maratona, sentiu momentos de isolamento social, fez uma viagem de carro de duas semanas pelo coração dos Estados Unidos, e foi duas vezes à praia na Flórida com a mulher; o patrimônio líquido deles bateu novo recorde, mesmo que tivessem deixado o trabalho, o que Long atribuiu à "aprovação do corte de impostos para os ricos criadores de empregos, como eu".
+Falando ao telefone, Long admitiu que pode simplesmente ter se esgotado, e que a adesão ao FIRE talvez fosse só uma pausa necessária até que ele encontre carreira mais satisfatória. Quando lhe ofereceram novo emprego no setor farmacêutico, recentemente, ele teve um leve acesso de pânico.
+Na manhã do dia em que conversamos, ele acordou quando quis, "e não porque um despertador me disse que tenho uma responsabilidade". Leu as notícias por 30 minutos, correu 11 quilômetros, tirou uma soneca e "fiquei vendo o ventilador girar no teto, por algum tempo".
+Ele está assistindo aos filmes do site They Shoot Pictures, Don’t They?, que organizou um ranking com os mil melhores filmes de todos os tempos. Long já assistiu 600 deles. Ainda há trabalho a fazer. Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "30ae69ccdf5b988900717981fa1890a579fa20b946e032b0b1a30df884b24313",
+    "mention_text": "Carl Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6777e826707a9cf577a83685b5e61916f73bb977a2e73fc9ed7ec13d7ff94847",
+    "mention_text": "Denver",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c660d0bbe17959990a53d9130fbfd6991cbe857b6e086740a7a614de80a601a4",
+    "mention_text": "FDA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b00b46b06d00719fb7e42cb32bf02b4bf196934a93e2ba94d4a75c02bf8cbe6",
+    "mention_text": "Food and Drug Administration",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f877441ebaf6d7a1dee5214ca61004ed876acfcb31d355b8db261c9965bb995f",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f2876ccd7a48333f9b4a59a76fcff7af4b6bfc2811a3f81e15a4cfd60278319",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31401e599038fac0b76f7b44a26ed80b62696c7a2683e1e3a3792b898b31cc59",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18cd3c0d9b0924d502b7edccea4f33e62f200a4827b872b6bf254e47b23f6e71",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5446b8792f41d191deddedd1ed0d5eb5f1a0d9f4dae78687b63d9ff173a3d76",
+    "mention_text": "Wall Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ea5c6c5bf9f7dbe4272eedbcec7faa9df78c551196a34c35c0dd64bd6dd3a43",
+    "mention_text": "Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5178f87e310467dde1f488e4b672e9c16467e71a77009d557217185aaf41e02",
+    "mention_text": "geração milênio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18b9a976681de34212a710dc98595881eda30ba53c6c4cb6509ce5adf2285a9c",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9811b487af4702a262a70f07f71a8aab07445a58d03ccef22fc069602c21532",
+    "mention_text": "Mr. Money Mustache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eeb770fba6c2383a40ca258e84df8fbc3ef6869398294d196bf1fe4e67d41821",
+    "mention_text": "Starbucks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe9f249af10e7f05e0bb85921580d5f187dca0f260ee8719697838a291fc558d",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "efcc2f34fdb4207f2f4284796ce7983fd5b86316b281d66e79d3e8064ed4c237",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4661d86f1997cd61d0f61fe49fd3a6e675ced87b822a3f75729182d5c33783f5",
+    "mention_text": "Costco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbe770da7d5e500bb84d1af12fa8b8d344b0fc5268d6fefd764affbe04229ab8",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9e8cd5c3c218d179a6edabc2ba2c67ad877c91842ed8ab337d24ed78235cd8a",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f30261809bc55cde174ddca4cf1430e0de3d9741b9b010510813d3288bcacb84",
+    "mention_text": "Jason Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8274571966b549b8792071acdceee4c1c57c565e2f0efcfc1a3dcb793128cc01",
+    "mention_text": "Tennessee",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "604507e70a78583e8b43a3ae0a1190723104e5d30e6036e4a99ac04226a4e78d",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4efe169db5e02974964da4dd0ccc278df955c726ae641025ff1164487e5c6cc3",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "667646c44f0649aed84d085b091b3d06800260f88a12ae1a41c3024b0ddd1eb0",
+    "mention_text": "Jensen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1fbb2d1d507b32b0a372570c7524ffe20c10b10b7495d402674d0281d21a9a4d",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "348202fd3d067538b776a901d5ec7bfb5894d88045ce5edca60954afab0d00b2",
+    "mention_text": "americanos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17d3af5a7718637fa897186fa217d65d88870a3a87e1a6c63215545c517fac86",
+    "mention_text": "Vicki Robin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f5c87f5db7554467cfad79c18754d58db697c4180b06d1ea47cbbbf461b8d6b2",
+    "mention_text": "Joe Dominguez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b9beb0c466b62951e23522193d9d8c8ead215799d323088638e8b8a007ad265",
+    "mention_text": "Robin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c9fff4e6b40949178c7ee644b07ef05913b9b1a30ff86d2b87556e3c3c5f757",
+    "mention_text": "Robin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e3d0ad399d95a6dc02cff89e2c0eb029b9fd721c199efd251a635304c9bc87b",
+    "mention_text": "geração milênio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1d0f0c009635e1173db66267c0cd0c7b96870870b5f627376ee96dcdc886451",
+    "mention_text": "Kristy Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "550c97d3945155e8abb5fc487b118d40d7b3c9b83891edf48394971d8a49d6ad",
+    "mention_text": "Bryce Leung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11cc11e9384b2795aa6bfab6a542265ad1fa08b61faf98670a376f08a79af18b",
+    "mention_text": "Toronto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c19a21fe62a9ba3ed7266f6b4263ef0eb5f9c4e79272bf9092bd71d4f4d54fe",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "70a9c6e6e9c3758c2eeabec791db9a44294f41c5426d5727808a0be029c16819",
+    "mention_text": "Leung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aac52830153595a1614eb153fba38c41c0ef868644863562504741931b07d18c",
+    "mention_text": "Toronto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3961895ad99029b187ca66dfd3b92f22e9c65de89515ea2704d07fa4b7879b6a",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b40b2d44fa8041f9a4751d8fa6109e028ca819408d2e584548d64048be48bc6e",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a0dfefa0c8b9cd57b4865eff44bc09a5337163b22927fe7584985fb2ad6d15b",
+    "mention_text": "Leung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b315a7f184a362e76d7db40bfecd3b6a4501a9af0a0327520630a1a3b681bc30",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65114bc2d64405ae0146779a063821387f23f2b82e39a66ac51795674c062252",
+    "mention_text": "Leung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3533bd01dfa9ba8b8753ad85e63aebbc8dadbdeb9f5d26c068a5a5b1a86a7d3",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3696d6c6ccef84b48c2d42dc0a84587359c2c5a0498f374537a21db603c84f9f",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d424f106c9d158c1cb0e6d3d9adf8f38d535d1b00af34599150a9db3211f896",
+    "mention_text": "Scott Rieckens",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e4b46066f9f90e143778784d20652629d8d6df0e9e11d7de6a1c9e9ed5dc93b",
+    "mention_text": "Taylor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "306313551720f0017f817af53faa17db600f6174ce9e4b40e889ad38bab0b330",
+    "mention_text": "Coronado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f1c8e0ef4587ec22824b481d9ddfce51f8041533a43bfd9b8ea8159c309b027",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "df827e4b38b60bcef0ca9cc108da0cad091d2a87661904f7789b8ee7f3f4b5a4",
+    "mention_text": "Mr. Money Mustache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4b1e6a780a72dade6793eb08fa35a77f1deb3fb91761bf01e16c25e1222a128",
+    "mention_text": "Pete Adeney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "993ae2c74e66ccffb16cd0ce5e94bc9c291a06003f3df65caf700e9e573c772b",
+    "mention_text": "New Yorker",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25670baf340a096cc865a4707873025490648326554a6bc4e411f9b3d411c603",
+    "mention_text": "Scott Rieckens",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "661c1a832154e40ae6cbbf5d5be943b5dee13963dbb944e5a04d3cfd241721ff",
+    "mention_text": "Adeney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39308d8599b5839ac97c63c1ead27bed5fc88752fb91a852e61b71ad5a6a289d",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e0de3b7923dd0aeca3392ce21e492fd6d92f0199ed80e800088c4285a7b69d97",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4d2aabf39dc6dc3ee7154194f3884e35b7f265c85325b429791306fe07762121",
+    "mention_text": "Taylor Rieckens",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57af78fcdf688b1c9d47ac4c84b3fe92f386bca647d7268636e55f8e7255fc34",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1bda77793434aef9d6f35d619204fb938941ebd385accfb8a8d929d2a4f8217",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9a6555edd5ed45f5d5dbd6b171060ab8e04176fecd792665e3529558fea38f29",
+    "mention_text": "Scott Rieckens",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95e9353425b284ff50da3df25c7b8a6df839cb9d54ffb3af44aa78877c4eafc2",
+    "mention_text": "Bend",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17cd86ac0266c9cb900cd756dff81b9a284aeca44574d8e354222c995b11c2a9",
+    "mention_text": "Oregon",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3c92f48e91ee0be1e71bfda0b1604109123832e6a3e57354a261eba082a871ef",
+    "mention_text": "San Diego",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5dc5e0993d7c74f9e05f994e246b6a0b333f716fb42d3176a18a66f12e300c81",
+    "mention_text": "Scott Rieckens",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5a2ef295be059b9c9af3b33155dc0c7d529653fd861e4fd1a5b2897f32337d7",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56964a05b08d442f36432abcb2d7995c3fb5a45b30e84f00d196ea3a4e057702",
+    "mention_text": "Tennessee",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b67fea31d7b8fb05ecd99d9b2f7c61767dccf8e89eaf8d4734baad9cf192104",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4a1942d7c09753ffd64a8c8f02300268a477ebe15738161729d30c0e000c59c",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cc6bb2bb11e6a339062c7b3dd8c550af1a9e2abe85f43ef6e0ce2f322c16c610",
+    "mention_text": "Flórida",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "658001ff6433457f2fe9bfd37b8f9d8bca19f091ce904be3f8723fb0963f16b6",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "643eefc65a57bea43488bae859bac41d9caf9170e2ddfb4eb7abf53849b3076a",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d2cfb952c3d59324a1b9b1a31356bcc2880d547b64797ff3d894e30f6593feb",
+    "mention_text": "They Shoot Pictures, Don’t They?",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c96952834a90de03309d8d9978bdae1634582e7a0acebb6429e3ab1542875cc",
+    "mention_text": "Long",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e4f031e5ddf07bdd1b6c3fdd4b0c136d8fc201faa3b022bdf9a358c96df00a0",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

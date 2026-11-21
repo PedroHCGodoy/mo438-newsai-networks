@@ -1,0 +1,404 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: dcae3ac28f79c25c6c0efeeb6da7c63cb90dc5e6ea23ccd93cd1cefc91cb0991
+
+TEXTO:
+Desenho dos Simpsons completa 20 anos
+
+17/12/2009
+-
+14h35
+Desenho dos Simpsons completa 20 anos
+da Livraria da Folha
+Divulgação
+Os Simpsons completam 20 anos desde a sua esteia na Fox em 1989
+Há vinte anos estreava na FOX o desenho "Os Simpsons", um sitcom animado criado por Matt Groening. A série é uma paródia satírica do estilo de vida da classe média americana, por meio de uma familia disfuncional e muitas vezes politicamente incorreta. Seus membros são Homer Simpson, Marge Simpson, Bart Simpson, Lisa Simpson e a pequena Maggie Simpson. A série se passa na cidade de Springfield e satiriza a cultura e a sociedade estadunidense, a televisão e vários aspectos da condição humana.
+Desde sua estreia, em 17 de dezembro de 1989, o programa já exibiu 448 episódios e já está na sua vigésima primeira temporada, tornando-se o sitcom e o programa de animação de maior duração da televisão estadunidense. O seriado já recebeu inúmeros prêmios, incluindo 25 Emmys, 22 Annies e um Peabody. Em 2000, a família Simpson ganhou até uma estrela na Calçada da Fama, em Hollywood. O seriado gerou também um filme que arrecadou mais de meio bilhão de dólares em todo o mundo.
+Com enorme influência na cultura popular, os Simpsons serviram de inspiração para diversas outras séries animadas, além de citações em inúmeras obras de escritores, músicos e diretores de cinema e televisão. Veja abaixo algumas:
+*
+Divulgação
+O livro traz tudo o que você sempre quis saber sobre "Os Simpsons
+Só mesmo um fã de verdade como Johan Lagger poderia ver e rever tantas vezes os episódios da família mais engraçada da TV para preparar um almanaque assim.
+"De Olho em Springfield" traz tudo o que você sempre quis saber sobre "Os Simpsons": como a série começou, detalhes de cada personagem, os melhores diálogos, os moradores de Springfield, um ranking com os melhores episódios e muitas outras curiosidades.
+O livro traz ainda um guia completo de todas as temporadas, incluindo episódios inéditos no Brasil. Nem precisa ser um simpson-maníaco como o Johan para gostar deste livro.
+-
+Divulgação
+Traz análises a respeito da ironia e da irreverência dos Simpsons
+Este livro traz uma série de análises a respeito da ironia e da irreverência de uma das comédias mais inteligentes da televisão mundial: "Os Simpsons". Estudiosos de filosofia e de outras áreas do saber reúnem-se para desvendar questões filosóficas levantadas pelos personagens, enredos e pensamentos da série, mostrando que pode haver seriedade por trás de um programa que vai muito além da história de um bobão e sua família.
+Os ensaios aqui reunidos são provocantes, reflexivos e muito divertidos de se ler. Há textos que comparam "Os Simpsons" a outras séries televisivas, como "Os Flintstons"; outros que traçam paralelos entre a série e filmes como "Psicose", "Pulp Fiction", "O Retrato de Dorian Gray" e "Os Bons Companheiros"; e outros ainda mais inusitados, aproximando a história dessa família ao cerne do pensamento filosófico, a exemplo dos capítulos "Homer e Aristóteles", "Lisa e o antiintelectualismo americano" e "Assim falava Bart: Nietzsche e as virtudes de ser mau".
+Formidável, inusitado e altamente desafiador, "Os Simpsons e a Filosofia" é um livro que mostra como a filosofia pode residir em qualquer lugar, até mesmo em um desenho popular. Alia a profundidade de uma ciência tão antiga à linguagem contemporânea dos desenhos animados, introduzindo os leitores ao pensamento filosófico pelo meio mais atrativo e agradável: o riso.
+-
+Divulgação
+Um olhar curioso sobre "Os Simpsons" e seus ensinamentos cinetíficos
+Na série mais duradoura da televisão mundial, com mais de 20 anos de sucesso, Os Simpsons é parte não apenas da cultura pop - tornou-se desde já um clássico memorável para gerações, tanto por seu humor inteligente quanto por sua capacidade de nos fazer pensar, indo muito além do usual em se tratando de uma animação.
+Você sabia que alguns dos criadores da série Os Simpsons são formados pela melhores universidades dos EUA nas áreas de filosofia, tecnologia e outras ciências? É por isso que a série traz muito mais que diversão. Um olhar curioso sobre os mais famosos personagens das séries animadas de TV e sobre o que eles podem nos ensinar - pode acreditar - sobre genética, inteligência artificial, viagens no tempo, viagens no espaço, extraterrestres, física quântica, o efeito Coriolis e outros temas instigantes.
+Este livro extrai sabedoria e lições da vida real do desenho, indicando inclusive os episódios que exploram o tema das mutações genéticas; os perigos da exposição aos elementos químicos, ecologia, desenvolvimento, viagens espaciais, tecnologias e uma visão crítica sobre a ciência e sua aplicação na vida diária. Não é toda hora que encontramos um livro sobre ciência que nos fazem rir; como o próprio desenho, este é um livro divertido e inteligente.
+Assim muitos espectadores foram além dos episódios de Os Simpsons em busca de mais informações sobre ciência, filosofia. antropologia... E quantos e quão relevantes temas científicos foram tratados por Homer e companhia em Springfield: usinas nucleares, robótica, genética, viagem no tempo, corrida espacial, alimentos geneticamente modificados... E é por esse motivo que temos de saudar a publicação de Os Simpsons e a Ciência, afinal, aprender se divertindo com a família mais maluca de Springfield é, certamente, um grande barato!
+-
+Divulgação
+Um estudo hilariante e perspicaz sobre a sociedade moderna
+Springfield é aqui e em todo lugar. A série de TV que há anos conquista corações tem neste livro um ensaio sobre o mundo atual. "A Sabedoria dos Simpsons" é um estudo hilariante e perspicaz do que a série "Os Simpsons" tem a dizer sobre a sociedade e de como a mesma é afetada por esses divertidos personagens, que ganham força e a simpatia do público.
+O que diz Marge sobre a situação do feminismo moderno? Somos mesmo obcecados pelas celebridades de Hollywood? São os americanos tão geniais quanto se imaginam? É Homer o novo empregado industrializado? Nenhum dos filhos Simpson será deixado para trás? Descubra respostas para essas e outras perguntas neste divertido ensaio sobre o mundo atual, visto através dos olhos de personagens tão fictícios quanto verdadeiros.
+Compartilhe
+twitter
+delicious
+Windows Live
+MySpace
+facebook
+Google
+digg
+Livraria
+Almanaque traz GUIA de episódios e curiosidades de "Os Simpsons"
+Entenda filosofia a partir da ironia e irreverência de "Os Simpsons"
+Livro traz histórias engraçadas de seriados como "Jornada nas Estrelas" e "Friends"
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d0b66e7edae6a837ca5dfca0b93ea6422bb88e098b791d4df8b67fba748a449a",
+    "mention_text": "Livraria da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4874db6b27de1d4285df343f6fc3d99a4d4c0a1edc0fd0cd4a6f45aaeef86986",
+    "mention_text": "Fox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf2dea2fe83951a6d8b7a1f022158d13c197d5880dff35158f0b7d5311f67a75",
+    "mention_text": "FOX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6707f3bf0963935c59728e37b9bd2ecf78d014513dedc2c2f53f9773f6118616",
+    "mention_text": "Matt Groening",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fab316f962c7a85454cf4eda5719a24300492722c87ef08bb36f40babbe20a22",
+    "mention_text": "americana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e415bb041f7edeb91eda8882fdd3119f71881f9ca21f95504d41a10b26c4c8bc",
+    "mention_text": "Homer Simpson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf39376c6cbba405f8554261a4d42152ec4378dfc2f42df3f26d08fb45b20520",
+    "mention_text": "Marge Simpson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea94afb2035168234a7faebb3f77d16c32b905d897668edfde3a4234b617af97",
+    "mention_text": "Bart Simpson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d9dc918344011d9e8a1703941e0b7d19b362be80d8e7e595a4e14a32f4e89c2",
+    "mention_text": "Lisa Simpson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8193ae9d091a92dde91e09e9f6ab050a88cf1ea20ba6e2df9c489135716d5c1",
+    "mention_text": "Maggie Simpson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a83552a7aa28c1da747f9a7812b55db9acdbac8bd23324485394cf1a2e2f09a6",
+    "mention_text": "Springfield",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb7c26cc057dbc776a68181317e4fd6d43a1a75eff244c6ea7c72ed658bd0ae9",
+    "mention_text": "estadunidense",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "772e4296ea484b99ab16bd2ad20037340edf32e9d9fda0a91ef12173f9e1d5ad",
+    "mention_text": "estadunidense",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10099d229c8d81f09afe2e847d53a35bc84fad5be74333e46aaabe13033f027a",
+    "mention_text": "Calçada da Fama",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d92274da20bd84e8b42fccf4091b205dc00b0e59dc1540bcd8029540d44aee4",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2efe8d53c53ba808d43c55cb5fc4fe8ba8b03555d7cbabaee930424f5f8b3ea0",
+    "mention_text": "Johan Lagger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74d62a2a6ec4f2267652c879080c6c25f71fcff2d1de22c2bb982f4b6d9ce63c",
+    "mention_text": "Springfield",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "691aafb7be613af32c03454de10a5f6238c91ad92f608a754ab4a1567e4fb602",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1add5e7c2592447330c237de7bb260c2e199ed197e995f05dd1adfe31926dc17",
+    "mention_text": "Johan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cddbcf2ab5dc4e032e5798d2727fa9b6deda4220314402d2611e1036f729b6dd",
+    "mention_text": "Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c84b13f809baba25bf17bf9515c86fba7c691463f59d8862b1c9c42356cc046",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88f60a923c5ebdd4471e4912f7052973e962856e47dd6804d65fab91b54070e6",
+    "mention_text": "Homer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5c31c76becacaea2fd92dce267fe6b9441254f60c599c5369e94ed14a5e7f89",
+    "mention_text": "Springfield",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "930537dd6992c4ce775d061b295aa011957077440cd77f03654c6293a39f9f6d",
+    "mention_text": "Springfield",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03860528918b22588069425d85b9a5517eff95450777de02e264fe19a6d8b4d3",
+    "mention_text": "Springfield",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6b6e6dad5157b3a03a7ba0e76c21c851d267668d01a029bfcee6d53ff12b007b",
+    "mention_text": "Marge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74a8553db785882ee1049839a73f399605a5b50d746784f5d088abe4a13c6c9d",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "57496adf5f5364fcdd0a02f742eb02bb5430e80307e6704da9165d6f68f83c6d",
+    "mention_text": "Homer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58502ad9184bbe5fe3ce8b89ec80770426bea54babd883e9cd7d4edde7abb221",
+    "mention_text": "twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09a5840057cb0f9bcc589ebf936627f548870e150e558fe47cb2941a159ce8c2",
+    "mention_text": "delicious",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9be95f99cba74db215dd19cd827e2ac08c1e3285c4f1876db59fb351f5234172",
+    "mention_text": "Windows Live",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d22247c98f0b5ea609385732963b6ab0f9b4054e9739ddd663def3662a26b571",
+    "mention_text": "MySpace",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "179fa481e888831d1b2fbed1be503acb13cbf6c9532c9dabb44f4664222635d1",
+    "mention_text": "facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f950ce4b2ab429b3bc1327c76349a70ccc942331d345ff90284ed9b1aefce297",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a56863c084e29c1b3785aaee8cc754775d1a0b275b69f3021eb87d41f35605ae",
+    "mention_text": "digg",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,519 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 79e6ad780bad0c0155bf9f351a98288cbfa16c122efbabb3193bbb874adaf27c
+
+TEXTO:
+Dirigente de time da NBA é acusado de usar contas falsas para criticar atletas
+
+A noite de terça-feira foi movimentada para o Philadelphia 76ers.
+Surgiu a informação de que Brett Brown, o treinador do time, havia chegado a acordo para renovar seu contrato por mais três temporadas. O jornal The New York Post noticiou que Ben Simmons, um dos astros da equipe, está namorando com a estrela de reality shows Kendall Jenner.
+Mas a notícia mais séria foi a acusação de que Bryan Colangelo, presidente de operações de basquete do clube, aparentemente opera diversas contas anônimas no Twitter, e algumas delas estavam postando informações confidenciais sobre a equipe.
+O time anunciou na quarta-feira que investigaria a situação de Colangelo. As acusações, que Colangelo negou, vieram em um artigo postado no site de esportes The Ringer. Uma denúncia anônima resultou no estudo de semelhanças entre cinco contas do Twitter —nos usuários que elas seguiam e no estilo de redação de seus posts.
+Essas contas anônimas, que costumam ser descritas como "descartáveis", ganharam destaque recentemente quando Kevin Durant, do Golden State Warriors, admitiu que mantinha contas paralelas, usadas para criticar antigos colegas do Oklahoma City Thunder. A manobra foi exposta quanto ele se confundiu e postou uma resposta a um comentário usando sua conta principal, @KDTrey5.
+No caso de Colangelo, a situação parece mais séria do que a revelação de que Durant se ressente com críticas. Alguns dos posts que o executivo é acusado de publicar são bem inócuos, por exemplo uma defesa de seu gosto quanto a roupas, ou o questionamento quanto à extensão do contrato de Masai Ujiri, o executivo que o substituiu no Toronto Raptors.
+Mas também existem posts que revelam informações confidenciais, entre as quais a de que Jahlil Okafor havia sido reprovado em um exame médico, o que motivou uma troca —algo que o time não tinha revelado— e outros posts nos quais jogadores da equipe, como Joel Embiid e Markelle Fultz, são criticados.
+"São acusações sérias, e iniciamos uma investigação independente sobre o assunto", informou o 76ers em comunicado.
+Embiid, selecionado no draft da NBA pelo predecessor de Colangelo, Sam Hinkie, reagiu à notícia ao seu modo indireto costumeiro, o que resultou em numerosas respostas dos torcedores, a maioria das quais mencionava Colangelo.
+Embiid em seguida tratou diretamente das acusações, em uma entrevista à ESPN. "Falei com ele e ele me disse que não era verdade que tivesse dito aquilo", disse Embiid. [Colangelo] "me ligou para negar a história. É preciso acreditar nele até prova em contrário. Se for verdade, porém, seria bem ruim".
+As acusações surgiram depois da temporada mais bem-sucedida do time desde 2001. O Philadelphia, depois de anos de esforço para reconstruir o time, uma empreitada que veio a ser conhecida como "o Processo", por fim pôde colher os frutos do trabalho de Hinkie nesta temporada, quando venceu 52 e perdeu 30 partidas.
+Embiid, que ficou fora de quadra por temporadas inteiras devido a lesões, se transformou em um superastro confirmado, e Simmons é um dos dois candidatos favoritos ao prêmio de calouro da temporada. A eliminação na segunda fase dos playoffs foi vista por muita gente como ponto de partida para um futuro brilhante para a equipe, o que explica por que faria sentido estender o contrato de Brown, algo que o time ainda não confirmou.
+Embora os principais componentes do elenco do 76ers tenham sido contratados por Hinkie, Colangelo assumiu o comando das operações de basquete depois que Hinkie se demitiu, e adquiriu alguns veteranos como J.J. Redick, além de ter negociado a troca sob a qual o Philadelphia cedeu duas escolhas de primeira rodada no draft ao Boston Celtics a fim de adquirir a primeira escolha no draft de 2017, que o time usou para selecionar Fultz.
+A decisão foi elogiada no momento da troca, mas terminou criticada mais tarde, porque Fultz mal jogou em sua primeira temporada por conta de uma perda muito debatida de eficiência no arremesso. O Celtics, enquanto isso, usou uma das duas escolhas de primeira rodada adquiridas na troca para selecionar Jayson Tatum, que imediatamente se tornou um dos dois melhores jogadores estreantes da temporada.
+As finais da NBA só começam na quinta-feira, e por isso toda a liga estava de folga na terça-feira, o que resultou em muita discussão entre jornalistas, jogadores e até executivos de basquete. Daryl Morey, diretor geral do Houston Rockets, e Mark Cuban, dono do Dalas Mavericks, brincaram sobre as acusações contra Colangelo.
+O acusado, em declaração ao The Ringer, negou que fosse dono das contas na qual o conteúdo discutível foi postado, mas admitiu que mantém uma conta anônima.
+"Como muitos de meus colegas no esporte, uso a mídia social como meio de acompanhar as notícias", ele afirmou em sua declaração. "Embora eu jamais tenha postado qualquer coisa que seja na mídia social, uso a conta @Phila1234567, citada nessa reportagem, para acompanhar o nosso ramo e outras notícias atuais. As demais afirmações dessa reportagem são perturbadoras para mim em múltiplos níveis, porque não conheço qualquer das outras contas que foram mencionadas, e tampouco conheço quem está por trás delas ou que motivos essas pessoas possam ter para usá-las".
+O artigo do The Ringer disse que a investigação surgiu porque um repórter recebeu uma mensagem no Twitter sobre as contas. O remetente da mensagem disse que já trabalhou no ramo de inteligência artificial, e que havia usado um instrumento de análise de dados de fonte aberta e identificado conexões entre as contas suspeitas.
+"Todas seguem um mesmo padrão em termos de 'likes', de pessoas que acompanham, e de tuítes que são extraordinariamente parecidos", a mensagem afirmava. A investigação do site confirmou que muitas dessas afirmações procediam, e que as contas todas seguiam pessoas com as quais Colangelo tinha conexões pessoais, e postavam mensagens notavelmente semelhantes em conteúdo e tom.
+Quando o time foi contatado sobre duas das contas, mas não sobre as outras três, as três contas que não haviam sido mencionadas tiveram seu acesso mudado de público para privado, entre as quais uma conta que não mostrava movimento havia meses.
+Colangelo, 53, ganhou por duas vezes o prêmio da NBA como melhor executivo de basquete da temporada. Ele já dirigiu as operações de basquete do Toronto Raptors e do Phoenix Suns. Seu pai é Jerry Colangelo, ex-dono do Phoenix Suns.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "53ceb938fe8abeb2cf5947ea2c6bedb358a2121e7741b5f20b89f71bcab5a0fc",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba8a9eccb8029f5e95396c065a08a8d1ee6622a853540b01115a2b61b9c05ccf",
+    "mention_text": "Philadelphia 76ers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4cb4f9997d9847edd3b3def840d689a45e6e77ac323f66bcf3469e30813db9b",
+    "mention_text": "Brett Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f30f1ef4d3b4d0960d834dd1dd918d7a015539e392525cf7de91f373ff06a113",
+    "mention_text": "The New York Post",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1276710d9b2b36096abda7390d3c4bb045fdba983d52eed3ae32ed9f264e942c",
+    "mention_text": "Ben Simmons",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "525493ae6861ec35500a87f054b8534192fd08a2e97ee2723f975e3c09a725f2",
+    "mention_text": "Kendall Jenner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a96eca38f0a3a3d086443700eeaea1a246d7277b0e6d5ae2c7ad73ada3bff409",
+    "mention_text": "Bryan Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76cea80b1b95189526289415216b593d3607c481fc4b18d313f1ab450a2fcf91",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50d007691b211aa5b127cc6398978e6ea9873e92f5254e8b0c53e05aa25931fd",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee06e7c0c47097eb9ba91f2865212d2ad2f910751e3305c0020f281e5b42aa10",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e649fb65862556597580af471537456643525872d9db0855ecc4dacb5bae118",
+    "mention_text": "The Ringer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f66816cfdad00f8f528545cc3909cf8986c025bc0828e35624361100def84a6c",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0cfc245852d0032f19cad0963204501a02967e363bdebe8ebf34ee25a3c99443",
+    "mention_text": "Kevin Durant",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5adb20a7f1a1ede24d290ed51ccee9a7e3c0c83ce552bdbc5df9713c1fb70076",
+    "mention_text": "Golden State Warriors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c388da72ce4ca03001ebb6fe1a024ae18cfa964b48ba09b91555a62e54667a53",
+    "mention_text": "Oklahoma City Thunder",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "440a147e3086cbe7a81ba1dabfd9e17d11221ddfbacf8b1893cab1d31c768179",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6451360546325ccf2b16e5e6763519aa806d4c5c38f5cf68dbe7d59cfd247ade",
+    "mention_text": "Durant",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2971933d1dd6e2230186e1cb52781bc2aedf3186823aca0fb9020d445004386e",
+    "mention_text": "Masai Ujiri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ea51c38a1247dbe83dfe9000ed631f01a22c8be57a279b170260fa16af6283a",
+    "mention_text": "Toronto Raptors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb1da58797adbb2b7af105d0b606d2d4d50d604f4989587d97d872da6dbd9938",
+    "mention_text": "Jahlil Okafor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64af1be49547886637af2aa8997a1cf3bdbff43d085122faf79efaaf1f20e008",
+    "mention_text": "Joel Embiid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c4bf36778707cd2387498f6ad0480d3ef99cd6a5c7f84e84c6360cc2f2a2848",
+    "mention_text": "Markelle Fultz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5c9bcb66f7f8a4ed77a2295fb122b3fd406fb8c65f1b1f6c408756238466221",
+    "mention_text": "76ers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd9e7ad610d887d28f24d0c48927d70f96f91bc2b147c184022049b126814854",
+    "mention_text": "Embiid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5ccd006c462fb97941d831e16152da55cf0e31675c9be882df3001515392208",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ec1b52f392a0f212da5d9a9e7b01d1082719c0b06f441378d71a9d9d7eea22c",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "691214b34941437b8d956fbae084c09380d94c5f72b62c43f09d01753e96d77d",
+    "mention_text": "Sam Hinkie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7acdaf4a9c5094c8bdcb38e92124176709791a9b120268a14d5674382b1072b5",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3006253260daf9c9ddae0c9a073b2ec0e30c9966dedfdbeff13c78e4dc4fcb2",
+    "mention_text": "Embiid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44aca03d59d05f8a88576982589b61606c4c915353992002d690608b1c80f05a",
+    "mention_text": "ESPN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50b8afaade67c2027570467b10f65aa1a61b82584e51012ea0c553a44d04d99e",
+    "mention_text": "Embiid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e528950ad2dfd2c649169664a259cb39149f8a6e6d331afe3ffd6d1838bbb396",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3aa695b40c757a402e2aace163b0177a6500d9bce9de4aa1bdfe176c22070702",
+    "mention_text": "Philadelphia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71392d6a803aecd0b05c1cb0e90fea902351222c9943d022c09fa8e40b28bfe2",
+    "mention_text": "Hinkie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3116fd54a6fee926e5f12082b2a2865b17680371c8ead9eef0148b2e18dd0456",
+    "mention_text": "Embiid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99169b0595ff48637202a067d479cff83ad0872cef969aad3c58fd42a0ce282a",
+    "mention_text": "Simmons",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da8709555446d0b8f013e986200d52942c8dad3840bc3e2daae55a189177e4c4",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "816de4d110f86b8c8beac05f609a3d71dbd72b5ddc6b714ca87ca46c7c97fb59",
+    "mention_text": "76ers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42982a8c6d6c4276b4217562eddcc1c3f773b9df55a169e174796923881e9e33",
+    "mention_text": "Hinkie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4516f809b77d9077740f270e7acab1c54b41be5e154b4b06b9194bfcc2ef1a89",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2310c702f60ab53e61a24f1057a19772bb56c16077c5678baeede9edd2834151",
+    "mention_text": "Hinkie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "005b1ceebd7726a9d5257f1240ceba44365c37347c05d11a1ff1a5bc915fb75e",
+    "mention_text": "J.J. Redick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f5ef09727dfcf8f4895de0f11d255c38246d3c45b2360cd82a0dd6ac4dcd632",
+    "mention_text": "Philadelphia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94baf2741388c0287989dc63f4b00f278c1c39cdd46f88cef66b54cd2531d343",
+    "mention_text": "Boston Celtics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2ecf81f2804698c274b3a5f4c28d9b6882ef1f916baa759a107d0681d9dd136",
+    "mention_text": "Fultz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1849fdcb84f88c2006d420641998998b8ceafe28692077d3a1fa7872ef967858",
+    "mention_text": "Fultz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6895c2e5aa3be8da690b84d2611c21a8943e35db328da27976f1788e7d6875d1",
+    "mention_text": "Celtics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee4bf149f5891cce2dae81438b3c3d11bb472775ae8b9cf4a9168f4b7c0f269c",
+    "mention_text": "Jayson Tatum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97cc21aa0b640d9e3ef5d911bcdff7efb5f14fe8800feaf7d52ecba538cc65bc",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b75c1090a7466f9f1b6f61f9d023ee6643e383e119ef79c53628d374c9e12ef",
+    "mention_text": "Daryl Morey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f59b3264f8be5bc2b3563cc2ef5f06bac48dc8cdb935b7a6a97bd6a2a11e3a3",
+    "mention_text": "Houston Rockets",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1a945704f56efbf6f1622e1cdfe7306ddcbee849b0b28859469e9e1eb8f7541",
+    "mention_text": "Mark Cuban",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7564ec70c62ac8bb4c7b180925a2bead69ff6cb8c3ee366b7f1c3c7c3c31cfb3",
+    "mention_text": "Dalas Mavericks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db72787939e97e7d580779a4191e8461f0a6b9f7b63b881fdb51ef68dd48bbd3",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ae15ce4fba3d656add2f98a26cdf3a7bce9ac5c483b18373ec918dc00276a80f",
+    "mention_text": "The Ringer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "790495aa7005efcf2775e67a7c096c968c1cd381bca987b4aa0993f347afbbee",
+    "mention_text": "The Ringer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef51846c6f88c8db5bff3486609fb3b7648b951816272d3fbf9cb4c07d05dd2f",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc31df1b3c1c46a27e707620151ca0ec1ce1ce0448404db08e263c7087b92cae",
+    "mention_text": "Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6749855ec204a66272d5a80401c99a09eb1061b28fb339b7d9ffb05d2f5e679d",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b66cad4fbb1b2a26c7fe02f74a915ff6fa6f64492c1d133829420fa81defad4b",
+    "mention_text": "Toronto Raptors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bef64811f457d8f4354236a458389ff37e1be226f142f2620d1e98eacfa10b5d",
+    "mention_text": "Phoenix Suns",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c52e6e903813a5ef96ccbecf9bc8d67625722662408dec327aa76cc9aa81b80f",
+    "mention_text": "Jerry Colangelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "754888889f92d9d9b2e1850bd117ccaa6775624de1e024f76195c9edf5f1d323",
+    "mention_text": "Phoenix Suns",
+    "categoria": "ORGANIZACAO"
+  }
+]

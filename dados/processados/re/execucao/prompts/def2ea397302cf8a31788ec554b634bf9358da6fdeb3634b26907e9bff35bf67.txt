@@ -1,0 +1,453 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 4f77bc8a3acca7ca74f5249ea48a081e5e4ac5c21654f9efdb33b53190d1aa2a
+
+TEXTO:
+Cinema: Álbum imprime lenda Stanley Kubrick
+
+CINEMA
+Organizadas pela viúva Christiane Kubrick, fotos registram da infância ao set do último trabalho do cineasta
+Álbum imprime lenda Stanley Kubrick
+AMIR LABAKI
+ARTICULISTA DA FOLHA
+"Stanley Kubrick - A Life in 
+Pictures" vai muito além 
+da celebração de um gênio por 
+sua viúva. A ex-atriz e frágil artista 
+plástica Christiane Kubrick, a terceira e última mulher do diretor 
+de "De Olhos Bem Fechados" 
+(99), selecionou e escreveu as legendas do extraordinário álbum 
+de fotografias que acompanha 
+Kubrick do berço às locações do 
+último filme.
+Como o documentário homônimo, disponível em DVD no 
+Brasil e dirigido por Jan Harlan, 
+irmão de Christiane, há no volume um inequívoco tom solene e 
+oficial. Seria um motivo tolo demais para desprezar a ambos, filme e livro. Há qualidades suficientes nos dois para torná-los 
+obrigatórios para quem pretenda 
+pesquisar a esfinge Kubrick.
+O volume começa com duas 
+epígrafes do próprio cineasta. 
+"Não é uma mensagem que tentei 
+transmitir por palavras", diz a primeira. "Real é bom, interessante é 
+melhor", assevera a segunda. Seguem-se, antes das fotos, um prefácio de Steven Spielberg, a introdução de Christiane e uma cronologia sintética. Fechando o volume, um valioso apêndice com fichas técnicas da carreira do diretor.
+Spielberg lembra a relação pessoal e profissional com Kubrick, 
+que legou a ele o irregular e subestimado "Inteligência Artificial" 
+(2001). Nada como um grande batendo continência para outro, 
+ainda maior. "Stanley Kubrick foi 
+o grande mestre do cinema. Criou 
+mais que filmes. Deu-nos completas experiências ambientais 
+que se tornam mais, e não menos, 
+intensas quanto mais as vemos", 
+sustenta. "Ele não copiou ninguém, enquanto todos nós rastejávamos tentando imitá-lo."
+Christiane, lembra Spielberg, 
+esteve casada com Kubrick por 42 
+anos. Sua devoção emana de cada 
+texto abaixo das fotos. Não se furta mesmo a incluir um belo flagrante de camarim da bailarina 
+Ruth Sobotka, a segunda mulher 
+do jovem Kubrick -esquecida 
+pelo documentário de Harlan.
+O álbum cumpre o que promete 
+no título -uma vida em fotos. Eis 
+Kubrick das origens numa ascendente família nova-iorquina ao 
+set britânico de filmagens de "De 
+Olhos Bem Fechados". As imagens comprovam: Kubrick viveu 
+para filmar. Raras são as fotos 
+eminentemente privadas -várias tiradas por ele mesmo.
+Estrutura-se o volume em duas 
+partes e um intervalo. Neste, 
+Christiane reúne oito retratos que 
+fez do marido. Cinco são pinturas, sendo uma póstuma. Três são 
+fotográficos: sem barba, abraçando a primeira filha, em 1959; barbudo, ao lado do cachorro, em 
+1978; e tomando um café na cozinha de casa, no final de 1998.
+Na primeira parte, de 1928 a 
+1964, reúnem-se os retratos do artista quando jovem. A imensa 
+maioria traz Kubrick sem barba, 
+trajando terno e gravata, ao lado 
+de uma câmera, fotográfica ou cinematográfica. Não faltam instantâneos colhidos por ele mesmo, seja em sua primeira carreira, 
+como fotojornalista, seja do curioso cineasta, incansavelmente 
+flagrando colaboradores como o 
+roteirista Terry Southern ou o camaleônico Peter Sellers.
+Duas sequências celebram uma 
+das admirações maiores de Kubrick: o fotógrafo americano de 
+origem austro-húngara Arthur H. 
+Fellig, mais conhecido como 
+Weegee (1899-1968). De 1965 a 
+1999, na parte final, foram apenas 
+seis filmes. Cristaliza-se a imagem 
+tornada mítica: um Kubrick barbudo, despojadamente vestido, 
+com um sorriso a desafiar a lenda 
+de seu temperamento difícil. Quase todas as fotos mostram-no em 
+cenários ou locações, como se Kubrick não vivesse fora dali. Parece 
+justo: imprima-se a lenda, se é 
+mais verdadeira que a verdade.
+Stanley Kubrick - A Life in Pictures
+Autora:
+Christiane Kubrick
+Editora:
+Little, Brown and Company
+Quanto:
+cerca de R$ 145 (192 págs.)
+Onde encomendar:
+www.amazon.com
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b62e782e4c94395d983b9dc598f28fdb116abbaea9b7c2d6e2f5dcaf2758f735",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ad521b9bc6faa097fab5383e0b13b3070588876c58b7ca7d3aff9e1ca1afa0d",
+    "mention_text": "Christiane Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7418917b7e2dbb3068a77192a765fb715f67ee44470b6fa921a2819e957c0aa0",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f0f23751748f31b8dacdaa1fa2cb11a3bd922ae731d4e16d7ec0c88c411efae",
+    "mention_text": "AMIR LABAKI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e0aa6957e1950913b03a2615fa5e39fc332948e86b0b11aaaad4f61c5da202c",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6db66cd7d9558bc1475132e6db93d5c27deef1feb7f39cbe96a95fd026d51670",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0af5d052fc0ae89db70e12970ab642951bfaaa151d5a46d79c47ac344efb0624",
+    "mention_text": "Christiane Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84af2e767c266ef75047c44960482e21d40bdca12074132a3fa4953b2e5473a6",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58cda5b5f56095e4b9565308af9dd289841c89567c7f921f555ed72d02b466f8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2702e3d8241e67d512dee0df035cdf67205ce0425d1da70be40993a2df034ef3",
+    "mention_text": "Jan Harlan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84579d5161872e11bfa87495234ef9e61cabe584eea5948bd847ee00653bd500",
+    "mention_text": "Christiane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82559bdd4f9379366ae7a4345333914e061f3b8c1ab8e70302d88c192347b747",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "378ad1b71e687dfc0526a7126c6ad554f549e479beca5fb1b218f4326065201d",
+    "mention_text": "Steven Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d86235bbacac1404db690f67ec6d8df64e0a426ce00492d78d76ef5437d43378",
+    "mention_text": "Christiane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ef5ef6a8420250dc0a701baf24857f98454d14c5d2543b5af05043ddfa29302",
+    "mention_text": "Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33e5b49dd4a845082741475cb2e239d3fc68b7ee6d54700c106784acec96cab1",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d99b5d73c01b28323e6aec302e79b49001d33da814ffcd4b76b9e20fa76db38",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "763bddda728f45068d01911fe51233d7e1c8529e8562d2357d046c5e9a886d41",
+    "mention_text": "Christiane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b59986eaafa726b937ce1df4913a30cb5be1f49ef5efc46989fb45d3d0a209d2",
+    "mention_text": "Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cb0fc362ef659903cd502efd60a314cdeb1fc33783150b73aa540581df2370f",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe1a335bb322482ff5f3d29daac85bdc432a748baa46fa0b098c56c906465104",
+    "mention_text": "Ruth Sobotka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9261f0dfbf51651079de61e4fb74983d1ae19a30d1b2bcbe7fe69d87c4b186ae",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e7f20472ee7cbd17f620f093896f1daa368e800224810f5a56303a7669f8944",
+    "mention_text": "Harlan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a7e93be25416d9f80d219fae1690adfdc25cf36388915d877d2546693591c27",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "972fec236810bee6bf47abfefffceb2592a4cb9fb8542b605a3e043c3ba4bea7",
+    "mention_text": "nova-iorquina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c440f0a567420a8df89f0f06b3ca7db271b376724cfb49313a73a77f5e09aa7e",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4e8ab0bc8fd19b5dacea85fda3a3fd2553358a58686b4defcf6c1e3019c33d0",
+    "mention_text": "Christiane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "912c971f0c6d662150e5c9db5c419d1c663db18c20b3169dab8aad081b137341",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a299278c86bdfd0136ad68406e06e0bb65cd8d5476e49bb65040eaa360d465b",
+    "mention_text": "Terry Southern",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e05edefb7311a0cdc09b0ea1d28f5eab3a500c7cbab6370972a24acb5068edb",
+    "mention_text": "Peter Sellers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34102a04bbe718a87d36fddfddaefa9774922f52defe371a8fe8bdf43051eb24",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e0459ea6688dd4e37bb76365c589c66baab64fcb627dcf1af93743c5ae620e9",
+    "mention_text": "americano",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e216da5a37f0fd076f767496d8cddab6f5e41adf6c2e7aaaa48dcf89b7cddd5a",
+    "mention_text": "austro-húngara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0350ccd739564e4eba4fe878ad4c8e8b993a967ab2a5c6d8b4a2a7565d76d06a",
+    "mention_text": "Weegee",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f667ae5a021a6fadf69df8df34f3ca460e909dbbd5c660b0d2e957f6e1df3cb",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b3efceebceb9bc3fda9663e7749f470861dfeba31ecc777758d660b8fae4a11",
+    "mention_text": "Christiane Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3fb773ee2a1daf6554fcb32271c278f21fcc4cc7f67a50d12672c9fcc8bfc244",
+    "mention_text": "Little, Brown and Company",
+    "categoria": "ORGANIZACAO"
+  }
+]

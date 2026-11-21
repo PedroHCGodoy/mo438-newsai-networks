@@ -1,0 +1,376 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8f4f1ee89bc9e27441f56d4f7e24074550773945f7a17e331ed26ede3705d9dd
+
+TEXTO:
+EUA começam a ver ameaça que Trump representa, diz Michiko Kakutani
+
+A direita americana, e o governo do republicano Donald Trump em particular, se apropriaram de ideias antes identificadas com a esquerda e, com a erosão gradual do valor dos fatos e do conhecimento, criou o clima de pós-verdade em que se vive hoje, opina a crítica literária americana Michiko Kakutani no livro recém-lançado “A Morte da Verdade”.
+“A ascensão da subjetividade e os ataques acelerados aos fatos são resultado de várias dinâmicas simultâneas, incluindo o argumento pós-moderno de que não existe verdade objetiva”, diz ela à Folha . Em sua obra, Kakutani explica a curiosa inversão pela qual os conservadores, antes “guardiões da tradição, da expertise e do Estado de Direito”, hoje usam como uma espécie de base intelectual as ideias derivadas de pós-modernos como Jacques Derrida e Jacques Lacan sobre desconstrução da linguagem e verdades parciais.
+Já a esquerda, especialmente nos EUA, passou do polo de desconfiar do “sistema”, do governo e das grandes corporações para o lado em que se vê hoje, identificada com o elitismo intelectual e com o “establishment” da Costa Leste.
+No entanto, a jornalista, que foi por mais de 30 anos a principal crítica de livros do The New York Times, afirma que os americanos estão acordando para a ameaça representada por Trump –o fato de o Partido Democrata ter retomado o controle da Câmara dos Deputados nas eleições deste mês seria um indício disso, diz ela. * A sra. fala no livro sobre o poder das narrativas e sobre como a direita englobou a narrativa da desconfiança em relação a instituições e ao “sistema”, que antes pertencia à esquerda. Quais são algumas das novas narrativas que a direita e a direita alternativa estão tentando emplacar nos Estados Unidos?
+O governo Trump e a direita têm espalhado a desconfiança nas instituições que protegem a nossa democracia. Eles têm atacado a imprensa como “inimiga do povo” e “fake news” (quando são Trump e seus asseclas que estão mentindo e espalhando desinformação em uma velocidade sem precedentes), enfraquecendo a independência do Judiciário, desacreditando o FBI e tentando subverter a credibilidade do próprio sistema eleitoral. Os motivos de Trump são tirar o crédito de seus críticos e se inocular contra possíveis acusações criminais. Seus ataques também são uma tática conhecida, usada por líderes autoritários em seus esforços para sabotar instituições que os cobrem sobre suas responsabilidades e para criar tamanha descrença do público em relação ao sistema, de modo que as pessoas parem de participar do processo político.
+A prevalência da ideia de que a opinião de alguém é tão relevante quanto fatos jornalísticos ou científicos tem mais a ver com a cultura de narcisismo e com as mídias sociais, ou com a tendência do jornalismo de apresentar “especialistas” com visões extremas e suas opiniões como válidas?
+A ascensão da subjetividade e os ataques acelerados aos fatos são resultado de várias dinâmicas simultâneas, incluindo o argumento pós-moderno de que não existe verdade objetiva, só verdades menores e parciais que dependem da perspectiva (como a de classe); e com a crescente polarização da política, que tem encorajado visões tribais e a aceitação de “fatos alternativos” (sobretudo, de mudança climática a  controle de armas).
+Toda vitória inesperada de um populista tem sido apontada como resultado de algoritmos, das mídias sociais e de fake news. A sra. acha que o papel desses elementos em decidir eleições está exagerado?
+As redes sociais contribuíram para isolar as pessoas em “bolhas”, conversando só com indivíduos que pensam como elas e expostas apenas a informação que tende a ratificar crenças preexistentes. Mas outros fatores deram combustível à ascensão do populismo nesta era em que a globalização, as mudanças tecnológicas e a contínua reverberação da crise financeira de 2008 criaram ansiedades em pessoas que temem perder seu emprego e seu status —ansiedades que as fazem suscetíveis a apelos de políticos inescrupulosos à raiva e ao medo. Além disso, num momento em que estamos atordoados pela sobrecarga de informações, com frequência são vozes demagógicas —as mais altas e estridentes— que têm sucesso em chamar a atenção.
+Existe um caminho para o jornalismo profissional nesse cenário? A sra. acha que as pessoas vão perceber em algum momento o valor de fatos?
+O papel essencial do jornalismo de revelar verdades e cobrar políticos têm sido mostrado com destaque pelas reportagens investigativas feitas por veículos como o The New York Times, The Washington Post, New Yorker e outros pelo mundo depois da eleição de Trump, do “brexit” e das crescentes ameaças à democracia ao redor do globo. Nos Estados Unidos, há sinais de que as pessoas estão reconhecendo as ameaças representadas pela teimosia de Trump e por seu desprezo ao Estado de Direito, e estão reafirmando a importância de ter pesos e contrapesos no governo —prova disso é o fato de os democratas terem retomado o controle da Câmara dos Deputados [nas eleições legislativas de novembro], com um repúdio à política de medo e desinformação em enclaves republicanos como o Arizona.
+A narrativa vendida pelos liberais nas últimas décadas, de uma América globalizada e pós-racial, com empregos para todos apesar dos avanços tecnológicos, não se tornou realidade —a desigualdade aumentou, salários estão estagnados e os americanos estão mais endividados. Isso pode ter feito com que o país ficasse mais receptivo às táticas de Trump?
+O “fim da história” e o triunfo da democracia liberal profetizados depois do fim da União Soviética deram lugar, nos últimos anos, a um ressurgimento do autoritarismo ao redor do mundo e à erosão das normas democráticas nos EUA e em partes da Europa, América Latina e Ásia. Descobrimos que os milagres da tecnologia têm um lado escuro, com a inteligência artificial e a automação levando à perda de empregos. Ao mesmo tempo, os frutos da globalização e do livre comércio têm sido distribuídos de forma tão heterogênea que há desigualdade crescente em muitos países, o que resulta em ressentimentos contra as elites e os sistemas e instituições estabelecidos. Esses fatores nos lembram de que reformas —econômicas e de justiça social— são uma parte crucial da democracia, assim como a educação para a participação cívica. Conhecer a história não só de nossa nação mas também de outros países ao redor do mundo pode servir de lição sobre a fragilidade da democracia e sobre as consequências devastadoras do fascismo e da autocracia.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "3b97882eb95159cdb656e956b9c913f51b6fdb8f713ab0c88715d6878c9f1b1b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b886190646e99e1a4021769d9bc5c519c43b5b2b2d3f754707363ffb6402359e",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d72489357489faabe8639a1870cdfac4026a813894cbdb82a60cb3a8dd78d398",
+    "mention_text": "Michiko Kakutani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d9b762e93e623cca5e9b56ff5832f061524d2bd16212f3fd85b7bc4d1ea2d58",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7973c0ad95e5adaa691ab3d83ee0279e26a20dcb2515ee4eba483130e9767e3",
+    "mention_text": "Michiko Kakutani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71c67b696e026048a053a0f5f9596a88f113b214c5aa14dd4328da3fbb0048d0",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d533b0c13ee706d412692792bce11ae0f096651601ff2bdd847d8e3c59ab362",
+    "mention_text": "Kakutani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cffd54920795da288454e008f666cf968752ede2f13d3172870c94e48402302a",
+    "mention_text": "Jacques Derrida",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acc7e5c1331ee585a6c9667b7d1f8c749e140137112c7b04b5bb7f5131c1b1a4",
+    "mention_text": "Jacques Lacan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a72f0e80caae2e6991bef9fd1ea33f9900e749dc9c935dca011c13fed2b3fd3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19c213b555ab8c6d9bd6685a1cf56cb8771ac51f2019020bf0143248b9281ba4",
+    "mention_text": "Costa Leste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c07a24b70afb4b1a82bbf251c2dede0c92552814dbac823dd652666cddc5de9",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1295d73998f899143d3172ceeb67ca10295b2fbbc2ff3f433bd01bacb3927a15",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bd3f1194802844ba8541b405ffe87983f5d2f06e9c266fe3ed658879255d5bb",
+    "mention_text": "Partido Democrata",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b2cb650e1131f4c6472b3cc9cd516ca2c1f5b5a85662acb9e28f7b2c1135efe",
+    "mention_text": "Câmara dos Deputados",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "237537acff0429d9e781c6fd4b2672f977022244bdbe3b6dbf320897c5072f65",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "806555358d89f4da8a5a9dcae62b7794ae2ce35ce1a74eaccde6e1a8581433b3",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b07b04fe642bca62111a9e87fa3da6a08c8cc24a13b2b8d607f7d8372f22fa32",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95f43946b0150cb8d5a0a6120cc98bb2aeb61f83409e76aa80b05be62c69025c",
+    "mention_text": "Judiciário",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2a71f7d884bc44531b206321646506279bf866b89946e6128dad187923e0131",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5535e5ef2ce2b1961ff44670a4970fceb8fe2fddad0c7d071d1a52a773b33cd",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04b2031480ae7d75a014960d445e92d2becafdbf2bbc0065dca65ce1a7cb62cc",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa5c02bfae0938730089437964ec92e5977ed5352115f1463e250184701e7473",
+    "mention_text": "The Washington Post",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c73dda6a6ba2bcccf26c028272018344e63cd47e15fd1887ff7dfcbbc3737fd",
+    "mention_text": "New Yorker",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0cd9e67238950b774e669d787133c1e756d0789c684b703c7006bf47f4706f8",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29aaf7b22f0d613e30e5680d9f7843e12dd70a9131c8bd6b05e87491bee2ab30",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "84d3363eeadc8d2e6c8e44ef292669dc439c56417f1702125a636ece89e699fa",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23674ebdddc26328256a7fba2e458f22b62cf075a8b3b526267fae04bc4a4960",
+    "mention_text": "Câmara dos Deputados",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "043b15155d238024f19c61fc6df53ebbdf76ef7ae8e5cfc4f7c39f5a552cdf9e",
+    "mention_text": "Arizona",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4b5626f667f341354c992a2b9ceb20381474429a35c32c836d3d82e2b333bb42",
+    "mention_text": "América",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a9586fdcd9b39202e3a90663f21660755467300cbd504bcb07bc142037f915bf",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4f86eef423023ff346598ab5d81382b87800fbcab602fe2cdf7082d4c60e57d",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a27320bdee4e081c9d80262cdd7d9a7e42fd3bf2c458bd7b3c3040c6458ead1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5c424980862341f4f2505a04acaf746066119eb67def72ceeaa2a0a13e76febb",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a7bf01b345ee92e27da99373771dcda8252c5d4590687edd81af20159f2aa452",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5d7bd3829034fa596f535130e6e48c22efaec27aeb28f64c2451a3525836b402",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  }
+]

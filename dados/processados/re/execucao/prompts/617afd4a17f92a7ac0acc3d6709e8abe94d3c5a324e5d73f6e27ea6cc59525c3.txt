@@ -1,0 +1,457 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 3c8e869eb07ad872852100dcc2de00858da3df51167eac8bdd7adf7bcc2c1058
+
+TEXTO:
+OPINIÃO: O momento Frankenstein do Facebook
+
+Na quarta-feira (20), em resposta a uma reportagem do site ProPublica que revelava que o Facebook havia autorizado anunciantes a direcionar publicidade aos seus usuários por meio de termos ofensivos como "odeio os judeus" , Sheryl Sandberg, a vice-presidente de operações da companhia pediu desculpas e prometeu que o Facebook ajustaria seus sistemas de venda de publicidade para impedir que problemas semelhantes ocorressem no futuro.
+Quando li sua declaração, meus olhos se detiveram sobre uma linha em particular.
+"Jamais pretendemos ou antecipamos que essa funcionalidade viesse a ser usada da maneira que foi e isso é culpa nossa", escreveu Sandberg.
+Foi uma admissão franca que me fez recordar um momento de "Frankenstein", de Mary Shelley, quando o cientista Victor Frankenstein percebe que a criatura que criou com partes de cadáveres havia escapado ao seu controle.
+"Fui o autor de males inalteráveis", ele diz, "e vivi a cada dia o medo de que o monstro que criei viesse a perpetrar novas maldades".
+Se eu fosse executivo do Facebook, estaria sentindo inquietação digna de um Frankenstein, hoje. A companhia foi abalada por uma série de escândalos que macularam sua imagem, enraiveceram seus críticos e abriram a possibilidade de que, em busca de domínio mundial, o Facebook tenha criado alguma coisa que não é capaz de controlar plenamente.
+O Facebook está tentando resolver um emaranhado de questões de privacidade, liberdade de expressão e moderação, junto a governos de todo o mundo. O Congresso americano está averiguando informações de que agentes russos usaram anúncios direcionados no Facebook a fim de influenciar a eleição dos Estados Unidos em 2016. Em Mianmar, ativistas estão acusando o Facebook de censurar os muçulmanos rohyngia, que estão sob ataque pelas forças armadas do país. Na África, a rede social enfrenta acusações de ter ajudado traficantes de pessoas a extorquir dinheiro de famílias de suas vítimas, ao permitir que vídeos abusivos fossem postados.
+Poucas dessas questões envolvem malevolência deliberada da parte da empresa. Não é como se um engenheiro do Facebook em Menlo Park tivesse autorizado a propaganda russa pessoalmente. Na quinta-feira (21), a companhia anunciou que entregaria os anúncios adquiridos por russos na eleição de 2016, bem como algumas informações referentes a eles, a investigadores do Congresso.
+Mas os problemas tornam claro que o Facebook simplesmente não foi construído para lidar com dificuldades dessa magnitude. Trata-se de uma empresa de tecnologia, e não de uma agência de inteligência ou de um corpo diplomático internacional. O trabalho de seus engenheiros é criar apps e vender publicidade, e não determinar o que constitui retórica do ódio em Mianmar. E com 2 bilhões de usuários, entre os quais 1,3 bilhão que usam a rede social a cada dia, transferindo volume cada vez maior de suas atividades sociais e políticas ao Facebook, é possível que a empresa seja simplesmente grande demais para compreender todas as maneiras nocivas pelas quais as pessoas podem usar seus produtos.
+"A realidade é que, se você está no leme de uma máquina que carrega dois bilhões de pessoas ruidosas e exigentes, é basicamente impossível prever todos os possíveis usos malévolos", disse Antonio Garcia Martinez, autor do livro "Chaos Monkeys" e antigo executivo publicitário do Facebook. "O problema é que quando você elimina uma dificuldade, outras surgem".
+Elliot Schrage, vice-presidente de comunicações e política pública do Facebook, anunciou em comunicado que "trabalhamos com muito afinco para apoiar nossos milhões de anunciantes em todo o mundo, mas às vezes —raramente— os maus elementos vencem. Investimos muito tempo, energia e recursos na extinção desses acontecimentos já raros, e somos gratos à nossa comunidade por nos apontar o que podemos fazer melhor".
+Quando Mark Zuckerberg criou o Facebook, em seu dormitório da Universidade Harvard em 2004, ninguém teria imaginado que sua ideia se tornaria uma ferramenta de censura para regimes repressivos, um árbitro dos padrões de discurso mundiais ou um veículo para propagandistas estrangeiros.
+Mas o Facebook se tornou uma espécie de praça central para todo o planeta, e teve de se adaptar à influência que conquistou. Muitos de seus usuários veem as redes sociais como serviço essencial, e as decisões da empresa —que posts remover, que anúncios permitir, que vídeos exibir— podem ter consequências de vida e morte no mundo real. A empresa desenvolveu algoritmos complexos para tomar muitas dessas decisões, o que acarreta outros riscos, mas muitas das escolhas mais difíceis que o Facebook faz continuam a cargo de pessoas.
+"Eles ainda se veem como um intermediário tecnológico", disse Garcia Martinez. "O Facebook não deveria ser um elemento da guerra de propaganda. Eles não estão equipados de maneira alguma para lidar com isso".
+Mesmo que Zuckerberg e Sandberg não tenham aspirações políticas pessoais, apesar de boatos em contrário, já são líderes de uma organização que influencia a política em todo o mundo. E há sinais de que o Facebook está começando a compreender suas responsabilidades. Contratou especialistas em combate ao terrorismo e está expandindo suas equipes de moderadores em todo o mundo, para busca e remoção de conteúdo perigoso.
+Na quinta, Zuckerberg afirmou em um vídeo postado no Facebook que a empresa tomaria diversas medidas para ajudar a proteger a integridade das eleições, por exemplo tornar mais transparentes os anúncios políticos e expandir sua parceria com as autoridades eleitorais.
+"Faremos nossa parte não só para garantir a integridade de eleições livres e justas em todo o mundo mas também para dar voz a todos e para lutar pelo bem e pela democracia em toda parte", disse.
+Mas é bem possível que não haja como impedir que desfechos negativos surjam no Facebook, cujo alcance é quase inimaginável. Alex Stamos, vice-presidente de segurança do Facebook, disse no mês passado que a empresa fecha mais de um milhão de contas de usuários a cada dia, por violação dos padrões comunitários do serviço. Mesmo que apenas 1% dos usuários diários da rede social se comportem mal, isso representaria 13 milhões de pessoas violando as regras, mais ou menos a população do Estado da Pensilvânia.
+Além dos desafios do tamanho, a cultura empresarial do Facebook é definida por um otimismo entusiástico. Isso talvez conviesse à empresa quando estava começando, mas pode prejudicar sua capacidade de prever riscos com precisão agora que seus serviços servem como campo de batalha em grandes conflitos mundiais.
+Diversos atuais e antigos funcionários da empresa me descreveram o Facebook como um lugar onde engenheiros e executivos em geral contam com o melhor da parte dos usuários, em lugar de se prepararem para o pior. Mesmo a declaração de propósitos da empresa —"dar às pessoas o poder de construir comunidades, e unir mais o mundo"— implica que pessoas que ganhem acesso a instrumentos poderosos os usarão para propósitos construtivos. E é evidente que esse nem sempre é o caso.
+Contratar pessoas com uma visão de mundo mais sombria poderia ajudar o Facebook antecipar conflitos e usos indevidos. Mas o pessimismo não bastará para consertar todos os problemas. Será necessário continuar a investir pesadamente em recursos defensivos, entre os quais inteligência artificial e equipes de moderadores humanos, para impedir as ações dos maus elementos. Também seria sábio que a empresa aprofundasse seu conhecimento sobre os países em que opera, contatando mais especialistas regionais que compreendam as nuanças do ambiente político e cultural local.
+O Facebook poderia até aprender com Wall Street e criar um departamento de risco que fiscalizaria suas equipes de engenharia, avaliando novos produtos e recursos antes que eles sejam lançados, em busca de potenciais usos indevidos.
+Agora que o Facebook está ciente de sua influência, a companhia não pode continuar evitando a responsabilidade pelo mundo que ajudou a construir. No futuro, jogar a culpa no monstro não será suficiente.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e68c049a431f44a7876228c5385401f486543e79e44b938eb4a27f7b384717e0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffd4632107e5b004117d17f28b9919692bf708180aa55fd447cc6bee407103eb",
+    "mention_text": "ProPublica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e2eaa48e9d0a26b04a903fc1fa63a292aeac4fca110504fa3218b231ef3e47b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e2ba21324f043735037122c969ecd41f1e55e012da765ff552d4bcff9cec02a",
+    "mention_text": "Sheryl Sandberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0683cb67b5ade176c1297374422586824e4b66c4d5a851671c1ddef71ae3076a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f903a622e1aca2a370a3a40fef90a43f3d82e8c1f3354984695cb5e36c67f272",
+    "mention_text": "Sandberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b88bc51b4f282f64cbf97c298797915b9a4c9b90f222633c24ab426d090759d8",
+    "mention_text": "Mary Shelley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3873293b5e8810bc846b13a2fcac6a9fdbfc383d45cc948e368fb72c22f11047",
+    "mention_text": "Victor Frankenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e7887b1e113125de065049c08964e448ad2a0432e7837986310589ea45a5924",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62e94a882acd3995dc533fe04b2b007427028c35112beaf5eb4e9a5cec65e9d5",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a9f334f70c03767bdac7fe6ccd1e506957b3bd17df8d38da90623876c134acc",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42ae92f05c728b68be1e64ab638c8037c1025c0ba0979a0d9a25a97a2bfe9af7",
+    "mention_text": "Congresso americano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "253fe4ea73712a68c2b7281cb5279664feddd873a52d055dc0993539b7be23e7",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "602cad20197a749896edb29f7ea2a1cadbe41fa4a50bf83d227828bb09221888",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "58b39735ad3eabb8adac6e5a80d37e45321bd58c63450a58e9f9cd9cd78e01bc",
+    "mention_text": "Mianmar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "85e96c74cd4a5faeb8f0cdf3b91d4fc4ca4d0c83fd6837ebc02764c4071a4534",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "167603098fd55a3911176c8d257ea68dd82ab5ce4c9ec5098e2a96dbab15b3ed",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "23d8598991be8a6684b5a2eed625f80b5dab20bf373e460475794ed8f7099b1d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc73ef0d01999205f4d03a191bb56f8e858887a26bff5bd8d94134cdc7b046a3",
+    "mention_text": "Menlo Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d82f05386d779ed5926151fa03553c07445d912f5a4df65c5cdf54406a04231",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d507dc78f193886ff097d16bd4e8be6b683b804988df285b2a5d3acd666aaa0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a846dedeb35602e13d8f97862102e65173bc9f7bd05e9830e998bac139213b0c",
+    "mention_text": "Mianmar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2faf8a6a820f547c89308ebfd06d36f3a4b89bd1836088fbd87cf5a1909c9cd",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "158a9341d35dfa2391bd2416dba888c8d9c43033e765c5ce1fa3774552159b54",
+    "mention_text": "Antonio Garcia Martinez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73393a1748e1637dc9e77fd3e4853f41deafb0ae3330c0b67e361652d3fe5185",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca61ee1b26eb902a9ef33b05b78844c556a558ddaae03905426334806a31a0be",
+    "mention_text": "Elliot Schrage",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e53bb36adf7f26946c173ddc135e9460afebc1508babd194b944ca57b7cf0833",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4338a4034f249e129b8508b53eb38e6081d275579dc0397c8058042c975f43d",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af5682996f0840a14e923c2bb2217ff65f713e3b63de1e1548c78c2b675f9427",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f486cbb1faf756b1475de092c525aeb591ae77eeb1959cb62956378cfe09361b",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c07c4aaa581bf5ab119720ae9a96edb7be2bd71d62fea2c9a8ab3cf8300ff4b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa974eedc393f40fa4c1bbf1b7953acc5b20e52e140dbc709fa0d84d0340ec81",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "092988f1a40c1f41dedfdd6a4f8feb81b3bdb299eb72d8d6eb9f0d9215d1b70f",
+    "mention_text": "Garcia Martinez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8724482edb9fccb082f01a42e5423616e3b90a9b0187e01555a6e5529a7c976e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26a45d45dbc4d007bebcfb9c651e19fcb68977fa00be5e00b29705136bdd0994",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15c74ea36bdd85be80e00d943a91e0b94e3dd526fba603bcdad598c5a76dea72",
+    "mention_text": "Sandberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2b019097602bb0668b0042a368b4630439c0e0f1a4f7614517eec5587cfcfdf",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53966cb2972d376e953ecb287398524a3acaacb6bb8b4efeceb216dc5e39f4a5",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "336e868ad86f145bc6f8a09e5d4a31208c3edbd960e96141cfcf3f88b8a03fec",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b870fa1775499224624ac2ff650621c81e186b39001f4e3c86b6984b4b225b05",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6abb7fac28d8afbec8354881a5464f6d885b0eb2e306035c7194a43416f680c4",
+    "mention_text": "Alex Stamos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef61928c34517c316eb915e7eeb0fc465a9913b3f005f680587bf59780518c41",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1f5aaa9dda05e6efed576ae3b8f9c7e9d7014bd84484f4bd917bb083171728f",
+    "mention_text": "Pensilvânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "57016babb119440142f5860b9dd975c7836e2c9d9ee0e5146e8ef59c3776dc5d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "485da440453775957cac08f04c16b7fa212992058dc6a93397ee698fbc4b84a5",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21bac191c854bb99d2194a88037ce39e968c6ec8e8eeae858c9f88bde5012181",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb427692f454fe9a2a0bf046dcfe32efe47052f50de1b6deec3642a81787e0fb",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d89eb3ec818d234f19f999710e18da0eb6716242261116b85948d30a79ed4ccb",
+    "mention_text": "Wall Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "50fadf30fa524f4d2e91c3524cdc202974d63cbc330a2834cc4a6bb4532f5b37",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4888c928b52b4dee7fab34e6dcc214b88995787ac28e14f863bd39746b1df1aa",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

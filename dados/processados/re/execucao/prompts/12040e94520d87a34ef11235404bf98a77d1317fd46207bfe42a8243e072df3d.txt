@@ -1,0 +1,419 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8c4e53e971ccd4e61fe6fc40f469035d1a6108d9fa707eecd31ab0551a2a9d37
+
+TEXTO:
+Robin Williams, o bom, realiza sonho antigo
+
+EM CARTAZ - "O HOMEM BICENTENÁRIO"
+Robin Williams, o bom, realiza sonho antigo
+CLAUDIO CASTILHO
+especial para a Folha em San Francisco
+Que o forte de Robin Williams é 
+a comédia não é novidade. Mas 
+seus personagens mais engraçados não são, necessariamente, os 
+seus prediletos. Ele prefere ir contra a maré quando se trata de escolher papéis.
+Foi o desejo de partir para o 
+desconhecido que o levou a participar de sua primeira produção 
+de ficção científica, "O Homem 
+Bicentenário", em cartaz no Brasil desde sexta passada.
+No filme, baseado em um conto 
+e no livro "The Positronic Man", 
+de Isaac Asimov, ele se une mais 
+uma vez ao diretor de "Uma Babá 
+Quase Perfeita", Chris Columbus, 
+desta vez, como o robô Andrew, 
+que tenta se tornar humano.
+Na entrevista a seguir, Williams 
+compara seus papéis nos dois filmes de Columbus, para os quais 
+teve de passar longas horas por 
+trás de carregada maquiagem. 
+Fala ainda de suas expectativas 
+com os avanços da tecnologia e 
+de sua estréia na Internet num site próprio, dedicado à comédia.
+Folha - Como foi usar a fantasia de robô?
+Robin Williams -
+Muito suor: 
+longas horas rodando e mais de 
+20 quilos para carregar. Quanto à 
+atuação, senti-me usando uma 
+máscara do teatro grego. Minha 
+atenção estava em cada simples 
+movimento do corpo, que dizia 
+algo sobre Andrew. A idéia era 
+encontrar detalhes do movimento humano numa máquina.
+Folha - Qual papel exigiu mais 
+fisicamente, o de Mrs. Doubtfire, em "Uma Babá Quase Perfeita", ou Andrew?
+Williams -
+A vantagem de Mrs. 
+Doubtfire era poder me coçar. Já 
+com Andrew, depois entrar naquela roupa metálica, não havia 
+chance, o melhor era esquecer.
+Senti-me aliviado quando as 
+pessoas perguntaram se o Andrew era produto de imagens 
+criadas por computador: prova 
+de que fiz bem o meu trabalho.
+Folha - Por que só agora sua 
+primeira ficção científica?
+Williams -
+Sempre fui louco para fazer um filme do gênero, mas 
+nunca me fascinara por um projeto como aconteceu com esse. Meu 
+filme predileto quando garoto era 
+"2001, Uma Odisséia no Espaço", 
+que mostra o mais incrível computador de todos os tempos.
+Folha - Qual seria a vantagem 
+de ter um robô em casa?
+Williams -
+Seria interessante. 
+Quem sabe ele não me ensinasse a 
+falar línguas? Ele poderia me ajudar bastante no meu próximo filme (O Intérprete), sem eu ter de 
+pagar nada para ele. Eu poderia 
+conversar em português com você. Não seria o máximo?
+Folha - O senhor não teme que 
+as máquinas se tornem mais importantes que os humanos?
+Williams -
+Rezo para que não. 
+Pesquisei muito sobre robôs antes de fazer esse filme. Eles já existem há muito tempo. No Japão, 
+por exemplo, eles estão em fábricas e até arrumam flores em vasos. Mas o conceito de combinação de um corpo de robô e inteligência artificial ainda é hoje uma 
+coisa primitiva. Aprovo a idéia de 
+a tecnologia servir para melhorar 
+a qualidade de vida das pessoas, 
+mas, se os avanços passam a nos 
+isolar uns dos outros, algo está errado.
+Folha - O senhor acha que a 
+Internet ajuda nesse processo 
+de isolamento das pessoas?
+Williams -
+Quando uma pessoa 
+manda e-mail para outra que está 
+bem perto, aí é triste. Mas, na prática, as pessoas passaram a se comunicar com muito mais frequência depois da criação da rede. Isso é muito positivo. Estou 
+criando um site que deve entrar 
+no ar em abril. Será um programa 
+semanal de humor, com duração 
+de 30 minutos, no qual vou interagir com o público.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4fdb04689899f31db563a8c6c7b3444ef958101e409f3364bd5437e478851825",
+    "mention_text": "Robin Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a81b6570b0adb89662bdef88a68ae36bac3e1be106bedc89dc6e44028109b5de",
+    "mention_text": "Robin Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3ab3dcf0478f6aa96e0f115bd323372f7dc4c99a84ab7e0c93fba69eca0b8d8",
+    "mention_text": "CLAUDIO CASTILHO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64c5e0df06c56429fafabd443b8ed128621ed1f6fea051f26a1e93a63b654722",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "861140ec6e85ac96ff3ceead2d46e7176ca34488b2be699c4a8006df036e457a",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5dc40a876347c8bfc98f3d68d6626bd61e57ab57dd47db154e4ccdbb2e9e062f",
+    "mention_text": "Robin Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71c1d387ac52dfcf082e75f9dfdae5cd2e2c301dba56d1041b4c904b7e1d4823",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7cbbd3143bf062b84ab84b7fbae6b7f15699bf2ca2f00be908bb48becd936591",
+    "mention_text": "Isaac Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "520796f8dcf7d60a830019fd6626c31a38f80a801958b6f0d6dbe1ebccc48ed6",
+    "mention_text": "Chris Columbus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d7812301c75d178928bff7c7462f3ffd4ab40f832246665e1da489a8e0eca22",
+    "mention_text": "Andrew",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1817f2c8cc7f6ea9ad14981ad9e17d89f975d4802459b658142e0a239e3fca44",
+    "mention_text": "Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c893fffd73771024572ddf3f279354036a3e3b8b8f89654fae61dd1a3afed5d",
+    "mention_text": "Columbus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b2ca0af6d61e67b27a717498e9450bf3a56792d595370dc90c06ff65b3d1bd0",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1bae68c1a6dfa0fed4560f1eece01f76ff0f287039215377ccfad5b49871d504",
+    "mention_text": "Robin Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b68047f86a65bef7b9f3ec645c78f1777cac61c9d79b824be98fbadef7c9201e",
+    "mention_text": "Andrew",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d381408623f81e6ca5dab411f9b74414ac2233c1dbb6f12a8758cd116b6ec7de",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "450df440dca094cd201112fd6f2ac1769697377e439d38e6d9577f56c66c44d1",
+    "mention_text": "Mrs. Doubtfire",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1a27f162a3d4c62286f5f99357ed441d625aabfb5f7c3efac84dd66813f548f",
+    "mention_text": "Andrew",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19683ab5c73d98f8e2d90e315b5e0510460723f03bec99f6e5333ca264f81c73",
+    "mention_text": "Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be74a8afdc7df7da50100a1ae929cd4ce52012332cd46c1947e58ea9a46fef57",
+    "mention_text": "Andrew",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62a36e7435f7b84df5dde92a415000b6c6645c2330c3dc35078c8194c74b2b69",
+    "mention_text": "Andrew",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c45d8f39711fa7ef0e86892b1f869319be58c238d254d8af8811b3c561856840",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af052e499e77dc26078093b08bb66a1ee17b8e1124d9ac29a033d0791b6a4f1e",
+    "mention_text": "Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39614c40342d01804a6c21fb238a27fdf82964ceffb0e0ac37ded5ad63261119",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c9dfccaffd0780cfdac089bf53603e45ac59c3dfc5326c6043d18b2040c0ef3",
+    "mention_text": "Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b941b9721bf35c91186fcd31d504660c934c58d0c118fe51c7f24ca209f67a3",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e070f287b8b7d8b6559fa101df8ea80beb49e464e0dffc08279d18e2549d5835",
+    "mention_text": "Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76cd9be2f1464a2cdd3595125e124254e54408ff231175e8943341b3be608015",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20bfc00f63ec2c448f633832a2ed338a237b288e61c19378c1497914072e42c5",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e9c1bee45c9d3e63b3b24e088852c64cf5c422e55a9ab8044eb9dfe2016e231",
+    "mention_text": "Williams",
+    "categoria": "PESSOA"
+  }
+]

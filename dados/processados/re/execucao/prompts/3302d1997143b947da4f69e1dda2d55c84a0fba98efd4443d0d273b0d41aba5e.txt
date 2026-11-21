@@ -1,0 +1,526 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2655a77ba5776c7955f41b1dddec6fc2c76216263a93f7e4f19c63fa50080f92
+
+TEXTO:
+Ainda longe de 'Blade Runner'
+
+17/07/2011
+-
+08h05
+Ainda longe de 'Blade Runner'
+Publicidade
+JOHN MARKOFF
+TRADUÇÃO CLARA ALLAIN
+O pioneiro da robótica Rodney Brooks volta e meia inicia seus discursos procurando algo no bolso: remexe moedas, tira uma de US$ 0,25 e a gira por entre os dedos. A tarefa quase não requer pensamento nenhum. Para os pesquisadores de inteligência artificial, no entanto, treinar um robô para realizá-la é um problema imensamente mais difícil do que a festejada vitória da IBM no game show "Jeopardy!", neste ano, com um robô chamado Watson, observa Brooks.
+Apesar dos grandes avanços dos robôs no setor manufatureiro, em que as tarefas são repetitivas, eles ainda não se comparam aos humanos, capazes de pegar objetos com as mãos e movimentar-se sem esforço no mundo físico.
+DESAFIOS
+Projetar um robô que imite as capacidades básicas do movimento e da percepção seria revolucionário, dizem pesquisadores. As aplicações iriam de cuidar de idosos até devolver aos EUA (com menos trabalhadores, no entanto) atividades manufatureiras hoje realizadas fora do país. Ainda assim, os desafios seguem enormes, bem maiores do que os que a inteligência artificial enfrenta, como falar e ouvir.
+"Se você quer reproduzir algo que a biologia faz, como percepção, tato, planejamento ou segurar objetos com as mãos, esses problemas se mostram fundamentalmente difíceis", disse Gary Bradski, especialista em visão na Willow Garage, empresa de desenvolvimento de robôs no Vale do Silício.
+A Agência de Projetos de Pesquisa Avançada da Defesa (Darpa, na sigla em inglês), setor do Pentágono que ajudou a lançar a primeira geração de pesquisas com inteligência artificial nos anos 1960, está bancando três empreitadas concorrentes para desenvolver braços e mãos robóticos que custem um décimo do preço dos atuais, que chegam a custar US$ 100 mil (R$ 157 mil) ou mais.
+BRAÇOS E MÃOS
+No mês passado, Obama foi até a Universidade Carnegie Mellon, em Pittsburgh, para anunciar um investimento de US$ 500 milhões (R$ 787,5 milhões) na criação de tecnologias robóticas de ponta necessárias para ajudar a trazer operações manufatureiras de volta para os EUA. Mas braços e mãos mecânicos de baixo preço controlados por computador são só o primeiro passo.
+Ainda há discussões importantes sobre como começar a desenhar uma máquina flexível o suficiente para desempenhar muitas tarefas feitas por humanos: dobrar roupa recém-lavada, cozinhar ou lavar louça. Para isso, vai ser preciso um avanço nos softwares que mimetizam a percepção.
+Em circunstâncias limitadas, os robôs de hoje volta e meia são capazes de desempenhar essas tarefas, mas os pesquisadores descrevem essas habilidades como "frágeis". Os robôs falham se qualquer modificação, por menor que seja, for introduzida. Além disso, precisam ser laboriosamente reprogramados para fazer outra coisa.
+Muitos pesquisadores de robótica têm adotado uma abordagem de baixo para cima, esperando que, ao treinar robôs para realizar uma tarefa por vez, consigam montar uma biblioteca de tarefas que, com o tempo, permita que os robôs comecem a mimetizar os humanos. Outros são céticos, dizendo que as máquinas verdadeiramente úteis só virão se houver um grande avanço na inteligência artificial, algo que resulte em uma percepção bem mais flexível.
+TOALHAS
+As limitações dos robôs de hoje, por mais sofisticados que sejam, podem ser vistas em uma demonstração de robôs dobrando toalhas, postada na internet em 2010 por estudantes da Universidade da Califórnia em Berkeley: de maneira inusitada e antropomórfica, um robô dobra toalhas com habilidade, olhando os cantos, alisando os vincos e empilhando as toalhas dobradas.
+A parca extensão das habilidades do robô só se torna clara quando o espectador é informado de que o vídeo foi exibido em velocidade 50 vezes superior à normal. (Nesta primavera americana, os estudantes admitiram que só agora estão começando a enfrentar os desafios adicionais de fazer um robô dobrar camisas e meias.)
+Nem mesmo o mais caro e ambicioso braço robótico já criado rendeu resultados impressionantes.
+Em fevereiro, por exemplo, o Robonaut 2, robô ultradestro desenvolvido em parceria por Nasa e General Motors, foi levado a bordo de uma missão do ônibus espacial para ser instalado na Estação Espacial Internacional. Seus criadores reconheceram que o software necessário para o sistema, um robô humanoide do torso para cima, ainda não estava pronto, e que o robô só entrou naquela viagem por causa da rara oportunidade de embarcá-lo no ônibus espacial.
+O OVO E A GALINHA
+"Estamos em uma situação engraçada, que lembra a do ovo e da galinha", disse Brooks. "Ninguém sabe ao certo quais sensores ou algoritmos perceptivos usar, pois ainda não temos uma mão operacional e, pelo fato de ainda não termos uma estratégia para segurar coisas com a mão, ninguém consegue visualizar que tipo de mão deve projetar."
+Brooks também está debruçado sobre o problema: em 2008, ele fundou a Heartland Robotics, empresa com sede em Boston que pretende desenvolver uma geração de robôs de baixo custo. E os três esforços concorrentes para desenvolver braços e mãos robóticos com financiamento da Darpa --na SRI International, na Sandia National Laboratories e na iRobot-- oferecem bases para algum otimismo.
+Recentemente, num laboratório da SRI em Menlo Park, dois alunos de pós-graduação da Universidade Stanford, John Ulmen e Dan Aukes, deram os toques finais a um passo importante rumos às capacidades humanas: uma mão com quatro dedos que vai conseguir agarrar coisas com a precisão tátil de um humano.
+Cada dedo tem três articulações e é manufaturado de uma vez por uma impressora tridimensional, sendo então recoberto de "pele" derivada do mesmo material usado para fabricar telas de "smartphones", sensíveis ao toque.
+"Em parte, estamos nos valendo do fortíssimo avanço das telas táteis com os 'smartphones'", disse Pablo Garcia, designer de robôs da SRI no comando do projeto, ao lado do pesquisador de inteligência artificial Robert Bolles. "Tiramos proveito dessas tecnologias e apostamos que vão continuar a evoluir e a baratear."
+PERCEPÇÃO
+Ainda falta uma geração de softwares potentes e flexíveis o bastante para desempenhar tarefas que os humanos fazem sem esforço. Isso vai exigir um grande avanço na percepção das máquinas. "Eu diria que isso é mais difícil do que o que a máquina Watson precisou fazer", comentou Gill Pratt, cientista da computação que é o gerente de programas encarregado do projeto de Manipulação Robótica Autônoma (ARM, na sigla em inglês) da Darpa.
+"O mundo é composto por objetos contínuos, dotados de formas variadas" que podem ofuscar umas às outras, disse Pratt. "Um sistema de percepção precisa ser capaz de perceber isso; para tanto, requer o bom senso de uma criança."
+Na Willow Garage, Bradski e uma turma de pesquisadores de inteligência artificial e especialistas em robótica vêm se concentrando no que chamam de "hackathons", nas quais o robô PR2, da empresa, foi programado para realizar tarefas como pegar cerveja na geladeira, jogar bilhar e embalar alimentos.
+SUPERMERCADOS
+Em maio, com o apoio do Escritório da Casa Branca para a Política de Ciência e Tecnologia, Bradski ajudou a organizar o primeiro Desafio de Soluções na Percepção. Um prêmio de US$ 10 mil (R$ 15,7 mil) é oferecido à primeira equipe que projete um robô capaz de reconhecer cem itens encontráveis nas prateleiras de supermercados. Parte do prêmio será dada à primeira equipe cujo robô for capaz de reconhecer 80% dos produtos.
+No concurso, realizado durante uma conferência sobre robótica em Xangai, nenhum dos participantes alcançou a meta de 80%. A equipe que se saiu melhor foi a do robô de Berkeley que dobrava roupa. O grupo deu a seu robô o nome Brett, iniciais de "Robô de Berkeley para a Eliminação de Tarefas Tediosas".
+Brett foi capaz de reconhecer 68% de um grupo de 50 objetos. A equipe vem progredindo em sua busca por um robô que lave roupa; recentemente, postou um vídeo novo que mostra quanto o trabalho do robô foi acelerado.
+"Nossa meta, neste momento, é dar conta do ciclo inteiro de cuidados com a roupa", disse Pieter Abbeel, cientista da computação em Berkeley que comanda o grupo, "do cesto de roupa suja à pilha de roupas lavadas, secas, dobradas e em ordem".
++ Canais
+Acompanhe a Folha no Twitter
+Conheça a página da Folha no Facebook
+Livraria da Folha
+Madonna - Rebel Heart Tour (DVD)
+Madonna
+De:
+Por:
+Comprar
+Racismos - Das Cruzadas ao Século XX
+Francisco Bethencourt
+De:
+Por:
+Comprar
+Coleção "Cinema Policial" reúne quatro filmes de grandes diretores
+Sociólogo discute transformações do século 21 em "A Era do Imprevisto"
+Livro de escritora russa compila contos de fada assustadores; leia trecho
+Box de DVD reúne dupla de clássicos de Andrei Tarkóvski
+Como atingir alta performance por meio da autorresponsabilidade
+folha.contextual_ads.init()
+Comentar esta reportagem
+Termos e condições
+folha.sharing.ads = ''; //fallback antigas
+folha.sharing.ads_before = '';
+folha.sharing.ads_after = '';
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "216015afe2db966d2d55cafe0c667a53bee4f670735f8546fb2ef7fa134f8f35",
+    "mention_text": "JOHN MARKOFF",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc6dbd889f8dae812b6411e6e7083d5d0646ebdbccb4d5318b47262b0310a01d",
+    "mention_text": "CLARA ALLAIN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74ee3ec7b6baa68dd80ee22071ddac859c8106db66f87fc31f52cc410cc7bbe6",
+    "mention_text": "Rodney Brooks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8542a9987df98655b984248f9016ac58eb1652eb67dda665e95daf44b1f18df0",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7ee090ca3641c0e6cd43bfb94fb49098aa37b58c7ce69214a81ebc4d6957563",
+    "mention_text": "Watson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4dcd803a6726c7fb6e69986c3e6e89850afc70531824130a15a3953c76e45de",
+    "mention_text": "Brooks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2ab35bf017579cf0eace9137ef0f4ce35b44cac54decb8fa3b7b161381f875f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "433b8e88fa2609a9a5f96bec1803a393d88bfc193e56b2d36e6fb3bfc28bca8f",
+    "mention_text": "Gary Bradski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4eb52f4c2e4d70b56f1294a9fe08b510273511ff95fc85b655ac541851548b64",
+    "mention_text": "Willow Garage",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b622f006e22a015d5fd1ebc0a568ecabecb278de18879b21b275ee48a1b85504",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f147f452a1157ee5a0480c9ae75e4cd837f1b06998a0d561af85a03f014903f",
+    "mention_text": "Agência de Projetos de Pesquisa Avançada da Defesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3eb950cf2748e0acdba20d02ae834ddee348bb0c20d009ef1d0c09b7811a107e",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34db87e9d4c3af7c0c9591924cfc0cce73457c5f95c9d55dd93c5be5effc028a",
+    "mention_text": "Pentágono",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a78ecdca26e58345e1982a112e0b75d277921b4611dd1c57e3d67390c2838b0",
+    "mention_text": "Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e3a537318e909c981d756fb98b4efa539d580a55c4e72c7f9d45f0b4f460d0a",
+    "mention_text": "Universidade Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0010f13c3f6d06cf56c5854106b38e12a2837c7b73e83df2148f597f3b1378f4",
+    "mention_text": "Pittsburgh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e505dfdb940390bb64eb19d28d3a2f8665e1b6f708228d4ebc5d6c44074a3e93",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bc91bcbfe339f515249af6f67e86d2b4f723c68afd808a5c9804c730757feb2",
+    "mention_text": "Universidade da Califórnia em Berkeley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7d386f12c656ca7987b03cb019dcf830913ea3aa0feab2bda8c2502c1e0cb7e",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8cd2940c989ddce66cdb361f84a85ee237697f975a967c9638646fc6fb407188",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78c0efe934522fea44a5aa7e418d0ebf4ec167e2737e0ae83835bd00d38847b0",
+    "mention_text": "General Motors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87c468f9753f338e1c745826b4ee0a398c159955ef4b1800678242173f036837",
+    "mention_text": "Estação Espacial Internacional",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "faccfa230a9bc70c3ae4cd27f6869832f5f106d956bff3679dc10a1e21fefbec",
+    "mention_text": "Brooks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bad93b903d74a310be41c19629241cc8b58ee05ead08c1fe7e9eeadc9b7a1d3a",
+    "mention_text": "Brooks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f083410cd787814dd52e43a73cbd741d3756828e98107f5cb8762ff708877562",
+    "mention_text": "Heartland Robotics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5e3566ec3314725363abe2916a4d92b22f89a8ab3f08396c2f018cef9c23048",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e51b692e1eecb32526c75d58540c63cfec03ab68a49bb89c70a392ae35f8a5f",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "268734c9183135c4e9f027e274b938ca0d7b5f12efc696471085f8a34cc193b5",
+    "mention_text": "SRI International",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f837d86e5287737d824aed6fd37740b7a95936367ed154c5f3aac2d4bd9241aa",
+    "mention_text": "Sandia National Laboratories",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7f40b8787041be79843abd35e3fe84fb69b896503df1af0382deb588cd5fee5",
+    "mention_text": "iRobot",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4d58bf799732c3ba944c5d8ecb928f2b9ea11db1f9ac783a2fcbfeec45f8f05",
+    "mention_text": "SRI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d409af1be90cb3d0d85b545177cd8ef8beb3028a2f442fa935d0701a8d72ec5a",
+    "mention_text": "Menlo Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a1c65a8dc0b511435bf1ac3807f987714240fe0af6477bfae8f52944a9cb4a27",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10c1a20d08f7296a054e5ff28c34cbb9d430a9551824663279e52b8ddb7a21d3",
+    "mention_text": "John Ulmen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ad7044e02f709bbb54ad1fede5f95dfc8c1524553e022c0a778acdc77fb5f1f",
+    "mention_text": "Dan Aukes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb2fdfdcbe78e0a91feb48554dd2b4bd98f0345d14fc86d102b442d42e314d63",
+    "mention_text": "Pablo Garcia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e348c5d4d97b54924c7184d0f023b43254ec5bada689a01443d4c2dc8e083c1",
+    "mention_text": "SRI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5018c61cad305212e595f911bf992c08f3a7a0d150badce1a66e2ef89da6687",
+    "mention_text": "Robert Bolles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4be2e7837cf8745cd76a4f507a6c33d9d8250d1310750d359e761c496c3a30e1",
+    "mention_text": "Gill Pratt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "894adb10d6f5dbc9bd8a2066be92a4beac22baa5a3c59e914c5682d1d6dbd80d",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64c98384e109f05577f5917d4f79ff224a37eed08d599bb1b8d9dc17672f5881",
+    "mention_text": "Pratt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf7d82767ca3181ebbd9e8178a9ac7d9193712373465a8efd8d875d791cb3026",
+    "mention_text": "Willow Garage",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a488d829f3340160a3181389b3b56e99148d5db2f15cfda6a722c0c3d2b052a9",
+    "mention_text": "Bradski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0106969b429e7862475536f908688620ab29373e3ed9d166141bcef3989dec10",
+    "mention_text": "Escritório da Casa Branca para a Política de Ciência e Tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c12698ef2170943e219b256a465783bb6fc9c6d57f3b3b8fd62abb2b6fe2574a",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c07133523a3ce6bda847320d31278cbfc4dc314080ef6761fb0fdb4b854edb26",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d075ab89b37b272f59754f68593b13e518835f118a1dedfc437ba946c41bfd6c",
+    "mention_text": "Pieter Abbeel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42a2549d2749dfdfb5f056433df3141ffae8c9c4db9c0a630a62a407ee380aa7",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2069570d9bbf69160e9662b2323d5c904bdcd0f26616d19ad238087df9ee2056",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06a8cfccd22e8be4248bccb074ef22bd0fb06ab8ef74b78f86eab997555caea4",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c562161899d3b5199d580a24c287b7164b6193960cee5848a113b7befda67673",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d47f3759ed3a95cc4d8de394f88851d2f507b61da432ac417b7e0d3c6ece773",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2fc15f1dae98f0660cb6e016f54cbe740fc36829be1f5e59824568dd6e1eae82",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf1e4c84c8daf298070dcb83105dc0c1cf3035d7ec84a3ff339a060d7809d15a",
+    "mention_text": "Madonna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bba9e9e70976a5d73503e68ac5c59228530ed3e4d1ec34282af19f3b2d96015d",
+    "mention_text": "Francisco Bethencourt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94fe174c79b31afd6d2a3efb042a68c62487cc0c1c3ffe0b457c2f85481ac88a",
+    "mention_text": "Andrei Tarkóvski",
+    "categoria": "PESSOA"
+  }
+]

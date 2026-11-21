@@ -1,0 +1,437 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 63415703c7720bcc5f5b25002a30f567797fd5901af045e4c1f474bac4c81c0d
+
+TEXTO:
+De olho no futuro, conferência do TED tem início no Canadá nesta segunda
+
+São conversas sobre o futuro, e não discussões sobre o passado, que movem o mundo para um lugar melhor, acredita Chris Anderson, organizador de uma das conferências mais disputadas do ano, o TED, que começa nesta segunda-feira (24), em Vancouver, no Canadá.
+Entre nomes conhecidos como o do empresário Elon Musk e da tenista Serena Williams, há na lista de palestrantes deste ano médicos com novas pesquisas, engenheiros com robôs superinteligentes, artistas com obras instigantes e especialistas em clima.
+"O que mais me inspira no meu trabalho é a nossa comunidade", disse Anderson para jornalistas. "Você vê israelenses e palestinos conversando, cristãos e muçulmanos conversando. E eles não estão brigando sobre suas visões da história. Eles estão sonhando com o que podem fazer juntos amanhã."
+A comunidade é feita pelos diversos eventos produzidos ao longo do ano pela marca TED, fundada nos anos 1980 na Califórnia. O evento de Vancouver é o principal, dura cinco dias com mais de 80 palestras de 18 minutos e inclui jantares, atividades como ioga e uma rede expansiva de contatos.
+Os ingressos para 2017 se esgotaram e para 2018 custam de US$ 10 mil (R$ 31,5 mil) –se já for membro– a US$ 25 mil (R$ 79 mil), pois é preciso passar por uma seleção. Há também os TEDx, conferências organizadas de forma independente em diversos países; o TEDGlobal, com ênfase em questões internacionais e que teve uma edição no Rio de Janeiro em 2014; e um canal gratuito no YouTube com quase 7 milhões de assinantes e centenas de vídeos.
+O tema deste ano é justamente o futuro, mas Anderson promete não deixar de lado questões levantadas durante a tumultuada eleição americana. Em tempos de fatos alternativos e opiniões radicais, ele acredita que o slogan do TED segue mais relevante do que nunca: "Ideias que valem a pena espalhar".
+"O TED é apartidário e estamos tentando fortemente não escolher lados e levar todas as preocupações a sério. Isso significa começar a reconhecer que muitos dos medos que as pessoas tinham são de fato legítimos", disse Anderson, que lidera a marca desde 2001. "Acreditamos que ideias são fundamentalmente globais e pertencem a todos, cruzam fronteiras livremente. Queremos uma estrada aberta num mundo que está se fechando."
+Dois convidados vão falar sobre a questão dos refugiados , enquanto um painel inteiro com oito palestrantes vai abordar a questão do clima, incluindo uma especialista em icebergs e um meteorologista ex-oficial da Marinha. Há também um painel sobre inteligência artificial, que contará com Tom Gruber, cocriador da Siri (assistente por comando de voz do iPhone).
+"Não vamos fugir de política, nem deveríamos. Será de forma indireta e queremos enquadrá-la de uma maneira mais atraente", disse.
+"O que realmente muda o futuro acontece completamente fora da política. Acontece dentro da mente de designers, inventores, empresários, tecnologistas."
+Anderson lançou em 2016 um guia de como falar em público ("TED Talks", ed. Intrínseca) e afirma que não existe uma fórmula para chegar ao "estilo TED" de palestras. "A única coisa que esses 'talks' têm em comum é uma ideia boa. Eles chegam ao palco com esta intenção, como oferecer um presente, um conhecimento que importa."
+"Há milhares de jeitos de fazer isto e creio que este ano teremos mais variedade de estilos. Incentivamos todos a acharem seu próprio jeito de comunicar sua paixão."
+*
+10 TED TALKS PARA FICAR DE OLHO Conheça palestrantes que falam nesta semana em Vancouver. Os encontros são disponibilizados no YouTube ao longo do ano
+1) Elon Musk Cofundador da Tesla e SpaceX é entrevistado por Chris Anderson
+2) Serena Williams Tenista é entrevistada pela jornalista Gayle King
+3) OK Go A banda explica os bastidores de seus intricados videoclipes
+4) Tom Gruber Desenvolvedor cocriador da Siri alerta sobre como robôs manipulam nossas vidas
+5) Anab Jain Designer e futurista traz projetos reais que parecem tirados de filmes
+6) Guy Winch Psicólogo e escritor ensina como curar um coração partido
+7) Richard Browning Empresário que criou um sistema pessoal de voar estilo "Homem de Ferro"
+8) Raj Panjabi Médico conhecido por ajudar a acabar com o vírus ebola na Libéria
+9) Michael P. Lynch Filósofo analisa democracia e ética em tempos de dados tecnológicos
+10) Anne Madden Pesquisadora de micróbios fala dos mais de 600 tipos que vivem em nossas casas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "226dcdf96fa7897205d7546db57448725024a4edd1d9cca96c47ff5db4d48abd",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa9a188a968071c9fa58d5df71c571749dda07df74c3e83480e737422d55ffd1",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3fe6858a24a9b22f23cfa4bdc59c94bc8fbb10eec0af867cdaac931b75a009ed",
+    "mention_text": "Chris Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eaa276493bd3277f2b7ad4b564db0eced433869189b123bce322d823ac986616",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0860ab59d06764de6232a1bc3a9f56eeec2a1f10c00675942e29a0e6cfb424c",
+    "mention_text": "Vancouver",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8bec2f85222d1e8b7f49b96089c5568abc8775c9c05f1461ca02126967193132",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "84586eec5047c83edba6089eaeff8d4083eb1449106c3f4995b47b86b79ba979",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37abbbd091c61f1d28f271f29f5d4f8b2d88c7d245f61c5a4f7754cd1eb9f722",
+    "mention_text": "Serena Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd3eb06b70b1442daabbba44f09bfe9882e06f172410de26bb6a466dcd95b4ec",
+    "mention_text": "Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "142a7367370fcf5cbe9fe1112be02ba0837c9d77a7300158b2dd6d5d9d708ef8",
+    "mention_text": "israelenses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abdea18928f4d76ca560f86793f713546af142522f7b039c0d39044513cc3fb8",
+    "mention_text": "palestinos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8166958e116774ec75b594f7e0f8cf0a856e53c9e824808b8d54ab201fc6838",
+    "mention_text": "cristãos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1c3d24cfd9c81890c7c1e491ffb9201176dbffb6abaf8588dbc1d7205850810",
+    "mention_text": "muçulmanos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd75b5c28412c8ba332f72ec9ac63925de07b62aeb850b58d5f7fcdd393c4dec",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3a8601c14c2cb2ddcc0f55bed12644967ad1270f055d33104ab0e5548141286",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1831f8a21fef214ec6f4cd4fe6a7db36deb748b73aada5e771bcc069f380540c",
+    "mention_text": "Vancouver",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4783288345dd0f25ca316a7ce47b80b58dee927b850bd047ab0923ffae9473ff",
+    "mention_text": "TEDx",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0ce4d435f53dffe57d1896b5e862c41fda8ea0cb1a432d2c11885a8508fe3be",
+    "mention_text": "TEDGlobal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da02e5d7b550858d09997f7fe345db192b2c3c9fa609bc70e464bf8630fd8f1d",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "354aa5a2c66c8b5e2d0faf430c1d954859859870123bb95921bf42bec74cca9d",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7269b727a8f748d7b829a434e14e8fc8231e5496b681f36c71d83c95631a1c25",
+    "mention_text": "Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "279fb335a242b660eb01003b5df8243dda59445a774c5a57df9b4c1518ceecac",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72ec5b0caa221b26bc992f71146286b28ee777150dfd155fab8ef7064a898165",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90587899bc28a5912e6a167879d45e38ed4617ab741ee4b5e7da255c0c01db3b",
+    "mention_text": "Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76654248a180620ad47eb84d2f507f8d0e4f99e960566df024dbe50e1324a614",
+    "mention_text": "Marinha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e992646cc1c7d85a3c1c746e8ccff9262fc07cd882939bf8bdd07be41f2f0f1",
+    "mention_text": "Tom Gruber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79bebfd6edccdd18d9815be84a1b0edd9ff23765401621b4129af19bf795f3ba",
+    "mention_text": "Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "418fbb80f04d37aa741f3992e78f226ded822f1c38dc3f4cd6244a9760a905bc",
+    "mention_text": "Intrínseca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa9aa1d1cb421ebc188ad889ba466ea57b35b4705820b5b87a39a7aa80956a56",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29f2acea3c1f75d86917cd6060550b4d9ee9b5ba007254cdff05285d40edac89",
+    "mention_text": "Vancouver",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d572eebc9633ac6ea7d025c49608c137c05564f01607881d598076903b87f9ee",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ebcf240029d53c954700eda637984336bd838463e39d7275b04a72c17a3ad9c",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9234e387b08c08032d229a1a26c5e7546be47fec5d385e06215d19550513fe5e",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5eff9b8d83203a5cd609dc68a41895a928ee10c711044bd638f4c9bd9817e1c7",
+    "mention_text": "SpaceX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4da79ee324b99ee8782b12c9bc7d2693eab5ea8231732dd8654a2e171f452172",
+    "mention_text": "Chris Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a01a3ad29733e682d7825df88005c7e5c2b766aa054aeec6bc05820a02ac36e6",
+    "mention_text": "Serena Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e476b6ae4f1963e03830506cdf0883449774126eed7e6ac01c004716943428c",
+    "mention_text": "Gayle King",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa69759845b8558ed8dc5a001c2f0c6ce410e9ae981dcc557abd50faa98b10cf",
+    "mention_text": "OK Go",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "500ad5ed1160bf1a7aa809e514f79098f281117be5c511dcc0769051a027c74d",
+    "mention_text": "Tom Gruber",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "680b65fedb3a19e544b044e7e29f43a7654d49745c14564a0cce088a1449f117",
+    "mention_text": "Anab Jain",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f24a6b871696a935502d6edbb6f581338daa009d7af3a43525e4bed0e11ca118",
+    "mention_text": "Guy Winch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "deff7cb802847fd147834311f605181c2ef7fc3251e34285fa81a6b0757e0416",
+    "mention_text": "Richard Browning",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f78ec65e6f6a4856d9a7e29256ceb752768bc930ea25564ffe9c279142c07480",
+    "mention_text": "Raj Panjabi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56a7e4dccc592499f7a8344f2ec04a80700a9eba471befbfde0fbccfde254963",
+    "mention_text": "Libéria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9a5bfc7e90fe9be99114a34f92b3bd4435f55d246bfbfa6f2a15afe289e03977",
+    "mention_text": "Michael P. Lynch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "886c9f1114a4f3755f5bbb1ce3e5120d588810716e3e065d44979e7c16b01c7f",
+    "mention_text": "Anne Madden",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,614 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1e7213c8760a263431c4d93a17a426954c77d3750de5281ef051ca22b3ad332f
+
+TEXTO:
+CNJ deve analisar ao menos quatro representações contra Moro na próxima semana
+
+O CNJ (Conselho Nacional de Justiça) deve analisar na próxima semana pelo menos quatro representações apresentadas contra Sergio Moro . Uma delas questiona o encontro dele com o economista Paulo Guedes para falar sobre a participação do juiz no governo de Jair Bolsonaro .
+O corregedor nacional de Justiça, Humberto Martins, pretende dar celeridade aos casos e deve decidir sobre eles nos próximos dez dias.
+Ele deve analisar também o fato de Moro ter pedido férias nesta segunda (5) afirmando que elas permitirão que ele “inicie as preparações para a transição de governo e para os planos para o Ministério [da Justiça, que assumirá em 2019]”.
+O fato de Moro não ter se exonerado, preferindo apenas tirar férias, é criticado por integrantes do CNJ. Um deles diz que “não existe o sujeito fazer plano de governo de toga” pois a Constituição veda a participação de juízes em atividades políticas.
+Martins analisará também o caso em que Moro divulgou conversas de Dilma Rousseff e Lula de forma inconstitucional, como definiu na época Teori Zavascki, do STF.
+A divulgação dos grampos ocorreu em 2016 mas até hoje a atitude de Moro não foi julgada pelo CNJ.
+Os cantores Filipe Catto, Ceumar e Stela Campos participam do show “Nick Drake: Lua Rosa”, que celebra os 70 anos de nascimento do músico inglês; as apresentações ocorrem nos dias 14 e 15 de novembro, no Sesc 24 de Maio, em São Paulo
+E Moro concede nesta terça (6) sua primeira entrevista coletiva, sob expectativa de setores da área jurídica. Há uma crença de que ele mantém divergências em relação a Bolsonaro em temas como desarmamento e controle da violência policial.
+Moro já criticou, por exemplo, a ditadura, que é elogiada por Bolsonaro . “O período da ditadura militar foi, e não há dúvida disso, um grande erro”, declarou em 2017.
+O presidente da Associação dos Juízes Federais, Fernando Mendes, diz que a presença de Moro no Executivo é simbólica. Sua biografia, “sinaliza que o novo governo seguirá o caminho da institucionalidade porque Moro não abonaria qualquer medida que implicasse o rompimento da ordem constitucional”.
+Mais
+O presidente do conselho do Instituto Vladimir Herzog, Ivo Herzog, e o jornalista Juca Kfouri foram à abertura da mostra “Para Respirar Liberdade - 70 Anos da Declaração Universal dos Direitos Humanos”, na quinta (1º), no Sesc Bom Retiro. O ex-deputado Fabio Feldmann e o cônsul geral da França em SP, Brieuc Pont, compareceram.
+E o corregedor do CNJ vai decidir também nesta terça (6) se abre processo contra o juiz Glaucenir Oliveira, do Rio. Uma ordem dele para prender o ex-governador Anthony Garotinho foi revertida por um habeas corpus de Gilmar Mendes, do STF. Na ocasião, ele afirmou, sobre a decisão do magistrado, que “a mala foi grande”.
+A agência Brasil, da EBC (Empresa Brasil de Televisão), que é controlada pelo governo, publicou reportagem no domingo (4) sobre a abertura de uma loja do grupo Havan em Brasília. O dono do conglomerado, Luciano Hang , é um dos empresários mais próximos de Bolsonaro .
+O texto da agência diz que o evento atraiu “uma multidão” e que “muitas das pessoas usavam camisetas com a imagem de Bolsonaro ou da seleção brasileira”.
+Um total de 9.904 alunos de escolas públicas de SP foi premiado com medalhas de ouro, prata e bronze na 21ª Olimpíada Brasileira de Astronomia e Astronáutica. O evento foi realizado em maio, mas os resultados serão divulgados agora. Cerca de 770 mil alunos participaram da competição.
+A Embaixada do Brasil em Tóquio, no Japão, inaugura nesta terça (6) a mostra “DŌ: A Caminho da Virtude”. A exposição esteve em cartaz na Japan House, em SP, entre agosto e setembro, e teve mais de 55 mil visitantes.
+Mais de 70 dos 102 integrantes do programa de patronos da Pinacoteca do Estado de SP participam da assembleia anual do grupo nesta terça (6). No evento, eles irão eleger, entre 15 obras, novas aquisições para o acervo da instituição. Em 2018, o conjunto doou ao museu cerca de R$ 1,2 milhão.
+Mais
+O ator Lázaro Ramos, a cantora Wanessa Camargo e o diretor geral da Universal Pictures Brasil, Marcos Oliveira, estiveram na pré-estreia do filme “O Grinch”, no shopping Market Place, na sexta-feira (2).
+Ocorre nesta terça (6), às 20h30, o 15º Faap Moda , no Teatro Faap.
+Betty Milan lança nesta terça (6) em seu canal do YouTube a série audiovisual “O Amor em Cena”.
+O IAB SP celebra 75 anos nesta terça (6). Em sua sede, às 19h30.
+Será lançado nesta terça (6) o livro “ O Oitavo Dia ”. Às 18h30, na Livraria da Vila do shopping Pátio Higienópolis.
+A coordenação de inteligência artificial do Conselho Federal da OAB se reúne nesta terça (6), em Brasília.
+com BRUNA NARCIZO, BRUNO B. SORAGGI E VICTORIA AZEVEDO
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1b0c7828bb297d33fb9cb4f61b70a0bf715ed6541215fb758298564d92a4e90f",
+    "mention_text": "CNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "660fecaf77b7d202699c74cfc3dae3adc3d57de24bce2d8f1e941153e0c12d10",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ea6cb524cebbad4ea70d945cbfe6933a0722fd788c334880c38d0dee1425b04",
+    "mention_text": "CNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df3eac9e1b7134b6921c3efbfb05fb79626f4215d4754089ce72303eda6ef281",
+    "mention_text": "Conselho Nacional de Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed36908ea02684a566009d794b8d33d1aa41204945c44622e9fdda51b3c1c22b",
+    "mention_text": "Sergio Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30ac9d3211ff845fb5f9293606f20025e792616d4c5cfa90a2a6e57509be9aaf",
+    "mention_text": "Paulo Guedes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1ef70d523485da46f6bb99e9ed899ab9d88c9e050ffa08cc4626e8334cc5eef",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8eee7b7b9763c6a8b59d9034773127520ea5e5369497518ab2721ae168015739",
+    "mention_text": "Humberto Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3694da59b4f60977c1624f2a69cac3d984cf918e478c9eef4a91d0a0d857a336",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "398bdce8a6550d7311f9e2c0892bbb9ec005344de9ee961d6c12cb4c129a2540",
+    "mention_text": "Ministério [da Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14f7cba59068946aa8c0979e631f43614108ebf442e41e53e1e56ff836877244",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5947e4aa4e9bfa343d9b693c75bd591618f425dca3df32f6bfd80ec3c41175c8",
+    "mention_text": "CNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "555fe7a3f6694c7165da1685d30b238fe52ce03a398d25cc8ce83d2772ce5c4f",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db040ca35182e95095e2e2058dc6bb45de5c0c639b1ad0002d1e0088b5c811ab",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a46ee7e34c6db40cc07b30ada2a56dbb7d823b9ea98318955cf39a4c6ee0397c",
+    "mention_text": "Dilma Rousseff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a12e5e57bb4a7ec9c582a665ff210335096f96cf101e394138a8577e1735be4c",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02e94bbe03bffc711341ec007ed488189014b9c507254c015c28f3be9711c390",
+    "mention_text": "Teori Zavascki",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e49a788bea4eedc08019aa330aa8d998d8cf385dd89048f88032781dd2d65ff",
+    "mention_text": "STF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0963fa995130ca2f4cc7509801ae2e815f40f9916916c257b236681a62ed2e52",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3cc5f3274ff0103664bc1aa253b255744c01ce2efa2fe276716d4d233ba2d01",
+    "mention_text": "CNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbbacb7a4b0a51076d0231a6f55211474e183f827daa06cde1c80e82a4c7e6a5",
+    "mention_text": "Filipe Catto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bd9e1ea6917b8653339a5e8f2b985b3efb8f15ee1a8ff61ca7a5bbf3b42d5be",
+    "mention_text": "Ceumar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81dc2a51ca4382131b00a53f0ce144d445a8c093630a2b34d79c7ec53aec5825",
+    "mention_text": "Stela Campos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1b4b4a613bc1ad0c79d74165e1de9a66cb9a858533527cf0058ffea50cbbe2c",
+    "mention_text": "Nick Drake",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce2dcd17b3958d9376f835ae7f24bf6c9c0bce058fd945855610cfd1698b8422",
+    "mention_text": "Sesc 24 de Maio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48e09b0732add4f1082040db7626d2dd726054cf58e3369b560c2f02f5e382e4",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44622fe483a9257b42505eb405637a37f9d22cd2b9b20c73cec4564adc26ed07",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ea3b8e96140d1e72d091cfa1cff32489f83c6627c0b97ec533ab43c1f746b26",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c83f1d1266f271c832ba50567b660b1a7f390d5af6acf1d0d8db3ab111042bb",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13a6eb7ad055f21a363d48dbfe96ba35aee6abdd8b88e4a7fc61176c16145232",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a4ff7321e664ccc40c132e6c6570d209f490fc9ebfc10227685aa8efaeb719e",
+    "mention_text": "Associação dos Juízes Federais",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7dacdbccec473352bbcbe2dc8cb66d85cecfe781df3de5de931445672a59abed",
+    "mention_text": "Fernando Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f13c5d1b94c69e8c56a741b7e0aada1bcb29a234e2530fa2539253fce055787",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9254266e1f5aeb0553c7a52ee723cd17efdab51c15154b8d3535a6ba6537e4ab",
+    "mention_text": "Executivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "671bd565017b5b58331ef3ba8d67f7b77a08012a89616f8c6600efc7db18d99f",
+    "mention_text": "Moro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "463a4b3afeb82127f297020246d7cf43bc33b4dc5b07efb06454895e9c51ce5c",
+    "mention_text": "Instituto Vladimir Herzog",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15ce4f30f8118ad91d72d824b3c12d94f30c3e9742a6890a08f9668416802d13",
+    "mention_text": "Ivo Herzog",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abdb081e852441da18a8045427ff4deaef9735ccee2322d3ba4c1ed4f6ce2ffc",
+    "mention_text": "Juca Kfouri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea08e17bdba8f088c19d81ec8b75db3ae2497f900ddad8add51fe8be30e5ef9c",
+    "mention_text": "Sesc Bom Retiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb12eccedabcf43840ded912b3c61fff47d5431db07c4eac7d4696875928dcac",
+    "mention_text": "Fabio Feldmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ba52254d73aa2718f6d554b23c356688479649f4528e85c0a557ec9222c46fe",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d040b5d4ae4d6e0965fa22d17982a00950c0d7a16922a5d6503ae410c578661",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a89455fdf1595ee34081546d67ba5e198832ac08b5d679259d2b5ad141b321da",
+    "mention_text": "Brieuc Pont",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40dbeb9027fe2d7a572bf8f2fb72acae4c86605f738da911ddccb68a5b6f4bed",
+    "mention_text": "CNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0289fb4d44b04d360842ffea2ec0edc678b63c28409852359dea910f16c9b9a",
+    "mention_text": "Glaucenir Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "553354d8175811eb393de90fbe2fc27c0dc2c8d59f9fc7b6070babc10bb84b03",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aefb8165005a037e54ba7867a6c29cdcc93b5ca563673f58f465ab9d42280327",
+    "mention_text": "Anthony Garotinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8d10acd98f67109759d12fa18a34f4b3f7948de3a305016464e6c8adf5c7895",
+    "mention_text": "Gilmar Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74a3ff05ebe5f2d72467448efc7675346691854740702b272d30e6232ae877b6",
+    "mention_text": "STF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9fa8bc458dcdb566242883ecbdb3c58369356272b3c01d95159afa70e3f37fd7",
+    "mention_text": "agência Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1b9399a51f1e13dec0be9350bfc88cc77068a85a5d6e672b0375c9e46461eca",
+    "mention_text": "EBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4620103f83eea73d2e3e4a515ecd66b505cf12914e1caa0688f11d0351bae21b",
+    "mention_text": "Empresa Brasil de Televisão",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a02ce4f36a5ca003889c5f6070a631fe206a60c8a4ad2e8cab924b7d610c99f5",
+    "mention_text": "Havan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c122b441f86432959a15b124f886196f41dc12070bea502401765220a9b47e76",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7391b374d047f7a9d32934d225a09563fb9c0552f30909115555991d07362ad",
+    "mention_text": "Luciano Hang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c34516db881f3ed4a80260c4561104e07442f0d91becb7142a14839da6049cc",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e64463fa731b896f280b7e5312393c774b8bbb5b8dba74676c019d9446d06e5",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e57aab0b0798d9d7bc21fb0568c9643fd6c02b1639825fd5c12d42cab8aee91d",
+    "mention_text": "seleção brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae725b7af8886efc5bb71993cde9ada0f77047376a9beaffca02a7e904e539a4",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94aeff04394441500c8be08eebed0b6746bf83832442d2550101739510447e3a",
+    "mention_text": "Embaixada do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3e3dc26abae628be9a67df54995aca696e339aec40a9f6fde3c9fa5d341eea4",
+    "mention_text": "Tóquio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b6ecee5b0f3ad4c5f7069280a0cf7a860df06d4b8b250840b3f8f40457755da",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eaf88ffe0df2fdbec8ee0679a5a47f4d5358efa58bc97797bed4e4d206c1eeee",
+    "mention_text": "Japan House",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2b7857177c7be47af2831e8dc7bc0b7335efc6f73da8798f1b0724bf8f58885",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b410ecfe2cc63a7a120e18378b93328f4fbadba83d86daa5f1c135b4772c252",
+    "mention_text": "Pinacoteca do Estado de SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33a13db364b8acaeb95f5abe455c3cd3dec73539fa29b19d89e578960ba5304e",
+    "mention_text": "Lázaro Ramos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8bfcf7276c0b87dbf10427e19af41ce3090f0b2c8d569f41f8b5dd2de44b7c3",
+    "mention_text": "Wanessa Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5056d48feb24ce55a43e37fd6054535f9fdcf3eb0dc033cb6da7bfe931f976c",
+    "mention_text": "Universal Pictures Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee30e00396bf198b18a91006be845642ea82065bccc49b3a4b1736c9ee0860d4",
+    "mention_text": "Marcos Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "076a370e7563be2cfc2e72e1a3449b16ca6e4d94072e3a52ad6b5cd1ce46bd56",
+    "mention_text": "Market Place",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9c46502f714e6cd8bc41cf07943329641a319d714509630614ea3d5e8cc840b6",
+    "mention_text": "Teatro Faap",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8bf799224395801e55345a3dd787477325f530f3928a96c51f967d736b72e980",
+    "mention_text": "Betty Milan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19e47e8e5995d84b02a921054a8d42edfb0b45bfb137bbf03ea0593e1740fcd0",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21542f6cfa1e6ab6c78cea6c11b1f360cfe28b5cb15c512ac61caa87811259f2",
+    "mention_text": "IAB SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e0151424149e07616268a5666a39cf09b754b0b9101eb578a6a38b4fea489bb",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31a3c70904cb4703bc27df7b9c4a88d66c95e6009d8df596e0c4c3be463673a2",
+    "mention_text": "Livraria da Vila",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "286227c549cbd9c178d6f20cf89422bb08140dcd0e5e540a57d3b541e4e0e0b0",
+    "mention_text": "Pátio Higienópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f06cd1c307eee35538f3fcc08dc85ea4757badc024b9dd25105b18e19e212475",
+    "mention_text": "Conselho Federal da OAB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "480c41426653d7281f6da448ad350cac146c84020db861879f51be2435c51979",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c6e154fe31a804ebb49b09b7972ab51307ae58cb0c7649e7895dd58831909441",
+    "mention_text": "BRUNA NARCIZO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "671509e293c115996830bef2c0ded2c00286d6f5893e38ee3593e53733896a45",
+    "mention_text": "BRUNO B. SORAGGI",
+    "categoria": "PESSOA"
+  }
+]

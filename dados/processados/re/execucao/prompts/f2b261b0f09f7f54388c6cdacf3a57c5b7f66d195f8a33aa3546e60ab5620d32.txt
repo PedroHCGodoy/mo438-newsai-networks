@@ -1,0 +1,361 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ded611550bc175035596e19291c2217f6bd84369cda36d0339dd05a4a9b96e68
+
+TEXTO:
+Jornalista aponta migração do poder no mercado publicitário
+
+Na publicidade, a vida se move muito rápido. "Aos 72 anos e ainda robusto, era improvável que Martin Sorrell deixasse seu posto, no futuro previsível", escreveu Ken Auletta sobre o ex-presidente executivo do WPP Group, ao final de "Frenemies".
+A suposição era justa quando foi escrita, mas ainda assim se provou incorreta. Sorrell renunciou em abril ao comando da empresa que ele fundou e transformou na maior holding publicitária do planeta.
+Há controvérsia sobre a saída de Sorrell, mas o mergulho de Auletta no setor revela os antecedentes da história. As coisas já não são tão confortáveis como no passado para os redatores de publicidade e as agências que compram mídia.
+A avenida Madison (o principal polo do setor publicitário em Nova York) ditava o destino do setor, mas agora o controle está se transferindo ao Vale do Silício e à China.
+A publicidade é um setor difícil de compreender, em parte porque se tornou muito mais complexa do que na era retratada pela série de TV "Mad Men", mas, principalmente, por estar repleta de pessoas acostumadas a contar histórias. Mesmo que soubessem por que as agências vêm sofrendo uma forte compressão de sua receita e o quanto elas se tornaram vulneráveis ao desordenamento tecnológico, tenderiam a retratar um panorama mais róseo do que o real.
+Auletta, veterano repórter da revista New Yorker, faz um trabalho notável ao delinear as personalidades e as transações obscuras do setor.
+A história é sobre um negócio de alcance mundial com movimento entre US$ 1 trilhão e US$ 2 trilhões (entre R$ 3,85 trilhões e R$ 7,7 trilhões) ao ano e no qual personalidades ainda importam, mas a arte vem sendo substituída pelos dados.
+Ele faz perguntas incômodas aos executivos que comandam o mercado. As mais duras são sobre o imenso volume e a profundidade dos dados pessoais de cidadãos americanos detidos por empresas que incluem Facebook e Google, mas não se limitam a elas.
+Uma dessas empresas é a GroupM, da WPP. Esse tipo de agência se tornou a parte mais lucrativa das holdings de comunicação, ao adquirir espaço e tempo publicitário em nome de grandes anunciantes, em diversas mídias.
+Irwin Gotlieb, presidente da GroupM, é franco sobre como gastou US$ 2,5 bilhões (R$ 9,5 bilhões) para evitar que o Google e o Facebook o flanqueassem.
+Ao adquirir agências com acesso a dados de grupos de varejo, sua companhia criou uma planilha contendo informações sobre 200 milhões de indivíduos e 40 mil características de comportamento.
+Você quer vender um novo molho de tomate? Em lugar de adquirir tempo na TV e esperar que o comercial dê certo, a GroupM pode colocar um anúncio direcionado a pessoas que compram grande quantidade desse produto. Não se trata exatamente de quem você imagina —como pais com filhos adolescentes—, mas de pessoas cujos programas de fidelidade no varejo permitem rastrear seus hábitos e cujos detalhes foram objeto de comparações online.
+Os titãs do setor demonstram algum desconforto quando Auletta os pressiona sobre as leis frouxas de proteção à privacidade nos EUA e pergunta se não acham que os consumidores se revoltariam caso estivessem cientes de até que ponto são vigiados, mas todos terminam por responder que é uma troca justa.
+O tom que eles adotam é ligeiramente desesperado, como se soubessem que estão envolvidos em um jogo perigoso, e também que não têm alternativas. Como aponta Auletta, o jogo pode terminar não com a GroupM e similares detendo os dados e cuidando do rastreamento, mas com os anunciantes negociando diretamente com o Google e o Facebook.
+E talvez não seja esse o verdadeiro fim do jogo —toda a cadeia de suprimento pode terminar dirigida por robôs.
+Se isso acontecer, qual é a probabilidade de que a inteligência artificial seja programada na avenida Madison, e não em Shenzhen? Baixa, eu imaginaria. Como muitos impérios, esse prosperou por muito tempo, mas, quanto mais gordas as margens de lucro e quanto melhores os martínis, mais difícil se torna perceber que as hordas estão chegando.
+Frenemies Ken Auletta, ed. Penguin, R$ 43,60, 368 págs.
+Tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "130dd247ae0866c6fee68ec12888d2a2cd9d9040a5e8bb2496da5ed898f0fefb",
+    "mention_text": "Martin Sorrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0a7d098bfa09b2ccdd91dfd68cbc1d65db97ae8280fdf8d9a7d70ca984cc782",
+    "mention_text": "Ken Auletta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0b8eb5806ad98f2b89fbd6b7e61cd9a4151c741624b910b8096174a8396a449",
+    "mention_text": "WPP Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f56164802f1cd0420afb9d3e1524c348d23d3a7623810c8f94eb400eb88ba63f",
+    "mention_text": "Sorrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aae0847a11e2b5a2d89c5606f4857df45b03d067dbef68a5b332ae21c5d3aa82",
+    "mention_text": "Sorrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94ae31e6d82369532ce07f398af61054274c49b7c8a429c421eb868a095550e6",
+    "mention_text": "Auletta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13de2e56a32367733d11d4719de75b5736bcf19b93827248595e2b9736631273",
+    "mention_text": "avenida Madison",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2fd3ef849e27faa76db6755acd4622f49c14f5acbd9e1f69793ce3bbaa9a295",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f3d257828ba723152c2c016795fba93204312a38a96f94305ffaff71cf703be2",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2a9760f947d706e21b65fa5343a3cb094fad6b3312882a3e02744191282ef77",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a9f0b1a67f46924ee43950840e90934bc9d588b0924d43920950a04cd0d9b49",
+    "mention_text": "Auletta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e75aa14636de5eef85504532dd615bc75cd09ad8aa843089da7e482c740cd249",
+    "mention_text": "New Yorker",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d91c56ad3ff30c04e6fde4fd8280c301245480f0f70fcf94e5c4c116693f0b11",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1d1d8da293ad9a39b8020a078832a4be07ccf3f65b84e325abd3c75920d4ad5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b9f73c14757f37207baf0d8c2e115f4815308f3cde49c4de1c889ae167c93b2",
+    "mention_text": "GroupM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7f9d497e47974600d77c64cf54ceea8e5ed673517c19d189052ec0643e010b9",
+    "mention_text": "WPP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "414c782cfb9bcb37f7d80a1e565e2fbcf751a06e6211eaa844e3a4dea98d39ea",
+    "mention_text": "Irwin Gotlieb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abf21b66286afd5d0ce88ea7a359e480ed1b5461287fe918d40f0a9e5bb1b417",
+    "mention_text": "GroupM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea205ee4ec9435e9bb40e76d08265ce1e98d22ed0d12d1cdafec0694eb951701",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f704958de989f5dfd2ffa1146aef051b21a33467119f7d6cf929b2941166a7ba",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48448e23a2d241f700de2efd6ff067067744bcd55d7e8f84e298e597c5c8c64d",
+    "mention_text": "GroupM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "010fc865930dfa46f48bffb71e790f383be0b6906bc720119d524aaab94bd01c",
+    "mention_text": "Auletta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b6a3ae452c8c65d924cc6484c206fcfad7c85670227f22251d56720cf8151a4",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac2a7c5d76dfd4cf9899918b2574cba39970fdde6e725c18069ee2c92d1550fe",
+    "mention_text": "Auletta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af60ad4ea6bd02a7eef6104c8dab7b5b160ad458b28a27b6d781f0fe4658cb18",
+    "mention_text": "GroupM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e54464d4a6c297c79e06bd5032ea56af4e6837ca3e9a7cf03fbb6d014f11f6e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "070d267ae6d4ef8d4a1af3a2a3c56fe2d5c035846c69f1d04247805b03b4153b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0a50dc5679743626afe4f491aa8c0f4ffd1de95b7fe45282ff334d3e9e016e1",
+    "mention_text": "avenida Madison",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8fc209f5b7eade16330dc48612adff4ca0c91e86f5f77240dbb11b43ab1f26a4",
+    "mention_text": "Shenzhen",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a73171082665960210520d1552089322916783c70c7bc468a59a67647cdd8fd",
+    "mention_text": "Ken Auletta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ae73dd606d7feabead9bd6f800a3c0f4d7e8abd558c7237298d755de122a26d",
+    "mention_text": "Penguin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "461934f3a866f337e91902a6a0bd1f3ae1ff4771c68fd04e0317f7946d4823be",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  }
+]

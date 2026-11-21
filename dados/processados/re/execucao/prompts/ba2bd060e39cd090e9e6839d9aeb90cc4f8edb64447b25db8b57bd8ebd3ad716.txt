@@ -1,0 +1,440 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: aac14b0812c4cc6d24981d970aff32a1f7ef951a064c9fd964fd1ec537781b3b
+
+TEXTO:
+Autor de 4º livro da saga 'Millenium' diz que pode escrever mais um
+
+Sexo, violência, números primos, autismo, inteligência artificial e uma enorme tatuagem de um dragão. Com essa barafunda, o jornalista sueco David Lagercrantz constrói o quarto volume da série "Millennium", criada pelo também sueco Stieg Larsson (1954-2004) e aclamada como uma das franquias literárias de maior vendagem da história.
+Lançado na quinta (27) com pompa e circunstância no mundo inteiro, "A Garota na Teia de Aranha" exibe números impressionantes: chega a dezenas de países simultaneamente, com tiragem inicial de 2,7 milhões de exemplares. O que não é exatamente de surpreender, pois a série estrelada pela jovem super-hacker Lisbeth Salander e pelo jornalista investigativo Mikael Blomkvist já vendeu mais de 80 milhões de exemplares desde o lançamento, em 2005.
+Sim: os manuscritos das três novelas que originalmente formam a série foram publicados depois da morte de Larsson. Agora, seus herdeiros –pai e irmão– contrataram um escritor para produzir a continuação da franquia.
+A companheira de Larsson, Eva Gabrielsson, que não é herdeira legal do escritor, condena a sequência como mera manobra para faturar mais alguns milhões de dólares.
+Joakim e Erland Larsson, pai e irmão de Stieg, negam. Dizem que não se trata de fazer dinheiro rápido e que os lucros serão repassados para a "Expo", revista antirracismo da qual Stieg foi cofundador.
+Por seu lado, Lagercrantz, que não tem nada a ver com as pendengas sucessórias, se declara absolutamente entusiasmado com o projeto e os resultados de sua produção.
+"Estou exausto, em entrevistas dia e noite. Mas estou muito feliz porque as resenhas são excelentes em todo o mundo", disse ele, em entrevista por telefone à Folha.
+Mas as críticas da "viúva" são uma sombra. "Esse é o trabalho de minha vida, escrevi com paixão, não por dinheiro. A única coisa que me entristece é que ela [Eva Gabrielsson] tenha ficado tão brava. Espero que chegue a um acordo com o pai e o irmão de Larsson", afirmou Lagercrantz.
+A sequência, afirma ele, é muito boa para o trabalho de Larsson. "O escritores querem ser lidos. É por isso que escrevem. Agora uma nova geração de leitores vai descobrir seus livros. E vai conhecer o seu grande trabalho, de uma vida toda, que foi de lutar contra o racismo, contra a extrema direita e a intolerância, o que é hoje ainda mais importante."
+A própria trama do livro traz isso à tona, apresentando figuras da NSA, a agência norte-americana de segurança, atuando a serviço de interesses privados em conluio com grupos criminosos.
+"No tempo em que Larsson escreveu, os hackers eram indivíduos, gente fora da lei. Hoje em dia, como [Edward] Snowden mostrou, quem faz a espionagem são as corporações, os Estados. O trabalho de pessoas como Lisbeth Salander é ainda mais necessário", diz Lagercrantz.
+Antes de criar sua história, conta ele, tratou de ler e reler as tramas produzidas por Larsson, decorar os livros. "Havia muitos desafios. O maior era encontrar uma trama. Nisso, Larsson era mestre. Precisava não apenas recriar o trabalho dele, mas colocar algo de meu na história."
+Pois conseguiu. Do ponto de vista formal, o fã de Larsson vai se sentir à vontade ao abrir o volume. Logo reconhecerá a mesma estrutura dos demais livros, cada capítulo identificado por uma data ou sequência de dias, epígrafes abrindo cada uma das partes do texto.
+Salander e Blomkvist são recriados tal e qual o figurino da série, com bônus para o fã. Lagercrantz mergulha na infância da super-hacker para finalmente explicar por que a garota se tornou especialista em computação.
+O jornalista, por seu lado, precisa enfrentar ameaças à própria existência da sua revista, a "Millennium", que acaba de ser engolida por uma corporação de mídia –demissões e mudanças de rumo editorial são algumas das consequências.
+A figura mais emblemática da história é, porém, uma das vítimas: um garoto autista que se revela mestre do desenho foi o ponto de partida de Lagercrantz para produzir a trama.
+"Acordei às quatro da manhã pensando em uma história antiga, de um menino autista com capacidades especiais para o desenho. Comecei a pensar nele como uma figura espelho de Salander. Então imaginei o que poderia acontecer se um menino assim estivesse no meio de algo terrível, como um assassinato. Bang, bang! Eu tinha uma história", contou.
+De fato, uma boa história. Que ainda traz para os holofotes da trama a gêmea de Salander. Artífice de maldades, Camilla continua à solta depois de seduções, tortura e assassinatos. Sai da história como a dizer que a série "Millenium" não acaba agora.
+"Talvez eu faça, talvez eu não faça uma sequência", solta Lagercrantz, cujo livro mais conhecido até agora foi uma biografia do goleador sueco Zlatan Ibrahimovi?.
+"Atualmente estou simplesmente muito satisfeito com o trabalho, é um privilégio. Terei agora uma série de viagens de divulgação e só espero ter um tempinho livre no final do dia para tomar um copo de vinho no quarto de meu hotel e pensar no que realmente gostaria de fazer. O que eu sei é que eu não vou ser Stieg Larsson pelo resto de minha vida. Vou pegar outros desafios. Talvez escreva um quinto livro. Ou não. Vamos ver", diz, ao concluir a entrevista.
+Sim. Vamos ver.
+Leia a entrevista de David Lagercrantz na íntegra no blog Mais Corrida
+A GAROTA NA TEIA DE ARANHA AUTOR David Lagercrantz TRADUÇÃO Fernanda Sarmatz Åkesson e Guilherme Braga EDITORA Companhia das Letras QUANTO R$ 44,90 (488 págs.)
+TRECHO
+— E o que aconteceu depois?
+— Nada. Absolutamente nada, e esse talvez seja o detalhe mais estranho. O episódio simplesmente foi ignorado e, ao que tudo indica, porque o cirurgião não quis processá-la. De qualquer forma, Mikael, foi um ato de loucura. Nenhuma pessoa equilibrada entra num consultório médico para quebrar dedos de um cirurgião. Nem Lisbeth Salander em seus momentos mais desvairados faria uma coisa dessas.
+Mikael Blomkvist não estava totalmente convencido. Achava tudo muito lógico, ou pelo menos dentro da lógica de Lisbeth. (...)Teve a impressão de não ser um caso qualquer para Lisbeth, sobretudo pelo alto risco que ela havia corrido.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "323b0c62b0cf481cc65bdfeda7e020363ea441fdee4078193625fed57daef412",
+    "mention_text": "David Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "900264f15f9711d687f4bccdf5e26097e7e3e174606148c816f0cbcfa7e201e2",
+    "mention_text": "Stieg Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9d46ce5884fd4b0c3ffcfbf2674880e2abbc7334b67b77a8ff1af4306908f16",
+    "mention_text": "Lisbeth Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6aab95ab57b3d0765322acc19d12a371520034fab9f247444d85a29086b56b4c",
+    "mention_text": "Mikael Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8da2aeae98b9f0fa313a3b0682d9b377f21e44438e810bb737292a0405f935e",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f2695c174a9a2e59a86a845fc03e1ad79fae49faafca7b19eb8abd871c4f20b",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e7ebecba0850ecfb123ec12cf0fcf12a4572d6d75a38e332c9d0f4004e3dfe7",
+    "mention_text": "Eva Gabrielsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "208c377f1484beb217fb5efaaefe5e063c401257ba9a0d038f09a7e23e07eb26",
+    "mention_text": "Joakim e Erland Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26afccc292287447dd8142e2d23636c4e5fdd0307e9a0ae3d122f9f7fa648ef5",
+    "mention_text": "Stieg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e25deebc25453c19f09150c997f3c0f5745b6c6e6af9966373a66726c2d6e3f",
+    "mention_text": "Expo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45e752dd0a16e53730534c438e57df9d285b4054d56b954dba8aa3ccdf69d271",
+    "mention_text": "Stieg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84b2d0d3a373271dbbe6c6f43409fcab44e258a862c91285f450d525526fc298",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9287c78c159612b34ce6e43233c6a98d6ae95b6496b6d5cafc888535cde115ee",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d9b17d0d3194d741ced7a1e53ad963644098780488c987e22f567e97b26c536",
+    "mention_text": "Eva Gabrielsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad2980c40eb2d62bde589237982f5a94dd1b46e0ac3912e3446eb11803107ef8",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "412270394e5d10f11f42e655a829428cd32a60e9a14b6a3227eaf60e553fd675",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48abfd67579df34ad87ba4d939af85899acfcba04c8bfafc51324342b3cf2677",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8a3b4a9d6aec346d71bebcfad66329e6d12afbbb0fe6904695da11c9481d595",
+    "mention_text": "NSA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e07eb33feb371eab4eefbd776f051f91a99275a2f95304c92c6fdcf2f4acc543",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81af4e1f0b39bd7b525f7d63e2284a80dbc37f58e6db03ea0d51838d5160ba54",
+    "mention_text": "Lisbeth Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2a817930c47697c081b2e224564688cb4893336e8e9e7d34a3b289a79a73764",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f37181f3d8d0315af2d965c0440ea151e300bd8637aaac02bc03124402491251",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb5b0fa1a6a78109fb0736ed9951830ce7cfafac4fc3aaf53186fbae3a65d287",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3c1ee2d4b48dc0efc9072e5469058913824d537fa58c3ac5715a93449a78c4e",
+    "mention_text": "Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6e8540f316e4132d041320887daf9f879e5d3f28bd183de38818c9468c635c9",
+    "mention_text": "Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3b7cb126197bc8f9a047e354766c8ae4aecb1bf4de8d1148d896ad40c7a9d94",
+    "mention_text": "Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9bfbef8314ae11a26b07e47d974ba33cb5c31f0ededb9a4d2c8927ba0c63490",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f3ea304ecab7d4135ee71efd8b483e93034a27543860869ca1b353516312ba5",
+    "mention_text": "Millennium",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5170349d196350dfaff8925ab38e1865113143bac0d50ca0a1da0b2a70378f6",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc0b5a62e64bdc6c396e922dfbfd36e985717df16edbc343114eaeec0105f211",
+    "mention_text": "Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc3a8b1d8c4cb72f07c6a7c3c45d352f51cb9b23ecf425d23f66df86932df032",
+    "mention_text": "Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1eab2ac9fb1a5f280469f675539d36c61b09b3b5a4521e9f82a10ee439f0f253",
+    "mention_text": "Camilla",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "212fee1db12d05e7b37def1dd324ad333df3fee4da46eb192435fe5cf9a70ae5",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "393337a0bd61bcb3abec0d710d0d29a418fd479c1208af46e39edc4390f5e295",
+    "mention_text": "Zlatan Ibrahimovi?",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "efbacfbbce7ce8fd007070bd5fdd6a83d02e80886ce84bc6ab408e48975591be",
+    "mention_text": "Stieg Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7c52b5fea31e2080f45d5a4088cfb05874e128c97c85eec8188cb402d3feefb",
+    "mention_text": "David Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49e381ea2f49d63f454ead8c96facc3480e83c3252689f38d50603812bd70894",
+    "mention_text": "Mais Corrida",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c59b24f0a4d89e8a1b4f4841bfdfdd7bce6d586036eadd4f8a0660a8ec411714",
+    "mention_text": "David Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e63bef9d8616d0f2a880204b66b9f8849da159bbb13c57b823f3f8a90f1889b",
+    "mention_text": "Fernanda Sarmatz Åkesson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d7bc7f9ff11514ef5ccbd141572c9adcf02099b804a90423e4adc0e586f25b0",
+    "mention_text": "Guilherme Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38426c35fcd71c3bc9ec59c75128ac49beaf0c3cc586847aaac5d6a5214e33a1",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b90bc32484643950da7a7ae43c4b5aa50a895b4bd1f52eb780b194a86029303",
+    "mention_text": "Mikael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7d29858f9f6cb279dc978f18fde287b2319de1abca5f450e2bdc505e359abc1",
+    "mention_text": "Lisbeth Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5fbe7a0d1f8090052b448a82c783c9e79573b843b5a523d5111aee256727e8c",
+    "mention_text": "Mikael Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ce160d4de94fbb9c46530aa624d76fa939a0b2b889213a7c13197564e5c368a",
+    "mention_text": "Lisbeth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20acd8168cba81bd4646d96cde047a7d6c23b98a5a434c2a225f6737cc95f852",
+    "mention_text": "Lisbeth",
+    "categoria": "PESSOA"
+  }
+]

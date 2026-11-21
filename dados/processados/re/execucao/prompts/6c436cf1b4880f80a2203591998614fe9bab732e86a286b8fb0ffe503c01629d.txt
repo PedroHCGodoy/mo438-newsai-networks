@@ -1,0 +1,324 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0b8223596858244ca9b08d65a00ebcaa746e05652aa93d7c03e438cd14ac964f
+
+TEXTO:
+Robôs industriais não são ameaça, afirmam especialistas
+
+A morte de um técnico por um robô industrial em uma fábrica da Volkswagen na Alemanha deflagrou uma tempestade nas redes sociais nesta semana e causou temores sobre a segurança na era da robótica que se inicia.
+Mas especialistas em inteligência artificial e automação dizem que o incidente deveria ser entendido como acidente industrial extremamente raro, em lugar de como alerta sobre futuras ameaças. O acidente, no qual o robô esmagou um homem contra uma placa metálica, ocorreu durante a instalação da máquina e envolvia um robô de alta velocidade e de primeira geração projetado para operar dentro de uma gaiola, bem separado dos trabalhadores humanos.
+"Com a presente tecnologia, não podemos 'culpar' o robô", disse Blay Whitby, especialista em inteligência artificial da Universidade de Sussex. "Os robôs ainda não estão em nível no qual seu processo decisório nos permita tratá-las como culpados".
+"Esse infeliz acidente é técnica e moralmente comparável a um operador de máquina ser esmagado por não ter usado o sistema de segurança", ele acrescentou. "Este caso é mais complexo, e portanto mais perdoável, porque o sistema de segurança era oferecido por software, e o trabalhador estava em meio à instalação".
+A próxima geração da robótica -designada como "robôs de assistência no trabalho", "robôs colaborativos" ou simplesmente "cobôs"- foi projetada para que os robôs trabalhem fora de gaiolas e ao lado de pessoas. Eles incorporam sensores e outros recursos de segurança para limitar a força que podem exercer e para impedir que escapem ao controle.
+"Infelizmente, as pessoas têm expectativas exageradas e medos exagerados quanto aos robôs", disse o professor Alan Winfield, do Laboratório de Robótica de Bristol, no sudoeste da Inglaterra. "Sua sensibilidade foi exacerbada por filmes de ficção científica e histórias na mídia".
+O professor Sandor Veres, diretor do Grupo de Pesquisa de Sistemas Autônomos e Robótica da Universidade de Sheffield, apontou que houve poucos acidentes fatais com robôs industriais instalados em gaiolas desde que a indústria começou a utilizá-los, nos anos 70.
+Desde o primeiro incidente de morte causada por um robô, em uma fábrica da Ford nos Estados Unidos em 1979, esses casos vêm ocorrendo em razão de menos de um ao ano - o que responde por uma fração minúscula das mortes em acidentes industriais.
+De fato, a automação via robótica provavelmente reduziu o número geral de mortes nas fábricas, porque mais pessoas teriam sido mortas em uma série de outros acidentes industriais se estivessem fazendo o trabalho no qual foram substituídas por robôs.
+Mas mortes continuam a ocorrer. "Eles se movimentam de maneira notavelmente rápida e silenciosa", disse o professor Veres. "Se o sistema de segurança falhar e alguém estiver dentro da gaiola com um robô que não tenha sido desativado da maneira devida, as consequências podem ser fatais".
+A Federação Internacional da Robótica estima que um recorde de 225 mil robôs industriais tenham sido vendidos em todo o mundo em 2014, 27% a mais do que em 2013. A indústria automobilística continua a ser o maior usuário, ainda que o balanço geográfico esteja mudando da Europa para a América do Norte e Ásia.
+Ainda que os robôs industriais de primeira geração, que trabalham separados das pessoas, continuem a dominar o mercado, boa parte dos esforços de pesquisa acadêmicos e empresariais vêm sendo dedicados aos robôs colaborativos.
+O professor Veres está envolvido em três projetos para desenvolver sistemas de computação que permitem que robôs trabalhem em segurança ao lado de pessoas. "Grandes ganhos de produtividade poderiam ser conquistados se conseguíssemos que os robôs realizassem trabalho de rotina ao lado de pessoas cujas funções continuam a ser mais bem executadas pelas mãos e mentes humanas", ele disse.
+"Por exemplo, o robô pode segurar os componentes na posição certa para que os trabalhadores humanos os apanhem", continuou o professor Veres. "Pode carregar peças pesadas demais para uma pessoa. Ou pode inspecionar o trabalho com sistemas robóticos de visão, que para alguns propósitos são superiores ao olho humano".
+Uma maneira simples de melhorar a segurança é que os robôs se movimentem mais devagar, para que as pessoas possam sair do caminho, mas isso pode ser exasperante para os colegas de trabalho humanos.
+"É realmente enervante o quanto o movimento deles pode ser lento", disse o professor Veres.
+Outra solução é incorporar scanners e sensores aos robôs colaborativos, combinados a software que processe a informação e informe a máquina sobre o que as pessoas estão fazendo em torno dela.
+A tecnologia incorporada aos robôs de assistência nos locais de trabalho industriais é semelhante à usada em robôs sociais projetados para interagir com as pessoas em suas casas.
+De acordo com o professor Winfield, que acompanha de perto esse campo, "o primeiro exemplo real dessa categoria de robôs assistentes de propósitos gerais é o Baxter" - lançado pela Rethink Robotics, de Boston, em 2012, ao preço de US$ 25 mil.
+Mas os pesquisadores já estão trabalhando no próximo passo, para além da segurança: "robôs éticos". "Um robô seguro não fará o mal, mas um robô ético ira mais adiante e protegerá as pessoas caso aquilo que elas estejam fazendo possa lhes causar um mal", disse o professor Winfield. "Estamos começando a realizar algumas experiências de laboratório para estudar e testar essa ideia".
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e4424c5186a15908b54ccf9238bcc3199fe3f8bfa308f2f73bcf4ef8845f0fba",
+    "mention_text": "Volkswagen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f2127827b768dc064637b21710b476de9788dd53d21ecaa8570b268c2ae570d",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd67e8cf8070b296497571b23ceb82df5135ef3a013d395726f87e03fcc34f33",
+    "mention_text": "Blay Whitby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfc6c9be3b085700cfce8d9777820ab6eb9552736bb0bf847594e450163bd5bf",
+    "mention_text": "Universidade de Sussex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e3fb40456cf4d7647119c887de99de1c6f08eef84a37eb557cdc8fad8b9423a",
+    "mention_text": "Alan Winfield",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0cb2c4946fab2cef03ce83765c927a938529b9629b047de7ec00e008852c0c15",
+    "mention_text": "Laboratório de Robótica de Bristol",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39e82b343f53092a5fc840fbe4d47922f8dbb1268666e6d840c18197d8a36525",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1634207d9196ebb7cf4c17f34f3cbd8aec87999420742e9ca423b5cbbbaeb25a",
+    "mention_text": "Sandor Veres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46cb1344254c5950119278db4397a98f74ca3ba7cbd4b77f338f234671648010",
+    "mention_text": "Grupo de Pesquisa de Sistemas Autônomos e Robótica da Universidade de Sheffield",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63485c8dacae1026e66505375f588873c8f562c4bd199f54204400ac64e56f31",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7e387ac2a67fbabea9aca29efd5ba28fa08eca5f2cbcac281eb8303abbef145",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08e8d3b8c88749aa382d96e865a74bbe5b5fbbd5a11c0a19a6a8334440a70681",
+    "mention_text": "Veres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8baaaccf380bb69af9c9f7b157ecab28f12fb684d0c8c257286675c6dbaec0d",
+    "mention_text": "Federação Internacional da Robótica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a519f1b0e019a8043f1d2e951d4769227f15f66fb1d9fb4acece72033f8e7c3",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "654c37c08be056862e947724986ed301e2b5af8ded96ab09ab868c0310ce8eac",
+    "mention_text": "América do Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "024e623c1f0aef0c72c67842e774dde4c2bbbf2d22bda68347a9b74830d4ff34",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c882718cdd8db2cb712a2e614e8a770531997f6e8871e8bb5677ab3c23279b8c",
+    "mention_text": "Veres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd7fc6e39e12690c275934c136189e9e375e67d6e451cba97a165c2dc419b0c5",
+    "mention_text": "Veres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b902ac05529e8378f961fe4e7075811bf04ac56e371c015a20d9f53600db554",
+    "mention_text": "Veres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0db8b1cacbd4b0f58e7e8c2be2d8b78c008c74c19c192e287106816e7f7efca",
+    "mention_text": "Winfield",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd148a040e690671914915f03bfcbe3613d9d77bfa3676781f2b5daacaeb6b4a",
+    "mention_text": "Rethink Robotics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e130a60866238d61bc3d69877fd2fbf453dfa1724b1f9bb38fe814f28de41f5f",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "97b3b829e181baeb6e961829f3df4bfb1b483a522ce703695b45b02bc0ee15c9",
+    "mention_text": "Winfield",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b764af8e72d6d29c52f94284fac2c267ecc8066123d3b62c156e56f64f251e1c",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

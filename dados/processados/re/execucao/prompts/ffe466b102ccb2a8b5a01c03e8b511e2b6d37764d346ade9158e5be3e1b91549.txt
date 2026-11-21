@@ -1,0 +1,472 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1b416189063bf441f74df158cb037a934b0f5d17631d085310ffff2d6ecb404d
+
+TEXTO:
+Cientista aponta erros de Descartes
+
+CÁSSIO STARLING CARLOS
+EDITOR-ADJUNTO DO MAIS!
+A fama do neurobiólogo Antonio Damasio, 51, extrapolou os limites da comunidade científica com a publicação de "O Erro de Descartes", em 1994. Já traduzida em 12 línguas, a obra transformou-se em best seller onde foi lançada.
+O título provocativo pode incomodar os filósofos, mas conquistou o público leigo. Não porque exista um grande interesse popular sobre Descartes, mas porque o autor desvenda mistérios -como os segredos do funcionamento do cérebro e o papel das emoções-, utilizando-se de uma linguagem fácil e narrando casos médicos que beiram o extraordinário.
+Damasio evita a polêmica filosófica, mas não poupa Descartes como "símbolo de um conjunto de idéias acerca do corpo, do cérebro e da mente". Sua intenção é refutar, sob a luz da neurobiologia, a idéia filosófica que proclama a separação entre o corpo e o pensamento e que defende uma razão pura, estritamente lógica, como único fundamento confiável para as decisões humanas. E conclui: "Se Descartes vivesse hoje, possivelmente pensaria da forma que temos que pensar, e não da forma que pensou naquele momento".
+Nascido em Portugal, Damasio mudou-se para os EUA em 1976, junto com a mulher, Hannah, com quem criou um importante laboratório de ciência cognitiva no departamento de neurologia da Universidade de Iowa, do qual é diretor. Ele também leciona no Instituto Salk, fundado pelo criador da vacina antipólio, Jonas Salk, na Califórnia, e é membro das principais sociedades médicas americanas.
+Damasio falou à Folha, por telefone, de Iowa City, sobre o livro, que será lançado no próximo mês pela Companhia das Letras.
+*
+Folha - Em "O Erro de Descartes" o sr. critica o conceito cartesiano de razão. O sr. poderia explicar o que entende por razão?
+Antonio Damasio - Razão é um processo de utilização de imagens que representam conhecimento, de forma a permitir uma resposta adaptativa, uma escolha que permita ao organismo continuar a viver de uma forma eficaz. Esta é uma definição muito geral de razão que utilizo no livro.
+É em torno desta escolha de respostas em determinadas situações que julgo que os processos chamados de razão se desenvolveram. O que é curioso é que, tal como defendo em "O Erro de Descartes", este processo possivelmente começou na evolução natural, de uma forma que não foi necessariamente deliberada e tal como a pensamos hoje.
+Folha - Esta escolha estaria orientada pela emoção?
+Damasio - Na evolução, muitas dessas respostas, que têm a ver com a forma como um organismo funciona no seu estado interno, têm sido transmitidas, têm sido em parte escudadas, por processos que são processos de emoção. O que eu pretendo chamar a atenção é para a idéia de que as emoções, e toda a maquinaria que está por trás delas, não são um luxo, uma experiência curiosa que está ao lado dos grandes processos da razão.
+A idéia principal por trás de "O Erro de Descartes" é que há uma continuidade nos organismos, que começa na maquinaria de regulação dos processos de vida e se exprime depois na emoção, e que em indivíduos muito complexos como nós, com grande conhecimento dos fatos, vai utilizar não só estes fatos, mas também a manipulação lógica dos fatos. Quando decidimos o que vamos fazer, há uma mistura muito humana de fatos e processos de raciocínio lógico, mas também de processos de sinais emocionais que vêm da regulação biológica e auxiliam a lógica.
+Folha - Descartes errou ao isolar a emoção da razão, separando matéria e pensamento?
+Damasio - O título do livro é um pouco irônico. Claro que eu tenho uma imensa admiração por Descartes. Não gostaria de atacá-lo com a idéia de que ele tenha sido inferior em suas capacidades. Mas, se Descartes vivesse hoje, possivelmente pensaria da forma que temos que pensar, e não da forma que pensou naquele momento.
+Creio que temos que chamar a atenção para uma idéia que tem influenciado o pensamento dos filósofos e também o senso comum. As grandes divisões que estão implícitas nesta idéia cartesiana, entre aspas, são não só a separação entre o que chamo de mente e o cérebro, mas também a separação dos dois em relação ao corpo.
+Aí é que estão os problemas das pesquisas relativas à inteligência artificial. A concepção por trás delas é de que a mente é algo separado do corpo. Não há de fato apelo à idéia de corpo ou de corpo modificável em certas circunstâncias que chamamos de emoções. Esta separação parece-me extremamente errada e é algo que teremos que modificar se compreendermos o que somos biologicamente.
+Folha - Na sua opinião, as pesquisas sobre inteligência artificial seriam uma quimera?
+Damasio - Tenho imenso apreço e respeito por aqueles que estão tentando criar sistemas de inteligência artificial. Estes sistemas não só podem ser extremamente úteis para os seres humanos, ajudando a resolver certas tarefas de uma forma eficiente, como também podem nos ajudar a fazer experiências, por exemplo, sobre processos de raciocínio e sistemas lógicos.
+Mas é preciso pensar que todas estas medidas não devem ser vistas como uma tentativa de criar alguma coisa igual ou superior a um ser humano, porque simplesmente não vai ser possível. Nossa mentalidade, nossa humanidade e até nossa espiritualidade assentam de fato sobre um organismo. Este organismo é muito complexo e, pelas circunstâncias em que emerge na natureza, está sob constante risco de perder a vida, sob constante necessidade de manter a vida. É essa condição, que não é estritamente humana, mas biológica, que nos torna automaticamente diferentes de um robô que se pode construir com peças de engenharia.
+Folha - Como o sr. concebe os processos de cognição?
+Damasio - Quando falo em cognição ou em mente refiro-me a uma coleção de imagens em diversas formas sensoriais -visuais, auditivas, olfativas. Todas estas imagens, em constante manipulação, em constantes inter-relações e sequências sincrônicas, são o que chamo de mente. A maioria das pessoas considera a emoção e os sentimentos separados da razão. Eu argumento que, quando temos uma emoção, temos inevitavelmente e ao mesmo tempo a apreciação do estado do nosso corpo e do estado de nossa mente durante esta emoção. É esta apreciação que chamo de sentimentos.
+Folha - Emoções e sentimentos seriam modos de conhecer?
+Damasio - Quando você tem a apreciação do estado de seu corpo e do estado de sua mente, à medida que o corpo se modifica sob uma emoção, como o pavor, a tristeza
+ou a alegria, esta apreciação é também cognitiva, é também uma imagem. Só que é uma imagem ligada ao estado do corpo, em vez de ser uma imagem ligada ao estado do mundo exterior.
+E é esta talvez a idéia principal do livro. Quando temos uma emoção, o cérebro tem a possibilidade de criar uma imagem do estado do organismo durante esta emoção. Portanto, as emoções e os sentimentos são tão cognitivos quanto todo o resto.
+Folha - Que diferença há então entre emoção e razão?
+Damasio - Eu penso que emoções e sentimentos apareceram primeiro e que são o fundamento para todo o edifício mental, que veio depois na evolução e que está constantemente sob sua influência. Meus argumentos sobre os mecanismos de decisão são o resultado dessa maneira de pensar.
+O que tento apresentar no livro é o seguinte: em vez de pensarmos tal como queriam não só Descartes, mas também Kant, que nosso raciocínio lógico é o melhor e que o raciocínio deve ser feito de uma forma pura, totalmente divorciada das emoções, temos que verificar que o mecanismo do raciocínio tal como qualquer outro mecanismo mental está constantemente sob a influência das emoções.
+Folha - Mas o argumento dos filósofos derivava do temor às paixões como perturbações da alma. Tomar decisões, na sua opinião, não requer "cabeça fria"?
+Damasio - Claro que, em certos casos, se uma sintonização entre as emoções e as idéias é eficiente, as emoções vão ter um efeito extremamente positivo. Por outro lado, podem ter também efeitos negativos, por exemplo, se você quer chegar a uma decisão razoável sobre sua carreira e está no meio de uma enorme depressão, ou de um enorme terror sobre o que vai acontecer. É muito possível que sua decisão seja influenciada negativamente por estas emoções.
+Folha - Há uma justa medida da emoção?
+Damasio - De certo modo, existe. A emoção excessiva, de modo geral, é capaz de ser negativa para as decisões. Do mesmo modo que a falta completa das emoções vai ser negativa. O que estamos fazendo é modificar a visão tradicional. Para esta, as emoções são sempre negativas e devemos raciocinar sem emoção. A minha visão é de que, sem emoção, estamos perdidos. Mas com emoção exagerada também estamos perdidos.
+Folha - A hipótese do fundamento emocional da razão não conduziria a uma relativização absoluta? O sr. acredita em alguma universalidade da razão?
+Damasio -Claro que as contingências são inevitáveis. Mas elas são controladas por certos parâmetros de variação. Gostaria de explicar com um exemplo: se considerarmos seu rosto e meu rosto, concluiremos que temos faces diferentes. Mas, no entanto, essas faces e os nossos corpos variam unicamente dentro de parâmetros extremamente limitados. É muito improvável que qualquer um de nós tenha um rosto com 50 cm de altura ou um corpo com 10 cm. Há uma variação que limita a possibilidade de certas coisas existirem para além de certos valores.
+É exatamente isso que acontece em relação às emoções e à razão. As variações humanas são relacionadas com as experiências pessoais, mas a maior parte das variações vai estar contida dentro de certos parâmetros. Portanto, apesar de termos enormes diferenças individuais, na maior parte dos casos elas cabem numa variação que poderíamos chamar de universal. É por isso que nós, humanos, temos a possibilidade de comunicação.
+É quase uma diferença entre forma e estilo. A maior parte das contingências humanas acabam por ser contingências de estilo, e não de forma. Exceto, evidentemente, quando temos criaturas que estão fora das variações-padrão, como Pol Pot ou Hitler.
+Folha - O sr. aponta também um equívoco na célebre fórmula de Descartes, "penso, logo existo". O que há de errôneo nela?
+Damasio - A idéia é que não se trata só do erro implícito nessa afirmação, mas também de um erro que temos feito durante vários séculos ao utilizar essa afirmação. Eu tenho afirmado que o livro não é só sobre o erro de Descartes, mas sobre o erro daqueles que pensam da forma atribuída a Descartes.
+Descartes tinha várias intenções quando fez esta afirmação, e há fortes aspectos da sua afirmação que podem ser interpretados do ponto de vista filosófico. Mas a maneira como tem sido interpretada esta frase lapidar de Descartes é de que todo o nosso ser é uma consequência do aparecimento do pensamento e de um pensamento que necessariamente tem linguagem.
+Em "eu penso, logo existo" a existência passa a ser secundária em relação ao pensamento. Ora, o ser, de fato, começou a existir bem antes de haver um pensamento. Há indivíduos que não têm, por exemplo, linguagem, que não têm acesso ao grande pensamento lógico, e têm, no entanto, um ser e uma consciência.
+Trata-se portanto de uma discussão relativa à procedência. O que vem primeiro: o ser, com sua biologia, suas emoções, seus processos simples de resposta, ou o pensamento? Para mim, o que vem primeiro é o ser biológico.
+Folha - Um dos princípios do pensamento de Descartes é a identidade permanente do "eu" como uma unidade à qual se atribuem as idéias. Em seu livro o sr. questiona também essa identidade permanente. O que é afinal o "eu"?
+Damasio - Esta é uma das idéias mais complexas do livro. Aliás, é a idéia que estou no momento desenvolvendo para meu próximo livro, que examinará a maneira como construímos a identidade, a idéia da construção do "self".
+O que acontece é um pouco como o mito de Sísifo. Aquilo que temos como identidade, os sentidos do "self" e a tradução do "self" em linguagem, por exemplo, na palavra "eu", é de fato uma construção, não é alguma coisa que existe num determinado lugar. A identidade é construída como nosso conceito de qualquer outra coisa.
+A cada instante de nossas experiências mentais temos que reconstruir o "eu". Talvez a coisa mais cansativa para o organismo seja essa construção incessante do "eu". Mas esta reconstrução não precisa partir do nada. Existe uma imensa estabilidade do corpo, e existe também a estabilidade de certos aspectos de nossa biografia.
+Folha - A crítica de Espinosa ao dualismo cartesiano parece ter influência sobre seu trabalho. O sr. reconhece esta ascendência?
+Damasio - É curiosa essa observação, pois devo confessar que meu conhecimento de Espinosa é extremamente limitado. Estudei Espinosa no liceu em Portugal e nunca mais li suas obras. Um filósofo me disse que há em meu trabalho várias concepções coincidentes com as de Espinosa, mas digo com toda honestidade que não posso assumir a influência.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e534df6f7aff0d49ff88e800fd64d32e262aa9dc8968614246c78ca040be9c4a",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af834f4c456bc74d2f8bda9d8744073182d6a352c38b35f591bf1dc9a8cf552c",
+    "mention_text": "CÁSSIO STARLING CARLOS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "090a4e1eaae78bba7882867f581a71b61f9ca1f6d2e981928344279a585d0ad2",
+    "mention_text": "Antonio Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "674f4e10e5c4eb518b3c99fd0bd221b096447a0cfc5f330fd64deed385a78f5d",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45bfecc31042ff0477c7578d207ee0f16ebc7af353c7af39e17b3fd1106f48af",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99a4f9b0fedf2e328373e1e409eb4b01fa423ce7b1b7ce9cc81621515ee30e22",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7a1978bf74678295d2c084dd253e00f5f7ea0ab9ce5232e7ce97af68375fca7",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfedf61cc5b5b5ea81eeb906a64b5fc6259388316763f9b410acdc3be1d79743",
+    "mention_text": "Portugal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1102451bcfce9ead780cc6056dbbbbb0eab0662b03c1756f34e114e6bb7f4681",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6feebf394b9815dc5d2c83bc7402394cd10f0830429f3b353970ded5fd36a68a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ce9b505bc6058f9bd31c3341bea8cafa206b1e95e3c2d3775eb79bd52a6d85b4",
+    "mention_text": "Hannah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b38247105fd47e0961a74747882d2c284793415d3e9669c0ec035391f67c6cd4",
+    "mention_text": "Universidade de Iowa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5dc396372f1060c1a6be6a4b43b12b06f35802a2a2b34528d9a709596d9c21e0",
+    "mention_text": "Instituto Salk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e437596157586b73a551c67e50326fe51f1593e9c6a739ba60b6f69859234331",
+    "mention_text": "Jonas Salk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36ae8bcbc7ccfc973eca120aa402de79bed485b4c3c290a04300403602a41c80",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5c2cee72701573c3cecd8b2ebdb2cf3d095beaa73458db0d572845ed714782a",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ef478fadb039c6d3102489da14c6ca5147804bbeea174cfbc9f4b96e09a707f",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83a1a902dc93b64fee0a1c7cad245b014a899cffa3fde8c4770920f1f00725d5",
+    "mention_text": "Iowa City",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bedf52edaa746d7bf724139cb412985fb24489f7680fed75418623521d38f0fd",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2193b47af7a7ef8ec092fdc1665b41c2bf6bd6e8c4d6c5536a84f935ba5b9681",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a370bf2c65aff807bef9a798e3b6cef161c49e6564eef3c1f9d6784ce9bc9466",
+    "mention_text": "Antonio Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44906e2d1dbb38ac576cc501cf54b0a996ea51a8f0bb962f94efe415e5275ea0",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a684e3a87caba2968bf50ec076dd4a08163a5780ff62295bad51e9633a6cf670",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a56e6dd2d0006c5d319fbebe70fbdad4a51fcc87b101d2f3895af699da369c94",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4d1d9c8df0446ea12cd338c938cf27d72d0c62f14ae1ff356e684c759440f3a",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6811e7876c6d41fa9f33e76ed82d3bbbd5c94c2927d474d139731a807d28e244",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40d210d02235fb7efabea7aa58ab8e1d3e4f1d98aa89d850504a73e77450c445",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0dbff08956cbb55caf8dd6868e29df51a5ef43008e6884c80056a4768f38419",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7fdac4a437ae4d68253143d742c60dce3978e909e8b83d346ae7b83e952705a",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbdaea144e5192ad0cb7d174e92dc052a27832ddaa50c146bda8af19eb764e9a",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be344df0d7ae95e1339f63cc34854f93f90871df468cd0d69dbcf7a27262a97d",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "301faf7f041e76d90a975d89c38c42601a37f2e1a51c5ac7c7f90bd88961cdc3",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35b6fb1122931331b6e5e884affcfbeacf3ace19895f454e4997437c42d1d00e",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1dd9e5dd98114c8edbdd4a9ee807d40985bd36085885dfa12bbad6d5cba3102",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63ba50ae97e51c8f0691bbc2d11e4143e452e6731f52ca3d52b00d20052f9b8a",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16142534e528ecc8e26ef75547b07950b8b9ac7d10257c76ae338de408526aa1",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09c9a6c4b3fa0fce3841910ab6fa6ca80f889056ac6207be155e74f21519bd73",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddeab01d4f4be02496c28c7eee77de81dae63b94d859f7d69920061ab7e4d157",
+    "mention_text": "Damasio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b52524d9c67c6a6e8259763401d9543dd8aae5a284cbac59484015b0a9b65e99",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2e613615ce061469d0e4b5aec643089d0d7206ba360c0b6ed703fe6218dc637",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2575e13d4e2d0d6471a30fd0c58449b4f2943313919361913e50e513c8f8e554",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d56ef978fa0e6d39d8cd3f46b64ddf811569d71e38a0fb5036ba274cc46ba11",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e750503636e561c97a0245c5fec88e8d1db92da599efdcc0f5cd2b1c121bc118",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6568f1154a5dedb08138044dee4e97aa825346a0a18d7f426bf296afb673749a",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8ea448e0accc7fd9a075083d18d66e47739c0d92900a399722c82932149ada1",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8eaa1dcf35818345f1e7e544e7fed239a73b6d8bd06faafb4da5f0baaa51588",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "533b07bc185a628bb2f4f7809d732ebc244a3068e7de13f2a0dee6e59155b596",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f529e837d86816855ec6ee8fd677e13f87562fe6723d2f1f8f9e2fc05c7d52b",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  }
+]

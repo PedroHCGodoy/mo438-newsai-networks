@@ -1,0 +1,332 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: be5ff5165df622e8331d55ec57a47da5bf5e2847261c2316a9afe7daa1590935
+
+TEXTO:
+"Na informática, Israel é um império"
+
+Quando o site da revista "Scientific American" discorre sobre os avanços da inteligência artificial nos últimos 50 anos, destaca dois supercomputadores da IBM --o Deep Blue (que ganhou um torneio contra um campeão de xadrez) e o Watson (que ganhou um game show de conhecimentos gerais)--, mas também fala de uma empresa israelense desconhecida, a Mobileye. O poder desta última se concentra em um chip de apenas um centímetro quadrado chamado EyeO. O algoritmo do chip é capaz de interpretar em tempo real tudo que uma câmera simples instalada em automóvel captura, para evitar acidentes ou reduzir seu impacto.
+A fim de comprovar seu funcionamento, saí para um passeio com Ofir Atia, engenheiro da empresa. O passeio mostrou que a câmera detecta os veículos próximos, e o EyeO calcula a velocidade relativa do mais próximo com relação ao carro em que está instalado, prevenindo com um alarme sonoro se a distância se reduzir demais. Caso o motorista não use o volante para corrigir o problema, o sistema aciona os freios. A câmera também identifica os pedestres nas calçadas, e freia automaticamente caso atravessem a rua, a fim de evitar um acidente, ou para mitigar o impacto de uma colisão, se a velocidade estiver alta demais.
+Capaz de executar diversas tarefas simultaneamente, ao contrário dos homens (melhor não me referir às mulheres...), o sistema lê sinais de trânsito e aponta o limite de velocidade. Alerta quando o motorista muda de pista sem acionar o pisca-pisca. De noite, alterna automaticamente entre farol alto e farol baixo a depender do trânsito encontrado.
+A câmara "observa tudo", o chip analisa o que a lente registra e dá instruções aos acionadores (actuators), que disparam alertas, apertam cintos de segurança ou acionam freios. O resultado final é uma contribuição forte para o que os especialistas designam "manejo autônomo", quando o automóvel já não precisará de nós.
+Amnon Shashua, co-fundador da Mobileye, é professor de visão computadorizada e de aprendizagem mecânica (machine learning) na Universidade Hebraica de Jerusalém. Contou-me que, desde 1999 --quando sua empresa foi criada-- já previa que um dia seria possível garantir a segurança de um veículo por meio de uma única câmera --"pelo mesmo motivo que uma pessoa não fica cega se fechar apenas um olho"--, quando todo mundo mais estava convencido de que seriam necessárias pelo menos duas (o que custaria bem mais caro).
+A tecnologia da Mobileye já está em uso em alguns modelos da GM, BMW e Volvo, e está disponível como opcional em carros da Citroën e Honda, entre outros. Até setembro, um milhão de veículos equipados com o sistema estarão circulando.
+Shashua também conta com o interesse das autoridades norte-americanas e europeus que defendem a adoção de dispositivos de assistência a motoristas. O preço atual do sistema completo, US$ 150, já está bem próximo da cifra mágica dos US$ 100, a partir da qual os fabricantes podem passar a considerar sua integração como item de série.
+O sistema da Mobileye recentemente foi incluído na lista dos 45 inventos israelenses mais importantes. Shashua me contou que "eu sabia [desde 1999] que ele poderia funcionar, mas não no ambiente universitário". Por isso, criou uma companhia para atrair os fundos necessários, com a ajuda do Yissum, o fundo de investimento da Universidade Hebraica, que ficou com uma participação em seu capital. Os negócios vão bem e a empresa pode em breve atingir valor de mercado de US$ 1 bilhão, de acordo com o site israelense Ynetnews.com.
+Shashua está convencido de que, afora o Vale do Silício, o único lugar onde surge inovação é Israel. "É parte de nosso ADN como nação", ele afirma, "diferente do que acontece na Europa ou Índia. Temos os algoritmos mais avançados. Na informática, Israel é um império".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ac412ddd7de676c75b00bb04630bb821813828fd230ea255f204128d81c9a51c",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b297357184f892a0a884765c057d05d7beed2535fc9ae19d524ceba35f925693",
+    "mention_text": "Scientific American",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5b418ee8b41833da1851bd717149ccedf3212e5de7589ebfff9ef531377e3f3",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d8d37f53d5005f8186329ef60f34521ec54d9e2f10ca7d52c7f39e93baa41cd",
+    "mention_text": "Mobileye",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42c8c6723a060f10e89c03f030eab69d44059ddc9e313690e9a98b8038d002f8",
+    "mention_text": "Ofir Atia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9f7195f37ebba9ee7bfe8c65963cb5a6b2b06cad7b47bdcd697f1f5eaa7f748",
+    "mention_text": "Amnon Shashua",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73e5ab9c73c7144798380c1e3575028743e797ac80a205c8f0261a28a3130426",
+    "mention_text": "Mobileye",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "787e12132011a480e06228cc56d75c32f0e2d868b13ab1e9f8346c6bcabb7cb2",
+    "mention_text": "Universidade Hebraica de Jerusalém",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "563701bdef91a901e6f5994c7a914f5355bc6c155d806c8461c536601a8c1cdb",
+    "mention_text": "Mobileye",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdeee1d19c4b295258f89884cc8e49bf115ab22ee5b8522b512b4ae8e6c65d79",
+    "mention_text": "GM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59e8e86a03d041d2a2923dd8fc4c165251c47e5250909ddc65368b5d8ee6149f",
+    "mention_text": "BMW",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7eda13267845104573a0306090fa3e522f129f87eff8a7b37cc3fb2498f36dea",
+    "mention_text": "Volvo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5367fffd4a6387af72d39e9f069d1ba10b579dcf88b7d353a323ac2df37e1823",
+    "mention_text": "Citroën",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ca46277503567c0d653242a04670da4f506d7d1aa182fbbb777d9183d78aeac",
+    "mention_text": "Honda",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad2965c171b0bcfaf5fda6f6d55b62c1bf5696924b35e47224781b984ad19ac0",
+    "mention_text": "Shashua",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36beebfed5ad3dd50eea25824b1823019a01c5778f84f5d77732f427485989a8",
+    "mention_text": "norte-americanas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8208ad8fbb0dbc8ed13a55c02a6cf1d188730e20029d73054ac4824d33e46388",
+    "mention_text": "europeus",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "00adf7a5f833c13dced0ab32e21f7ccda87880136ce1823ec1a04aca0fdc4082",
+    "mention_text": "Mobileye",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04514625bf608575b12caeef563a46f8958b77a2743519d1952ca9e2cbf85db1",
+    "mention_text": "Shashua",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6ade2b006e420cb79a052395ab32aaed92e32cdb457bb2b355363bbf4a9bb07",
+    "mention_text": "Yissum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6614f1385a34dabe912f0e489fbb2061e2c402d242fbaf29d6abe5ecb6b0c544",
+    "mention_text": "Universidade Hebraica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f80fbbb31c17e483eb9ebf96916784b1c5698575277de31c7be7762b7ccebd61",
+    "mention_text": "Ynetnews.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f655b005abdd1981cc91d8bb65f1c2e8928cdf4be9ed77c14f4488d582848c42",
+    "mention_text": "Shashua",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62273a76f481a2edea94ae047da9092e08b2051a9ea1126d3e93af318d0f3c16",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7509a7a8c5324e68833c3ab299816c1f6c985a298c675191eec01748bdf537bb",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3dada3e63a32af6fb102b8b1202fdfead77267277b78447e05c464cdd0f0b9a0",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86dcf0499bacdb2722da61d985313946ad7b453b658c889975473acd762fb104",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c0f98d21830ca7e9c17d709c3e61103b9e8706af8e8de4161aa70b00358e7829",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  }
+]

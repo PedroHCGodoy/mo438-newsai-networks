@@ -1,0 +1,380 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e06e9880b145c715c3f540885c9572e375c058bdc1e85148b047b277bd15f4d4
+
+TEXTO:
+'Precisamos de penas, autorregulação não funcionou', diz deputada a Zuckerberg
+
+Em novo depoimento ao Congresso americano, o fundador e presidente-executivo do Facebook, Mark Zuckerberg, afirmou nesta quarta (11) que teve seus dados pessoais colhidos pelo aplicativo usado pela consultoria Cambridge Analytica para difundir propaganda política.
+No total, 87 milhões de usuários do Facebook foram afetados —incluindo o seu fundador.
+As informações foram colhidas e vendidas a terceiros, sem autorização prévia, para a divulgação de materiais em favor do então candidato Donald Trump, entre outros.
+Zuckerberg respondeu à pergunta da deputada Anna Eshoo, da Califórnia, que também o questionou se ele considerava ter responsabilidade moral, ao comandar o Facebook, de proteger a democracia.
+“Sim”, afirmou o executivo.
+Durante cinco horas, sob novo cerco de congressistas que o questionaram sobre monopólio , falhas de segurança, monitoramento de usuários e censura prévia, o executivo admitiu, novamente, a possibilidade de apoiar uma regulação a empresas de tecnologia.
+"A internet vem crescendo tanto em importância que é inevitável que precisaremos de alguma regulação", afirmou.
+Zuckerberg, porém, não quis responder sobre a possibilidade de mudar o modelo de negócios da plataforma a fim de proteger a privacidade de seus usuários.
+Atualmente, boa parte das receitas do Facebook vem da publicidade —que é direcionada de acordo com as informações sobre preferências e perfis dos usuários.
+Um dia antes, Zuckerberg falou por quase cinco horas ao Senado , onde foi pressionado por congressistas, céticos de seu compromisso em assegurar a segurança da plataforma.
+Na Câmara, o executivo ouviu elogios à sua “verdadeira história de sucesso americano”, e à forma como “revolucionou” a comunicação entre as pessoas, segundo afirmou o deputado republicano Bill Johnson.
+Mesmo assim, não deixou de ser questionado firmemente sobre sua responsabilidade na difusão de conteúdos falsos, de ódio ou de incitação à violência –e se o eventual controle sobre esse material não poderia ser interpretado como censura.
+Deputados republicanos, em especial, mencionaram casos de posts de inclinação conservadora, que foram retirados da plataforma após denúncias de usuários.
+O fundador do Facebook defendeu que a plataforma é neutra, mas pareceu não convencer os congressistas, que voltavam ao assunto pergunta após pergunta.
+Ele afirmou ainda que a empresa está aplicando ferramentas de inteligência artificial para identificar e banir, de forma automática, posts com potencial danoso, como discurso de ódio e manipulação eleitoral estrangeira.
+Zuckerberg reconheceu que esse esforço terá resultados “no longo prazo” –mas negou que esteja agindo como censor.
+"Existem alguns tipos de conteúdo que não queremos ter em nosso serviço", declarou.
+Muitos congressistas perguntaram o que exatamente o Facebook rastreava, inclusive em outros aplicativos, ou se a plataforma ouvia às conversas dos usuários pelos microfones do celular ou de um computador –Zuckerberg disse que não.
+“Muitos desses casos são coincidências”, afirmou o executivo, sobre a publicação de anúncios que parecem ter informações nunca relevadas na plataforma.
+O deputado Bobby Rush chegou a comparar a atividade do Facebook com o monitoramento de ativistas dos direitos civis pelo FBI, na década de 1960.
+“Vocês não são mais a companhia que começou num dormitório da faculdade. Há uma enorme responsabilidade social que você falhou em considerar”, disse Rush.
+Na terça (10), muitos senadores se mostraram desconfiados e questionaram se a empresa não cresceu demais, sugerindo uma possibilidade de regulação antitruste.
+A preocupação ressurgiu nesta quarta, quando alguns congressistas defenderam inclusive a aplicação de multas ao Facebook, por descumprir um acordo feito em 2011 com o órgão de defesa do consumidor dos EUA, para proteger os dados dos usuários.
+“Precisamos de penas robustas, para evitar que isso aconteça novamente”, disse a democrata Diana DeGette, do Colorado. “Nós já ouvimos uma lista de desculpas. A autorregulação simplesmente não funcionou”, afirmou a colega de partido Janice Schakowsky.
+A diferença é que, na Câmara, alguns congressistas se posicionaram a favor da companhia.
+“Nós não precisamos de novas leis e regulações. O que temos é um CEO com a cabeça no lugar, fazendo o melhor que pode”, afirmou o republicano Chris Collins, de Nova York, que se disse confiante de que Zuckerberg está trabalhando bem. O executivo agradeceu.
+Mais
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0bafcf331bdb8f4deb66ec5aae04e9fd4bf305a439696da09542a7fb3009bb68",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05847b63909cd06056db3edd3e16438100b4fde50cd33f5380c97f600f665d64",
+    "mention_text": "Congresso americano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9fa229172b48f83cdedf4d4fb205c50a7d915756c46d6eba588fe7ad6aa0831d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72411c923d55115c4464b3c5c1941fb38d131643f1406c5a75c55f3b1ba36460",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63ddbb808f6f1bca869bb5ae21ed3575abe8eb19b8e9895e7aa33e5416820e13",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7b0a58d77585fc7c9723f1bc168aa1e7a7d8559c183820eed4bb8bf0ba0e7db",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b43cfd84527bb0c58dcf3253a363d571b2ac5a71c41e79e63f9f3cbd78f0d83",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f82dda924e39f5ca449bc4f97408df5299aff3f41eda5fb4529d49109c4b95b0",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b4c2079b543e39afe87bfc489bdca46afa95952d84452936446504403f34da0",
+    "mention_text": "Anna Eshoo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "533d27462d5352aa8bb4907f3edb9021727d952ae3433cb0cd2bcc1d8833514c",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40ff46ec63d71c7914f089016758a18906c207e1004d156098c930538e5ead54",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb5e2cf7883fd98d34103588ddb47b55a5e5a0a1cf335e4491efa6293a7a868e",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c8836675280817cac835e4a37d159dc35c18bfcade618d2cdad003e448d09c6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69566d02a668bcd6b031ed753144d18a5c78aed1b7a441a0a29ddd87ba5ace0c",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f70d320e4997aedca16ba495ed78c7e0f2e0d8c92226defd08ea7430495f75e",
+    "mention_text": "Senado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bda6f1c8fd2fa114dd8d00148262b6e9458d184bdc8ef3a5c9fb9b2bb3297620",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00e75be83de1dec9df5ee7aed8efe45eb7218ebd49b7bbbed22b25a8eab35d61",
+    "mention_text": "Bill Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5325909591ddf14ff8b00e1ce5d52a9dbd4f99a7b062972cff77a65e0c7ca738",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77b4ec8b8db7f973f3cd7ea61b71f2dd76ed2dd53571c2c0bc2c003a5e69c2ca",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88a3cd66c1e303220a2df449bac4e0aecf23d1d06ad69e47dee68654101d973d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "050c60eb3fe499bb05d0a291a37ae0a7c14296142cc0806a93184fe6754ee1eb",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86b974af33dd1d1251d2c257cfae1c2a21b54fa6bf962b69b81a758b5c940d45",
+    "mention_text": "Bobby Rush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfb7967217bc84278a23058f6d61de1a54e9a2463f0f2381b4145c26ece57549",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a2ebb96b74450046041f0416b439f6e4352d5a36472c71b39473d3bd18f2504",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9993525cb6d4d6d02cbf21d1d45a782e236b8cd209b71e2cfe0d49245e361eeb",
+    "mention_text": "Rush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56415a1ba5ea7293c747d39bcc3f49b114d7be6e1a0011d8b042c9577f96e2e6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c4052110e73b495bdc99ae3293dfb4bd583f6ec896dd7c7cdcfeaa0ac7e290ab",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5dbd37c9b2cea129f1fcd99f5c00289436757328132d32c721cc26a524bb76ab",
+    "mention_text": "Diana DeGette",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c850f701ac30018e3c164fc39c4ff56fd99618c8b2ea92e0788c8a5a5c4fd13f",
+    "mention_text": "Colorado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6630b5d36af9d079b2241a230b131b5e8e6e25589b8434073faa3e2b0872e3de",
+    "mention_text": "Janice Schakowsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a55feac7172ee3ae4744636b87df51b54994354315074f2a02f2f123f58f1ba",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82c3ac3189380f2ea833f391f27d9b2a9fe5f3f8317c93f2e5bec14674cafb2e",
+    "mention_text": "Chris Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ecfae60d09cf6a89702d46ec3e990146ece84fc457d78549f0135c4c15ff9f0",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "97d7f73bacd45ffad3f306d79e36cdfabd109387269b3622a3ea0094e6542a6e",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  }
+]

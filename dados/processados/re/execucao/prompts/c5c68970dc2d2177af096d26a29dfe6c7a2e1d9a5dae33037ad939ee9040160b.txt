@@ -1,0 +1,711 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 68880c726f1eb8d00a9aa233aabdd80dddf0c9f5ba0b70ef807652839d6a5f0a
+
+TEXTO:
+Estrela da publicidade digital, boo-box começou a vida hackeando anúncios
+
+Aos 11 anos, Marco Gomes montou seu primeiro computador, sem mouse, a partir de peças velhas doadas por parentes. Enfrentou, no Gama, cidade satélite de Brasília, todas as mazelas de uma infância de periferia -escola pública, amigos assassinados, pais vivendo de bico.
+E contrariando as estatísticas, passou em computação na Universidade de Brasília (UNB). Mas abandonou o curso no terceiro ano, e também o emprego em uma agência de publicidade, onde chefiava uma equipe de 20 programadores mais velhos, para fundar a boo-box, empresa de tecnologia e publicidade digital.
+Com apenas seis anos de vida, a boo-box foi considerada uma das cinco empresas de publicidade mais inovadoras do mundo pela FastCompany e uma das duas empresas mais inovadoras do Brasil pela Forbes.
+Ao invés de sair batendo na porta de investidores com uma apresentação em PowerPoint no pendrive, colocou na web um site com seu projeto. A ideia original caiu nas graças do TechCrunch, site de tecnologia cultuado e de leitura obrigatória para investidores em start-ups. Logo veio o investimento da Monashees e também da Intel.
+Sem nunca ter assistido uma aula de gestão -"na UNB nunca ninguém me falou que eu podia abrir uma empresa"- Gomes, hoje com 27 anos, começou o negócio usando técnicas de hackers. "Sou um hacker do bem, daqueles que descobrem soluções criativas para problemas e tentam entender como os sistemas funcionam por dentro", diz
+Ele copiava, sem autorização, a interface de anúncios de produtos vendidos por grandes varejistas e relacionados com o conteúdo de blogs parceiros. Quando a audiência desses blogs passou a clicar nos anúncios, anunciantes e agências passaram a procurar a boo-box.
+"Foi a forma de vencer a resistência e conquistar a confiança dos dois lados. No começo os anunciantes não davam bola pois não tínhamos a audiência; e os blogs não se interessavam pois não tínhamos os anúncios", diz.
+Hoje a boo-box funciona como um elo entre mais de 1.500 anunciantes e uma rede de 500 mil blogs, que exibe uma audiência somada de 60 milhões de pessoas por mês.
+Leia abaixo entrevista com Marco Gomes:
+*
+Folha - Qual a grande inovação da boo-box? Marco Gomes - Usamos tecnologia para descobrir para qual blog deve ir cada propaganda de cada anunciante. A diferença do que fazemos em relação ao que o Google e o Facebook fazem está nos formatos. Temos os padrões do IAB (Interactive Advertising Bureau), os banners, e formatos especiais, onde estão concentrados o nosso maior volume de negócios nossos: tela de fundo, banners com vídeo, interação com o conteúdo. E trabalhamos com segmentação por comportamento de audiência. Se entro em um website que usa boo-box, vejo propaganda voltada para o meu perfil, empreendedor, 27 anos, homem etc. Minha esposa, mulher 26, jornalista, vai ser impactada por uma propaganda diferente.
+Vocês são uma empresa de big data? Coletamos e processamos 20 Terabytes de dados por dia, em tempo real. Dos 102 milhões brasileiros que estão conectados, 60 milhões entram em contato com nossos sites pelo menos uma vez por mês. Para cada um deles tenho um perfil: se é homem ou mulher, escolaridade, assuntos que mais se interessam, em que região da cidade estão, quanto tempo passam online, velocidade de conexão. Só não tenho fotos e não sei nem quero saber e-mail, nome etc.
+Quem são seus concorrentes? Competimos com a verba online do anunciante, que está indo para Google, Facebook, UOL, Terra, iG e boobox. Somos uma espécie de butique. Conseguimos fazer o que o Google não consegue por ser muito grande. Tenho equipe de 50 pessoas, que é o que o Google tem de suporte, de força de vendas.
+Como você vê o mercado de publicidade online no Brasil? Muitos dizem que a publicidade não avança, que os anunciantes são tímidos. Só fala isso quem tem interesse em manter status quo. Não é verdade, o mercado cresce muito, ganha cada vez mais relevância. Quem consegue fazer publicidade online se sai melhor que os outros. Veja a Fiat, que é super arrojada, crescendo bastante. Ford, Itaú, Bradesco.
+Mas a publicidade em portais caiu 10% no acumulado até setembro, segundo o projeto Inter-Meios. Falta aos portais se adaptar ao novo mundo. Os portais são reflexo, e não sei como você vai colocar isso na matéria, do comportamento da geração X na internet. Essa geração consumia jornais e, no inicio dos 2000, quando ela veio para a internet, os portais vieram junto. Essa geração escolhe um jornal de preferência e assina. O portal é o jornal na internet. O negócio dele era –hoje não pode ser mais pois vai morrer se continuar a fazer isso– não deixar você sair do portal. Você precisa de tirinha, de notícia, de horóscopo, ele te dá. Precisa de e-mail, tem seunome@portal.com.br. Isso não faz sentido para a minha geração. Ninguém da minha idade tem email de portal. A geração Y nunca consumiu jornal na vida, não tem o hábito de consumir tudo no mesmo lugar. Com o buscador e a rede social, o paradigma de consumo de conteúdo muda. Você busca, aparecem 20 resultados e o que faz diferença é quanto mais específico o conteúdo é. Não importa se é um site grande ou pequeno.
+A audiência está pulverizada. Quando você tem 2 milhões de buscas por minuto na internet e 100 milhões de pessoas usando rede social no Brasil, você pulveriza a navegação. Hoje nossa página inicial é o Google ou uma rede social. Saímos de uma navegação concentrada em seis grandes portais para e multiplicamos para um mundo onde surgem 571 novos web sites por minuto. Não é só a geração Y que não concentra a leitura em portais. É todo mundo pois a Y influencia as mais novas e as mais velhas.
+Qual a sua avaliação da publicidade online? A parte de criação é muito boa. Na parte de planejamento de mídia, está bastante atrasada mas está se reinventando. Estamos cinco anos atrasados em relação aos EUA.
+O que falta? Clientes precisam ficar mais sofisticados no planejamento de mídia. Serem mais criativos, usar ferramentas mais relevantes, parar de usar mídia online como se faz off-line. É natural que se sintam inseguros diante de um mundo novo que não entendem. Mas acredito que essa segurança virá no ano que vem.
+Porque? Temos aqui 500 grandes anunciantes. Destes, 70% trabalha com as tecnologias mais modernas de segmentação comportamental. É gente que investe pelo menos R$ 50 mil por mês em publicidade online, as maiores marcas do Brasil.
+Qual a perspectiva para 2014? Acredito que vai ser o ano da sofisticação dos anunciantes. Vamos ver mais investimentos e mais gente investindo. Os grandes anunciantes ficarão mais sofisticados e a massa de pequenos anunciantes – clinica estética, petshop, concessionária de automóveis, sexshop etc – vai descobrir as qualidades da mídia online e ver que é possível fazer não só link patrocinado, mas também construir marcas.
+Como você vê o mercado de blogs no Brasil? Nos últimos anos houve uma explosão de blogs amadores, agora, com a maior penetração das redes sociais, os blogs estão se sedimentando e profissionalizando, tornando-se formadores de opinião de audiências significativas em volume e relevância.
+A chegada do Huffington Post altera de alguma forma esse mercado? O HuffPo tem uma importância muito grande nos EUA, mas acredito que no Brasil a relevância do veículo terá que ser construída aos poucos.
+Como você o cenário de start-ups (empresas iniciantes) de tecnologia? Precisamos de mais start-ups e de mais investimentos. Está crescendo, mas faltam projetos, educação empreendedora, incentivos. Em um dia de Vale do Silício surgem mais projetos do que em um ano no Brasil. Falta projeto com potencial de verdade. Não simplesmente um monte de cópia da Amazon, de aplicativos de táxi, de Groupons. Passei uma temporada em Stanford (Califórnia) e só o que se mostra é nego abrindo empresa. Nego abre desde empresa para entregar pizza para os amigos dentro da faculdade e fazer uma grana até um Google, que surgiu dentro de Stanford. Passei três anos na UNB e nunca me falaram que eu podia abrir uma empresa.
+Como surgiu a sua veia empreendedora? Eu vi que havia oportunidade e não tive medo. Quer dizer, tive medo, mas não deixei o medo me parar. Uma coisa boa da geração Y é que a gente não viveu a hiperinflação. No máximo temos isso como memória infantil -no meu caso, nas dificuldades que meu pai tinha para pagar o aluguel pela falta de um emprego fixo. Mas a nossa geração não tem paixão pela segurança da carteira assinada. É uma mentalidade que se vê muito na Europa, nos EUA. O cara larga tudo pra lavar prato na África depois volta e vira engenheiro de novo. Estão começando a surgir pessoas que pensam assim no Brasil.
+Como você vê a questão da segurança de dados na internet? É um problema sério, os EUA têm até acesso ao e-mail da Dilma. Uma vergonha para o país. Só que a resposta a isso é louca e sem sentido nenhum. Obrigar que todos os dados de Facebook e Google fiquem aqui é inócuo. Mesmo que mantenham os dados aqui, as empresas vão replicar os dados lá fora. Têm que fazer, se não a internet não funciona. O cara que está na Europa não consegue acessar o perfil do amigo brasileiro. E quando replicarem os dados lá fora, pode trancar os servidores aqui com chumbo. Replicou acabou. E o louco do ministro das telecomunicações, aquele doido, sem pensar um segundo, propõe isso. Foi proposto pra acabar com a espionagem. Mas não vai acabar pois parte de premissa falsa. E o que é pior, cria mais problemas para o empreendedor brasileiro.
+Como assim? O Facebook tem grana para fazer um parque de máquinas. Eu? O empreendedor menor que eu? Não tem essa grana. Se o cara for obrigado a manter os dados no Brasil ele não consegue fazer a empresa. Custa seis vezes mais caro manter os dados no Brasil. Se isso for aprovado, morreu a inovação no Brasil. Acabou. A Argentina fez isso e o que aconteceu? O Despegar mudou a sede para Miami. Tiraram US$ 200 milhões de faturamento do PIB argentino e colocaram no PIB americano. O [Barack] Obama agradece.
+Você é a favor do marco civil da Internet? Ajudei a escrever o texto inicial, já fui no Congresso defender o projeto. Mas ele está sendo cada vez mais cutucado pelos inimigos da liberdade da internet. É preciso aprovar o projeto original do [deputado Alessandro] Molon (PT-RJ), garantindo a neutralidade da rede e impedindo a criação de pacotes para internet. Quando eu acessar o Youtube, a velocidade tem que ser a mesma que a do Terra. A Netflix tem que ter mesma velocidade de uma Sky. Se as teles conseguirem acabar com a neutralidade, elas podem fazer com que o Netflix fique lento e o Sky fique rápido. Isso permite fazer uma outra coisa: "Para acessar internet toda, custa R$ 999. Mas para acessar só o Face, Twitter, netvirtua.com.br, com nossos conteúdos exclusivos e de educação para o seu filho, você paga só R$ 29,99." É um esquema meio TV a cabo.
+Vocês têm planos de abertura de capital? Não falamos nada sobre futuro simplesmente pois não temos nenhum plano. Qual vai ser o tamanho da boo-box daqui a três anos? Não sei. Somos bem pé no chão. O objetivo é bater a meta deste mês. Fazer com que ano que vem eu possa contar uma história com ainda mais clientes. A data para a saída dos investidores, nada disso está escrito em nenhum lugar. Claro que tem essa expectativa, mas não há um planejamento.
+Em quase sete anos, quando a empresa começou a dar lucro? Recentemente, não posso dizer quando. Mas não foi no segundo ano não. Aliás, isso é um tabu muito grande. Quando você começa a crescer e a dar lucro, é sinal que está na hora de contratar mais gente e continuar dando prejuízo para crescer mais. Se meu objetivo fosse só dar lucro, eu estaria trabalhando com quatro pessoas sem crescer. A gente não fica neurótico com lucro. A neurose é para crescer. A gente continua investindo.
+Vocês se juntaram a uma empresa a argentina Popego. Como está esse negócio? Há planos de expansão internacional? Eles eram nossos fornecedores de tecnologia de análise semântica e inteligência artificial e achamos que fazia mais sentido fazer uma fusão entre as duas empresas e crescer juntos. A operação toda se chama boo-box, o trabalho deles é produzir tecnologia inovadora de inteligência artificial e big data, que implementamos na operação brasileira. São nosso laboratório de Pesquisa e Desenvolvimento. Nós não falamos de planos para o futuro, portanto, desculpe, não posso comentar expansão internacional.
+-
+RAIO-X
+FUNDAÇÃO 2007
+INVESTIDORES Monashess, Intel
+FATURAMENTO R$ 12 mi (extraoficial), com crescimento estimado de 50% em 2013
+FUNCIONÁRIOS 50
+FUNDADOR Marco Gomes, 27, fundador e diretor de marketing da boo-box
+FORMAÇÃO Computação na UNB (incompleto), fez um curso de duas semanas de educação executiva na Stanford University. Foi eleito, em novembro, profissional de marketing do ano pela The World Technology Network.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4bdeda8079578148ed13f6e743e4de7a7bf36276300d6e05150c20336ac31584",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50047860b763762ca3dd65c69ad4bf79e56eb00e6191aa84faf563137ae76428",
+    "mention_text": "Marco Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "473580fc5de2acf4577800b0e656574ebc3a6491e28702c145a25b790c9817b0",
+    "mention_text": "Gama",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43d94289b03daa3e3dbd6134238caf1c8fc86c9357d1f4dc182c87695ba95037",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa0688f2a7ad7c17937e1841f910df92aa85cc645d08530c3ff125bddb104014",
+    "mention_text": "Universidade de Brasília",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20df408df2521a3a72ac064dde065b236157e5889dd9db54427188f67ec4d2eb",
+    "mention_text": "UNB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bde1545df92153c11bdd075336ff9f73de5d2d884f7654dd4e69a1aca9cf2602",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9351abffa91d1295873521c3dbe12cbeb75af31ecdcf97f372ff42484c593d2",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18970c86fed0990a05549a739127fab706ff4aeaba08cdcade6526dc21ac205c",
+    "mention_text": "FastCompany",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "435c215f7444a7d4cab79051b7b06c70b7f0c667282fda76dcbfd8ed3e658c3c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "741c831181f8e93cbfe68c204a472b15194d269b20f71d951f4b5861de68414a",
+    "mention_text": "Forbes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80bf48965e03adabe8eccd22a31266586ec412595fb83babf98e5835eb6ee1c5",
+    "mention_text": "TechCrunch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fcce43814dd42bb7845e507ef3c9fdb804120f62783fb0f4beab92348ad23d9",
+    "mention_text": "Monashees",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2122b882227bdd16ddd59770904471312db875db6baae9b3e4813dd88b2943f1",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ea5d9011cde5fbb7e1861b58066598700a50fb35e359b8c55c702964007e0fd",
+    "mention_text": "UNB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69d1236ce926a348412e1fe99f1faac15a2def8ab65d9f452085d45b5e94a761",
+    "mention_text": "Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11a64713518fd2ba746c73eb7bb17776a6ecf1723a8b5a886288d00c91a1ea72",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20d5fe5e89da65fecfaf0bd5d39d7339277239cb15c29fadcfca55570a995581",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c4ee16c5ca8cf801d449fa928f6d22e7eee606d92e9ce803616174c050d6f41",
+    "mention_text": "Marco Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15fa02cf386b0839b1539c07473f5d80fcbfe44b8e858fbe33b9ffed006a5a6d",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9be22ad942662624e5fb21db2e982a0a007e3dd1907210091abf88ab61506712",
+    "mention_text": "Marco Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ae8a1837bb7791ee1e9fad328aad3458b7335717cb91b12768237ead9b190f6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8cf7fe4a4192d40000053fecd5be851159302cfd216ce10b16defb944a747c3e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "209c39a3245490c1d09d194c7d8dadf52a7ed361818f12d1aaf7a321845c1dfe",
+    "mention_text": "IAB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bcf1a7e493db1e4a67808553b522e2251fccc674abf95feec8fc5bc663722b38",
+    "mention_text": "Interactive Advertising Bureau",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f74c65ef9c20447c3c73b8110a80d01db183eaf562235a47e6976d6148ee5d76",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3e017f3cb7e5ccffedf82b37425dcf2bd058b2788d1b6a4fcade184be724d4c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "380dcc198b988ad41f4b21b88b3229b58869c70ab54e2afdf7fc0b49cc037174",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ea56a439ef1b9166518abd818c2e169b48dce243cb4c2bf591286fa62e50a7f",
+    "mention_text": "UOL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab694d1ee41c58fe2cbb27012a3cceb5b2d47cc7a272430926b314562d6b1b43",
+    "mention_text": "Terra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea3079e706554dc41a0d9cb78dca36b969274ff13c2db0974f372ab763710880",
+    "mention_text": "iG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89d8923515e66ba0f0a2962355517e186ec9d3f917c563bc8dafee8d932216d3",
+    "mention_text": "boobox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a7c7e8ed065a9171210f6d656488f20a4ebd26e379d5185dc449645173b266f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bde38cdc1f001722b3dbd37ab82d17cda9476e131fcc6a4e50fae1e0add61891",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20401b28bd9cf4c5b5f0251455190eb625db0a58f50e466832fa9d1a9268d5be",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2be7ec75c7b92699967e9282296cad73871a405b10971ea43cf38d46b8cb0aa8",
+    "mention_text": "Fiat",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38ef815bb69ab24f3fa3fb140081a8c529abf1f427b0ae57c16bcacb3a9e9ae6",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ff84cb440421515e0ec3b69fe5878bb5d79c7e66bca4a56a6f6cd47c45725da",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b0295a78bacb98a331b74692f9f4cdb5035dc21c98365f5cb11b0cde57187d7d",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09fddb256715842714eaf8464fd3f6b5d5624afa15dc059e36095fccdb38b14a",
+    "mention_text": "Inter-Meios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3f8ea90971f3d417e64681373bcf918ca944a23ab9160f45efbcad14a314527",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "282e916c0216a8c8b867ffe9cda279a3b48e2340f82642fa0df91757d4381279",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2792b7cb6ba4624f120c43ecc9ff258857534fb654206e47af4644c330554476",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "079877ce43535edf2534c1a746a3d41ceccc4bb73b35b9116fa06aebb3c6e9e2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3af0b8ee9534087f717f311a900c14372bcc21d0bf535d66c18ca6dacedc2b2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a25b54936b57b125973f0fd6440bbf0804520b98f85c9d7cd5c35d5c8ef79582",
+    "mention_text": "Huffington Post",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4dbb114bce57113148e6f9a17f2ea97a4149890890dfe723b84dba2bed814154",
+    "mention_text": "HuffPo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0edb190da76f4b0d6efb58ebecd4792eb1e75b0744b85ce773643e74daa75bf3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e69abb4fcefd051d9f6395c189ad9fbb5c5d30398d9127b51dbce15bc0863751",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4ac66c64103e05cc64c99253b398de95247b589c498e7e5d48a16c706b4a437",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a368f5860a7c2edeb036d1881c43a9628c1dd82eb5aeb0692e600a75189436f6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f70c826320d25961c49481ec61cb92827f23d2c3ca2de41f2f19d14b3bbd56f1",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f2993753854134c8b3c08980adad6d72c372d17818ef7c55b92ca00871a887a",
+    "mention_text": "Groupons",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b926ea7bab6f9581c6f1637253779d39ec6469cdf7799ddd4a1a63c7b1eb3147",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c64b01ffc2d5d37011ddc8c3466c23c2e2d6d4fda79d4270357485dc18d02d1",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75953fd98a8aa3242fbb540be86926df5118d46f44f3076133a77e5b9410b6cb",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bca97912d49eec5186e524a52550b110e49e33cbc71ada97442e196ddf74c773",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25f4f468deb8dc58b10cbd57dc6a077214d83c609f708bde824fef1794009da1",
+    "mention_text": "UNB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "644996a6930446aac8a0d89141508c9e2b300bc7d06edd64f4d397018e76225a",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d10a6d992e841e67344b72da9bfa3340b3ccb2a82ef6996958301e4c29de074d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4b88a4e2ab833dbbc80a065b9529a4321561840a3171a4400a8a5282cd6400c8",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "788908b8a187f83934b7dba4c3e3e4824a6df1a23fa6e5a52334fe76f3be419b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03f1072397880bc4ab8c18171cab25dad1e12228a829e3455e3c9b05dea11a89",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a9c6e3156479c238e5cd9eda9f802cd35743749fddb3e37934f82d0ad7d73c39",
+    "mention_text": "Dilma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "32a1140ba62e18335ded0d3c91f8e64dd5d2ebdd6c805f84ac530ff637689498",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "301c4fddfc6e5f92ef52eaba14b97c55500ef02410f155a47b49de3764853255",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43954808c17a8606205c939edaba012ebf5aeaad30f793e8230176ed0300b7b8",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ad8e982dfdbcc955aa3aebecffbdffe808acec5d2dc27fb42d40a8d3fda83ed",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2c74c802fed014ebf3526ed59fb03d9d641a25030daa78c3740aaca01a79bd3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "32d0c4a94b99920a7dab51cf81c164eb5775637c4542421e249724daa8b79454",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eec64e66d6a8b3a0d1be065c29be32194c9501e94e0d913464e6d70bf2b13068",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2bde737fac0e7c31246f8e48cbc86f7e0dcb0b8231ec50e25a69e8f504be359c",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5c3438ac62109c8af854ad184ee8c0703f9eb33b18dfa436df89d55fca2230a9",
+    "mention_text": "Despegar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "76f7fe3e5edb992a10852520c3be0998d12213431fdc75617618e0f9e1422c94",
+    "mention_text": "Miami",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3af9926a191061d88749997e1bdd418b473652bcc7e6326c6a6ecb0e9c7a2bf6",
+    "mention_text": "Barack] Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5547f38964909c029e39429b8196b0918c2ff5a5a0df9b0bbf99d84ce76aa6ab",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a37b0a5da03a8611a99521248292170440421083f2ab92189254add9776e5c8",
+    "mention_text": "Alessandro] Molon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2e4593bdd174f2fbc81546966c5234f9ddf8cd8226fe64fde076842ddb3778b",
+    "mention_text": "PT-RJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0f0c43836ee80702fbbf61e34db73275342c61d0a33b71d79d5b4e1efd47cff",
+    "mention_text": "Youtube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7d32e60a75ecd40270e90aff63fc5b3d026c2d35db0cb24e5e53078e93a81a4",
+    "mention_text": "Terra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa08bdbae706c981af48514c62257ac57a67d567d6948abb9edbc1e4c767d15a",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cea8eca7c08b91547bf4527a71c6c9f5ba0a2cff2d9c59495baa66ce2c12842",
+    "mention_text": "Sky",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "844716723aa03650391c73bed232eb05e8df04ec306c70b4a6609e3c5d9774ed",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abb3dfb2901f575db266e28b78d808ed55e32349b6ae09495f4df257cc94b898",
+    "mention_text": "Sky",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c38cb9aae5ec6d45f9c7e2636e7e5f6c4348ad015c4c1e5ab8e99a41ca213e57",
+    "mention_text": "Face",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c2fb6383cbada8cb40c9797139579dabc6cb24264f8c9d412990f5020a2e773",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bce41cc2885e7dfe2a10973848b7b791aeb834fceb9465d91bfb968134426b9",
+    "mention_text": "netvirtua.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "590a92fb5901e85b5aeb21adf1b6467faf1cdb8213a40614d42bd70d22e837d1",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f7bc4a3909725c0b2b672e0be27de3327e56b7471baf9887d68044e60995748",
+    "mention_text": "Popego",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "617c1d96641b1f24af27e4924f385178e4ad17ead7dd4a7922d3725effaa6a7f",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df6e068cc8a9d98f7aff38fe99f9cd169cb5cf9fd5dc842727770cc2ba214df6",
+    "mention_text": "brasileira",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c1388a4a2514f4100ccfc35bd1d583583b06b53d3c75fb8d0852b9ba9df38fc",
+    "mention_text": "Monashess",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "175e899c8f4739c01f21fe8f1367c82966996eab6c432a360309c9f9b680b5c1",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c44b0f048e72818d59c41624739f54d7ec8b90decc7c86276e20fa617d89af2",
+    "mention_text": "Marco Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83634e0e94df3bfe14de5bc06013d0a67fe172cc8c1a5e6e115b311b32206bb4",
+    "mention_text": "boo-box",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c6912c2a2fc52eea9db19d8caccb11f73efecf0d00d400e96909d2c26717ff7",
+    "mention_text": "UNB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e5b20ab60b020d2a7928d011afed461472b091a12bc2cf013e77bd430f5210c",
+    "mention_text": "Stanford University",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "76f424d41ba460b43c8f7ec1f0a7611e738c347a61cf9dbb0e96433d867703ee",
+    "mention_text": "The World Technology Network",
+    "categoria": "ORGANIZACAO"
+  }
+]

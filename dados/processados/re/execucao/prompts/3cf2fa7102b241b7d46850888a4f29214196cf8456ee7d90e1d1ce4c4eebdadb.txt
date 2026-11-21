@@ -1,0 +1,1054 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b19033e84939ca1352d8654bcf32ac138c1b91f0e061f4e5db798874d38f96a5
+
+TEXTO:
+Estamos em um período muito, muito grave, diz Henry Kissinger
+
+Não foi difícil atrair o ex-secretário de Estado americano Henry Kissinger para um almoço. Embora ele tenha 95 anos e se movimente muito devagar, o grande conselheiro da diplomacia americana fala com vivacidade.
+Ele sobe e desce de aviões para ver gente como o líder russo, Vladimir Putin, e o dirigente chinês, Xi Jinping, com tanto entusiasmo como quando jogava o xadrez global como maestro diplomático do presidente Richard Nixon.
+Ele adora estar no centro das coisas. Convencê-lo a dizer o que realmente pensa é outra questão. Kissinger é para a clareza geopolítica o que o ex-presidente do Federal Reserve Alan Greenspan foi para a comunicação monetária —um oráculo cuja visão só se equipara a sua indecifrabilidade.
+É minha missão empurrá-lo para fora da zona de conforto. Quero saber o que ele realmente pensa sobre Donald Trump.
+O momento é perfeito. Almoçamos no dia em que Trump se encontrou com Putin em Helsinque —uma cúpula que o establishment de política externa dos EUA acredita que ficará marcada como um ponto baixo na diplomacia americana .
+Mais
+Trump fez o impensável ao endossar os protestos de inocência de Putin sobre a sabotagem eleitoral, contra a palavra dos órgãos de inteligência dos EUA. Hoje mais tarde Trump tentará de maneira não convincente desfazer o que ele disse em Helsinque, insistindo que disse não em vez de sim.
+Mas é tarde demais. O jornal The New York Daily News traz a manchete gritante: “Traição declarada”, ao lado de uma charge de Trump atirando na cabeça de Tio Sam enquanto segura a mão de Putin. Não poderia haver momento melhor para sacudir Kissinger de seu ninho délfico.
+Chego com um ou dois minutos de antecedência. Kissinger já está sentado. É uma figura de gnomo em uma mesa de canto num refeitório meio vazio. Uma grande bengala está apoiada na parede lateral. (Ele rompeu um ligamento alguns anos atrás.)
+“Desculpe-me por não me levantar”, diz Kissinger com seu sotaque alemão áspero. Estamos no Jubilee, um acolhedor restaurante francês dobrando a esquina do apartamento de Kissinger, na região central de Manhattan.
+Fica a poucos quarteirões da Kissinger Associates, a consultoria geopolítica que cobra valores principescos dos clientes para ouvirem, suponho, seus pensamentos sem verniz. Minha única indução é um bom almoço. Quando pedimos, Kissinger verifica se é meu convidado.
+“Ah, sim”, diz ele, rindo, depois que eu insisto que sim. “Senão seria corrupção.” Ele come aqui com frequência. “Jantei aqui ontem à noite com minha filha”, diz. Duas ou três vezes alguém se aproxima para apertar sua mão.
+“Sou o embaixador ucraniano na ONU”, diz um deles. “Quem?”, diz Kissinger. “Ucrânia”, replica o diplomata. “Temos grande estima pelo senhor.” O rosto de Kissinger se ilumina. “Ah, Ucrânia”, diz ele. “Sou um grande apoiador.”
+A geopolítica tem um enorme peso sobre Kissinger. Como um dos arquitetos da reaproximação com a China e a distensão com a União Soviética na Guerra Fria, hoje Kissinger observa um mundo em que a China e a Rússia, muitas vezes em concerto, desafiam a ordem mundial dos EUA .
+Mais
+Mas o deão da diplomacia da Guerra Fria está tão interessado no futuro quanto no passado. Neste ano Kissinger escreveu um artigo terrível sobre inteligência artificial para The Atlantic Monthly, em que ele compara a humanidade atual com os incas antes da chegada da varíola e dos espanhóis. Ele pediu a criação de uma comissão presidencial sobre IA. “Se não iniciarmos esse esforço logo, em breve descobriremos que começamos tarde demais”, concluiu.
+Neste verão, Kissinger está trabalhando em casa em um livro sobre grandes estadistas, homens e mulheres (há um capítulo especial sobre Margaret Thatcher). Ele acaba de terminar uma seção sobre Nixon, o presidente a quem serviu —unicamente— como secretário de Estado e assessor de segurança nacional. Ele tem 25 mil palavras e Kissinger está pensando se irá publicá-lo separadamente como um livreto. Teme que saia pela culatra. “Poderá tirar todos os envolvidos de seus buracos de novo”, diz ele.
+O senhor quer dizer que poderá provocar comparações entre Watergate e a investigação sobre a Rússia e Trump ?, pergunto. “Esse é o meu medo”, responde ele.
+Antes que eu tenha a oportunidade de dar seguimento, Kissinger muda para Thatcher. “Ela foi uma parceira magnífica”, diz. “Eu acredito nas relações especiais porque acho que os EUA precisam de um equilíbrio psicológico, e este é um natural, baseado na história —não apenas em contribuições.”
+Nossas entradas chegam. Kissinger tem um prato de patê de fígado de galinha, que consome com gosto. Ele prendeu o guardanapo na camisa, no estilo babador. Quero falar sobre Trump. Kissinger insiste em ficar no Reino Unido.
+Pergunto-lhe sobre lorde Carrington, o ex-secretário do Exterior britânico, que renunciou em 1982 para assumir a responsabilidade por não ter freado a invasão das ilhas Falkland pela Argentina, e que morreu neste mês aos 99 anos.
+No dia da morte de Carrington, Boris Johnson, o mais recente secretário do Exterior britânico, renunciou por motivos muito diferentes . Você poderia dizer que o primeiro renunciou com honra e o segundo, com desonra.
+“Eu adorava lorde Carrington”, diz Kissinger com sentimento. “Nunca fui à Inglaterra sem vê-lo.” Em todos esses anos de amizade, Carrington nem uma vez se queixou por ter de renunciar, diz Kissinger.
+“Ele me disse: ‘De que adianta assumir a responsabilidade se depois você sussurra para seus amigos que você não foi realmente responsável?’ Acho que não temos mais essa qualidade, porque para isso você precisa de uma tradição que você considera natural, e não podemos mais.”
+Johnson certamente não a personifica, sugiro eu. “Não acho que Carrington tivesse grande estima por Johnson”, responde Kissinger.
+O que Kissinger achou da cúpula de Helsinque ? Sua resposta é hesitante.
+“Foi uma reunião que tinha de acontecer. Eu a defendi durante vários anos. Ela foi submersa por problemas internos dos EUA. Certamente foi uma oportunidade desperdiçada. Mas acho que temos de voltar a algo. Veja a Síria e a Ucrânia. É uma característica única da Rússia que a rebelião em quase qualquer parte do mundo a afeta, lhe dá uma oportunidade e também é percebida como uma ameaça. Essas rebeliões vão continuar. Temo que elas se acelerem.”
+Mais
+Kissinger embarca em uma dissertação sobre a tolerância “quase mística” da Rússia ao sofrimento. Seu ponto-chave é que o Ocidente supôs erroneamente nos anos que precederam a anexação da Crimeia por Putin que a Rússia adotaria a ordem baseada em regras do Ocidente. A Otan interpretou mal o profundo desejo da Rússia por respeito.
+“O erro que a Otan fez foi pensar que há uma espécie de evolução histórica que atravessará a Eurásia, e não compreender que em algum lugar nessa marcha ela encontrará algo muito diferente de uma entidade westfaliana [a ideia ocidental de um Estado]. E para a Rússia esse é um desafio a sua identidade.”
+O senhor quer dizer que nós provocamos Putin?, pergunto.
+“Não acho que Putin seja um personagem como Hitler”, retruca Kissinger. “Ele vem de Dostoiévski.”
+Nosso prato principal chega. Kissinger pediu robalo com legumes. Ele mal toca no prato.
+“Não, mas estava muito bom”, diz mais tarde quando a garçonete oferece para embrulhá-lo. Em comparação, eu como a maior parte do meu linguado com couve-de-bruxelas. Os dois bebemos água com gás Badoit, que Kissinger pediu especificamente.
+Sinto que estou perdendo a batalha para fazê-lo falar sobre Trump —ou não estou detectando sua mensagem oculta. Ele diz que estamos subestimando Trump —que na verdade Trump pode estar nos prestando o serviço não reconhecido de acalmar o urso russo? Mais uma vez, há uma pausa antes de Kissinger responder.
+“Não quero falar muito sobre Trump porque em algum momento terei de fazer isso de maneira mais coesa”, responde Kissinger. Mas o senhor está sendo coeso, protesto. Por favor, não pare. Há outro silêncio prenhe.
+“Acho que Trump pode ser uma dessas figuras na história que aparece de tempos em tempos para marcar o fim de uma era e forçá-la a abandonar suas antigas mentiras. Não significa necessariamente que ele saiba disso, ou que ele esteja considerando alguma grande alternativa. Pode ser apenas por acaso.”
+Agora Kissinger desistiu de suas garfadas desanimadas no peixe. Sei que ele já se reuniu com Trump. Ele também encontrou Putin em 17 ocasiões. Ele relata o conteúdo dessas reuniões a Washington, segundo me diz. Experimento uma outra pista.
+A quem Trump se compara na história, pergunto. Isso também não resolve. Kissinger parte em um tour pela saúde da diplomacia europeia. Ele não encontra um líder que o entusiasme, com a possível exceção de Emmanuel Macron , da França. “Não posso dizer que ele é eficaz porque acaba de começar, mas gosto de seu estilo”, diz Kissinger.
+“Entre outros estadistas europeus, Angela Merkel é muito local. Gosto dela pessoalmente e a respeito, mas não é uma figura transcendente.”
+Que cérebro diplomático ele compararia no establishment atual a ele próprio, digamos, ou ao finado Zbigniew Brzezinski —seu ex-parceiro de luta, que também serviu como assessor de segurança nacional? A menção a Brzezinski provoca alguma coisa.
+“Quando Zbig morreu, o que foi uma grande surpresa, escrevi a sua mulher que nenhuma morte me emocionou tanto quanto a dele”, diz Kissinger, mais uma vez com claro sentimento.
+“Zbig foi quase único em minha geração. Nós dois considerávamos que as ideias sobre a ordem mundial fossem o problema chave de nossa época. Como poderíamos criá-la? Tínhamos ideias um pouco diferentes. Mas nós dois estávamos preocupados sobretudo em erguer a diplomacia àquele nível de influência.”
+Quem está fazendo essas perguntas hoje, pergunto. “Não há debate hoje”, responde Kissinger. “É algo que precisamos ter.”
+Não consigo afastar a sensação de que Kissinger está tentando me dizer alguma coisa, mas que sou literal demais para interpretá-la. Como um jogador de dardos vendado, tento vários arremessos diferentes. O que seria da Alemanha se Trump retirasse os EUA da Otan?
+Kissinger gosta da pergunta, mas se recusa a dar palpites quanto a sua probabilidade. “Nos anos 1940, os líderes europeus tinham um claro sentido de direção”, diz ele. “Hoje eles querem principalmente evitar problemas.”
+Não estão fazendo um serviço muito bom nisso, interrompo. “É verdade”, diz ele com um sorriso cifrado. “Um eminente alemão me disse recentemente que sempre costumava traduzir a tensão com os EUA como uma maneira de se afastar dos EUA, mas agora ele se vê mais temeroso de um mundo sem os EUA.”
+Então Trump poderia estar chocando o resto do Ocidente para que se erga sobre os próprios pés?, indago. “Seria irônico se isso saísse da era Trump”, responde Kissinger. “Mas não é impossível.”
+A alternativa, acrescenta Kissinger, não é interessante. Um Atlântico dividido transformaria a Europa em um “apêndice da Eurásia”, que ficaria à mercê da China, que quer restaurar seu papel histórico como o Reino do Meio e ser “o principal assessor da humanidade”.
+Parece que Kissinger acredita que a China está a caminho de alcançar seu objetivo. Os EUA, enquanto isso, se tornariam uma ilha geopolítica, flanqueada por dois oceanos gigantes e sem uma ordem baseada em regras para manter. Essa América teria de imitar o Reino Unido vitoriano, mas sem o hábito de manter o resto do mundo dividido —como fez o Reino Unido com o continente europeu.
+Kissinger é mais circunspecto sobre inteligência artificial —assunto com que ainda está se debatendo, admite ele.
+Mas fica preocupado com as consequências desconhecidas da guerra autônoma —um mundo em que as máquinas têm de tomar decisões éticas. “Tudo o que posso fazer nos poucos anos que me restam é levantar essas questões”, diz ele. “Não pretendo ter as respostas.”
+Mais
+Tenho pouca ideia de como Kissinger receberá minha próxima pergunta. O poder é um afrodisíaco? “Qual foi a palavra?”, pergunta ele. “Afrodisíaco”, repito. Estou citando a famosa frase de Kissinger no auge de sua carreira, quando ainda era solteiro. No final dos anos 1960 e início dos 70, ele era tão conhecido por sua agenda romântica agitada quanto pelos negócios de Estado.
+“Eu certamente diria que poder tomar decisões tem uma dimensão que você não tem na vida comum””, responde Kissinger com um esboço de sorriso. Foi uma resposta sutil, digo a ele. “Eu diria que sim”, responde ele.
+“Mas quando eu digo essas coisas elas se destinam mais a definir sua inteligência do que seu objetivo na vida. E é verdade até certo ponto. Baseia-se na observação.”
+Agora estamos no café. O meu é um espresso duplo. Kissinger toma chá de hortelã. Decido dar uma última punhalada no alvo. Conversamos por quase duas horas.
+Se há uma crítica recorrente a Kissinger, digo-lhe, é que ele se esforça para preservar o acesso a pessoas no poder às custas de não falar claramente em público. Não é este —dentre todos— o momento certo para queimar uma ou duas pontes? Kissinger parece desanimado.
+“Eu levo isso a sério e muita gente, bons amigos meus, vem me pedindo isso”, diz ele afinal. “Poderá acontecer em algum momento.” Não há momento como o presente, digo com um riso nervoso.
+“Está clara a direção em que estou seguindo”, responde ele. “Está clara para você?” Mais ou menos, respondo. O senhor está preocupado com o futuro. No entanto, acredita que há uma chance incomum de que Trump possa acidentalmente nos forçar a reinventar a ordem baseada em regras em que costumávamos acreditar. Esse é um resumo correto?”
+“Acho que estamos em um período muito, muito grave para o mundo”, responde Kissinger. “Eu conduzi inúmeras reuniões de cúpula, portanto eles não souberam desta [Helsinque] por mim.”
+Está claro que ele não vai se prolongar. Pergunto-lhe que período ele compararia ao atual. Kissinger fala sobre sua experiência como cidadão recém-aprovado, num uniforme dos EUA servindo na Segunda Guerra Mundial.
+Ele também lembra do que trouxe o jovem refugiado alemão a estas plagas, para começar. Depois que a Alemanha invadiu a Áustria em 1938, os judeus na cidade natal de Kissinger receberam ordem para ficar em casa.
+Seus pais partiram para os EUA quando puderam. “Havia o toque de recolher, e soldados alemães por toda parte”, diz ele. “Foi uma experiência traumática que nunca me deixou.” Sua lembrança é cuidadosamente escolhida.
+Algo que parecia uma tempestade bíblica caiu desde que nos sentamos. Um guarda-chuva literalmente passou voando pela janela. Ajudei Kissinger a atravessar as chicotadas úmidas até seu carro. O motorista o segura pelo outro braço. Ele está instável. Percebo que estive interrogando impolidamente um homem com quase o dobro da minha idade.
+“O doutor Kissinger esperava por este almoço há dias”, diz o garçom depois que volto para pegar um guarda-chuva emprestado. Que bom, penso —mas temo que minhas perguntas sobre Trump tenham estragado seu apetite.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2fd68cafba5ef82d87d65567c3d283188d6aee3922010fd05b5642fc3545ea98",
+    "mention_text": "Henry Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38d8f536f5281f5e5be96dd18d8afd2d9e6bd85edb1573052b38e82e10ffcd77",
+    "mention_text": "Henry Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8840226089869ecdffa46caa932c44949352c88cf7a1607628088c8304c15914",
+    "mention_text": "Vladimir Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36a3ae56f140f8868de14c5416083b1ba62146fa47d969fa47b6a3d5f84d1631",
+    "mention_text": "Xi Jinping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80f20f423ce63d7ddd7eccbeee8379138f6d272de3396c6c344434e8cf1b2710",
+    "mention_text": "Richard Nixon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2cacd9cc122488417bb4c739fbace3084afdc8dd711e8f242f0d1d9da5d33f8",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ff8ad922af5bf1e6acfcbbf5d0b0a6b725281151d26c99bb815ef453d0604ba",
+    "mention_text": "Federal Reserve",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab1f3df2d34162a2d9745921acdf891f13d54d3b3a49e3ae1d5e2aeaec7b91a7",
+    "mention_text": "Alan Greenspan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b1857b345e757a6ecbce69c8722844b34833445a80f51a204769c3715bad29c",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a78f72ebea33e5e8c2fc384d5b30f8e85c9a7083185e357c14c126dbc4024e79",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c2cfeb271a0b764766b7d1f42e081072eea4d616432b75bae1c507e984ca89e",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13902941d3b347956656a4434e09b4f9dd3c046420a9756030793f3d84aa0380",
+    "mention_text": "Helsinque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ac22b50eca0f567095eed3a23078513d32a5dc65ec39c40a62bbd942a000a6a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "652ea35200d01fa0ea1a008c2755b6b7b312a9d6d2421fbb00a5a2370e9a19de",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94d7d5dcd89047f4dbb960aebaf178fe4b2c207c4b0d6692f9a3461ab1826fd1",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "972743602705949d3c9d3b7827fbb1abe3f0b73119ae278a08a85789e585a844",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "863b93ad9650651067fe1cea15e5844b9f99c3868b45936e1f993fb3ae421218",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3aaa663725bc34bce6b199ce1d835d3fb9270651f0e02a7694f48e9d7e454d2",
+    "mention_text": "Helsinque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b3d6b565d5c4ab1661b25b9171391c7d46a2feabe36d08f877a72b38810300fe",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2427683c550d7f0ea8c518ab312cc75f7ad6780c69b5b095cf225b22589a3e45",
+    "mention_text": "Tio Sam",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7017e9597646dcbcc61da9c0dd6578697b432c2be6604e8b63c069580736fb6",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6a128d3bf8601251bc9e886f23a8309e561732d238cf7439561e7c56d5d584a",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c06b0f43b6b8b45d0de591093472e50ad7245bb7b1a51c065949655126dd43d6",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47b12a3cdf2464b18c32f336ce2f14b6e38118193804e9afedd5a0c9a865ff65",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0496ae7fdcbb9ea0f7fb5820dd2431a216bc295e513798a6461c738e26635789",
+    "mention_text": "Jubilee",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54c3985fa5713e331c22bc7cb25153f52ca3514e944a3e682e84d54f70e6ae4a",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0eb49308bb1b9841ad116094157d536e930e3907d488f8f1695e81698d7c6c7",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8d7b2112db0cd1f2f89926a680e0652b8c0c46ee49a5e8ebcd4424069154883",
+    "mention_text": "Kissinger Associates",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c81e4409fd8e372ef4fde4a21a2d343cc92fdf0d55055bc68bbcff4ee5544555",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bfd95bbe8174650782b94c70c264adf3a96083aa2704c9a299aad55f71aaea2",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ea80c9220ce3ea4be277d88c3561c72db5657cf15a4a79bede2bde99197fdca",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd2697e67c9661e56cf7ccd7623a6da95599262dab262452d9c8d8fe15d267bd",
+    "mention_text": "Ucrânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef59a2ed5345701da60a5b98daf4f0313e46f306b0967ce003a7b3014fb8cb28",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "53b57dfe516b780f21cf4d2871fa44bf12b95d26f3264a7666a07e69a97b712f",
+    "mention_text": "Ucrânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5e4bfdff85454268af83458257c50a3efaa9004ee6e90ab21df182214b864c0",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7bc2456c5c98b54721ef1a2db590cf9d951ca22ffd71130f4fea6a7fcd65ec97",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3ac13449cc8bed6ed2a36ca7010aec16b4770c32598dc2f1c15bc3d62f71df73",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d229a18e528d27192cfe73bd3f73be8e31a5ce712adda83a053f890f3e969a72",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6aff3f2121b7358b1e0da970262dbed897fd7fe1eb2724aa642c2aca61e9880",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e6a731a32bcdec137211ba40c5408718bc67865122f20fb5e29488f4cfc4166",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e29ec166eb52f4c554ea113f5ac549c275194eeb8209a81a041c8b99c761b1f5",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04d999f78d7281e3e5c81d4a2e65d2974a9894eba1a88ce49965ad371c4d413e",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc1bd6aafb1358ea2ca7375cdf11b1b59c68b7e9b305b079009548fce424d1cb",
+    "mention_text": "incas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c8b460c83f8fa2a4a5a32b35364aee64383af36ef9a5dad929ddf936f8a618a",
+    "mention_text": "espanhóis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b91ee66fed560db2c5d1ac0f424fa4417f620d9761c68e6188601a55a75b6876",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc1be3af09d4c7df773b9ca21e08c4e5b2723bb51a197f66cc7e7136fdf13087",
+    "mention_text": "Margaret Thatcher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e18216bb33fc8371cfb9b506d251a5498ca0b5b2e94d415fe8c15073496b1bb3",
+    "mention_text": "Nixon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "017e5af736e2ca8951be93eb8913cc6c890a324a53d268a1f18419621bd55830",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "775c1c69c3393188bb3f3e68211b9fdd5eb1e559363485c50f5f032a440f58e6",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e04613a33ea2a32332bca29c1453b8487a46efa3ea3afce626031730f5226d8",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3d9d48a995e9ae5f30bacb0e32a4c18fcc644b35e5e9eab21c00963e454c1f3",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea2283d29f9714fb80adebabad2c902bfd8b75e1994cc177d1d4b9b4036b5be8",
+    "mention_text": "Thatcher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef0b2d5aae34bd76c96eaa96328266d99fc761bceccf4bf2bcbfdcf73159ec3e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f72dc18c38d67153ea3a6b897b6cb8626dabfc2e55ecc22013fb0ab00cb22e44",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7f3c0e583757443db49c2ba949535185166677a384b2bdb8c827823bed16e7c",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e30da7a0dccf0914c578d0c99744aca6cb8df611bb0354c66fb883e3be043b8",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e913e2f9122803ba128686201389becb3d6c251bb42b743457d2fffcbe1b9400",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "027f44aa42b27041c40864bf5ab354d0c331fd58d2076f9e38d61168fa57e2c8",
+    "mention_text": "lorde Carrington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ab71a3d24d7198cc5f9a73481f51bb47ec5703dc29a6a4709b18d20c4233407",
+    "mention_text": "ilhas Falkland",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e83a9cc71aca0974faefa3044580c08afde4bcec652023eca77f793e110a89a6",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c5753f78cf74aa6bad057d3f1acdbb579c74dc647fe3c28ce92ead78644a5607",
+    "mention_text": "Carrington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a55dbe970ff2ffb9328bc49996bd350ce59a9528fa581af2e4df89df37a32f4e",
+    "mention_text": "Boris Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3833d0d818e0528fda807ec91bf8c28d787bc25e57576f190ca68b2425c5bc25",
+    "mention_text": "lorde Carrington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f52878e4a19d5dc8e4cd6dd3ba43f1c451d3d23190e916feffcddc196edc691a",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e168ec13a0549f041ff643d7b20690a907530be38ef6c739c24cd5424b5f9b56",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d92e3204f96b5c8b3470d08585b9008739d5ab8e5cb19f5bd4571305acd9314",
+    "mention_text": "Carrington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "809d8d9116db2f127a624419978e6f109c4fdeb07c9c62ca55c58a0e3eb89b46",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b25ac2b398d7c7d4b0e921102c743c498d301cd5b9392e40be4836df8b34963",
+    "mention_text": "Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82a896486d7c2d9d9d17af2636cad782ff48a7d1410e138a319c3b216c2639ae",
+    "mention_text": "Carrington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e337e16e11fa57683db4ac64b392a14a552e390dec86369b83980ca306d9762b",
+    "mention_text": "Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9640e9e8e81a566b04d94151530b2c0814c8c1bc07073ae5b8b60cbfc7978948",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bac797466ec7a53ba0e04ff168db0e29845f7bb5292c4927dd2bce8e479b9822",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "952fc03be60b655f20313de6e5e023f1717253d6b74ffe9796010eddc5298294",
+    "mention_text": "Helsinque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f6f4b2b9421bac77cdff950af9c9f4549fcae6cf8da265fe241b2ec6f4a439e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56e49aac89722a1dba4d7a82e69aff22c72d0154be645bd5982ca95e349dba44",
+    "mention_text": "Síria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f2edb117418c7a142f7355fe41e0cce31cf6bab69925cc1081bd16599f564e3",
+    "mention_text": "Ucrânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa4eab818228c40e96da23d3b426fc75f2cba33a28e9b006f823a2034da85ee0",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c86005502f9cfa773692c33269ee7c0b8f02b0e6aeb01447ee1349e29c11437",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e614ddfcc73db7cb27079cb5659762d52f71dfb0dd07fc563150a5bec7c4b41",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af16c4fcabea9f27c719a3c855d375822c2d26fe47152008b26172157596979c",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f67078cf643d04b61b497d76b2d48d00d0e2c5b4c0d25891f047cea196a99dde",
+    "mention_text": "Crimeia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "304c17a69c37ebda9cf5567a730c8cd362d4696435de46e8b3489aa32c1b15dc",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72d72cca41d9e1f3fce16b2c0dc7e938c1f971419523a4a697c93c341d24224b",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a7a9ff2d6c29a2c0f53f75ccb2d22af49f2eba262240c661d2a0d066d7102a4",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "25efb0a72afbb8b2e5181f2477b20d2f2403383fdaf42963d9e933a2b7adfdb7",
+    "mention_text": "Otan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b8db07f157cc11b2b5db5f43ef2654e62c29603405080486d7bc0cef2d0ad74",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5b4a488ead30f10ddd9f2740b3c6390d4b945b36bfad75758009d551246697c",
+    "mention_text": "Otan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79ef018ecaaf6e8758bda29133afc8343402ce41415eabb572eee6a9bee930c4",
+    "mention_text": "Eurásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74d087f2ef4f029cc7e71b44f0dee70a6daa048ccc762ac769a7752f6f7de3cd",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8020b66a9046dd8a505020d217c8a9dc81df614256aa866e04217adcb55ceed",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5baa9329ee409c846aa8bfe61d22974ec886a3a2389a9e1a697a5339f00d1abc",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9952771be9ef7a0f8054a87a02b8144b59bba6c0034f99690f2f1b25f8ce7b5d",
+    "mention_text": "Hitler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a7ca3f4b0051f1c2b6cf3a3bef740d009bad93ea62433cd5722fe951c2b34ce",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30af6e7c81135f6640efee8089deb6417c411ef8f202ff21b25362bfc3f78597",
+    "mention_text": "Dostoiévski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90c317d7c833245626cc1c3409079b76c8adc3afe58013b6993d001118a56de5",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "12f1d737a28d5b5aa290aaa82a4414d5bac13f062bcff8901c375a87d6b7929e",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b315b0863ec472b372ad575a2d28b6d0749fefd899152bb9cf0d730a9f56e40",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "371e85d974c4779a143c629a40cb577c4ccd25fd3c60f9643c01118cc0ba35ec",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ca2e2bf411c4b934ab02f21779159ea4e9c45090d820ecabd679886cef0d9e0",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a412cdbeb34c28514bf42c596bb06ac3646b4c079254ef12c2d5964c68cea83d",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "619785ec51da902a3740037d3d2c016802173421df1846b4f6fc7ef57a4633aa",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80aae76a8705c59a311624623a657ff2fc0d701285f5e276924a36b565ce827e",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48eafeaa1967ea6cf0060c8319ae68acbc85cab06dafb595681dd190d8f7ec2c",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1522ed9210b7c6d2254c64c877d08eacdce810c4a4f9a05090e9766946c2bfd",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15181efe1a2cf3dc4500cb2e4001a2dd4a970789c6f181035485943ba822ba21",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a859e2a53738f31b6430df1adc907931847e23775cd20371fe27ce4c631733c9",
+    "mention_text": "Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0929528995a390b679baca63cf86f7738a1723c82fbade80466f755f60841dc",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f20302f1ac08e4b45c589712a8fe3a20fc8a9eed0ecac08184f5569ea8f87252",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfa3c70f943aec60f0407f8205af9594bdcd1ce3cf3a34fbff177311dbd47c1a",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a23a2eb5f24cb4f1fbb70fece7d06c782b29daefae07bfad5687ca87ff2d9118",
+    "mention_text": "Emmanuel Macron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "96e802eb9365cfc03ae5f8f882113c512117511a0c23d9566d7e66f290a8af2b",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b4fe9769583314f563f7769df7e559f8b5f0d5c5d082346a6ae33dffd08ea91",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d72e050fb966551b7cebacdded24146bb03f8f1ab74feabda2462067ab4988c",
+    "mention_text": "Angela Merkel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6aa8128df602fdc4405de47c9c54429fd9e67c8f99357dbb5f12d25db3dc6d7c",
+    "mention_text": "Zbigniew Brzezinski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "120ea800e74c6b5c1090c2f4d7e1b45b5b11b794d4e39ceb1655b87257c9e36f",
+    "mention_text": "Brzezinski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "612866bdf39ed8f04b666381d4e1cc56171a43364492783e6c06a2065c23a90c",
+    "mention_text": "Zbig",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33ed7c8747d334065a92c5376e277667d069e075d6d2271350cb86004fe07dcc",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "703ecf6f43860619c4849ed1d3ed1d958632119e25b7f40c67e9c23ab1585dc9",
+    "mention_text": "Zbig",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9bb24b8d58e8525ca5e115131131a631848eafeb54b7cffa3e07ceea2301e5b",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78ff541690eca9c47565a2ae82d9d966b67796a2ead41bd6db4b1e4200704da3",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a14e0bf6a7bf7da67481097b4181c2762618cd9cf274ee8c1a46c64430f77a3",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7af2d26d4bc9a44281617f127319cf819c978bc46b531fdc740598d4064c750c",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3441e477d777dfb2a7d21b15ff76f99e421d5928f0a5c90dc29f717bca93e34",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c9867aaf441dd2f7751f69b7a08a496b1b9c3e3564fcfadd7f2cdba166a84742",
+    "mention_text": "Otan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "180fc8a1798e8d0fbe02e32220dbefb66429018e3e4396af7530abca82ccf5ba",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "030f2d9ab939ac0159b66cbf7c2cb8213557977698d9eea034482f9ca17e9456",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b0ece6424fa0d652290b74e41db6287096ee648bd405d5b86edbd0b1dfc538fd",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b28177418c3c10b9de742839919c8527b6b89cad72c748a3b2b0a5b35f989b3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7259768a148211df59cbd1e2c553e8d4d5b323c1dafc44b10950318e11ee65b9",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86e2b50d20b370c5d4bfb97cf65578505a7b23ded9ed69b4a0648c4b1b115b26",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd2acf55155b6c00c4ee0b180752b21c95d90126c173923bff905fbf222425fc",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a20fbf199101a13ccdb24de3aa6335f3e99449646e773ac007c7372ff2578e5",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b310e787d312ca5d141b896900dfa5dd447fbfdd3ce2fcb5702344ccbdb2a841",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8132a44ffb9bbc98a9097a9d15e39d34771f290096e096d780069ad6de5f2cb8",
+    "mention_text": "Atlântico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a73b8b2800ca6bb16c7122745bd3fb5d839e26e74f32b35b816ec57e3d20b0e",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3097db2c5e661410e466427cbe302af6d5113c7027c10c129f82f5eb5679ef39",
+    "mention_text": "Eurásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ae8c9c664ac4eae0342e5318e8fb6ca7af425aa2f2e6429f193e6139bd0b012",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2b5dad10a90cfdafb0d9d2f866bee7ad1f96beba7c9f6c00eb559e2d97f4ae7",
+    "mention_text": "Reino do Meio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a88e33678f0f11dbfc413d8c25adaaf4d1d9fe789639cec63476d556b5040342",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "805cce9dae8d851ad1791f876ed6556c754e64c09bac845cd144c49cee329b27",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e33a565ba63e7c853b64bc3cacdb427a3798b16ee0e4f197c8caebb3b79c5fc1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d41de49f1c19613dfb4beb33e6659a0790cd661aeeb12c5818dc2b4d435b1daf",
+    "mention_text": "América",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d78604439a3b58489271bc8847e6b72b9c67ab64cdb634707aeaac6a4df4854",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "35a3ac1523007575e6a54776dc32daabc7d5850b60fecf6e4b9034262a8ddbbf",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acc6621dbf52a71b14f95a480d3790e3b239aee21544c6d972c6284bf488acac",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23c8aaf3b7b921d97525012459ca4073e37f1860464ba9ad4e4139fb775a404e",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "283d7d0c561cbfbd8c1d40a0277cd1d193c6c744344bd011d3ee129eb60f9bb8",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3056e7123ade84362b86a6031a3b50153ecdf30b5abcc67fc04a4dceb776624",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8c3c9ce4bf375dfebcfd6520ed66f043ca4b3a0c2b5c05ab45633d5715e9dfc",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b7f482d2753832930448146c22cbf0d26ea08696ff18b4e84682f71ac4c2115",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca88133397a5740c2b133d736cd53f78cb3c029070325eb24cbe6def97625053",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "132f2d940d6d2c19b1c9b4eedb680b7fc49be6949689ad82df35e27f08ca2fbe",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fac73f6d182c765311458eb59a0d3bfc24ccbec68d9542b38831498df9537bfd",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdc3d6d6f3cb6c34751e4c995eaa9aef2203fa18ac7ab9234a47c0462ccfada5",
+    "mention_text": "Helsinque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e5bc0def0ded2f075c008e02654c3f9420d7ecedb808767a08134f2268791c5",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73b4b33fe923ec0310a6a0ab8576b80941776ce5dca7fd807e2b922bed79dc12",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cdfc5a6dad67c93378e995173acd216fb96c16539ae8e0af4eba1addca4888af",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4bde217e85877cb6f0700db9cdb0258265b793e8e2cff9a6722980f66c590085",
+    "mention_text": "Áustria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb6d86cab98a6a398964cf2e4390630fd14999e4aeb022e44a39b63e40e30894",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b5e490505778bc1a7d20dd80248994c1c41793ec78670e6ba2b9dbc6b53d8cf",
+    "mention_text": "Kissinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78562330a0cdf8a0c3f009615c932341431746fc5e2c9c5feae2b39cc40e0367",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  }
+]

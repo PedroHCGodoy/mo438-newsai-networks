@@ -1,0 +1,548 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 5da19c0b1418503e8f7cda35ee2497018efa5fa9d2d4e4e8d61b31d4219cb7ea
+
+TEXTO:
+Apps são principal arma na batalha entre Google e Apple
+
+Com a continuação das guerras do hardware, o grupo de tecnologia por trás do Android busca vantagem ao conquistar desenvolvedores de software.
+Sebastian Thrun, o antigo diretor do Google X –o laboratório de projetos avançados que a empresa criou para desenvolver suas grandes apostas quanto ao futuro– sabe tudo sobre ambição tecnológica. Carros sem motorista, balões de altitude elevada oferecendo acesso à Internet e lentes de contato que medem o nível de glicose no sangue são produtos que floresceram sob sua liderança.
+Mas quando o assunto é o sistema operacional Android para aparelhos móveis, Thrun diz que não é hora de o Google buscar visões ambiciosas. Com as guerras dos smartphones já bem avançadas, ele acredita que a questão agora seja conquistar pequenos avanços graduais, na disputa de vantagem mundial entre a Apple e o Google.
+"Você pode ter grandes visões, mas a mudança precisa ser implementada, e para isso pequenos passos são necessários", disse Thrun na semana passada, depois de assistir à apresentação inicial da Google I/O, a feira anual de demonstração de tecnologia do grupo. "O que vi foi o Android florescendo, o Android chegando à sua fase madura".
+Sameer Iyengar, antigo funcionário do Google e agora cofundador da Beautylish, uma produtora de apps, questionou se o Google estava sendo suficientemente ousado ao definir sua visão tecnológica: "A liderança de pensamento talvez esteja ausente, comparado ao que havia no passado", ele sugeriu.
+No entanto, ele atribui crédito ao Google por tomar a liderança em pelo menos uma área: o aprendizado mecânico - uma forma de inteligência artificial que a empresa diz estar sendo usada para melhorar o seu software para aparelhos móveis, a fim de tornar seus serviços mais relevantes e úteis.
+As aplicações de inteligência artificial estavam entre as mais vistosas demonstrações no evento da semana passada, destacando o objetivo do Google de usar sua imensa base de computação e algoritmos avançados a fim de tornar seus serviços muito mais relevantes e úteis.
+Quanto a pelo menos um indicador, o Android vem sendo um espetacular sucesso. Concebido pelo Google como estratégia defensiva para garantir que seus serviços de Internet não fossem excluídos dos celulares de companhias como a Apple e a Microsoft, o software se tornou a plataforma dominante para smartphones, respondendo por cerca de 80% do mercado mundial.
+Mas o futuro exigirá esforço. Com um grupo díspar de fabricantes de celulares no campo do Android, a plataforma vem enfrentando dificuldades para tentar se equiparar ao conjunto mais bem acabado de serviços e hardware que a Apple construiu em torno do iPhone, como a Apple Pay e mais recentemente o Watch.
+Além disso, para ganhar dinheiro o Google precisa reforçar a posição proeminente de seus serviços em um momento em que o mundo de fonte aberta do Android ameaça se esfacelar. Fabricantes de hardware que variam da Amazon à Xiaomi agora buscam usar o Android como plataforma para lojas de apps e serviços próprios, tirando o lugar do Google.
+"Eles precisam garantir que o Android não degenere em dispositivos de baixo preço e fragmentação", disse Al Hilwa, analista do grupo de pesquisa de tecnologia IDC.
+Se isso não bastasse, o Google precisa lidar com as consequências de sua própria visão expansiva. Ela levou o Android a uma ampla gama de novos mercados, de eletrodomésticos "inteligentes" a automóveis. "Enquanto a Apple sempre mantém um foco estreito em algumas poucas categorias de produtos, o Google quer estar em toda parte", disse Jan Dawson, da Jackdaw Research. "É difícil para o Google continuar a realizar progressos significativo em todos esses diferentes domínios e acompanhar a Apple".
+Conquistar os corações e mentes dos desenvolvedores de apps –o foco da Google I/O na semana passada e da conferência rival da Apple para desenvolvedores na semana que vem– se tornou parte essencial da batalha. Criar um mercado no qual os desenvolvedores de apps possam ganhar dinheiro ocupa posição central na fórmula da Apple para encorajá-los a reservar o seu melhor trabalho para os dispositivos móveis da companhia.
+Mas o mundo do Android está recuperando o atraso. Para a maioria dos desenvolvedores, o cálculo agora é bem mais complicado. Como muitos deles, Iyengar diz que seu app atinge muito mais pessoas nos aparelhos Android, mas que em base individual os clientes que usam o iOS propiciam mais lucro à empresa.
+A Google PlayStore vem ganhando terreno como fonte de receita para os desenvolvedores, mas o ímpeto voltou a favorecer a Apple, nos últimos meses. Tero Kuittinen, diretor executivo da consultoria Magid Associates, consultor de diversos produtores de jogos, diz que os mercados de apps "se surpreenderam negativamente" com a mudança, que surgiu com o lançamento de iPhones maiores. No entanto, de acordo com pelo menos algumas estimativas do setor, o peso dos números começa a jogar em favor do Android –mesmo que o Google não seja o único beneficiário.
+A App Store da Apple responde por cerca de 45% da receita dos desenvolvedores com seus apps, ante 29% para a Play Store do Google, de acordo com a Digi-Capital. Mas contando a receita dos celulares vendidos na China –onde os apps do Google são bloqueados, o que significa que a companhia não ganha dinheiro–, a fatia total do Android atinge os 52%, de acordo com os cálculos da Digi-Capital.
+Na semana passada, alcançar e tentar ultrapassar a Apple era um forte subtexto na comunicação do Google com os desenvolvedores. Os novos recursos anunciados incluem o Android Pay, rival do Apple Pay, e uma nova tentativa de ingressar no setor de pagamentos móveis, depois do desempenho decepcionante do Google Wallet.
+Um novo app, o Google Photos , com a promessa de software capaz de organizar automaticamente bibliotecas de imagens, também ecoou capacidades já oferecidas pela Apple (vídeo abaixo).
+Fotos
+Mas em outras áreas, o Google parecia despreparado. Os relógios inteligentes baseados na tecnologia Android Wear do ano passado foram deixados na sombra pelo recente lançamento do Apple Watch, e o Google tem pouco de novo a exibir em resposta. Isso é um sinal de que a empresa está cedendo a liderança inicial na tecnologia vestível à Apple, de acordo com Carolina Milanesi, analista da Kantar Worldpanel.
+Mas algumas das mais recentes tentativas de estender o universo do Android claramente exploram as vantagens do Google. O novo app de fotos, por exemplo, oferece armazenagem grátis para número ilimitado de imagens, o que ecoa o lançamento do Gmail, o serviço gratuito de e-mail que a companhia lançou em 2004, embora o custo da armazenagem tenha caído imensamente desde então e se tornado um diferencial competitivo menor.
+Atrair grande volume de fotos também apresenta uma nova oportunidade para que o Google acrescente ainda mais informações à massa de dados que já tem disponíveis sobre os usuários. Executivos da companhia dizem que não existem planos para rastrear as imagens para fins publicitários, mas não fazem segredo de que a biblioteca de fotos de um usuário representa uma fonte de informação de alto valor sobre ele.
+Enquanto isso, a fim de melhorar a experiência de uso dos celulares Android em mercados emergentes, onde aparelhos de baixa qualidade e redes pouco confiáveis muitas vezes prejudicam o desempenho, o Google anunciou novas maneiras de usar seus serviço off-line. Elas incluem a capacidade de consultar mapas e pesquisar percursos sem estar conectado.
+Tudo isso representa uma tentativa do Google de transferir mais valor aos seus serviços e mantê-lo menos incorporado ao software Android de fonte aberta, diz Hilwa –uma forma de garantir que o Google continue a ocupar posição central no universo do Android.
+INTELIGÊNCIA ARTIFICIAL
+Entre os anúncios mais significativos do Google na semana passada estavam novos aplicativos de inteligência artificial, com o objetivo de reduzir os passos necessários a concluir uma tarefa, por exemplo uma busca, em um smartphone.
+O aprendizado mecânico –forma de inteligência artificial baseada em reconhecimento avançado de padrões– desempenha papel importante no novo app de fotos do Google, que emprega software de reconhecimento facial para organizar bibliotecas de fotos.
+Um aplicativo ainda mais ambicioso propele um novo recurso do Google Now , um serviço móvel lançado três anos atrás que tenta prever as necessidades de informação de um usuário. Chamado Now on Tap, ele analisa o que um usuário está fazendo com um app ou na web e tenta adivinhar o que desejará fazer em seguida. Se a pessoa estiver conversando com um amigo sobre um filme, por exemplo, o celular exibirá a classificação de censura, um trailer e uma forma de comprar ingressos. Ou, se a discussão for sobre um restaurante, exibirá uma página de críticas e um serviço de reservas.
+Ao contrário do sistema Siri, da Apple, lançado com muito alarde quatro anos atrás, o Google optou por manter discretos seus avanços no uso da inteligência artificial em smartphones. Isso aconteceu em parte porque a companhia não deseja oferecer informações que alertem a concorrência sobre a dimensão dos avanços que ela acredita estar realizando, disse uma pessoa bem informada sobre o modo de pensar do Google.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0a16f921b9431a1377a5d429327c3b91c409889bf5e5eab378084c559699804e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d13841494bc9b7e69d3f35b1e1ff184bb3560352c1956cff8dcc758d129d222a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26629360360e8fa5c0225ecfd7aafe9c5797da0db85653829862d3a39165ca71",
+    "mention_text": "Sebastian Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f255bd1be8e0d4a3520445c7edbd357caa572b02ef5ae1a2f80773ffae377f0",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65fc9c14039672de5b95b9667b8286b302f5c3522af7dc76e3523846e6e59c39",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "563d03d4b1eef5eac73ec577fc4d80d7c6505d691feec94f24fd2554d8f5d23a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba666015e0d1d3422874230900653114a9632ad6656a0a04a05999dadc657967",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b907704f8b52fcfa1d6366d06f0fa1444d83fcdec050090b942c01c84c8a56e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21ac35785df88ffd9a8c64182096aba56e9212a2f3c51d47671553bfa2f067e9",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "747ff94f2b9d5dac31fda3a9538b538e03b01c3c0869c4328577913d31f53b7c",
+    "mention_text": "Sameer Iyengar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "879ce91be277ff7ac540ee32b9760b5faea788636df745790411c893953e09ca",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d4afe503637ba9007aa6ff60b1112198da91d6b6fa475a1d814d4f5dfde80f0",
+    "mention_text": "Beautylish",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75c3b6b21dd85cdc0dcc5c3f35eb5e4ec82ef2797720e5ba193baac31322829c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26a9b23bbce5e45c22a099b1734a4a92cf8b13505c4fc7d26bc50d7cf883dcb5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0b4d66fb6cd82750798a253678ab3cf42feb6b0d8617127902266981986b63f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "824cbda2e599466d2b97ade0ef9f19b82e5efaa12adb650e795228795789d4c9",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "76e7af8ab7585e00b240a55763dad6d21baddec7b159bbfe4cb7cdebb6e4a52f",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5b7b40dd761178623939fdbdf5eb28ed35460a1da5e37941f74e8d79c1ccd7a",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d7a263102096a1d00703e821f7aa70d38c7aef991397c5ed9f8e5515996092d",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6faed57d4474318331d396b6337d4ca4cef402b7605bfaf7caaf0405084b5045",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0124560f9356173d692a2e1ff1e08130ebc3ae002cef78b2dbdfc65ec1149fbe",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9805c53136b8377777593792e22d4f983bdfaa8e2708775fb87301ebcfecf643",
+    "mention_text": "Xiaomi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51f1e1fcc9378a85a71f45b21209484c538c16b48f9204b74ef8bd8396cd7a02",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4bb79f3077ea19ba4c231917bf36b3a75fdb1df6add3d68a2756b6764a492f93",
+    "mention_text": "Al Hilwa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d27301fba7b57cfcc7187625649ae0dfcc5437b11336681ba3a502a08da785c",
+    "mention_text": "IDC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e86dc231b6cdcec048beaf0085ce294d42d73ae35358a75b4cddd1e28b418134",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00efde9f0d8c133f221de395ab711b823a19ab02a1124343b8671fc8dbc00612",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "698d61fb67ff550974b296487f260601639e54f523d517d5c40e761e772b7f0a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0385171b0ec7fd7a69a6cd2ba1f0fabaa1c022dd08a60b7c3cf15934fbfd6d5a",
+    "mention_text": "Jan Dawson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f32855041ea2ea47863c2093b17eae40a80328bf711044972752c1c705b5b5ef",
+    "mention_text": "Jackdaw Research",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "073daccdc07190f0e9e02194e2899d4a08190c931f7a8dedf5186f01f8b4cabe",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "301acd2c94a3730bad924ea4676bf9126c096c357b50f3a01adec61426d31f3f",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29d970357a0eb02d27775d987b23ba3504bb6763c238f3f5dc1a7f65351ddabe",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ae059ef645d547392ccd8c60454b0330c92b4dab5a935c363d46604972c03f3",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c306a0beb7ab6690e7c1765e5351ab7c8f46ba8d5221a34c584b3f5bb9f3e49",
+    "mention_text": "Iyengar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c55a596465c7b72f1670daad99f1f5645bcd31771aaa5ae6031a340c96928f8",
+    "mention_text": "Google PlayStore",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2e19086b06f88ad2e8cc40dc4d26043e4a1a8ad2ea60b4b4b8ba448c7d78afa",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d0ccea05578a65b7f40bf831d249433a72972b2845e96602ecba46f6cd13092",
+    "mention_text": "Tero Kuittinen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dcb180919db707280d86b68d45cc8a2774b8b328cfda14e7cc869564f664402b",
+    "mention_text": "Magid Associates",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "493e3270475e891e3fc416c7a62e8cdda10c4c828d9812a1016db8e97279fb41",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15ac4b375e0526daa7777f3d632b8cd9c4464b0a4ca476d0d726c25c0dad35c0",
+    "mention_text": "App Store",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "daf335e89a600ea49ee0e2e027100d8a0a86d43577fa74382285195315c51e99",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fac1b480316637f526be7c32e7e315ec77d69b1e0e3a66fbe2d321a1d67cdcaa",
+    "mention_text": "Play Store",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea4aff6c99f6f353db9d691ce4c41e328fa3e8ee56e8cc3c0a30e27c55816c81",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "779438bbed9669c0841cc437dcdde32f088a22f47045097d77cc1f49c0e314d9",
+    "mention_text": "Digi-Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "30227661ab463d5ac83684f4a81f5aaef397b2e0ea7491de003c3b7656a7d442",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f67f513ab5ed4cb5d42cfb00a373010299163956f32cce32072dfc25d0e91040",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "471b986fa8a2cbd2c01291d0b80c6063ca10483e6ec6df40274241d832cb9f07",
+    "mention_text": "Digi-Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19f6ce96fece4a0d9cc6619a041625f4959d2a3852a522da4db8a15e383a4086",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88b6e8b44cb0bb8e57059bd80da8b195898ed45261f429bdb7f73dc904800826",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94d225e703c30447a5d6c4cae883c747d94c785d48f100c44b5020238a0551ab",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f621807c8498fe9efa0323c4cf63d64c2b45b3c0475c93cc26d4d66f955b0920",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5da15d836c8aa6c1e6ac32847b40dd9e68093c4397c4b42dc1b504fdf843fd90",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d85e3c9b8050a6c48f7012d8a6bd301acc154232b9e6207412f2902f81c95392",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "714049a48d1ed187fca13b18f0c340b5b252d660e4ec69803f397b2645e10161",
+    "mention_text": "Carolina Milanesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74dcea6cd4e081c17ac5e5da37601c61efbc7614385f5dd27a0ba98c76cfe12b",
+    "mention_text": "Kantar Worldpanel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc5e948d54fd49e42b7dd66ead65e723696e8d841200fd6dbbecc8b55b94e39e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf3c13ed10e2b3d2cfb87225c8ffa03ff633bbacd0ea79d1e2c91c08c621984a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8bdb45c9691a15d81088fc6e8b7c9cf2d23b808fdf2115054addb25c1ad9413",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74d992454ff6cdb61c766a16bc6d703f7a0bba7c3827811a0eac0088c31107c2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfd987abdd5ad28a769edfa2b1a3d8c49940951202b5a135c51a749dd74f0c15",
+    "mention_text": "Hilwa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44ec92111ee4fa58cbffb2d14cdc08a31d5c6beb28ef6c7687388e0ef31044c7",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad9b5ec4221fa1aa2d620a2ddc92fafd753c08904dc984c8eb21caf39621b60f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "138bed0d79a0b032cdec977c0643b7cac346c44704c012ac6ffa640553f75a0b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e62dd3131554744a14bbfde9092f1bda1d243ae1bd4b85de1a3da99eb3e31c1f",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abd882d309ee16e0bbdd8f66ca112b789b6e571134619074dfb8bbf51dcd2238",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b76c26e3030c63f7ba2bed93fcb790064604103a430a8c5eabaa275aa106d43",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

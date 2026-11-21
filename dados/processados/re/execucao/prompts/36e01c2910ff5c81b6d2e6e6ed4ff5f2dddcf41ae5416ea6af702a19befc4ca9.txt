@@ -1,0 +1,497 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 795c071db818a69b3fb023ec4d48a5ae3128740ba737ba79a5b8f5f28546cf73
+
+TEXTO:
+Trump fará mesa-redonda com executivos de tecnologia na Casa Branca
+
+O governo Trump vai realizar uma mesa-redonda sobre inovação com alguns dos principais executivos do setor de tecnologia dos Estados Unidos, o que representa um relaxamento das tensões entre a Casa Branca e as grandes companhias do Vale do Silício.
+A mesa-redonda, que acontecerá na quinta-feira da semana que vem, discutirá "ideias audaciosas, transformadoras", que "podem ajudar a garantir a liderança dos Estados Unidos nas indústrias do futuro", de acordo com um email da Casa Branca.
+Os executivos que devem participar incluem Satya Nadella, presidente-executivo da Microsoft; Sundar Pinchai, presidente-executivo do Google; Safra Catz, copresidente executiva da Oracle; Steve Mollenkopf, presidente-executivo da Qualcomm; e outros, segundo o email. Steve Schwarzman, presidente-executivo do Blackstone Group, e Farnam Jahanian, reitor da Universidade Carnegie Mellon, também participarão.
+A reunião será parte de uma visita mais longa a Washington por Pinchai, que deve depor ao Comitê Judiciário da Câmara dos Deputados no dia 5 de dezembro, um dia antes da mesa redonda. A audiência dele no Congresso deve tratar de diversas preocupações expressadas por legisladores quanto ao gigante da internet ao longo deste ano, entre as quais o tratamento do Google à privacidade dos dados de seus usuários, os possíveis vieses políticos em suas plataformas, e o estudo pela empresa de um serviço de buscas aberto a censura, dirigido aos usuários chineses.
+Pichai aceitou depor em uma audiência pública algumas semanas atrás, quando se reuniu com líderes do Partido Republicano a fim de discutir algumas das preocupações deles. O Google e sua controladora, Alphabet, foram criticados por senadores americanos alguns meses atrás por se recusarem a enviar um executivo de primeiro escalão para depor em uma audiência que envolveu também Jack Dorsey, presidente-executivo do Twitter, e Sheryl Sandberg, vice-presidente de operações do Facebook.
+Os temas de discussão prováveis na reunião da semana que vem na Casa Branca incluirão tecnologias emergentes como a inteligência artificial, comunicações sem fio 5G e computação quântica, de acordo com um email de Michael Kratsios, assessor de política tecnológica da Casa Branca.
+Nos últimos meses, Trump expressou críticas a diversas companhias de internet, entre as quais o Google.
+"Os resultados de busca do Google para 'Trump News' só mostram as opiniões/reportagens da Fake News Media. Em outras palavras, eles MANIPULAM as notícias, sobre mim e outros, para que quase todas as histórias e notícias sejam RUINS", o presidente tuitou em agosto. "O Google & outros estão suprimindo as vozes dos conservadores e ocultando as informações e notícias boas. Estão controlando o que podemos e não podemos ver".
+Os líderes do Partido Republicano na Câmara também criticaram as empresas de internet, e o Comitê Judiciário da Câmara realizou audiências sobre o assunto este ano.
+Os presidentes-executivos das grandes empresas de tecnologia vêm sendo críticos constantes das políticas de Trump, das tarifas à imigração. No ano passado, um grupo de 130 empresas de tecnologia, que incluía Microsoft, Apple e Google, aderiu a uma ação judicial que se opunha a uma ordem de restrição de imigração promulgada pelo presidente, que queria proibir temporariamente a entrada nos Estados Unidos de viajantes vindos de alguns países majoritariamente muçulmanos.
+Em setembro, Pichai, do Google, se reuniu com alguns dos principais líderes republicanos na Câmara e com o principal assessor econômico do presidente, Larry Kudlow. Naquela ocasião, a Casa Branca anunciou que realizaria uma mesa redonda da qual o presidente, Pinchai e outras "partes interessadas na internet" participariam.
+Representantes de todos os participantes confirmados se recusaram a comentar ou não foram localizados de imediato para comentário.
+Ivanka Trump, assessora da Casa Branca, também participará de uma mesa redonda de negócios sobre inovação, na semana que vem, em companhia de Ginni Rometty, presidente-executiva da IBM.
+Tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "eafbd01b80aaaad71b44898479b91f135f22930febd72975d8b15a2d37e25ca8",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "221ec93ec1497cc30860e4164a451cd6eea7aaafe693a2a82cd3cefc5b363eec",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdf385aa8637dff33e8b635dca0ae1ea771ca34f399588cdac52879b3779c057",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04bccfc442835952a08323c5bbd87b076f25f24c31dc4e11866c42bf0405ddd4",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a632d68f2f43a8dbe5ec8b70082a0ca9034e75d0d8e2694abb88bfedbe3a995a",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42612a26cc4eb3fe70b0be7adc6dd501c994e17373dc3cf51933731987068e1f",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7c72f2e9ff8c79d3d3852061f27d0b7fdbf6fbb830a9c76ad8542f3292472fdc",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "51df98d0fc6cbafb43fe61f18d6653d569ea9395b14a5cfff114f2b58169c0aa",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7a6c10d660d178e5db3df9744365a39ed7f3d878ab4bbf7a43c0f05524da9d1",
+    "mention_text": "Satya Nadella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0848188954820eaf6131dfbcb6d8c8c47e8f6bd40b891c3ff948b2dbdd93d20d",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e41012103542e61b3644cac7fe497225d7baeb3549352760540db4d835b20bc0",
+    "mention_text": "Sundar Pinchai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b9c6d66d37f9b1ea201876c526be8819fd7633c6cf3bb83d32f6fbb3d0d00c67",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbc5167a840732e66eda5f2eb98b3e166d11a3438d87bbbc35bcc651c91e94c9",
+    "mention_text": "Safra Catz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02ab9ddbc25d4b185d10fcd2841ce90490c52ccc6d977e1b3f125d5e85ec6f4d",
+    "mention_text": "Oracle",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0819ca3b602d906dc270ec060fe2c638ee309866c2dce1f3c90219cb973133d2",
+    "mention_text": "Steve Mollenkopf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e27d00a4a1fcd6e3600089d736d89cdde4ec2c876c21a9203c04b3f685e4432a",
+    "mention_text": "Qualcomm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "272628fe8f17a8f9d7eaed2e385e4e14e70370e568d402e57cbbebc0c0dd0a4a",
+    "mention_text": "Steve Schwarzman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31963cd9c55b44ab8c5133bf22de3490bcbb7ce51d2c0e4e06229354f6487455",
+    "mention_text": "Blackstone Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8cea4c004683f2ae0d8590e480867e66aeccfe87dd1e50cb767f288299812a7d",
+    "mention_text": "Farnam Jahanian",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78d59ee0230ec9cd36faad89f0f9025773f61d7b7ea6f87f8d4b3938ee63486b",
+    "mention_text": "Universidade Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd6c7658cef20f424a601dd362d61b168fa65326b12c48d3d8decbce05d28958",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ffaa5f7daef1d9ccf5f3b2445d2248949284314fe75f8d0ab3f21d2960e1c857",
+    "mention_text": "Pinchai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "627e13dd377851d73dbba6d5323969ad87b826a11c781f79da86b117bd785838",
+    "mention_text": "Comitê Judiciário da Câmara dos Deputados",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88cbb7de36668074d46bc8fa0343e315da0e44a9787563e9640a61e6ebadfeba",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15722ea25842ea51e6aa026c7b2c98bd5bf4febe4dffc8d1c0f5a3e29ffcdcc0",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "647e332b9b209df88741e53116d43b7d5cbe48c4a2fa493c96986ed679d59a5d",
+    "mention_text": "Pichai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75d8ac4d2b121ed3617cc0a877582f37ffc85fd74c063aa9956ad6708b7fdccb",
+    "mention_text": "Partido Republicano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "757552362bfdb9bc3577321517194a93dbce20b701a6cba47f83be433c0a82fc",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa1b20a8f80da8b2c84b808303825fbcbdc2e92c69f74e28d00cdf7f47084540",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd19a249ce2581d517a54862edce2cb9aba65a4df62a7702864b3a9fc5c9f782",
+    "mention_text": "Jack Dorsey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1acc6a9de8bf3f1158ea75d72509c2b4f9f2560231fff2eaf3f77164f59ea3b",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b74e7da15005c0d9db4e1b481d058f7c14ebec0e9c1d874739f0f4e9ee5344fc",
+    "mention_text": "Sheryl Sandberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e385e0372244feabfb24a34b8cc539ce2298aa54fc623c57ee5f9b776cf39bf",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56dc131d17d529bb1cdc3ee515bae2971e40fb0ec655c66752067717893baab7",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e69a43f76fe3657d0a2d75931e803e678dc5174b7c58fea0b2ae02ec911b00a9",
+    "mention_text": "Michael Kratsios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a11848927c0bfbd6213dafd109690b6fff25d5e9fdfeeb21dc1dc006b974ccc4",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0c6e9dd747405aa7a2525c42fa44e9d6f9d0a9acf38176852c87d0506f7a293",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04c13f55f0e55acaa10018eb5d8d906a9df9b3c6fc7cfbd3a50803d089c3d3e2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bd232f01fe7f2adb224a7fed27f9ad12b80e1a94245a2481ada764e78a59a61",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5efc083fd54909ed4df7c06573412af9a1499b40826405cf8709cb80d370fa68",
+    "mention_text": "Fake News Media",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb4b4b2ddc24870645b3b4d0a562575db25bbcce05f82da47bc3e03c0dd90a37",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ef642505a4b0cda3edb57d64ac1768edd9d58ff74d41a9303ab4a8837602fa6",
+    "mention_text": "Partido Republicano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b98f8a04a20bea5868612b285e2e47cec157e5d7088e5f447e73ad59c1340d7a",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6497c29cd11ba37635fa21b2c3c0ea2ae029145adf2d6d84f5168f008f90f82",
+    "mention_text": "Comitê Judiciário da Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "062fd20d2f410410b6ce545d81b3adb98647ea415f474279f8b0f8088d4ddf5e",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3a66b1eb714635655391325bb9540f1c2f158a6160b8dce6716c4857c35b2bc",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8809b3ca2e703034abbd62b381311b70c4f2672ab5bb006b0ed4ece54f1da10f",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84815512cb731662ef4baaaf30fcdcde3b7dcb5cb6f4eb5da41168f59ecb5fd3",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38889b5df3ccec6fd4d8c2309a2b75144d5da2a81c27945742e62bb1447ed7de",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "33a00481bd86268d904987c521520cf2639cead432cc3dec894772d0d2ae4495",
+    "mention_text": "Pichai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62bc4d9a63ddafb5d82fcb27763f1148d593eb9a2d50d67ef4935b323da18d26",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7a2abadbf3da779585bbd81657614196caa8da8ff0ce8bd6832e0017aa27874",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "142a467cd3ac7fe65d44b5f1194ed777f1ecc9473365b37fc3caef9aa326582f",
+    "mention_text": "Larry Kudlow",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b29dff3b165fa3fed901808e0ede9c849a18689a6e60d062031e4e1a7b2bc11a",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0817bf0fd5075b4f66889af174ba43ee52f63849f95db268006d5860132291b4",
+    "mention_text": "Pinchai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7de4a1fa41972dafa891bfe9e3f3cca253a66f148729eb5a5dd980300e14f462",
+    "mention_text": "Ivanka Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02cc17776d435bc0724c59a4ed6ebeafa0b7c240a6f3d4b7aff81967c1cea02c",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58b4d082e61a3061ace5793853e9be5bd4b92520b8300d3b4eadc2673582f3b8",
+    "mention_text": "Ginni Rometty",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90fa0d55a2255369e73b7741293e9051bba4a1ac96ab539d2e49c2a2b6423c8e",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae39e33fb2d9199832587126eab8b0a833cf53ec0c74bc5575a8f212ae572af0",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  }
+]

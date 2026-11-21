@@ -1,0 +1,334 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d8d6f5cab08aff314c3a4a4eae4ee720292663d6c54ccd8a0cd7c546ed2676e4
+
+TEXTO:
+Não é hora de improvisar
+
+Apesar da polêmica em países às voltas com desemprego e problemas migratórios e de provocar discursos revisionistas em setores da diplomacia brasileira, a globalização sobreviveu ao teste da cúpula do Grupo dos 20 em Buenos Aires, mas continua o suspense neste novo mundo de tendências nacionalistas.
+Os governos do G20 concordaram em reformar o estatuto da OMC (Organização Mundial do Comércio), contrariando os maus agouros que antecederam o encontro. E o fizeram por unanimidade, ficando para o fim, à parte do consenso multilateral, as desavenças entre Estados Unidos e China.
+Muito antes de Donald Trump, o obeso déficit comercial dos EUA com a China mobiliza os presidentes americanos, sem resultados. O último superávit comercial dos EUA se deu na década de 1970. A combinação de interesses funcionou enquanto a supremacia econômica, militar e tecnológica pendeu aos EUA, com a China sem ter, aparentemente, outras pretensões que tirar da pobreza seus 1,3 bilhão de habitantes.
+Não é mais assim. A China caminha para ultrapassar os EUA em gigantismo econômico, o poderio militar já é expressivo, passou a disputar influência geopolítica em toda parte, inclusive aqui no Brasil, e investe pesado nas ciências de ponta que definirão os próximos campeões globais —como inteligência artificial, indústria 4.0, fintechs etc.
+O que está em cena é um rival com ambições múltiplas.
+É isso que sacode a ordem econômica global. Trump se elegeu alardeando a decadência dos EUA e abriu as negociações com o porrete na mão: aplicou tarifas sobre importações chinesas e ameaçou estendê-las a todo o comércio bilateral. A ameaça foi suspensa no G20, mas os riscos de guerra comercial continuam ameaçadores.
+Toda a prudência é pouca. Mais peão que tabuleiro neste jogo, ao governo brasileiro cabe ajudar no que puder e não tomar partido na contenda entre os dois gigantes. Os EUA têm o maior estoque de investimentos no país e a China é nosso maior importador, além de investidor ascendente.
+Não se pode improvisar em política externa. Sua formulação deve guardar sintonia com as diretrizes para o comércio exterior e atender aos interesses próprios do país, evitando, inclusive, o alinhamento automático aos EUA, como têm insinuado membros do novo governo. Qualquer posicionamento em temas globais deveria resultar de muito cálculo e nenhuma paixão.
+A desistência do Brasil de sediar a Conferência do Clima em 2019, bem como a promessa do presidente eleito, Jair Bolsonaro, de reverter a adesão ao Acordo de Paris, sinaliza incompreensão sobre nosso protagonismo nas questões ambientais. Não estão sendo devidamente consideradas as vantagens, inclusive econômicas, resultantes de nossa riqueza ambiental.
+A transferência da embaixada em Israel para Jerusalém, outro tema controverso aventado por ele, provoca reações negativas e possíveis danos ao fluxo de comércio com países do Oriente Médio. Revela também açodamento rejeitar o Pacto Global da Migração da ONU no mesmo dia em que o acordo foi aprovado por mais de 150 países, "por se tratar de um instrumento inadequado para lidar com o problema", como declarou o futuro ministro das Relações Exteriores, Ernesto Araújo.
+As transformações observadas na geopolítica mundial já são suficientemente complexas para abrirmos novas frentes difíceis de administrar e sem maior significado para a projeção externa da economia e do país. Frases de efeito em redes sociais podem ter sido úteis na campanha eleitoral, mas agora é tempo de fincar os pilares de uma estratégia coerente com as verdadeiras necessidades do país.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b6c008294bcfd21f901eed535a9f89b9d06bf85129f8a2962e28afa85f21e490",
+    "mention_text": "Grupo dos 20",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6eae21d51e5c7ac99e42757a5734b9e4509d7a06255fe3a374b667618b9b8371",
+    "mention_text": "Buenos Aires",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43d12ba29ae351949d69b3a4c64518f3f0fa34bca6f56a3cf52ed2ae1289b5c7",
+    "mention_text": "G20",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fefc9b884fd4f62434c820a4fb03fdfd09ba330b9a69b63eeaeb264663a99ffd",
+    "mention_text": "OMC (Organização Mundial do Comércio)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1252e0bbb3a420a618b30bd0968d204758c255c85f7c3d6d4189439b35f52763",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9c3aa8f5a43af4ecdb70a8425d140a2ed3ba10a7c9ffaea950307d3b18a8edf",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a22ebc70e9d5137d55d35bbc459de16e3bf8ea83516ce663d6db603d8c05d07",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b81f3798ccc6779e47faf7b6c39814b8ef8ceae418845f4673cdbd8e2006047",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20bdbd6a3f411be1a22752757f81b82106e63ecd96ca071342d44383c8434ef0",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43688a72e9f5a4783e47b32faf298036ad9e478ea8f9956859caedbf004d6ba0",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3bb5619b598cc1cae26f6a4db8f0ba60d74a137f91d04a718dd3c5e98eefdeff",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "32ae01c03aab86010786f8c236d6e6f83b6a4f0854b4db33329afad32658468b",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86f850b137830442ded4517403576ffe97381f8ce31a8654526798ad59643721",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aef55627a23cca45e3cea35bc32835b63f1b772f109597403e2ebec5c9040182",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "568282120580a28f44c864c89db25b8ea731328f5c7f9af0f611730ec57bb457",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "991a7c4b623d1383db6fdf3b4f8d2b7e00a700141d15fceb22e5b79f1a1b3e1b",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0693c58ac766cee8ef772edcc405126b0e05629819ae732f058510b5462885df",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "588db3c2d1a7ca4b308fe735846c93b26a0254d430d36f5628a91e686e8eab54",
+    "mention_text": "G20",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9b6175c6903d4c311176ef85a72c84b497af190f209dc70ade307ff20697c11",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "48b1067d75caf862dd51fb7410fe0044693bf6543ed9c63ebe38612d9fff289a",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6777945b53026c3d216adeb96e56b71bb824a192220bf8f82e85abbcd78edb8a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e54c2318625794bb5a4ee7981a3fa82fd3b5df03e9af1adb50189b44521d1152",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff35b86967d5ad368a9c41094566ed58cba300222da2e11db4f770cb298957c7",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb34556927a993c8d55001d142b31261897cb7fcdcbfa635b5441cb02da5f4c3",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27be0e28947328064e02b9959496c1569718efd09cab85ecb6f68b4b623a6cd0",
+    "mention_text": "Jerusalém",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39ebb3ce723494a0bd742f7b5cb5ff2096b1cbb4fe6279f138364c3a98acc987",
+    "mention_text": "Oriente Médio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "644dc71940f40ee4aba6e708aa2f6bb79710144ba391a2c79d06d00d41075a81",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "454d3dcca43c4bdc5ebb47fe705de12d17086c31fbd9d92cb508d9e5396b6891",
+    "mention_text": "Ernesto Araújo",
+    "categoria": "PESSOA"
+  }
+]

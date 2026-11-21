@@ -1,0 +1,472 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 3a53f677fdf33b50929cad3d2abe32723132c4bddc53786c1a4629361e9c5ac8
+
+TEXTO:
+Empresas de aluguel de bike sofisticam serviço com inteligência artificial
+
+​​Quantas pessoas, na capital paulista, vão alugar uma bicicleta para percorrer a avenida Brigadeiro Faria Lima em direção à Vila Olímpia na manhã de um dia qualquer?
+Vai depender do clima, de eventos ao redor e, principalmente, de que haja veículos disponíveis ali para todos os que quiserem pedalar.
+As empresas de compartilhamento de bikes investem em inteligência artificial para entender em detalhes o comportamento dos ciclistas e, assim, tentar prever onde haverá pedidos, minuto a minuto. Com isso, buscam evitar que o usuário se frustre ao buscar uma bicicleta e não encontrar nenhuma por perto. O processamento desses dados é feito em servidores remotos, na nuvem.
+“Desde o início, em 2009, usamos sistemas cloud, mas, agora o mercado vai além do armazenamento, e oferece também soluções de inteligência para tratar estes dados e integrá-los com informações de outras origens”, explica Angelo Leite, presidente da Serttel.
+Com sistemas de bicicletas em cidades como Belo Horizonte, Brasília e Fortaleza, a Serttel fez uma parceria com o Google para encontrar novas soluções, como por exemplo usar as informações do Google Maps que indicam a velocidade do trânsito nas ruas em tempo real.  A integração desses dados com semáforos inteligentes está em período de testes em São Paulo.
+A Tembici, que é responsável por serviços patrocinados pelo Itaú como o Bike Sampa e o Bike Rio, passou a utilizar em julho último um sistema de inteligência artificial com o objetivo de melhorar a redistribuição das bicicletas pela cidade e de prever picos inesperados de demanda.
+“Neste período de teste, o serviço já solta alguns direcionamentos. Com isso, tivemos aumento de 25% no número de viagens”, diz Tomas Martins, presidente da empresa.
+O sistema é capaz de detectar, por exemplo, se há um aumento de viagens entre as estações A e B no fim das tardes do domingo em que haja tempo bom e que não seja um feriado prolongado. Se essas condições se cumprirem, ele dispara uma ordem para que sejam levadas mais unidades para a tal área.
+A análise de dados mostrou que há mais interesse em pedalar nas quartas-feiras. “É o dia em que mais pessoas têm carros com placa no rodízio, porque ninguém quer ficar sem o veículo no início ou no fim da semana”, diz Martins. Outro fator de impacto é o clima. “A chuva sozinha nem atrapalha muito. É mais o frio com chuva”, prossegue.
+Ao longo deste ano, parte dos sistemas do Itaú teve a troca completa das bicicletas e das estações. Com isso, o uso aumentou quatro vezes: em junho de 2018, foram 788 mil aluguéis, contra 151 mil em junho de 2017. Os dados somam as viagens feitas em São Paulo, no Rio, em Porto Alegre, Recife e Salvador.
+O serviço de manutenção também gera uma grande quantidade de dados. Cada reparo feito pelos mecânicos é registrado em um sistema, o que permite a identificação de problemas recorrentes.
+Por essa razão a Tembici mudou seu fornecedor de pneus, após detectar um número de furos muito acima do esperado.
+Em agosto, o Bike Sampa ganhou a concorrência da Yellow, que não possui estações fixas e cujas bicicletas amarelas podem ser deixadas em qualquer lugar. Esses veículos, que podem ser desbloqueados por meio de celular, estão em comunicação com os servidores o tempo todo, transmitindo informações sobre sua localização. Com isso, geram mais um enorme volume de dados. A startup testa uma maneira de permitir que o usuário faça o pagamento em dinheiro.
+“Para incluir o crédito em sua conta, a pessoa tira uma foto de um QR code no aparelho do vendedor”, explica Ricardo de Oliveira, responsável pela área de tecnologia da Yellow. A ideia é fazer parcerias com bancas de jornal e outros tipos de comércio.
+A chegada de novas tecnologias nesse mercado é motivada pelo aumento da concorrência e dos investimentos. Criada em junho de 2017, a Yellow já captou US$ 75 milhões (R$ 275 milhões). O modelo sem estação fixa também facilita a entrada de novos competidores.
+A Serttel, que operou o Bike Sampa até o ano passado, aguarda autorização da prefeitura paulistana para oferecer na cidade um serviço do tipo.
+A disputa das empresas brasileiras do setor também se estende à América Latina. A Serttel deverá atuar em Buenos Aires a partir do ano que vem, e já possui um serviço em operação em Querétaro, no México. A Yellow tem planos de expansão que envolvem Argentina, Chile, México e Colômbia.
+Em parceria com o Itaú, a Tembici assumiu em julho um serviço de bicicletas em Santiago, no Chile. A parceria se repetirá em um novo sistema na capital argentina, com estreia prevista para 2019.
+O Itaú realiza sondagens para levar suas bicicletas cor de laranja a outros lugares onde atua. O banco está presente em 21 países, como Paraguai, Colômbia e Panamá.
+“Buscamos parcerias com governos que estejam abertos a abraçar esta causa, pois as cidades precisam se adaptar para receber as bicicletas”, afirma Luciana Nicola, superintendente de relações com o governo do Itaú.
+468 km é o total de ciclovias e ciclofaixas na cidade de São Paulo, segundo a CET
+6.149 é o total de vagas nos bicicletários públicos da cidade
+420% foi o aumento no total de viagens no sistema Itaú de junho de 2017 a junho de 2018
+360 mil novos usuários se cadastraram na plataforma Itaú no primeiro semestre de 2018
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "974545190efa18dbc6c74967e90ae0b9d16dc7e655d9fff88138f994fae4b0d5",
+    "mention_text": "capital paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "488567507d3a21beafbc2b39b77225dbfae5c9c4baba8b563869ec4e3b563222",
+    "mention_text": "avenida Brigadeiro Faria Lima",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1be7a7a389c61134e0f8dbbff4b65a1a680f1f025a6c6489497b4f43ec054fdf",
+    "mention_text": "Vila Olímpia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a46f2900c31d813fac6de8d5daf9e5d98009da249a2bc0b27d20d721605d03ad",
+    "mention_text": "Angelo Leite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bd7be610ad6a91047b98c63d00aa69be9185450d80bae85fd2fb34a4bb9d048",
+    "mention_text": "Serttel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "781784d2af90e184cf6872c8b594094deb1b636a2999bc91893d1fa0625ec75e",
+    "mention_text": "Belo Horizonte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34fe232283edb6d52812cdb296ca8a5d36964290857dcd215bb8a2cd582ddb75",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c8c6b85275657983fb0f9d525ae6383887be2f7bf5d4f35d0896e68ea8a420df",
+    "mention_text": "Fortaleza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b1fbe907863a669c922438c6a8eed12f6dac8a13083a3b3646c0ec18e4e20b3",
+    "mention_text": "Serttel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9b456e4b58385508ea507417201ee51b84621e220d70aecbe5fb9bb1accd5cb",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c65aaa436b8f5de94069b1473616a12d4420fd7ac63aa1ccfa2fc23a7b647ab",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2fbfa7921fe8d76c40389beed8fecca2551ebd768691d17f377413918d5043e2",
+    "mention_text": "Tembici",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b70ab487ba91c6176a8a389784428f64dffc919f3e58268ef5d257e58c32ea9",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d664f1c0401e4fa03a74b0d79ff8a9469fa684600f46b043ae19bc5577e76469",
+    "mention_text": "Tomas Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f14e120adbe8f68b6a1c27e208cc2a626f34d50d7cc4d308a8cdccf02925b675",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c4823e007ac3fa3cb11f919bc95f6830d005631b1104a3f1e12671a287a0242",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9472a542c4aa176531eb8bc01394196746beee65587d2a5c556a345e28a80020",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11cbe91ca18e02d86b967e3feb5cef3a824390bdd2be07ce6fae7b9a5d67f633",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ef20daa841cef005bbc4131fe354bb578234c48d9eadd753e4be8e9772712ce",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bc8a0659056b5ae41ae40c7783b99f887cd61ff75ff7acce3280200c332fcda",
+    "mention_text": "Recife",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "81e99d8b36e34306f2ba1549f9c53c68bccc19bc942ed8dedbc802b122c0a7d8",
+    "mention_text": "Salvador",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0133243c73ee6d112269b50ee1c0b320c5aa40823d81f3b0e9cae15c75aad21e",
+    "mention_text": "Tembici",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de7d6a5a0223f9c018b7d873cc74a1dd236d79f65ebe5a991af6627898e5633d",
+    "mention_text": "Yellow",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a58b1eac5e53b32034bfa9fb81692c256a265cbfbcb6ef83909fd4c7ab4cd14",
+    "mention_text": "Ricardo de Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "780d1d432f6f33addc8cf1d4fdd58a64062790b8cd104c24d6448e69c079921e",
+    "mention_text": "Yellow",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfffcffc0c870310a8010a2bb8121b854dbe394696b20fbaef6a805d2998ebf3",
+    "mention_text": "Yellow",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83bbb1d5132fc1f9240c74fcd0a02e79b1d7442807c38ab1f2013e28a57578d3",
+    "mention_text": "Serttel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1336f053ba67a5733102ff70923f9d19eede5755848431fcc5cfcac29a0e970f",
+    "mention_text": "prefeitura paulistana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "811e7ed5077426debdecc87e2a4ab5923a913929c032c1bf2214f06af92f1e6a",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "37eee3c3cc34db5313612d9624dc5e41cfa32802e4e2e74140e1eb5c9d0f501a",
+    "mention_text": "Serttel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ddebf698396dd0935ba6c1f30600aebcf9b6f3902c2b4b7ff5a9c9800c7ae75",
+    "mention_text": "Buenos Aires",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "402afe543ead4e4aa5229e81dc711af40c48f0442650586b72c7e78d39bdcb01",
+    "mention_text": "Querétaro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b5463e20548ca4e4252a859cfbf9320b89273f631111ab7a79ab6df299188c2",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef5249a4ec439d869df5f08aad5d433f14704cf83519db01da643a24092ad51a",
+    "mention_text": "Yellow",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98a305a5d2759811211fde691cc863e6af8f0d65154925b8f1a3de19cb592974",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9df73e803941f68c678296f6052988839a507cbe2c82315d6c7ad7d7086fc8ad",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1efe015abd7941ec96bbb05aaee9baf38f0093da84e394ec9ea319424c6ef9f",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6237c7118e1f6834312d79cf1097c507818066598dc38f5408685b56efeb65ea",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c25c7e0b490424be782a73b0d88eeb195a7a262d0e27a7f21c9122195e51b4a",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5221da47bb8b72e1a74e6a92ca9d49ccd73269110d3cdaeec2912121a0345c91",
+    "mention_text": "Tembici",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "beff4ddd084c0b45d98234cda26cd121238808583c8c7498c3717c441498c2c7",
+    "mention_text": "Santiago",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "afd20ea2cd0fb750e10309de4b7b9dbff4dae4598456c54c241d3ea17b1f2f01",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "714555649bc4c515b7578a9120d64f350d1f2b6982ec75fcfbabf4f9c267c55d",
+    "mention_text": "capital argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e3c295107f0dc761259fe288287638238c21eec22c4bc7a3fa83b515102a8d4",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64e1b32a0154873bd7169c6e6d2302b621b1f11acd559933e548229ce2616e38",
+    "mention_text": "Paraguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3a586d602406e783b61314defe0b3c04ccf407eb6d6a81f3498cb9784022f050",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a4badf1a29f516741c8c9232f91c181139f84c8a4069cd632fa87ee892be64c0",
+    "mention_text": "Panamá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e987aade4f1fc5ea4d34aef2e044cbdd6900e98e43a2f516025e7ed6aa770b9",
+    "mention_text": "Luciana Nicola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7a257d0e3a6747cab296e160eef8465587386b95b97f6bd04501a2d23dc1a2d",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e21d325d097afc416a100718e2bbac7ba90c36cd6a3a9a7d2a51dc03354af3cb",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63537e8a949dca6df3b626ec5562c04f500670646e6fb608de88124dd920995a",
+    "mention_text": "CET",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33e35c1bb2d6bd912869a60e12410bac46843a6d4d44b0dd4644a92e9c52d3b5",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4a54097a1f4f2f726592912cfb57ef65f81a3473f16c92398b5aeca571a615a",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,343 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9a6b14fcb6e1e6a533d0b931c8ab1d20e8b6b34db8724221284fac1081536163
+
+TEXTO:
+O que falta para a inteligência artificial produzir obras de arte?
+
+[RESUMO] O que precisa acontecer para que a inteligência artificial seja capaz de produzir obras artísticas? Organizador de exposição sobre o tema no Japão discute o que (ainda) separa seres humanos de máquinas no campo das artes plásticas .
+O violoncelista Jan Vogler disse que a arte é o que nos faz humanos. Mas e se máquinas também começarem a criar arte?
+Um exemplo de uma obra de arte criada por uma inteligência artificial está na foto (1), abaixo. Do lado direito da imagem, vemos um computador usando inteligência artificial que foi treinada com imagens de grafitagem. Ele controla um cabeçote de plotagem que borrifa água sobre blocos de concreto, à esquerda. Os desenhos resultantes são uma forma de arte gerada por computador.
+Isso é belas-artes no sentido real do termo? Se for, teremos que encarar a possibilidade de que alguma parte de nossa humanidade —a parte à qual Vogler aludiu— foi capturada por máquinas.
+Mas a verdade é que, embora o que a máquina produz possa ser artístico, ela não está criando arte.
+Quando arte é criada para satisfazer as necessidades de uma terceira parte —neste caso, o programador de computadores empregado pelo artista—, ela é ilustração ou arte comercial, não belas-artes.
+Se quisermos que arte real seja criada por inteligência artificial, a obra terá que ser gerada por ela própria: produzida por máquinas de maneira autônoma, independente e ativa, para o seu próprio bem e com sua estética. Apenas nesse caso a arte não seria um produto passivo de criação humana.
+No dia 8 de janeiro deste ano, a Exposição de Arte e Estética de Inteligência Artificial encerrou sua passagem pelo Instituto Okinawa de Ciência e Tecnologia (Oist), em Okinawa, Japão. A exposição se concentrou no conceito de arte artificialmente inteligente de verdade. O único problema dos curadores (entre os quais me incluo): ainda não existe arte que se enquadre nessa categoria.
+Para contornar esse fato incômodo, as mostras da exposição foram divididas em quatro categorias: (1) Arte Humana / Estética Humana; (2) Arte Humana / Estética de Máquina; (3) Arte de Máquina / Estética Humana e (4) Arte de Máquina / Estética de Máquina.
+A categoria 1 continha uma coleção de arte humana convencional, da Renascença em diante. As categorias 2 e 3 apresentaram, como seus nomes indicam, coleções de arte híbrida humana e de máquinas. A categoria quatro, por sua vez, não trazia arte feita por máquinas porque não existe esse tipo de arte que também reflita uma estética de máquina.
+Mesmo assim, essa última categoria foi útil como marcadora de posição —e, como vamos descobrir, não ficou completamente vazia. Cada categoria nos ensina suas próprias lições.
+A arte na categoria 1 mostra a transformação histórica da estética, afastando-se da perspectiva do olhar de Deus em direção a uma visão humana. A arte sistêmica incluída na categoria 2 (foto 2), em sua maioria arte do século 20, incluindo minimalismo, música serial e poesia visual, caracteriza-se pelo uso de regras ou formas matemáticas. Podemos considerar que a arte sistêmica nasceu com a Torre Eiffel, em 1889.
+A construção da torre enfrentou a oposição de muitos artistas famosos, incluindo o pintor William-Adolphe Bouguereau e o escritor Guy de Maupassant, para os quais sua aparência básica e seu design calculado por máquina eram uma negação hedionda da estética humana .
+O fato de que hoje a maioria de nós considera a Torre Eiffel bela é a lição fundamental proposta pela categoria 2: que nosso senso estético pode ser modificado pela matemática e pelas máquinas.
+A categoria 3 (foto 3) contém uma espécie de arte midiática, produzida por máquinas, mostrando-nos que, mesmo sendo um produto passivo da criação humana, a inteligência artificial moderna é capaz de produzir objetos dotados de beleza.
+Juntas, as três primeiras categorias da exposição descrevem um arco incompleto. Vemos o nascimento do autor humano e os primórdios do autor de inteligência artificial.
+Mas será que um artista artificial verdadeiro existirá algum dia? Podemos prever que algum dia a estética venha a ser gerada inteiramente pela máquina, sem qualquer design comandado pelo homem? Essa questão esteve no cerne da exposição: a inteligência artificial terá estética própria algum dia?
+Platão argumentou que o verdadeiro, o bom e o belo são todos coisas que possuem valor intrínseco. A beleza possui valor por si própria, não por servir a algum outro propósito. Fazemos o bem por fazer o bem, e assim por diante.
+Para que uma máquina possa produzir sua própria arte, ela precisa satisfazer a regra de Platão e criar sem finalidade utilitária. A pergunta que está em aberto é se as máquinas serão capazes de fazê-lo algum dia.
+Uma base para otimismo é que os humanos não são os únicos seres capazes de criar sem fins utilitários. Por exemplo, já foi observado que chimpanzés , quando lhes são dados materiais de pintura, fazem desenhos por simples prazer.
+Aliás, a exposição em Okinawa incluiu (foto 4) desenhos feitos por cinco chimpanzés e um chimpanzé-pigmeu que pertencem a Tetsuro Matsuzawa, professor da Universidade de Kyoto —e todos foram incluídos na categoria 4, "Arte de Máquina / Estética de Máquina", para nos lembrar do que é possível.
+Se os animais tivessem produzido os desenhos em troca de bananas, não teriam sido incluídos nessa categoria porque a arte deles não teria sido criada sem outra finalidade exceto a de criar arte.
+Para a inteligência artificial chegar ao ponto em que estão os chimpanzés, são necessários dois passos. Primeiro, a inteligência artificial deve ser capaz de gerar seus próprios objetivos. Hoje, suas metas são traçados por programadores humanos, que escrevem as chamadas funções de avaliação para calcular quão bom ou ruim está sendo o desempenho de um algoritmo.
+A primeira obra de arte criada por máquina qualificada na categoria 4 terá que ser capaz de escrever suas próprias funções de avaliação.
+Isso não apenas é possível como já foi feito —e se você visitou nossa exposição em Okinawa este ano, pode tê-lo visto em ação. Kenji Doya, professor da Unidade de Computação Neural do Oist, e sua equipe de desenvolvimento de robôs para smartphones montaram um experimento chamado "Os robôs são capazes de definir seus próprios objetivos?".
+Eles colocaram numa área comum uma coleção de robôs feitos de smartphones sobre rodas. Essas máquinas podiam deslocar-se livremente, encontrar seus próprios lugares para se recarregar e trocar programas, escaneando os códigos QR uns dos outros. As recargas eram análogas a se alimentar, enquanto trocar programas era análogo a se reproduzir.
+Os robôs que não se recarregavam paravam de funcionar, e aqueles que não trocavam programas com outros não transmitiam seu "DNA" à geração seguinte. Com o tempo, os robôs começaram a escolher suas metas: alguns pararam de se recarregar para correr atrás de outros robôs, por exemplo, um comportamento para o qual não tinham sido programados.
+Os resultados deste e de outros experimentos convenceram Doya de que os robôs podem criar seus próprios objetivos.
+O segundo passo necessário é que a inteligência artificial seja capaz de elevar as metas secundárias —as que existem apenas para servir à sua meta principal— à condição de metas primárias.
+Suponhamos, por exemplo, que a meta primária de um organismo ou uma máquina seja se reproduzir. Fazer sexo é um método de se reproduzir; logo, fazer sexo é uma submeta. Atrair um parceiro é um método para fazer sexo, logo, pode ser visto como uma sub-submeta. Ser belo é uma maneira de atrair parceiros, podendo ser visto como uma sub-sub-submeta, e assim por diante.
+Para os humanos, porém, o sexo e a beleza do parceiro adquiriram valor próprio. Assim como fazer sexo pelo próprio sexo pode passar a ter valor, fazer arte pela própria arte, também. Quando uma inteligência artificial tiver escolhido seus próprios objetivos e começado a ir atrás deles por eles próprios, e não com outra finalidade, ela estará a caminho de criar suas próprias belas-artes.
+Vamos ser capazes de reconhecer quando as máquinas começarem a criar arte? Podemos ensinar à inteligência artificial nossa própria história da arte, para incentivar uma produção que possamos reconhecer e apreciar.
+Por outro lado, a inteligência artificial não treinada terá probabilidade maior de produzir algo fortemente original e até mesmo irreconhecível, à maneira da chamada arte outsider ou arte bruta.
+Embora não possamos entender o sentido estético interno do artista autista Moriya Kishaba, um de nossos expositores na categoria 2 (foto 5), muitas pessoas acham seus azulejos com caracteres chineses minúsculos estranhamente belos. O futuro da arte criada por inteligência artificial é análogo a um mundo cheio de artistas como Moriya antes de serem descobertos.
+A verdadeira arte criada por inteligência artificial será ao mesmo tempo dolorosamente entediante e altamente estimulante, e isso representará progresso. Afinal, a beleza não pode ser quantificada, e o próprio ato de questionar a definição da estética faz toda a arte avançar, algo que já testemunhamos inúmeras vezes na história da arte feita pelo homem.
+A concretização da inteligência artificial vai imbuir essas questões de novas dimensões. Será também um triunfo do materialismo, enfraquecendo ainda mais o caráter especial da espécie humana e desvelando um mundo que não encerra nem mistério nem Deus, no qual os humanos são meras máquinas feitas de materiais inanimados.
+Se tivermos razão, também trará à luz uma nova geração de artistas e, com eles, novas Torres Eiffel que vão transcender nossas visões mais desvairadas.
+Hideki Nakazawa , 55, é o artista japonês fundador do Grupo de Pesquisas sobre Arte e Estética de Inteligência Artificial.
+Texto publicado originalmente na revista Nautilus.
+Tradução de Clara Allain .
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2405916ac63b283136bbbc48a08012c11d3a36711b37ebf4a681a85e349e6eb6",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62a883baa380d30e1debcaf6aa325392ab5a47bd40fcafaa76f734f66551d6a1",
+    "mention_text": "Jan Vogler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe8dc90f8eeaf247ce4692eabd37be2e22a736bbb7a3905ab99c93675a5b9475",
+    "mention_text": "Vogler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a113efc25131b16b3bc86e88e4bfc5dae4fda3fd569005a962aa81cbcd64c706",
+    "mention_text": "Instituto Okinawa de Ciência e Tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0d357671684c3abcd7b9000e96b54de84977b103cf85526df5d102b4e132d4c",
+    "mention_text": "Oist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45700f433d2ddf905858b374b5658e755bcd94f8734ae2846455d85a1c3e9ba2",
+    "mention_text": "Okinawa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e80b86c7731a61d84ed9eb9d95f582fe8442dedcc4baad23d79065ecf2a3984",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94609608727cb0cef26f0dac1f5165c18936db05d056d93c348084180de98e2d",
+    "mention_text": "William-Adolphe Bouguereau",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4300377ce6026ecce77722e5763ed1510f5707c4043e02fb2162c390de3ba34",
+    "mention_text": "Guy de Maupassant",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18fa69c82047e8a87be62ee42a14c6657981586323e6b31065d8e9c71ba58a91",
+    "mention_text": "Platão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af06b980684fd98c5e6d7321d53053eeffe8ffc5bc964630b976f63ab17f0a32",
+    "mention_text": "Platão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d350b6ec4a72cf030b82d599a04ccfd157b26633a24dfa14bf1b9e96fba145ef",
+    "mention_text": "Okinawa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a6fd3ebc16ef2ebbd568c382a40a9858cffc91b837f28046d35d211e586e7061",
+    "mention_text": "Tetsuro Matsuzawa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40a834139e8de1ccd3b754b8ef3904441b5f1dab84bec4b809ce7e3517b94bbd",
+    "mention_text": "Universidade de Kyoto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1aab40fde2a5793e9716006060c7731fb6128403af0071f2a620e96bd73d38a",
+    "mention_text": "Okinawa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "816a1e54124d5a752219deec2234f9ee9d5155af3fb5cdebc5a46755fe2f7bbe",
+    "mention_text": "Kenji Doya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e2a1ff97c0509b6d1933fc20ced9c4adaad469d33ff8fe40657f254aceeff94",
+    "mention_text": "Unidade de Computação Neural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "332b2e85dd473d225209bc44340fe37ec16bab53aed75b052d7b26680c2186bb",
+    "mention_text": "Oist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ea74c14b13ce2f5f238f65fd808d29cbc68b3c62a63dbc703eaffde5563cfe7",
+    "mention_text": "Doya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ce7eb25c7176c6a397f978ea08cb5e9791b9a123ebcda48306e0bf450be22b2",
+    "mention_text": "Moriya Kishaba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec827b03154ee341c2a423db82dacf6213f24a0d3d3a20418928817eaf975fd0",
+    "mention_text": "Moriya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50467eb6ba0cebae5c5eeea12b4cb1373e683557600cb6a1d33b49baf0eb06d6",
+    "mention_text": "Hideki Nakazawa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dbc28c78e7a2ae34f603c1918cccd22d93d10d7b60b448abf9c0ecb4f8ae0a3f",
+    "mention_text": "Grupo de Pesquisas sobre Arte e Estética de Inteligência Artificial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20724ef7aebb9a7fb19a0db9d09127bd1d7bb594e716579722a490dca734465f",
+    "mention_text": "Clara Allain",
+    "categoria": "PESSOA"
+  }
+]

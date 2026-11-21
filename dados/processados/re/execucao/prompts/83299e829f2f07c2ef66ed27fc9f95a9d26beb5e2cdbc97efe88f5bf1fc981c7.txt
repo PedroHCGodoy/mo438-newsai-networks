@@ -1,0 +1,367 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9c4586f866a29eaf558af7e33f94f4ef75defadcaaf17fd3994c3379bcf57585
+
+TEXTO:
+Otavio Frias Filho, obrigado por tudo
+
+De tudo o que já foi falado sobre a perda dolorosa de Otavio Frias Filho , o que mais me moveu o coração foi a decisão editorial da Rede Globo de ressaltar sua visão da Folha como o “jornal das pessoas que chegavam a São Paulo”. Em outras palavras, o jornal dos imigrantes e dos migrantes.
+É o meu caso. Quando fui para São Paulo estudar, fui recebido pela Folha . Mais do que isso, fui preparado pela Folha para aproveitar o que a cidade poderia oferecer de melhor.
+A Folha ajudou um garoto que morava no interior do Brasil —em Araguari (MG), para ser preciso— a saber quem era Susan Sontag ou Jane’s Addiction. Mais do que isso, formou um hábito (que tento preservar) de ler com atenção a crítica de cada filme ou peça que entra em cartaz.
+Por causa disso fui ver o Ham-let do Zé Celso (obedecendo à manchete de Caetano Veloso na época, que dizia na lata “Vá Ver o Ham-Let do Teatro Oficina”). Marcelo Drummond e Leona Cavalli permanecem como o Hamlet e a Ofélia definitivos para mim. Personagens universais “abrazyleyrados” pelo gênio que só Zé Celso sabe expressar.
+Não é por acaso que cinema, literatura e teatro eram também os gostos de Otavio Frias Filho. Em grande parte, por sua causa, tornaram-se meus também e, tenho certeza, de muita gente por todo o Brasil. Fico triste por só ter percebido isso agora. Poderia ter agradecido pessoalmente.
+Sua partida acontece em um momento muito ruim. Os jornais e o jornalismo estão sob ataque. Não é por acaso que uma das principais bandeiras da chamada “alt-right” (cujo hífen significa o oposto do hífen de Ham-Let do Zé Celso) declarou guerra a três instituições: a academia, a imprensa independente e as artes. Em suma, estão sob ataque os valores que Otavio consolidou como pilares do jornalismo da Folha desde os 1980.
+O desafio passa também pela transformação tecnológica que obriga os jornais a se reinventar de forma permanente. Ou, ainda, a enfrentar a concorrência das “ fake news ”, criadas e disseminadas por ferramentas de propaganda computacional, que em breve incluirão no seu arsenal redes neurais e aprendizado de máquina.
+Da mesma forma como a Folha formou a geração das Diretas Já!, o desafio atual do jornal é igualmente complexo na defesa (e reinvenção) da democracia no país. Estamos de novo em uma virada geracional. Cultivar os valores que serão praticados daqui para a frente é tarefa da qual este jornal pode novamente participar.
+Como escreveu Hermano Vianna em dezembro de 1999 na Folha no artigo “Internet ou o atoleiro virtual de porcarias”: “A internet se tornou um grande shopping-cilada. Que fazer então? Ecologia política, é claro! É preciso primeiro acreditar que a batalha não está perdida. Ecologia política no ciberespaço significa introjetar sem alarde, com a maior paciência do mundo, o infinito ‘não humano’ do sertão em cada buraco da rede-shopping-center.
+Infinito: quem procura acha, não vou aqui dar aqui seu endereço eletrônico. Em resumo: tome conta, com a dignidade de um Riobaldo, da internet. Uma Grande Rede sertaneja seria nossa melhor herança para os milênios que vêm por aí”.
+Todos nós, migrantes sertanejos, sentiremos muita falta de Otavio Frias Filho.
+Já era Fake news disseminada por meio do Pasquino em Roma
+Já é Fake news produzida e disseminada por grupos organizados e bem financiados
+Já vem Fake news feita e disseminada com inteligência artificial
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d8786ed93c7c9a8868702c94798071528b06ca9c148f26e063d59f7ee23359ec",
+    "mention_text": "Otavio Frias Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c61b70376a0c2295097c87b6bf3a1415e094d261bcbf3cb3f68371b6386644f",
+    "mention_text": "Otavio Frias Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38f3c09604edc715fe08f750e88b6a3a7d95c6e0bd672f0cd906148c4c6a302a",
+    "mention_text": "Rede Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "134acc303789835ff503c89e121d4954698aa255a450c64ed3de71dedb9e2589",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "811f0a61f5090350a6f8d1631a3a24cb9500f9ded66a9a700b3b6a0a0f5c71af",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c3acaaf94adbc97cbfaf2d981b3e93bdc9c7a6dcf371c1e295c74245a997d5c6",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0eea5030e6407fba6fe09bfe37de159dd14cfd855c949e2f6ffd9afaa88cfc8b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0984a9e16c02f5f6e72183bf1dc318770e57f5ce9a34cd6a70ccc788839f3c85",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f219d7bba84286cddb9fef1774afc5f35c139b4883e0fb53096d9ea883aaa27a",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "acec2eebc8b16a428df2607c89c2e1cd1777f2cc3f2c0352c54c2d6b27efd83c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "897a477700582334d398c45ca1990f1cab29eb4a008f16e564959329f16308fb",
+    "mention_text": "Araguari",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8909f8c9c1b32722c7ed21b6e546f4e77e23409be705eb6c8cb10a312f294eda",
+    "mention_text": "MG",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3fed6dd9022685ff306c794f52313d9918eef3616868c96a2faa49b2cddb1982",
+    "mention_text": "Susan Sontag",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "651001499914c6840c6a2d387536f9770857cc88fb5594ec9b93e6dcc1409ac1",
+    "mention_text": "Jane’s Addiction",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca6dc2531eb51e9bbd25b2745d48933477177fac4943bffb6ac2a0affbf0d7cc",
+    "mention_text": "Zé Celso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ee679abf6b3df6c229483a441df0aed2ec910799ede62e91670e2bf9d7d125f",
+    "mention_text": "Caetano Veloso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a36fe294ab4fe44d15f071ad996302f47e662775102443bb6a19b515717f2d7",
+    "mention_text": "Teatro Oficina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98895d73d41f090488b010c0886574ff9d34da9c4813a03e929285d47529fca1",
+    "mention_text": "Marcelo Drummond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b26a6eb3ed7d62c94f2ce51e652f2e1e3d4a0fcab86ccb4cc183020c3d924724",
+    "mention_text": "Leona Cavalli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4a431dbb50ebcee53bc9419460099e79ff9ad2f0880d12e2729df2453412bb7a",
+    "mention_text": "Zé Celso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d4a403934fde103fbae4b8941cf1c7df25beb723510656e64240f4db3fc644f",
+    "mention_text": "Otavio Frias Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8aae0a6781aa0cf5b68bbe4dffd7f1017490584df2c3ee50cdb80db8c0003518",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "030154cdf393c67e4beaf4da9642ce50490530760088a41b08087679263c8715",
+    "mention_text": "alt-right",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b785255244bd79b2b3d33610cf12080ef64d32ff1ff3ce2cff8a971e23d8917",
+    "mention_text": "Zé Celso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef195f2cc70d96e76796f2685e0cc6a96c9f61e4130f8f6c69a0b424d334bfbd",
+    "mention_text": "Otavio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5670c60ef14534deaecc5775de7e86436dc60619e3a4190a3c00d4eaf2918304",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aefa1ec7764d9d7495fd4f356072d857a5d2298d7a0d76c97543b4bbaa2f0281",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c71a6fe57f443dbedba9423438c3f361fd062646df06ca9190c3ac88c528eb3",
+    "mention_text": "Hermano Vianna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f92ee82273a721aa6a7cd5ebfec4f8e6a149400ded2948c9384df2d9967a56d5",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45d3cf6fe974620d5c7da91b8c05e3616e879def7c447bdba6e99c6423ef82ca",
+    "mention_text": "ciberespaço",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "864341bed8229da442132d5ed2a4cf9704d012b0ce50e6aa473dffa9cfbc6896",
+    "mention_text": "sertão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef9d274b7d8aaf565ce4e80ddd58f76842b03bb69d7184691b394b62e97d7f19",
+    "mention_text": "Otavio Frias Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fa95ea36ce09abf2b257841e914488c597a0b6e60218cd5fbf13b438279c9f3",
+    "mention_text": "Pasquino",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eceeb4129a7c9a30f373ba0acf8d3b2e4d2bbd32d4db346a4146ce7523f1d342",
+    "mention_text": "Roma",
+    "categoria": "LOCAL"
+  }
+]

@@ -1,0 +1,340 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8d6b92c04feecab0b275d8179697889640a3740104fbd99f06ea8937d625475e
+
+TEXTO:
+'Perfis e notícias falsas deveriam ser banidos das redes sociais', diz Orkut
+
+Vale do Silício, temos um problema. Algumas das principais empresas de internet têm enfrentado transtornos nos últimos meses por causa da disseminação de informações falsas e o mau uso dos dados de seus usuários.
+O WhatsApp foi acusado na Índia de ajudar a fomentar uma onda de linchamentos por causa de mentiras compartilhadas pela ferramenta. O Google anunciou mudanças em seus algoritmos para que notícias falsas não tenham mais destaque em suas buscas. E o presidente do Twitter veio a público pedir ajuda para solucionar problemas criados por "abusos, assédio, trolls e a manipulação por robôs e humanos". Mas nenhuma companhia está passando por uma crise tão grave quanto o Facebook.
+A rede social perdeu US$ 100 bilhões (R$ 330 bilhões) em valor de mercado desde o início de fevereiro e está sendo investigada pela suposta influência que informações e perfis falsos na rede social tiveram sobre a eleição americana e a votação da saída do Reino Unido da União Europeia, o Brexit, com duras críticas pela forma como os dados de milhões de usuários foram coletados e usados pela consultoria política Cambridge Analytica.
+Diante da dimensão que a crise das campanhas de desinformação vem tomando, Orkut Büyükkökten, criador de uma das redes sociais de maior sucesso, defende que "perfis e notícias falsas deveriam ser banidos". "Estamos chegando a um ponto em que não acreditamos em mais nada do que lemos", diz o engenheiro turco em entrevista à BBC Brasil.
+"Na vida real, se você descobre que seu amigo mente o tempo todo, você vai querer continuar com essa amizade? Se você sabe que seu namorado está te traindo, você vai terminar o relacionamento. O mesmo vale para a internet. Não deveria ser permitido que alguém publique conteúdo falso e minta constantemente."
+Ele fala com a propriedade de quem criou o site que apresentou aos brasileiros o conceito de rede social. Nos dez anos em que o Orkut ficou no ar (2004 a 2014), o site chegou a ter 300 milhões de usuários em todo o mundo, grande parte deles no Brasil e na Índia.
+Desde 2016, ele está à frente de uma nova empreitada, a rede social Hello, que ele diz ser uma "continuação da jornada" que teve início com o Orkut. O empresário avalia que sua primeira rede social acabou não resistindo a mudanças neste mercado.
+"Ela foi a primeira experiência social de muita gente, mas o acesso antes era principalmente pelo computador e, hoje, as novas gerações são multitarefa e fazem tudo pelo celular. O Orkut não foi ao encontro dessas necessidades", diz.
+Ele acredita estar fazendo isso com a Hello, que existe somente como um aplicativo por celular. Nestes dois anos, está disponível em 12 países, foi baixado mais de 1 milhão de vezes no mundo e tem a maioria dos seus usuários no Brasil - a empresa não divulga o número total.
+Além disso, o empresário crê que sua nova rede social, ao reunir os usuários em torno de interesses e comunidades sobre assuntos em comum, está criando um ambiente mais positivo. "As redes sociais estão sendo mal usadas e não é só na política", diz.
+"Estamos criando uma geração infeliz e insegura, que tem problemas de imagem corporal, depressão, ansiedade. O bullying e o assédio online estão levando pessoas ao suicídio."
+Quanto à disseminação de informações falsas, Orkut defende que as redes sociais devem se esforçar mais para checar fatos e priorizar fontes de informação "de peso". Para isso, devem buscar um meio termo entre a tecnologia e os esforços humanos.
+"Antes, confiávamos nos jornais e revistas, porque eles faziam pesquisas antes de publicar alguma coisa. Mas checar fatos leva tempo", diz Orkut, que conta usar Facebook, Instagram, WhatsApp e outras redes sociais para ver o que falta nestes serviços e descobrir como tornar o seu melhor.
+"Hoje, as notícias acontecem tão rápido que o que a decisão sobre o que é exibido para os usuários de rede social é feita de forma automatizada, com base em algoritmos e inteligência artificial. Não há pessoas de verdade checando, e isso faz com que o público seja exposto a notícias falsas. É preciso um equilíbrio."
+Ele acredita que a Hello ajuda a lidar com essa questão com um sistema de reputação acumulada pelo usuário com base nas interações positivas e negativas com os outros membros da rede social.
+Orkut explica ainda que o site tem funcionários para moderar conteúdo. Todos os posts são públicos, e os líderes das comunidades do site podem sinalizar um conteúdo que consideram irrelevante ou falso, o que impediria que ele se espalhasse sem controle.
+"Garantir que uma publicação seja vista por pessoas com formações e opiniões diferentes dificulta esse efeito que chamamos de 'câmara de eco'."
+Impacto na eleição
+Quando questionado sobre o escândalo da Cambridge Analytica, ele diz preferir não comentar especificamente sobre a forma como o Facebook usa os dados de seus usuários. "Empresas têm políticas sobre isso, e, neste caso, essas políticas não foram respeitadas", afirma.
+"Mas, se informações assim são repassadas a um terceiro, é de se esperar que quem as compartilha tenha a obrigação moral de monitorar e garantir que elas sejam usadas da forma correta. Uma boa solução seria impedir que empresas compartilhem dados sem o consentimento explícito do usuário."
+Orkut explica que sua rede social não usa algoritmos para monitorar e identificar os hábitos e preferências de seus usuários. "Pedimos diretamente que os usuários nos digam quais são seus interesses."
+Ele esclarece também que a Hello não compartilha informações com outras companhias, explicando que elas são analisadas somente pela própria empresa, para criar anúncios e experiências melhores no site.
+"As redes sociais fazem, em geral, um bom trabalho ao lidar com os dados que são realmente os mais sensíveis, mas é importante ser transparente sobre como isso é coletado e usado. A questão surge quando o usuário não sabe que seus dados estão sendo compartilhados", afirma Orkut.
+"Ao mesmo tempo, o usuário deve tomar uma decisão sobre o que compartilhar e tomar alguns cuidados. Na vida real, a confiança entre as pessoas é uma coisa que é conquistada, mas tendemos a confiar de partida em redes sociais e aplicativos, e isso cria problemas no longo prazo."
+Ele defende que as pessoas gostam de conteúdo personalizado criado a partir destes dados e que elas podem se beneficiar de uma propaganda que as ajude com seus hábitos, decisões de compra e planos, mas diz que, se um anúncio é feito para mudar visões políticas ou afetar uma eleição, "um limite foi ultrapassado".
+"Com certeza as redes sociais têm poder para impactar uma eleição, mas não podemos dizer cientificamente se já conseguiram mudar seu rumo. Não é porque vê o anúncio sobre um político que você vai votar nele", afirma.
+"Não é garantido que vá afetar o resultado, mas com certeza as redes sociais terão influência sobre a eleição neste ano no Brasil."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6361d8f1d01b5260539e5e9350860bd47656c2a266933083e38477ba8a35720a",
+    "mention_text": "Orkut",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4cc54810a49fe68f2a3ecf9711c24d899d79754c198d43a35a0a911790248eb5",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "64b88e983fa5e7acf8953f98030339509f632761dac9347f84949d83b9775414",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70e2f1effdec5bccbdf50af4d48b611421918a3e14898fecbc4f6c3111a18dc5",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c31313be37116f56aadc8571b41a53c8d49e25cc281190fd9b3b7c07046bd5f4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "699814243fe45d4c06cba61cbcdd16c6c050c48b492fe4a1147c5319b36eb9bd",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2b8811eb8bee1cddf150d1b89b7dc35ce1229b068594895ad118eaababf985b2",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f618ffd0e31e0c2e0a36b044f7a9256a550a8f6a7132939a48b9142cd7ed7d53",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c7c264fe5228fcf4570698eb6e40d23756566bddbda1ad3c6809937521f72814",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d00a1128ebcd0b5217588fb5a713941052fa8c9f0e32fdc8aeacfbe881a313bc",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f7e6c4b8169ab9a0704d6bbdf7bc4607a211586fb6b194b405b5c8b072015b6",
+    "mention_text": "Orkut Büyükkökten",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "007c0df0d9fd37c6c895cdef327f1f13d27bd65162ed9de659e77641e86b89ca",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86394e453bc0855ac115a127e82edef05ff3d0bfbac4ee5d42277842a231b639",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc14b6e8b650f15de43cadfeb383988698cc5a172eb7f1b380c99e52c64e7bc5",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8f47d9726a67025b5575e66eaf202b68e7a238d588b069359c14f7d16da53c1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ce1762b5afa3a82f68041b688c41b02d42a3a208d0f2864e6f0a983fbf8725b4",
+    "mention_text": "Orkut",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c19d38e7912d2657c93b62d6963ba3e694bb9f3adbc16d03c921c929c7677ac",
+    "mention_text": "Orkut",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19fa5319c7d5f57aa66be6d8d9629b4eedfbd9ea164610e41191d4d642c4d4f3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ce37f70de24679983275edea01410bb64df4e6886b4e68f76c28c842d50bf7d",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f4ca056d627ca9b0367c91d42a80d4a274999599a40119977a01ba1504efbf4",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cca76a77a3d40ac996fa92fa55434dc8072bbf0e66601246aeae23793978ccc9",
+    "mention_text": "Orkut",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cdc5c24c65a438d0d7ddc49649f1d7b083334e0d785af4997ba60bc7bb595529",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee0b1694c0da8a49187137d4c2b492c604b3629e177e6a42408af22870b7fc5a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e22bc9f5a754b7761fca5911ec8b0b044e02dd87d3f4687dd92ef19362e1e3a6",
+    "mention_text": "Orkut",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2836b2c22896115fe283d61789765491acacce0c3d4782a3541f23705bafab67",
+    "mention_text": "Orkut",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1412896bf6086ce1c71b9be75c0f555f42ccb031bfe182cf30671403935eeffb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

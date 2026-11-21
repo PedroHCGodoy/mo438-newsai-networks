@@ -1,0 +1,349 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e15deb8bb8d232bb1b5b109fb694761dcc4ec11f593121f76fb780d288e43028
+
+TEXTO:
+Tendências da CES 2020 mostram que futuro da tecnologia é estar conectado
+
+Quer gostemos, quer não, o futuro estará conectado.
+O próximo carro que você comprar provavelmente terá conexão com a internet. O mesmo vale para seu próximo televisor, e para as maçanetas de sua casa. Um dia, você talvez até venha a adotar como companheiro um robô capaz de analisar seu ambiente e de reagir em tempo real às ações de seu proprietário.
+Esse futuro, ou pelo menos um vislumbre dele, pôde ser visto na CES, a gigantesca feira de bens eletrônico de consumo que atraiu mais de 170 mil visitantes a Las Vegas esta semana.
+A edição 2020 do evento anual —a primeira edição aconteceu em 1967— contou com mais de 4,5 mil expositores, entre os quais companhias de tecnologia de grande e pequeno porte e de todo o mundo, e ocupou mais de 270 mil metros quadrados de espaço no Centro de Convenções de Las Vegas, no cassino Wynn, no hotel Venetian e em diversos outros locais da cidade.
+O evento oferece uma janela para as áreas nas quais o setor está investindo muito dinheiro e recursos, na esperança de que as tendências mais quentes da tecnologia este ano —por exemplo assistentes virtuais dotados de inteligência artificial, carros conectados e telas dobráveis—​ se tornem presença cotidiana nas vidas dos consumidores.
+A imensa feira também foi uma oportunidade para que os observadores da tecnologia fizessem previsões sobre as inovações que podem se tornar populares e os aparelhos que provavelmente fracassarão nos próximos anos.
+Entre as tendências questionáveis na tecnologia estão as telas dobráveis, mostradas pela TCL, Lenovo e Dell, entre outras. A Lenovo mostrou seu ThinkPad X1 Fold, um tablet com tela dobrável e sistema operacional Windows. Desdobrada, a tela tem uma diagonal de cerca de 13 polegadas, e o aparelho parece compacto como um livro.
+A ideia pode parecer atraente, mas nem todo mundo está otimista com relação às telas dobráveis. Frank Gillett, analista de tecnologia da Forrester Research, previu que aparelhos com telas dobráveis seriam impopulares, principalmente por conta de seu custo elevado e das possibilidades limitadas de uso.
+Um exemplo: O Samsung Galaxy Fold, o primeiro smartphone com tela dobrável da fabricante sul-coreana, com preço inicial de quase US$ 2 mil (R$ 8 mil), fracassou depois que surgiram informações de que tela rachava depois de relativamente pouco uso. O Lenovo X1 Fold terá preço de cerca de US$ 2,5 mil (R$ 10 mil) ao chegar ao mercado este ano.
+“Os aparelhos dobráveis se dobrarão à realidade. É difícil resistir ao trocadilho”, disse Gillett. Amazon e Google estiveram entre os participantes de maior destaque da CES 2020, e as duas se vangloriaram sobre a qualidade de seus assistentes virtuais .
+O Google informou que seu assistente virtual agora está em uso por mais de 500 milhões de pessoas ao mês, em mais de 90 países.
+No mês passado, os alto-falantes Echo, da Amazon, comandados pela assistente virtual Alexa , dominaram o mercado de alto-falantes inteligentes, com cerca de 25% do total de vendas, à frente da Baidu e do Google, de acordo com o grupo de pesquisa Canalys. E o mercado dos alto-falantes inteligentes continua a crescer.
+Ainda não é claro, porém, que os consumidores desejem muito usar os assistentes virtuais à medida que estes se tornam mais e mais inteligentes. Estudos demonstram que as pessoas usam a Alexa e o Google Assistant para tarefas básicas como comandar o sistema de música e verificar a previsão do tempo. Usá-los para pagar para abastecer o carro no posto de gasolina (o que a Amazon quer os usuários façam) parece forçado.
+Ainda assim, Dave Limp, que comanda a área de hardware da Amazon, demonstrou otimismo. Ele disse que mesmo que os usuários recorressem às capacidades mais avançadas da Alexa apenas ocasionalmente, isso continuava a ser significativo.
+“Os clientes interagem com a Alexa bilhões de vezes por semana”, ele disse. “Uma das muitas coisas que eles estão fazendo, mesmo que apenas uma, pode se tornar importante”.Os carros autoguiados ainda estão longe de entrar em operação, mas as empresas de tecnologia destacaram recursos que podem ajudar os motoristas a usar seus carros com mais segurança.
+A Samsung mostrou um carro equipado com seu processador de computação Exynos Auto V9, que pode acionar aplicativos em múltiplas telas e recolher e exibir informações de até 12 câmeras. O sistema foi projetado para oferecer entretenimento aos passageiros do banco traseiro, por exemplo vídeos, e ao mesmo tempo oferecer assistência de segurança aos motoristas, afirmou a empresa.
+A Amazon também mostrou seus avanços no ramo dos automóveis, mostrando carros da Lamborghini e da startup automobilística Rivian que oferecem a Alexa como assistente pessoal.
+Os novos recursos de segurança para automóveis podem se provar as coisas mais práticas e mais úteis a sair da CES deste ano.
+Aplicativos de assistência de segurança que alertam motoristas para a presença de veículos em seus pontos cegos ou os ajudam a estacionar automaticamente atrairiam os consumi dores, disse Carolina Milanesi, analista de tecnologia no grupo de pesquisa Creative Strategies.
+“O que estamos vendo aqui se relaciona mais à segurança e a salvar vidas do que a ‘uau, que bacana, você chama o carro e ele vem’”, disse Milanesi.
+Tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d13adf2c2fa680866d39da93aa8e45644e7a6306af168e28043b8ddfca4a72bb",
+    "mention_text": "Las Vegas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6838667f58e3f7c4012bc745b4fd21ba148c3dd63b1c8b696da78ff22506fe66",
+    "mention_text": "Centro de Convenções de Las Vegas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39520c20039369913271170745e851ec8fd677f6e04c6cae417b5b43863745e3",
+    "mention_text": "Wynn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "146b990c57ab32fb0448ebe190be91eb92141f4212406229f661a587454a87ac",
+    "mention_text": "Venetian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25af7d1ea45f629e68d7a64bd1ff899d00cf7ab4d16f75e28e55b1faecb26f8f",
+    "mention_text": "TCL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6581284e6085e26058230fea891843fa8c20b3598f561fa4cab27da8729b1b1",
+    "mention_text": "Lenovo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee38838cd401fdff290ff635c6f303dae507f58f5347b673c1674f734c8d0acc",
+    "mention_text": "Dell",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b8f1b9ecce13285071809c32316737ef70fa6eb77a496075b981d8cb61944e58",
+    "mention_text": "Lenovo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "090f5a250320ac8ab524c3b32c45ae5db48286db734fd309446061298a9b3284",
+    "mention_text": "Frank Gillett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca25be22dcb5fc5ad9925103f19c96cdb7849d1ee4a5729e2fb389fc364b9b1b",
+    "mention_text": "Forrester Research",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19c5c7874bcbfa3e88f88ba5a8f63fb16c044a2aa37145df275a7a18e176f4f2",
+    "mention_text": "Gillett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5d92ee19e2746c1a225a9c84936970897f68c8eef99723601e5c8ba4d80bb38",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "036d46d53ea7e1699c1dd2abd2964b841bcac816d9654a2a335a6940204b9e62",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5595dc3e4195a3852eca35a161d998ebbe072f6a0c7d99f58c04ee48fd321b1",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5756f28e7f8359089ba76af406cfe4dd0379e4c93e2973a30796deaf151166a",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea07f0f465d2fd3c22549598e54f52acd9afc9bc041ff37d09efee922317467d",
+    "mention_text": "Baidu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20972ffc248e05db312f41c89452a093a08be97cb6d43385af704e054b5e1184",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b1157281115d827bb19d746491a50b0d22e1c18e52f9a8374d8f3af4d0e695b",
+    "mention_text": "Canalys",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b9a21a1076f47835f640fbe1f552125a9e6d08590570683197004da871bd503",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae9acd125f6841efe012a702d6fa282f8d04466edfe515a8f932931ee0551798",
+    "mention_text": "Dave Limp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9fb4d68031939b63fc60fd649ae83fd49ac4ab461be22aba2ab61e46793d4689",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64f70053564d0a6b58c8707fc10f50583cbff8eefab38a83fba55077ac7b39e0",
+    "mention_text": "Samsung",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81e9465c7d1b2087730033eb7ffae46c6d147b7e39a32d4e9872459fdbd92e1f",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37ab22cf0f93160906f599817fd4d0ca88b09eefe423a2326a243ed40d20c000",
+    "mention_text": "Lamborghini",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f661fe508802aac09fa1444cf8e69b5f3dd83d6ca2877d3d27d5146cc225c5f6",
+    "mention_text": "Rivian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb93159dd156545274fe73631d6a2cf82d66bbd78b29a1fef519aaaaa57f095d",
+    "mention_text": "Carolina Milanesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45bc7b465b3884c418f9ec2feeca5879d0c5e1f0d4f8f1a861fa525e75321d8d",
+    "mention_text": "Creative Strategies",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21a113d63807073748801c0962521fc4dd5195a621ce9eee7f0711a6a9327b98",
+    "mention_text": "Milanesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f01a90223cff5dfbf2f912bc64f9c08aee12480ccb6ff69bcf2c1d32d4086ce",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  }
+]

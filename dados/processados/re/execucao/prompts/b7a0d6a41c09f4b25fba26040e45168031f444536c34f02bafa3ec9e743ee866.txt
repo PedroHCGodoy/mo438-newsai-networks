@@ -1,0 +1,621 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1ff9900ca909ada48db863d166ec7588b2c823da2dd64665e5d8eb2b8d904ee4
+
+TEXTO:
+Entrevista da 2ª - Daniel Dennet: As pessoas têm de aprender a conviver com os "sem-deus"
+
+ENTREVISTA DA 2ª
+DANIEL DENNETT
+As pessoas têm de aprender a conviver com os "sem-deus"
+Para filósofo americano, em algumas áreas dos EUA os ateus ainda sofrem a mesma discriminação que os homossexuais sofriam na década de 1950
+QUANDO DEZEMBRO chega, diversão é o 
+que não falta na vida do filósofo americano Daniel Dennett, 68. Além de ser tomado por Papai Noel pelas crianças 
+mais empolgadas, o pesquisador ainda organiza sessões caseiras de música natalina.
+Só não o convide para a Missa do Galo: ele é um 
+dos mais articulados defensores do ateísmo de inspiração científica.
+Autor de "A Perigosa Ideia de Darwin" e "Quebrando o Encanto", Dennett se especializou em explicar com clareza os conceitos-chave da teoria da evolução, usando-a para abordar temas como a natureza da consciência e as origens da religião.
+REINALDO JOSÉ LOPES
+DA REPORTAGEM LOCAL
+Ele afirma que tentar conciliar os dados da biologia evolutiva com a crença em Deus é um 
+ato de desespero intelectual. Os 
+que fazem isso, ataca, "estão 
+apresentando como ciência o 
+que, na verdade, é uma espécie 
+de confusão na cabeça deles".
+Diz também que se declarar 
+ateu hoje em algumas regiões 
+dos EUA é o equivalente a se 
+declarar homossexual nos anos 
+1950, e que a onda recente de livros escritos por cientistas 
+ateus militantes está ajudando 
+a tirar o ateísmo do armário.
+Dennett, que estará no Brasil 
+no dia 8 de novembro para participar do seminário Fronteiras 
+do Pensamento, em Porto Alegre (
+www.fronteirasdopensamento.com.br
+), conversou com a
+Folha
+por telefone. Leia abaixo a entrevista.
+FOLHA - Há um grupo de cientistas 
+nos EUA, como Francis Collins, ex-chefe do Projeto Genoma Humano, 
+que são defensores da teoria da evolução e, ao mesmo tempo, tentam 
+conciliá-la com sua fé cristã. Mas 
+têm sido muito atacados, até acusados de criacionistas disfarçados. O 
+sr. concorda com tais críticas?
+DANIEL DENNETT
+- Acho que essas 
+pessoas têm dois padrões diferentes para o que consideram 
+pensamento racional. 
+Quando estão fazendo ciência, adotam um padrão elevadíssimo e, quando estão tentando reconciliar sua ciência 
+com sua religião, acabam aceitando que esse padrão caia um 
+pouco, tolerando argumentos 
+que nunca tolerariam numa 
+discussão científica. 
+Não acho que sejam criacionistas, mas acho que eles estão 
+apresentando como ciência o 
+que, na verdade, é uma espécie 
+de confusão na cabeça deles.
+FOLHA - Mas eles deixam claro que 
+a reconciliação não é ciência nem está cientificamente comprovada.
+DENNETT
+- E até que é uma boa 
+tentativa, mas não acho que 
+funcione bem. Podemos colocar da seguinte maneira: a biologia, a teoria evolutiva, não 
+prova de forma absoluta que 
+não pode existir um Deus. Se 
+você quer continuar a acreditar 
+que Ele desempenha algum papel, pode até fazer isso com sua 
+consciência tranquila. 
+Mas você deveria ter em 
+mente que se trata de uma posição que é quase um ato de desespero, não é uma visão positiva de maneira alguma. É uma 
+espécie de último recurso. 
+Terminei recentemente um 
+livrinho que deve ser lançado 
+em breve, um debate com o filósofo cristão Alvin Plantinga. 
+E Plantinga argumenta, corretamente, que a teoria evolutiva 
+é logicamente compatível com 
+a crença num Criador que intervém no processo evolutivo.
+Admiti que isso era verdade, 
+mas disse que a evolução também é compatível com a hipótese de que o Superman pousou 
+aqui durante a Explosão Cambriana [evento em que surgiram todos os principais grupos 
+de animais], há 530 milhões de 
+anos e, assim, possibilitou a origem dos humanos. É uma hipótese totalmente doida, mas é 
+coerente com tudo o que sabemos sobre biologia evolutiva.
+FOLHA - A onda recente de livros 
+escritos por cientistas que também 
+são ateus militantes surgiu, de acordo com os próprios autores, porque 
+a posição acomodacionista em relação à religião não estava funcionando. E essa nova abordagem? O sr. 
+acha que está funcionando?
+DENNETT
+- Acho que sim, por 
+enquanto, embora estejamos 
+só no começo. Nos EUA, acho 
+que houve uma mudança clara 
+nos padrões de expressão pública. Hoje é muito mais comum ouvir as pessoas dizerem 
+abertamente que não acreditam em Deus, que elas são 
+"sem-deus". Pesquisas recentes mostram que esse é o grupo 
+que mais cresce na população. 
+E, toda vez que alguém se declara abertamente, que se sente 
+encorajado a dizer isso, a atmosfera fica um pouco mais 
+limpa, e a vida fica um pouco 
+mais fácil para outras pessoas.
+Ainda há enormes áreas do país 
+onde, se você disser que não 
+acredita em Deus, vai perder 
+seus amigos, seu negócio. Nesse ponto, os ateus estão mais ou 
+menos na mesma posição em 
+que estavam os homossexuais 
+nos anos 1950, ou seja, se você 
+admitir que pertence a esse 
+grupo, sua vida está arruinada.
+Temos de mudar isso. Temos 
+de fazer com que seja possível 
+para um morador do "Cinturão 
+da Bíblia" [as áreas mais religiosas dos EUA, nos Estados do 
+Sul e do Meio-Oeste] dizer com 
+toda a franqueza: "Bem, você 
+pode ter sua religião, se quiser, 
+mas eu não sou religioso" e ser 
+respeitado mesmo assim.
+FOLHA - No livro "Quebrando o Encanto", sobre a tentativa de explicar 
+as origens da religião com base na 
+biologia evolutiva, o sr. passa a impressão de defender mais a ideia de 
+que a religião é só um subproduto 
+de características da mente humana 
+que evoluíram por outros motivos. 
+Sua posição contra a religião pode 
+ter influenciado essa opinião?
+DENNETT
+- Acho que é importante perceber que as duas visões não são necessariamente 
+conflitantes. Há uma posição 
+óbvia, natural, que diz que primeiro a religião emerge como 
+subproduto de predisposições 
+psicológicas que não têm nada 
+a ver com a religião, e então, depois que ela passa a existir, acaba sendo aproveitada para outras funções, evoluindo, digamos, social e culturalmente. 
+Desse jeito, você pode manter ambas as vertentes, e na 
+verdade acho que esse modelo é 
+bem mais plausível do que uma 
+visão puramente ligada à adaptação, porque é muito difícil 
+imaginar quais teriam sido as 
+pressões de seleção [para que a 
+religião surgisse].
+FOLHA - O que o sr. acha da dificuldade das ciências humanas para incorporar a biologia evolutiva na sua 
+maneira de pensar?
+DENNETT
+- Para mim é engraçado ver a quantidade de antidarwinistas "automáticos" existente nas humanidades, na filosofia. Foi o reconhecimento 
+disso que me levou a escrever 
+"A Perigosa Ideia de Darwin". 
+Hei de ir em frente com bom 
+humor e vou mostrar a eles o 
+quão reacionários estão sendo.
+FOLHA - Mas por que a resistência?
+DENNETT
+- Acho que eles estão 
+muito presos à ideia que poderíamos chamar de criatividade 
+de cima para baixo, na qual você tem um autor que é o gênio, a 
+fonte das ideias. Essa visão está 
+impressa de modo tão fundo 
+nas artes e nas humanidades 
+que a ideia de que na verdade a 
+coisa está de ponta-cabeça, que 
+os próprios grandes gênios são 
+o produto complexo de processos "sem mente", algorítmicos, 
+de baixo para cima -essa é uma 
+ideia muito difícil de engolir 
+para muita gente. 
+A primeira coisa que nós temos de mudar é o hábito dos especialistas em ciências humanas de zombar dessas ideias e 
+ridicularizá-las. A zombaria deles é obscurantista, ignorante.
+FOLHA - Qual a sua visão sobre o 
+estado atual da pesquisa em inteligência artificial? Por que ainda estamos tão longe de conseguir criar 
+uma máquina consciente?
+DENNETT
+- Algumas pessoas que 
+começaram a estudar a IA [inteligência artificial] não estavam interessadas em consciência, mas apenas em produzir alguns sistemas cognitivos extremamente competentes. Essa 
+abordagem foi um sucesso. Não 
+chamamos isso de IA, mas agora faz parte das nossas vidas, seja no caso do reconhecimento 
+de voz, no planejamento de reservas de voo, no controle de 
+diversos elementos dos nossos 
+automóveis. Em certo sentido, 
+tudo isso é inteligência artificial. 
+Quando as pessoas pensavam em robôs 20 anos ou 30 
+anos atrás, imaginavam humanoides que seriam mordomos, 
+arrumadeiras ou cozinheiros.
+Esses robôs não existem, mas 
+ao menos parte dessas tarefas 
+hoje são rotineiramente delegadas ao controle de computadores. Então, esse primeiro sonho se realizou, de fato. 
+O outro sonho da IA, o de 
+realmente construir um robô 
+consciente, sempre foi loucamente ambicioso, e uma das 
+coisas que aprendemos foi exatamente a dimensão dessa dificuldade. A robótica humanoide 
+continua, mas acho que nunca 
+criaremos um robô humanoide 
+consciente. Custaria mais do 
+que pousar na Lua.
+FOLHA - Em "A Perigosa Ideia de 
+Darwin" o sr. diz que, ainda que não 
+seja possível ou sensato rezar para o 
+Universo, a ciência proporciona uma 
+espécie de assombro transcendental diante dele. Nesse ponto, a ciência e a religião não se aproximam?
+DENNETT
+- Sim, eu acho que a 
+melhor ideia da religião é encorajar uma certa modéstia, um 
+respeito e uma reverência pela 
+natureza neste incrível Universo que nós habitamos. E, claro, 
+isso remonta diretamente a 
+[Baruch] Spinoza [filósofo holandês do século 17], para quem 
+o caminho para estudar Deus é 
+estudar a natureza. Acho que o 
+respeito e o amor por este mundo maravilhoso no qual existimos, que pode nos inspirar a 
+melhorá-lo para outras pessoas, é a melhor mensagem da 
+religião, e a ciência pode compartilhar esse sentimento.
+FOLHA - O sr. ainda participa de corais de Natal?
+DENNETT
+- Sim, todos os anos 
+fazemos uma festa dedicada a 
+canções natalinas, temos nosso 
+próprio livro de partituras que 
+eu fui montando com todo o carinho ao longo dos anos. É lindo. Costumam aparecer umas 
+30 pessoas, talvez algumas delas sejam religiosas, mas a 
+maioria deles é como eu. Somos 
+cristãos culturais -crescemos 
+com essas músicas e adoramos, 
+então mantemos a tradição viva. E, sim, a criançada às vezes 
+ainda me confunde com Papai 
+Noel.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "440a43ce1b20cf3ad9765182f6cd054116caec01b938a137fdb34f7e0053534e",
+    "mention_text": "Daniel Dennet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c35554e91d4d60e55bcb656e99a24a60688ca12c07ac158452df8cb8745f0b9f",
+    "mention_text": "DANIEL DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47989bc8b9640508d3430c5e8603c99a1beee92c271418277641d5130c508192",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ca87f947938976efb6dec150d9f1607e0e8925a60b471b6d373482a0eee7017",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "de405006943670a25add2bdee4d59c2eaac735768be30d0386486157e923751d",
+    "mention_text": "Daniel Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5838e883e0ee4ec7dde89f20598eb15aa10977d7d245b95726b3515a1d3b514",
+    "mention_text": "Papai Noel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfe6b480c46063691057a28e95debcd0a72309fce213a63528ba062d5b5d6df4",
+    "mention_text": "Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04cc569d7ed85212306270079719f0f488882e99476de83f198fcf0a8835511e",
+    "mention_text": "REINALDO JOSÉ LOPES",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e195c88fd79f4699de8bee721125c5e9acf4d65ac4705e08d5d499009b988ca",
+    "mention_text": "DA REPORTAGEM LOCAL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd8089fe6d2e07fa80560e1c3d96f72c678c4882b1f697ca153ae745973ce69b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdfeab7f510c067f47a0965392eb4e96d990b6b75473101e17dc8c46f3da2aef",
+    "mention_text": "Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b629c5bde446eb365f266cca6e674452106d6c7ac2f4c187ff7beae7abba95d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdf3f4001f5a7459fc210640c9adc85d7edbfc5aa754790255ff1845e3eeba5e",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "820977810fc3f044844a2c987b248ab9ec567aed8151896c33b62be107c23e01",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f67783668b8f6ae62518e6038f91f39fb2797c57c5b803fa5c27cbfd183fd640",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd18b0fa2e1cefbb9f611e738dfe58160e9df4457b4c9563991979dcc6b1dd8c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89b5e67fafb3ea411acec43bd48f6e78b623ebb1672a78b4402474a4bdb51160",
+    "mention_text": "Francis Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4581d91a8a6ba4875c6ad37517c071550518d769f8bcb88a0a48a62691f36bb9",
+    "mention_text": "Projeto Genoma Humano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b3b4626209d3b7039257c91c6461622d68b482861509a39c81effa30d61923f",
+    "mention_text": "DANIEL DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e1695aa39d97cc5426f7be0c06328dee77d4393a0fd6312cff5b3ac1484daa1",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e5f48b910aa7af0d193d6b42aab31372c0da29778545507493f9cbea8c0c836",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db5c0da78c98e29a5c4f1f89b5d8085201d43f5483ee6bc16527b2aa281c3ef3",
+    "mention_text": "Alvin Plantinga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21c7264c04357bb30445d8a542e5fb32d02b3e551bf18104a3134b53d15b8cde",
+    "mention_text": "Plantinga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1835693b2047d198641cbf9e8171f42290c1f98af9f259aeb6e8d92ed17f0bbb",
+    "mention_text": "Superman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "719a53e4cf555d83bab48593a7033ec8e406b2c6314be356af6fd2cea644239e",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5389a43d93638b4497b99ced663722e5358cb108a31e4a1538ef053e17f6f0fd",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2db699973cab82282aa790a7dd0f99b655d543be110bf7a8428a86f38c17261b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2a2ab462df8716b44ab7b85f635e2f10ca06308500353e657ac49d16a60a753",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20bd869cdfa8a279880ac24b22461a59917e61b0f7cdf266f8a5f59ae92ed989",
+    "mention_text": "Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9144ff422faf54f6578bad88336e127c5f5164ac7ade2e0401bd12e3987fe87a",
+    "mention_text": "Meio-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1707b472992a9d3bb9baa9884ad9e2eaf10d770e777fbb8a982d45d615e5186",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "343294d70c2992b94830121919fb9215ea9343df8bb8698604eac295762cb00c",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2942562484917299eaed2696b33eae6a7f078d320889ecdb6ad6cacf176d43a1",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1649edfacba11b9ad1679ccb70c2b018a786e025a1052109d447ddcd3d059067",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eca4fcf78ce36eda9b8a1a1e5841b9449f6ce5f712200dce852743ca5357cf2f",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c436b0265333d866da0de71bebb994fb6351c983e2a8439f9eecf2ef829f94c",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9514a7a603f323860c9f31df05802c2eb9c13deb7546d229f7fbceb4ac446716",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1aa4e936505fee66ca003fa35f7578e875ee99d0188cb30d2667b8d1a48815d7",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ffe29feae96cff8aa212f934b708ba7ca85b6ac2b6edc52459e0586bddfbf8ef",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "286f6c97d72f0cb4f807003598c5cf14cdfd813f8e657d60fe7738d9c3bd55f8",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9afa592fd70d3ee01dc527af99eebcef1441f4febd9a0be1d113ccd20d19c5b3",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0fcf74ff8c2f3ba5b616ef55ac41e1833cd9983216f6feb815e3707787bbc3b",
+    "mention_text": "Spinoza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab0a58bd88cccf4aa34f2ffb9b9f38a755ed0f1f5dcb437d66f1b4c03d5de16a",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b4c56f91458e26e3ada9187f56aa51cea6bf1184843d957d92f6a997f1314c0",
+    "mention_text": "DENNETT",
+    "categoria": "PESSOA"
+  }
+]

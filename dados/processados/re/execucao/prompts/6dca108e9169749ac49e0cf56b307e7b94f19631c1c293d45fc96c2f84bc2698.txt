@@ -1,0 +1,395 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 73b1cb8c5d67752c0d67e1558c0ff11112817884d56131dba7848f95c72d7558
+
+TEXTO:
+Google leva veterano da Hyundai para chefiar projeto de carro autoguiado
+
+O Google contratou John Krafcik, veterano da indústria automobilística que chefiava a divisão norte-americana da Hyundai, para comandar seu projeto de carros autoguiados, no momento em que o grupo do Vale do Silício sinaliza sua intenção de transformar esse conceito em um negócio significativo.
+Krafcik é o antigo presidente-executivo da Hyundai Motors America e presidente do Truecar, um site de tabelas de preços de veículos,
+Chris Urmson, que vinha comandando a divisão de veículos autoguiados desde 2009, continuará a supervisionar as operações no posto de vice-presidente técnico.
+Analistas dizem que a indicação de Krafcik é mais um passo para que o projeto seja transformado em uma companhia oficial dentro da Alphabet, a nova estrutura corporativa do Google, e representa nova indicação da seriedade com que a empresa encara o novo empreendimento.
+O Google não planeja fabricar os carros sozinha, e já realizou conversações com montadoras de automóveis sobre possíveis colaborações. A companhia trabalha com a Roush, uma fornecedora de componentes da área de Detroit, que a ajuda a montar os protótipos, conhecidos como "pods". Assim, o Google afirma que as montadoras tradicionais de automóveis nada têm a temer de sua incursão ao setor automobilístico.
+Mas as montadoras relutam em se verem relegadas ao papel de fabricantes terceirizados para a companhia do Vale do Silício, que produziria o grosso do valor do veículo - o sistema operacional - e poderia tirar vantagem dos serviços de mídia transmitidos ao veículo.
+Companhias como a Toyota e a Audi estão desenvolvendo tecnologia própria para veículos autoguiados, e o Uber, que criou um app para serviços de carros muito bem sucedido, está investindo milhões de dólares em pesquisas de carros autoguiados realizadas pela Universidade Carnegie Mellon.
+"Trata-se de uma grande oportunidade, ajudar a desenvolver o enorme potencial dos carros autoguiados", disse Krafcik. "Essa tecnologia pode salvar milhares de vidas, dar a milhões de pessoas mais mobilidade e nos libertar de muitas coisas que consideramos frustrantes quanto a dirigir hoje em dia".
+O projeto dos carros autoguiados faz parte do laboratório experimental Google X, que está trabalhando em tecnologia futurista como a robótica e a inteligência artificial. Outro projeto do laboratório é o Loon, que pretende usar balões de ar quente para oferecer acesso à Internet em regiões remotas do planeta.
+Os carros autoguiados do Google estão percorrendo 16 mil quilômetros por semana na sede da empresa em Mountain View, Califórnia, e em uma instalação de teste em Austin, Texas. A companhia diz que está se preparando para estender os programas piloto de seus protótipos no futuro próximo.
+Krafcik iniciou sua carreira na indústria automobilística em 1984 depois de obter um diploma em engenharia mecânica da Universidade Stanford. Ele se tornou um dos primeiros engenheiros contratado pela Nummi, uma joint venture de automóveis operada pela Toyota e General Motors, conhecida por levar à indústria automobilística dos Estados Unidos as práticas eficientes das linhas de montagem japonesas. Ele posteriormente ocupou posições de lideranças na Ford e Hyundai, antes de se transferir para a TrueCar em 2014.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ec8f535b701f42cb4ce124162775ec2c994d58c39282d0df567294abd65b05dc",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21fd12c798fa69373546feaa4b0b518bbe7fbe2934a75167b8adf1c4e2ab1b17",
+    "mention_text": "Hyundai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09c6a7c6481d951c52baab932bd4a6d1c84101f830ee0f531ec0b0df460ddb8d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b49fee612abe91f6801d99ca0a88b8a3579267658c40159ba9352a0b03b290c",
+    "mention_text": "John Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99aba6b5cd097141ae385280bf84ea05d5a568e2cdba0e644ec81d7e8a6bf770",
+    "mention_text": "Hyundai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee2e1ee737af1732ececd913aad5dd51f42c321d62bbe0039fa222e3722f8d99",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf7fa709cafdfcff796b43576260db6233d05d120651928e1d4cb08d4385d304",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a3c3c781ea22d063fe9b83118dfe8a372f8b256fcbc612423c33bbedf2035c0",
+    "mention_text": "Hyundai Motors America",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae3059a5d6b08daf7a6f90b2c7c3d0d422f92554fa77f41aee1746c3fcceec56",
+    "mention_text": "Truecar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b16b9ccbdc2915a234761eba091078e1ed0a595ee6a8270649c3c8df0fce07f",
+    "mention_text": "Chris Urmson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5823c0a8ad95d32f93c4ffec393bbec0508f46f9583cd4c98a64377a3a8d15f1",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c84b7c289e9ef39697ce8ca094aaca32eae490e52dd185d884c26873555189d5",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21d7a897bfbb6bb68aff7bcc513479e27f9eb2b9bd73edd67f738603945395ff",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c1a50c815e72cede79f1016d9fe8daa39bd00b3d648a27e62c599d0d6cd86af6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ad622d65d804e8cf2f33d8f4d48f1c6d94967a1f17aef2d9b4d423f95daadda",
+    "mention_text": "Roush",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de6270d7504edf1ae513299b18bef54c71319c6f24ef7a34dbb37cb27de200b9",
+    "mention_text": "Detroit",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c4f66f9fbc28969ea8bb58eafb8acd6de9d006c8c1ee2243dc39efcadbecac50",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e0a0ca22f2479b265ed71c26a07de92f3b7befc3d23004ded74e44740d464ae",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9035d3b23bce6863808fec82dd27ea969ceaba59e25e8a0c1c091fb00363a977",
+    "mention_text": "Toyota",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51c478d3bacb0c2eed7b89c678753087ed10c51edc2c72c7d4ed195e0b7d04e8",
+    "mention_text": "Audi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38d351eef6255777bc3c0e19d04a73f1163aaa28a95ea37a4701f68a09dec273",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce255c2743323405439a388dd391df54fc799c1be6978469dafd0dcabc01ffc5",
+    "mention_text": "Universidade Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "031bf6cc0213ae3400b6b6982ebe341f8e8ee87fac2c6dfb3959fa0527513e4a",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29c903d2aae46b732cf37e7ac2466de4120b4797ca47bbda21449a2b32c8dca7",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62c6379abefb8af889c13e92db3df06dbce3ab70e5f9e68ae793ec70c5fa474d",
+    "mention_text": "Loon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6edfa07a8597af776cb1fc6e45ea282758b7b40d5d03b1d2241c1fae17c6f79",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ac82833d3714649c556d84e25524eec8ff5bd7d52fd163828d3d23bfe83a31e",
+    "mention_text": "Mountain View",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ce0785e02e62c387b1334ebf56aeedc5d5e7766bf60446b31f9e9b84e6e68055",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3ec2057d6d912db86098d6cebcceda3963417c22f2d35cf3e5ed7cd72b6665f1",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8873ce1b826b43c74dbebfbabcb7e10c3d4826e7887b36a85198e057add12941",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86506e18ae48b9f80205ac32a50205c38214e6019aab0b46313407876847af30",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "560a3a7360176cc005a0484b30194eea38a478cabe7b7fc63f337f9b31fccba6",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fa476164e443f8cf5b40c04f4f22fef4a38a4cbfdccc28ab5168910c123afff",
+    "mention_text": "Nummi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "460293ada25581bd09c8f7ad3122139d57ecc1f1739b26b134d2e8f462e55ba3",
+    "mention_text": "Toyota",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3646ce68ea916972d3ba4b8311812987ba3ed123aa4498b4b0efea05c5f2b7c",
+    "mention_text": "General Motors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53d00137de057ace2aed36c355e042f4ab18d10dff7ba786df10fe57998928bf",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69a8ed33896fcef2f1228d7cb10a5dc8dee54d57e951a1ad602a1b4d416ab2c6",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f71e3450a554b43ba2cd5371b673c09d570ef5c707deeff821510551dc24e229",
+    "mention_text": "Hyundai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee2f2c457cf9dedcc1865658754e984b4c2ef7d320921ac083d611151792016d",
+    "mention_text": "TrueCar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93504f11f3c06af5c287d89c35b1f8857428a6241a0b2e64ac83fff9a7437a40",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

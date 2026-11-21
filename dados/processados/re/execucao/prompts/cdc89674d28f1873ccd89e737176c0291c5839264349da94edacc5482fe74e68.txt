@@ -1,0 +1,417 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6f8c8371e5db70293dea05ec410a9195fa60e1ca5ff69c7f3c26efe17b27e51c
+
+TEXTO:
+Gilberto Dimenstein: A receita de sucesso
+
+Edward Glaeser, badalado professor de Harvard, faz sugestões que arrepiariam a maioria dos urbanistas
+IMAGINE NUNCA MAIS PRECISAR
+chamar a atenção do garçom para
+ser atendido num restaurante lotado, bastando digitar pelo celular o
+pedido. A novidade vem sendo testada num restaurante habitualmente povoado por apressados professores e universitários de Harvard.
+Os responsáveis pelo desenvolvimento do software conhecem bem a
+clientela: eles próprios estão entre
+aqueles apressados. Acabaram de
+criar uma pequena empresa, chamada Text My Food, para vender o
+serviço. A invenção virou um dos assuntos mais comentados aqui em
+Harvard na semana passada por se
+tornar notícia em toda a região de
+Boston, o que significa que, em pouco tempo, talvez esteja aí no Brasil.
+A poucos metros do restaurante,
+foi lançado, na quarta-feira, um provocativo e extremamente saboroso
+estudo intitulado "O Triunfo das Cidades", escrito por Edward Glaeser,
+badalado professor de economia de
+Harvard. O estudo é recheado de
+exemplos que mostram como as cidades prosperam ou desabam. Publicações de prestígio, como "The
+New York Times" e "The Economist", já apresentaram críticas elogiosas ao livro.
+Edward Glaeser adora peregrinar
+pelas cidades do planeta, entre as
+quais São Paulo, para investigar seu
+funcionamento. Com base nisso, faz
+sugestões que fariam arrepiar a
+maioria dos urbanistas. Sugere que
+os prefeitos se esforcem ao máximo
+para deixar subir imensos prédios,
+mesmo que, eventualmente, sacrifiquem paisagens reverenciadas pela
+população. Por atrair muita gente
+inventiva, a cidade fica mais interessante, logo mais cara. Isso significa
+que, mais cedo ou mais tarde, ficaria difícil o acesso para gente jovem,
+talentosa e disposta a produzir novidades. É o risco que correm Nova
+York e Londres, por exemplo.
+Mais uma ideia provocativa: não
+é a cidade que produz os pobres,
+mas os pobres que a procuram. É
+onde se vive, segundo ele, melhor,
+inclusive quando se está na favela,
+comparando-se com a escassez de
+possibilidades do campo.
+Nascido em Nova York, Glaeser mora e trabalha num ótimo laboratório
+para testar suas teses. Por ser um local com muitas universidades, centro de pesquisas e empresas de ponta, a região de Boston (onde, aliás,
+surgiu a primeira escola pública dos
+Estados Unidos) pouco sentiu a crise econômica que devastou o país.
+Simplesmente porque, nas garagens
+e nos dormitórios de universitários,
+prosperam todos os dias jovens como os criadores de novidades como
+o Text My Food.
+Nestes dias por aqui há um orgulho especial por causa de uma ideia
+nascida coletivamente nos dormitórios -tão coletivamente que há brigas milionárias na Justiça em torno
+da sua autoria. Atribuiu-se em parte
+ao Facebook a capacidade dos jovens de furar bloqueios e de se organizar para derrubar os regimes fechados do Oriente Médio.
+O poder da inteligência artificial
+ganhou destaque mundial na semana passada por causa de um jogo de
+perguntas e respostas, conhecido na
+televisão americana, que opõe um
+veterano vitorioso a um computador, batizado de Watson -os humanos perderam. Uma empresa de alta
+tecnologia se prepara para fazer do
+Watson um médico, capaz de dar
+diagnósticos diante das perguntas
+de pacientes. A inteligência artificial
+não substitui, no entanto, o poder
+das cidades, na visão de Glaeser.
+"Não adianta haver apenas contatos virtuais. Até que se invente algum novo programa, o único jeito de
+se resolverem desafios complexos é
+a proximidade física. É por isso que
+tantos talentos preferem morar em
+São Paulo, mesmo com toda a poluição, as enchentes e a violência. É um
+lugar cheio de energia e com uma
+mentalidade empreendedora. É definitivamente um dos motores não
+só do Brasil mas do mundo todo. Se
+você for brasileiro e precisar ter um
+diálogo global, certamente terá de
+ter pelo menos um pé na cidade",
+disse-me Glaeser.
+Naquele exato dia, aliás, estavam
+na minha cabeça as imagens que vi
+na internet das enchentes em São
+Paulo, a começar da minha Vila Madalena. "O perigo da baixa qualidade de vida (o alto índice de crimes, o trânsito, a poluição) e do alto preço dos imóveis é afastar os jovens talentos", afirma.Os melhores investimentos que uma
+cidade pode receber para prosperar, como mostram os casos do livro,
+não são os de infraestrutura, que
+rendem tantos votos, mas tudo o que
+se faz para desenvolver os talentos
+dos habitantes, a começar de um
+ensino público decente.
+PS- A lição prática do livro de Glaeser: um bom prefeito de São Paulo
+tem de investir na economia criativa, com estímulos fiscais, empréstimos, incubadoras, polos tecnológicos ligados a empresas e centros de
+pesquisa. É muito pouco dinheiro
+para um retorno gigantesco. Nunca
+vamos ser uma cidade nem bonita
+nem agradável, mas podemos ser
+cada vez mais interessantes.
+gdimen@uol.com.br
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "202d22e31aca702b43364b25b786a92ccbe72e851eeec07036645b2e776e7ac7",
+    "mention_text": "Gilberto Dimenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43d13fe7d9b831c21e799a1b05cb12da79b9b4f68c846997e960b7f0276d9fba",
+    "mention_text": "Edward Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88c1a5b7b7ea0ec941852175ef6f7a5bfb8f5afbd832eacc0298e11cc5bb32cd",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e933a554a837e4d23ab30521069fbd8ef75a046d27f9a55fa87bc3f17232209",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f710741461ef06a27f895ae0396cd6d0cf6f79ba41067f50b28ecdc6ab1dddd6",
+    "mention_text": "Text My Food",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b680d83a052a463cf914abe9a39cfa3a3fa091d3f1d75a6725c0a476631b876",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d664db2611d4002d75879675ab9964b2ebcab8da29b8d6da22041c90b4f6622",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ec979f744b1d18f07ffa85020b343afde402243677c7bd9a7792d217e7d72b2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed7ad316ac180a1830a2444006736ce9726aa8e0da9ea99a253274e76bde24ae",
+    "mention_text": "Edward Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2de0bff065f9908b067e6b747564990286990e32b09c4b512d258decac58b86",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "508ed1837fdd89831b1d5068bbc3430d9ea16298885f0e6fc6a7839bc0accc7a",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8d946e5f14ce8d97cd567e92e965cc2331a228ead76dba340311a0a08cea363",
+    "mention_text": "Edward Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6a1c0dfc07191ce20a37f5f2b521ad17c7a0727c2278ebf4d34020309c27ae7",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d3dd26310413fa865c952d80a2f36c8e660cb05b71ef3516cb8eb0d8235bbc0",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd1516d44a3d0c1ca60a9a9124e1e47b84195af90bbe739a10479c0b427fcf8b",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f3366ecb0a1cf54e407347edd1e32f1be5efb3f1fa79b55f2281b8cdde9a8403",
+    "mention_text": "Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5cc6f9b5724d2300da85c310e6a6a1dfdb5d4b8f7106601e9c66d22dd301e40b",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d6a4d81059d7079b2d6cf5f878e8e868d45de298e3169f0d9e964e48b146c66",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec184232d2a3f3ca7ca9ff18dc499e25d854a4a3653247c599a117354a7b66fd",
+    "mention_text": "Text My Food",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "145674bdb00a6bf721bfd087c1ce4401ef376cafb2867b03267cf6bca70f1b52",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c8d18657961ae72d0c9556e4d794f5f0e40d41be26c96c6e211baca7b8208e7",
+    "mention_text": "Oriente Médio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9558717975c2d24126c47d5149e82d45d0814039aa036b89eda64f5aa88c7968",
+    "mention_text": "Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d899cb5bce8d7f5e9e8b461a71fb66d31a20060d49c6574673070fdae0bc998",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56a9f8b4976da8f5fc4846b5432538138906fddf81678b021fa2b11c4e5e68db",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "436ce8e7e82d1344b10bd72b48bf03ca5b9305d383563f8ee30d5559cafbf0f3",
+    "mention_text": "Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b52f94a35ed6b0970b7302c9ae43362b20e92a22d5f13786192c64a0356cb56a",
+    "mention_text": "Vila Madalena",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "41f99e24e3972da24b50f44cda52827fecb67803314f01a2db5c2a522931e4e2",
+    "mention_text": "Glaeser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0e54c02b88d07dc5939c7c8e34fd36999e19d0e492c982c13cb3b6ae28a45a3",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  }
+]

@@ -1,0 +1,554 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 68ae45cb2ea577f87c9aea41b6d9c81c36fc27ec5c8c7e2861a44911e09f5da1
+
+TEXTO:
+Conheça histórias de crianças que se mexem para mudar a realidade
+
+Dia da Criança geralmente é hora de ganhar brinquedos, comer pipoca no cinema, andar de bicicleta e encher a barriga com sorvete —​ainda mais neste ano, em que a data cai em um feriado prolongado .
+Alguns meninos e meninas, porém, não se contentam apenas em receber presentes neste 12 de outubro. Eles e elas também se preocupam em entregar surpresas para desconhecidos, ajudar outras pessoas e transformar um pouco a realidade onde vivem .
+Conheça algumas crianças que moram em São Paulo, colocam a mão na massa e tentam fazer com que a cidade, o país e o planeta se tornem lugares melhores.
+O que cabe no espaço entre dois versos de um poema?
+Uma pausa, um respiro, uma quebra de linha? Para Akanni Alves, uma vida inteira pode se esconder entre uma rima e outra. “Poetas não podem entrar em extinção”, declama o garoto de 12 anos.
+Quando termina de articular a última sílaba, no segundo em que o silêncio prepara terreno para o próximo verso, Akanni viaja na memória.
+Lembra-se de quando visitou pela primeira vez a Casa das Rosas, em São Paulo, em 2015. A mãe havia morrido de câncer em 2014, e pai e filho tinham ido ao museu literário da avenida Paulista para assistir a um sarau.
+Ali o menino foi sentindo um formigamento, uma vontade de sair da cadeira, um comichão para pegar o microfone —o que só passou quando já estava em cima do palco. “Li três poemas que me emprestaram. Foi bem desconfortável. É como estar a vida inteira dentro de uma caixinha e, de repente, sair para o mundo.”
+Depois, ele se recorda do dia em que estava no cabeleireiro e, de tão entediado, começou a pedir rimas para pessoas no salão. Nascia ali o seu primeiro poema. Também convenceu o pai a escrever as próprias poesias. De sarau em sarau, os dois se tornaram membros do coletivo Poetas do Tietê, que faz apresentações pela cidade.
+A memória leva-o ao ano passado. Em um financiamento coletivo arrecadou mais de R$ 8.000 para seu primeiro livro : “Mente Aberta” (ed. Guismofews, R$ 40). Passou também a ministrar oficinas gratuitas em escolas públicas.
+“É difícil encontrar crianças que gostam de poesia. Mas, se consigo tocar o coração de um aluno só, certeza que ele vai começar a escrever e vai passar isso para outras pessoas. Aí a cultura vai se alastrando, fazendo com que a gente se torne mais humano.”
+Só depois dessa fração de segundo cheia de pensamentos ele chega ao último verso do poema: “Poesia é revolução!”
+É só uma meia velha mas também pode esquentar muita gente
+Uma meia velha pode servir para esquentar o pé, virar enfeite de Natal ou até coar café. Já muitas meias velhas juntas podem ajudar a esquentar o corpo inteiro —o coração inclusive.
+A ideia pipocou na cabeça de Maria Luiza Ventura quando a garota de 11 anos estava escolhendo um pijama na loja Puket do shopping Iguatemi Alphaville. Lá, descobriu que a empresa estava coletando as tais peças sem uso para desfiá-las e transformá-las em cobertores para quem dorme em abrigos ou na rua .
+A garota logo acionou as amigas Samira Balija, 11, e Giulia Celin, 12, para juntas costurarem um plano. Ficou combinado que o grupo passaria de sala em sala na escola onde estudam para pedir doações, que seriam depositadas em caixas de papelão customizadas e espalhadas por elas pelo colégio Mackenzie de Tamboré, na Grande São Paulo.
+“A gente explicava que podiam ser meias de qualquer tamanho, cor e modelo. Não precisava nem ter par”, diz ela. Só não podia ter chulé.
+Durante o mês de junho, ela encarou o frio na barriga que sentia ao visitar as turmas do 6º e do 7º anos para aquecer e ajudar desconhecidos. Quatro caixas inteiras foram preenchidas. “Foram tantas que acabei não contando. Coloquei tudo no porta-malas do carro e entreguei na loja. Agora quero descobrir se já viraram cobertores.”
+Todas as meias já foram desfiadas, transformadas em mantas e doadas.
+O projeto foi o segundo a que ela se dedicou. O primeiro nasceu quando tinha ainda cinco anos, ao cruzar com crianças pedindo dinheiro no semáforo. Logo em seguida, Malu fez que fez, insistiu e bateu o pé —até que os pais prometeram comprar brinquedos para elas e levaram a filha junto na hora de entregar. “O mundo não está muito legal. Mas, se a gente crescer fazendo o bem, vamos conseguir transformar o futuro.”
+Menos lixo e mais brinquedos é igual a muita imaginação
+Pode até parecer um simples quartinho da bagunça. Mas é no meio de objetos que muitos chamariam de tralha ou de lixo que as três garotas criam todo tipo de brinquedo, como se fossem ajudantes do Papai Noel.
+Um cano velho logo se transforma em espada. Caixas de papelão viram carrinhos. Panos velhos ganham a forma de fantasias. Rolos de papel higiênico se tornam temíveis dinossauros. E aquela meia-calça renasce como um fantoche.
+“Às vezes nossos pais reclamam da confusão, mas é muito mais legal criar os próprios brinquedos”, diz Júlia Brandão Maia, 7, uma das trigêmeas que criam jogos com objetos que seriam descartados. Como costuma acontecer em casos de gêmeos, elas não apenas fazem tudo juntas. Também falam sempre ao mesmo tempo, feito vozes que completam a mesma ideia.
+“Você não pode inventar se compra tudo na loja”, diz Clara. “O legal é pintar da cor que quiser”, continua Júlia. “E criar coisas novas, como um atirador de batatas, duvido que você já tenha ouvido falar de um atirador de batatas, já conhecia?”, dispara Alice.
+A brincadeira (bem séria) começou no Réveillon, quando perceberam que a praia estava suja . Cada uma pegou um saco plástico e limpou uma pouco com ajuda dos primos. O que dava para ser reaproveitado se transformou nas primeiras confecções do trio.
+Depois, quando ouviram falar de reciclagem nas aulas da escola Santi, em São Paulo, fizeram com que os pais passassem a separar o lixo em casa. “O mundo está muito poluído”, reclama Clara. “E muitas coisas podem ser usadas de novo”, fala Alice. “Assim você ajuda o país”, avisa Júlia.
+Agora, a ideia é fazer com que outras pessoas da família e da escola comprem essa ideia —ou melhor, não comprem: reaproveitem ou reciclem.
+Futuro inventor da formiga biônica já dá aulas de programação
+Uma formiga biônica caminha pelo formigueiro. À medida que suas patinhas robóticas avançam pelos túneis, as antenas enviam ordens aos insetos, ajudando as operárias a fazerem da colônia um lugar mais eficiente. A cena ainda é um projeto. Ainda.
+“Inteligência artificial é a tendência do futuro. É importante aprender programação para fazer parte desse processo e não ficar para trás”, acredita Matheus Barbosa, 12, mais conhecido pelo apelido Teteus Bionic. “E, como eu amo formigas, acho que esse inseto robótico vai ser o meu primeiro projeto.”
+Filho de pais que trabalham e respiram o universo da tecnologia, ele aprendeu a programar aos sete anos com uma apostila de Scratch —linguagem computacional criada pelo MIT, o Instituto de Tecnologia de Massachusetts, nos EUA. Após cerca de seis meses, Teteus já inventava seus próprios jogos.
+“Sete anos é a melhor idade para começar. Você está aprendendo a ler, escrever, fazer um monte de coisas. Seu cérebro está aberto. O adulto precisa se esforçar muito mais.”
+Pensando nisso, ele logo em seguida começou a dar aulas de Scratch para crianças da ONG Nova Era Novos Tempos, em Mauá, na Grande São Paulo. Uma vez por semana, no contraturno da escola municipal onde estudava, o garoto tinha hora marcada com crianças entre 7 e 14 anos que queriam dar os primeiros passos tecnológicos e criar games.
+No tempo livre, passou a também dar palestras em diferentes eventos de tecnologia, como Campus Party , Arduino Day, Scratch Day, Science Day —o que o levou a ser nomeado embaixador-mirim da IBM no Brasil e a receber uma bolsa de estudos em um colégio particular de Santo André, para onde se mudou com os pais no último mês.
+Como agora está vivendo longe da ONG, as aulas migraram para o YouTube, onde tem cerca de 1.500 inscritos. “Aprender programação não é só fazer jogos. Você desenvolve pensamento computacional e lógica de programação, que são importantes para resolver qualquer tipo de problema.” E para inventar formigas robóticas.
+Jovem líder indígena se divide entre a roça de milho e os protestos
+Cerca de 45 km separam o centro de São Paulo de Parelheiros. Nas duas horas de trânsito pelas avenidas que ligam o coração da capital ao extremo da zona sul, prédios vão ficando para trás e dão lugar a chácaras cheias de verduras e galinhas que pedem passagem aqui e ali para atravessar a rua.
+Do centrinho do distrito, são mais 30 minutos de viagem até a aldeia Krukutu . Um caminho enlameado, com mata atlântica formando um túnel verde, serve de entrada para a comunidade indígena. É lá dentro, no quintal de uma casa cercada por árvores, que Robert Tupã ajuda o pai na plantação de milho.
+As mãos do garoto de 13 anos, que reviram a terra com carinho, são as mesmas que seguram cartazes e gesticulam em protestos do movimento por direitos em São Paulo.
+Há um ano, por exemplo, o jovem líder indígena estava no escritório da Presidência da República, na avenida Paulista, em um protesto contra a revogação da demarcação de terras no Pico do Jaraguá.
+“A Paulista é muito longe. Nunca tinha ido. Senti alegria de ver todos juntos. Primeiro você tem que se concentrar na família. Depois na luta da comunidade”, defende.
+A aldeia é parte da terra indígena Tenondé Porã, demarcada em 2016. Com 16 mil hectares, fica à beira da Billings, entre os distritos de Parelheiros e de Marsilac e  São Bernardo do Campo. Atualmente, 55 famílias Guarani Mbya vivem ali, em nove aldeias.
+Assim que volta da escola estadual, onde cursa o 7º ano, Robert vai para a casa de reza. Lá, participa das danças e cantos tradicionais e escuta o cacique e outros adultos.
+“Falam que nós somos o futuro da aldeia e que precisamos ter coragem. Nosso povo chegou na terra muito antes”, explica, os dedos das mãos entrelaçados no colo —os mesmos que, depois de revirar a terra, seguram o controle remoto e aumentam o volume do anime “Dragon Ball” na televisão, o seu favorito.
+Agradecimentos: Donatelli tecidos, Acervo B.Luxo, Camu Camu, Puket, C&A apresenta Fábula, Dimy Candy, Parizi Jeans e Ampamulherdopadre
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "fe92039d3185deed2e34c616d57345bce01b6e7736be8965377b11a4c66e2f62",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "41bee4dd43d8981d0ce1f1afafe8fea75cc233cb4930679b02c481697549a6c4",
+    "mention_text": "Akanni Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c59cf04b765645aeb0fcbf135afcb5cc6adaba3337568a9a02952ef08058b8f",
+    "mention_text": "Akanni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13bb27a56b9978f8cc15f774417657ed461a44d509f9e3a0c968d5470fab1841",
+    "mention_text": "Casa das Rosas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3be1d4c63a15dd6ec4e54570629656002a45f12319aaca5e84fd8e9568571d95",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f2af880bdfbfb34aee6a1efd99c3cbb4293ab040fbf5b1e892d28735a964ac7",
+    "mention_text": "avenida Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dd2640a24101eae15b292f79de64b54f0924ff22f6f181c9ca60764ae82609e8",
+    "mention_text": "Poetas do Tietê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5cbe3db6ee0e26194d97ebcbb1bf744800e788c4ea886103b8a9e9001d4af51",
+    "mention_text": "Guismofews",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "324e0d4b6cf8ec86e38c6af92b1dde8df7b01a4308e8e6f6b4ec56459d3eab00",
+    "mention_text": "Maria Luiza Ventura",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7a94ae13851618f6fdf81053f4c209d5d79cee70504166775a37436746dd328",
+    "mention_text": "Puket",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a0c6299985dbc49906579ff92408afa012bdf76c24237c8037611bbd88ce51d",
+    "mention_text": "Iguatemi Alphaville",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19933b0d6ed303d1b2e1b88a912ec7a973c4d9ebe3d686e718207b398319793f",
+    "mention_text": "Samira Balija",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "065f65cb804e858cb1a8c52b0f1b30be18f3494580f5f08c4cac4a9c2ec5c910",
+    "mention_text": "Giulia Celin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e71ffea6c344b7c13fbeca44c5965ea0ae32f6c4a293fe0adb5414729e963a5",
+    "mention_text": "Mackenzie de Tamboré",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddb1d20c7924521999b3da7c61ae179ea21c1020c648dd4a08f243c4d3c4e19c",
+    "mention_text": "Tamboré",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46456dd18091c3d7da4452668189c7c16173f7ebe4956394f383cd47a000d1cd",
+    "mention_text": "Grande São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "16d67351adb33b1753a3da0dae01c4447c40487871a68ae72c2ff0de34730bef",
+    "mention_text": "Malu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "beeedc10da9826e28bb771fc7d2b5679745f18ec69837ac401c6f1ab9a94a292",
+    "mention_text": "Papai Noel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "523b03256569dc3f61319edcaa82909f541b227fb0dc192f1d0bcbb3c70047cd",
+    "mention_text": "Júlia Brandão Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c72364e55e47bae44d165d9a3d8643291f31beb126b30e658d18cb63c9342d87",
+    "mention_text": "Clara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "131c46862226fd337ca85050f08e37fe9e4d9407abd781f3fb43d3fda00dc053",
+    "mention_text": "Júlia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7204d975b36b50424c8e68a8f07c567f129924af3e005a7883d6d2e4d14c8b55",
+    "mention_text": "Alice",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f6ca27964bc4aa7f3c5733ace201375263f8adbf73b94aa402ea1b3e299f109",
+    "mention_text": "Santi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a5fc3dc5e65d13c52016fba4b4a05c8b665aa74578643a2db2df3baa351fd80",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc6f63bd4e1bbf5969230b1865e9377fee847f63a3b6774a4c4f19d30838a117",
+    "mention_text": "Clara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1c0c999c899b047f744dfbbb557490f10292f9f0efc343ee9baf576b43cd14e",
+    "mention_text": "Alice",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bb586557d50c9a95a5e8c693aaedfa368a5f787b71d7ee34f2f716c81fbb1c5",
+    "mention_text": "Júlia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3ad9295f025f66c454856d24857e528f5b8c3907b3dc37e6cdbe0f03708a2eb",
+    "mention_text": "Matheus Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f457195957b052abd2056c5fe99e905ec33fed47263b1c58b84f1d7885191ac9",
+    "mention_text": "Teteus Bionic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6dee2ed9d5f278784cdc7832fc7c12b3621e3a4de7656e3108835b8544728a32",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb6a6235ffbc47a83a803d2da4ab337e85934f18d8e82e83c2cf3d0c92fca004",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35878b516ef6551b7780674748b8750367908e6e242dfb771e9651a21e53d0d1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "319e20739e39a4e616ed1ac99411537d634f7f705ee8a8510a81526d7b53a9d0",
+    "mention_text": "Teteus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82977f60f91f6275b805353d96b4fc5e9e0e49d46e63fb445c94a0aae8e42b21",
+    "mention_text": "ONG Nova Era Novos Tempos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bcc4152cdd03372eb19d12bc4c7885a7ef5a57e821ab9b8cad4ba28175f5b25",
+    "mention_text": "Mauá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98cf4c05f64728fcaf97728a61d248f54185cec7c73cd356a69a50c17fcf891a",
+    "mention_text": "Grande São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3c892de25230908f8978e0670c235420d33d28e5e6f77b6471788ac6175ea057",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8235ae5717537951633ba946ccdd3dda956aa5554db0d951b71c032c7fc566b1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b4be5b042a84650b30fdca9c025c0226171a2c5138f33db4d86e81ee7e0272a",
+    "mention_text": "Santo André",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "356a15741bff258fbd11cf4aba4a509816b031c8c1357cf716b0422c97fcd3c2",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "828fa6b42dab2e4bf38dccfdadf00c53acf872c61ab0ade39ea4c3a42cb60599",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "05811c61967b433ed10a87c0603e67f45d160f98a1b771058525b9a8dccae0c0",
+    "mention_text": "Parelheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11e6d23a6afc87e57330500106e878d87746d8d765e07314790a197bc214df98",
+    "mention_text": "Krukutu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ed6c9ce50c6467d7a819f1192c80b644a67293b02d4eb0ba3b0bf8edf664ef5",
+    "mention_text": "Robert Tupã",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90f2be7b87bee0193b426afc90762f4e21cb5a06279ef0f0f2b97e9cd7cf5597",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "95413be537d06220bdee55f1f3c1d2dac4df39ff969daab2c09de6b0d0132ce2",
+    "mention_text": "Presidência da República",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0670542df94ae3c4bc8f0cc658c3a58ffb0f87a30a871909afe0b2bb58f9d03d",
+    "mention_text": "avenida Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b0c6199502fae5d8adb763dca8bea7fc90442b88b3ed339388f76f73fbb63c5",
+    "mention_text": "Pico do Jaraguá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a9cea0b44dcf5008606ed02d5691bc7e434f3be6da03879f2c49d0623a759573",
+    "mention_text": "Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f73e816f4f80f8c34c9b156dcc3129fee3304d85ba3ed28d15dc3d755ef89aa",
+    "mention_text": "Tenondé Porã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "865cdb75361a4dd26d66b554ba105bdba949039c3f83383d1070eee75b7417b5",
+    "mention_text": "Billings",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8925e8ff418eba263e0a7726643e2360073564949ae93b3dc28700099dbd1bc7",
+    "mention_text": "Parelheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d16a0cb30a83e4e821c0cf1344fbe015633b964e19982d49d09e58c63907e8f7",
+    "mention_text": "Marsilac",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f28f203180f52be7f4e22d12d6a5fd76aa093be274881fd0224d9ee9d5253d97",
+    "mention_text": "São Bernardo do Campo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "778417b46f1d6665197740d941394549c312b35d362022ad86ad9038ef94a948",
+    "mention_text": "Guarani Mbya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "087de1b0ae53ae9743fae91aea53c4115e852a753b4d843d0584483df50e15f1",
+    "mention_text": "Robert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69689fafad128bee95f5dc54df3f91cda3c49aff0f7fcf462bad6c25ab57545e",
+    "mention_text": "Donatelli tecidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21b2cc203c7040bd2baf1d02c360c23ab9c5ced78dd353661f425cd389724251",
+    "mention_text": "Acervo B.Luxo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cedf7bcd937e882b694fb147c8e59dddcf87c0b474869479555a99948bd8d411",
+    "mention_text": "Camu Camu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "393fa301754ed0197545c3c9caed85e50d990b4ada7a464533fd27bf71d24f54",
+    "mention_text": "Puket",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ccd4903af7f2e22956e943d552d3b1f80343d3ac95be54f10490dc5dc016251c",
+    "mention_text": "C&A",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48a88a48b87ecf29124c8ee1806127154ea0804517cca862c1bef10be62023a2",
+    "mention_text": "Fábula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14585aad8b0c55a7077e66a6f69d7718cb5501ac81ea555980710eb573d08056",
+    "mention_text": "Dimy Candy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c25253267c24cb9dd30934ccf9dc708d54e8584a736a1508c7d67d271cc2629c",
+    "mention_text": "Parizi Jeans",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "616eaee4d533bfffbe6c02447097e9235aaa4cdbe38b06f6ebbcec1bfe60be43",
+    "mention_text": "Ampamulherdopadre",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,421 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6954db346526139aabd1bcf4561cd8d65660d708f6ab518e8fede3873b23ec8b
+
+TEXTO:
+Robô faz pizza, hambúrguer e café nos EUA
+
+"Aqui não tem desculpa esfarrapada", avisa o gerente Rayshaun Solomon, em uma lanchonete em Pasadena, na Califórnia, enquanto entrega um cheeseburger quentinho ao cliente. "Não tenho de lidar com sentimentos, sabe? Ou com gente que nunca chega no horário, gente cheia de atitude."
+A seu lado, no fogão industrial quente, está seu funcionário exemplar, que vira os hambúrgueres metodicamente, serve-os em uma bandeja ao lado e ainda limpa a grelha sem reclamar. Ele não dá bom-dia nem conta piadas, tampouco precisa de pausas para banheiro ou cigarros.
+Seu nome é Flippy, um robô de US$ 100 mil (R$ 390 mil) que virou garoto-propaganda da revolução tecnológica que vem aos poucos estreando em restaurantes do mundo. Se os robôs de fato dominarem o planeta, ao menos vão saber fazer pizzas e cafés, como já acontece no Vale do Silício.
+"Quando me contaram sobre o Flippy, achei que era piada, algo maluco demais. Mas ele é consistente, é muito tranquilo trabalhar com ele", diz à Folha Rayshaun, 23, que trabalha na franquia de lanchonetes CaliBurger há dois anos.
+Flippy chegou faz menos de um ano e consegue cuidar de 12 hambúrgueres ao mesmo tempo. Ele é criação da Miso Robotics, empresa que também fez uma versão do robô para fritar batatas e asinhas de frango, atualmente em ação na Chick N' Tots, dentro do estádio Dodger, em Los Angeles.
+As duas versões usam um braço mecânico de seis eixos com escâneres térmicos e programas de inteligência artificial, que identificam a comida e os utensílios de cozinha para preparar o que for pedido.
+A CaliBurger pretende trazer mais 50 robôs para suas lanchonetes em 2019 e afirma que a chegada do Flippy não causou nenhuma demissão. A empresa diz que o trabalho na grelha é exaustivo e quente demais, o que causa alta rotatividade no posto.
+Flippy também necessita de ajuda humana. Rayshaun precisa colocar os hambúrgueres no lugar certo na grelha, acrescentar o queijo quando o robô avisa e checar a temperatura da carne antes de colocá-la no pão com os adereços.
+"Não acho que ele vá roubar meu emprego", diz o funcionário. "Acho, sim, que meu currículo vai turbinar com essa experiência robótica."
+Ao contrário das previsões futurísticas, as novas tecnologias culinárias não estão acabando com empregos, ao menos por enquanto. O setor de restaurantes é um dos quais o número de vagas mais cresce, com taxa de desemprego de 6%, a mais baixa da história.
+O pesquisador Alec Levenson, da escola de negócios da Universidade do Sul da Califórnia, afirma que esse tipo de automação só vai aumentar e lembra que isso acontece desde o início da Revolução Industrial, quando máquinas substituíram operários que costuravam roupas à mão.
+Muitos perderam o emprego, mas outros ganharam para operá-las, enquanto a possibilidade de roupas mais baratas expandiu o mercado para uma nova classe de baixa renda.
+Nos Estados Unidos, ainda que robôs como o Flippy sejam raridade, uma tecnologia já vem mudando o setor: a automatização dos pedidos via aplicativos, seja no celular, seja no computador de casa, seja em tablets no próprio estabelecimento.
+"Ninguém perdeu o emprego por causa disso na Starbucks, por exemplo. Você tem menos gente trabalhando na frente do café, mas há um volume maior de pedidos. Aumentaram a produtividade e as vendas", afirma Levenson.
+"Talvez você perca o posto de cozinheiro que vira hambúrguer, mas, se a máquina for eficiente, há o potencial de precisar de mais gente para montar os sanduíches e dar conta do volume maior de comida."
+No Vale do Silício, onde carros autônomos e robôs que entregam comida já são realidade, restaurantes e cafés automatizados são a nova febre.
+O CafeX tem três unidades em San Francisco e serve 13 tipos de bebidas quentes, sem nenhum barista por perto (funcionários ficam nos bastidores para carregar e fazer manutenção das máquinas).
+Mais impressionante é a máquina de quatro metros de largura que toma conta da lanchonete Creator, também em San Francisco. Com 350 sensores e 20 computadores, ela prepara sozinha cheeseburgers de US$ 6 (R$ 23). O espaço abriu em setembro para o público, com filas de espera.
+A carne é bem maior e mais saborosa que a do CaliBurger, que cobra US$ 4,25 (R$ 17) por um cheeseburger. E a máquina do Creator faz tudo, desde cortar o pão, passar manteiga e aquecê-lo até moer a carne orgânica na hora do pedido para grelhar o hambúrguer.
+O processo dura cinco minutos, e a máquina dá conta de 130 por hora.
+"Gastamos mais com ingredientes do que qualquer outra lanchonete com hambúrguer a esse preço. Nossa missão é reduzir o custo da comida de alta qualidade", afirma o site da empresa, fundada por Alex Vardakostas, um engenheiro que cresceu virando hambúrgueres no restaurante dos pais.
+Enquanto Vardakostas sonha em um dia tomar uma fatia dos negócios do McDonald's, outra startup local já ataca seus rivais com uma legião de robôs.
+Pepe, John, Marta, Bruno e Vincencio são seus nomes, e cada um é responsável pelo processo da pizza na Zume, como preparar a massa, espremer e espalhar o molho e colocar no forno.
+A Zume entrega apenas no Vale do Silício e tem 40 funcionários, dos quais 20 engenheiros. Afirma que faz dez vezes mais pizzas do que uma pizzaria convencional (até 370 por hora). Os humanos preparam os ingredientes.
+"Temos menos funcionários, mas pagamos mais que a média e damos todos os benefícios", disse a cofundadora e copresidente-executiva Julia Collins aos Los Angeles Times.
+A Zume tem caminhões, equipados com seis fornos inteligentes que preparam as pizzas no caminho do delivery. Collins chama os veículos de "restaurantes sobre rodas".
+A automação vai além do Vale. Em Boston, estudantes do MIT (Instituto de Tecnologia de Massachusetts) fizeram parceria em maio com o chef francês Daniel Boulud para abrir o Spyce, onde máquinas preparam tigelas de arroz, pasta e misturas saudáveis por US$ 7,50 (R$ 29) cada uma.
+Em setembro, o grupo obteve financiamento de US$ 21 milhões para expansão na Costa Leste.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "bd687c82aa8186f2856a15f0c807511bd24db4303874aeb447c11ebca2b06fdb",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62b6cee5a4f04a62571b01b6284196b4ba0bb6178d7893052a8a76ad88016e7f",
+    "mention_text": "Rayshaun Solomon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29c3a3ec09a3dc414bc0af554d24036317254108ee6d575c7ba50b32c191caa9",
+    "mention_text": "Pasadena",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69518b85c190f192c4c12bf2282017a693dca28a1634fb9b5824860211e9a911",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c9293c31257534b72652767bb9673893cfea74a8a61b00b5c45f8208a5587a1",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "06b4b78c7e50415835d187e776df1e0bbbc0016d75e6e5c48108007cce0905e5",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "354432e493af295e9135f52270a922983b3b9189aa2f1f64dd4703740f38069e",
+    "mention_text": "Rayshaun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0865c25a1b648f2e0c178e03638274a692b9a43e684112d0d3ab27da05d37e42",
+    "mention_text": "CaliBurger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65b6ef026b853a218a26555ca03bdbd30bc4ad9c439f4a4d32e6880ef0c04b35",
+    "mention_text": "Miso Robotics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4512eed9c657143d2ffc3ef644cfdf3fe57c5dec70d1f0ef5660510acf2b8af6",
+    "mention_text": "Chick N' Tots",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6e838dec39a79d9c2109ce836e38b66829d4ef859c65f90e66d86ff5249828b",
+    "mention_text": "estádio Dodger",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f514ae04774594c0a12c6d92c43ff46c38c8bc28b6fb1c5c455f22ff97c5d53a",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c56e5a492d29d107d6e8f5102da3770cc1606e38366d2090adffd11601611a5e",
+    "mention_text": "CaliBurger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7bdb953b794e6eac1e5c05cd93fa5c1f37872ba834692629ed9cc788b01a60a",
+    "mention_text": "Rayshaun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2569f6b7c08fbf7c5d69abebee4c89531fb1446041eeeb9b5e82b3dcbb83734f",
+    "mention_text": "Alec Levenson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2bbacd0eb87acefc155e1e5be553686a77d698b135bc971c0429d98ed070b3e6",
+    "mention_text": "Universidade do Sul da Califórnia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd0f97be88680e5d1b56dcbac25fc74b0f7138856f418f3f8224e3be858e1e74",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "362218af5b61ca9c474f2d8d371135082c9eeb500ecb86cf924bffe03fb06e0e",
+    "mention_text": "Starbucks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ad20a9a77a98f226311718bf58eb6581b9817e31011b250e91f2a0c21496738",
+    "mention_text": "Levenson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a6d6abe8e64b5331081d19f81883e2497ceeb65a24138889c065732bf22107b",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "115c674a767bd4aae564b84f723d45e323931f3b0dc276e91f0cde064282a992",
+    "mention_text": "CafeX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cdd897e71f5df3d1875fbabf7eaa18ae52b57b7f946258dad96b4862b3c480d",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "511fb037e0d33125a982c1375f62ff82ad71d8fb6041fcb387a7404e9586349c",
+    "mention_text": "Creator",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6614735e8bc121148226ee7d1962ca3bd7a9f976399c3adad7bfeff299ccca49",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "37531600bb7f003a42710a44b90bea4c60428df58e4b676c1fd9269fcdb79637",
+    "mention_text": "CaliBurger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "840b1e1d59256b5f651b21540f076c9f4c6920ac30d18170686dea9de79d28ac",
+    "mention_text": "Creator",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c403d5a9c3b1210074a96e5cf35e9bd9024dc98eace3101a1270aef1aa08732",
+    "mention_text": "Alex Vardakostas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e168f84016c01cf7c2559132e73912ad64001d52dcf4823e5f9dfad025cc9d2c",
+    "mention_text": "Vardakostas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "753627c34b9db2ae5eece8172a9ce080aa7a749b04c70802cc4dba073802788f",
+    "mention_text": "McDonald's",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a240f7a06297aa1bc914c507bbc99e4b6c8d9ddbeafe917d85f2c0906b795ed",
+    "mention_text": "Zume",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4bc87feb9a1467b603c4a7ec322184a20e55f61607d8ca8212ab8e14067af3e1",
+    "mention_text": "Zume",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d86e195774ee05d5cc0f8b3e038188c061eb136da4cc70ceaa5786f48b5aa323",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a78960505abd2ffc91f95efb8c4b4de5e4b1f82bd64dc08eb4be19543c3a104b",
+    "mention_text": "Julia Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a1da15406123fe68274c6c560459e0e31eeaa215d298e689526ba275558a5df",
+    "mention_text": "Los Angeles Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63a8284ff841db73141156067e95f69d08401354a46e44039b64443ca2cc5601",
+    "mention_text": "Zume",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85deecab456c44208265fd7dd0ed1006db73983cb77a38030b2fa0127c097ad7",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8308ace43a1e40ac3e19abd5296d8256d89dbfc5d5ffa50bdf11b38ae4945f08",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8cf71a2526e7055c3f408862f3aeda385fffdf636a9a289cf11e66be0df38a2b",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a1687a729efbbe8aa86943c427bca51da51665e4c8bb1404000807af9a0f5b5",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2032b06e2f2d1ba4a8e40e1a1cae3b5deea052205b3d0a7266298ee5b2d34e35",
+    "mention_text": "Daniel Boulud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45ca68066ca2c0ee74bfb57797a57470ae8e89dca4916e32197f475f503ee62a",
+    "mention_text": "Spyce",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d01f02feab8e20f48b693c6bd0f1a1fcc8942e38781cdfe33a48fc86b3f5903b",
+    "mention_text": "Costa Leste",
+    "categoria": "LOCAL"
+  }
+]

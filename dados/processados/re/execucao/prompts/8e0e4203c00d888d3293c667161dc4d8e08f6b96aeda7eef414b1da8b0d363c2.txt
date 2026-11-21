@@ -1,0 +1,583 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 55efcd25ee4bda6b253eef4e850268f498cfbb877ecb2b82fc7277318830201e
+
+TEXTO:
+Para além do computável
+
+Para além do computável
+NEWTON DA COSTA
+Roger Penrose publicou 
+dois livros muito conhecidos e discutidos, "The 
+Emperor's New Mind" 
+("A Mente Nova do Rei", Campus) em 1989 e "Shadows of the 
+Mind" ("Sombras da Mente") 
+em 1994. Tais obras, na verdade, 
+não são propriamente de divulgação, como "Uma Breve História 
+do Tempo" (Rocco) de S. Hawking e "Caos" (Campus) de J. 
+Gleick. Pelo contrário, nelas Penrose expõe idéias extremamente 
+originais sobre diversos temas, 
+englobando a relatividade, a mecânica quântica, a cosmologia, a 
+teoria da mente e, em particular, a 
+IA (inteligência artificial).
+Nos três primeiros capítulos do 
+livro, Penrose resume suas concepções apresentadas nas obras de 
+89 e 94; nos três capítulos seguintes, A. Shimony, N. Cartwright e S. 
+Hawking fazem críticas e comentários às indagações de Penrose. 
+Finalmente, no capítulo 7, ele responde a seus críticos. O livro ainda 
+inclui uma interessante introdução, redigida pelo organizador M. 
+Longair. A tradução é confiável e 
+bem-vinda, e assim o leitor brasileiro terá em mãos um sumário 
+dos pontos de vista do notável matemático e físico inglês, além de 
+uma apresentação elementar e 
+atraente de certos tópicos da física 
+e da IA atuais (1).
+Penrose tornou-se internacionalmente conhecido pelas suas 
+pesquisas em astrofísica e cosmologia, além de algumas contribuições para a matemática. Um de 
+seus resultados mais célebres 
+compõe-se de dois teoremas -em 
+parte decorrentes de sua colaboração com Hawking- referentes 
+aos buracos negros e ao Big Bang. 
+Um dos teoremas afirma, falando 
+por alto, que, segundo os princípios da relatividade geral clássica, 
+no interior de um buraco negro, a 
+curvatura do espaço-tempo (ou a 
+densidade da matéria) torna-se infinita, há uma singularidade. O 
+outro teorema assevera que, nas 
+mesmas condições, existe também 
+uma singularidade física análoga 
+na origem (Big Bang) dos modelos 
+cosmológicos padrão. Tais resultados foram obtidos, é interessante notar, muito antes de praticamente se confirmar a existência de 
+buracos negros reais.
+No primeiro capítulo ("Espaço-Tempo e Cosmologia"), Penrose aborda basicamente questões 
+referentes à relatividade e à cosmologia. Sua posição geral é algo 
+surpreendente, pois ele defende a 
+existência de um mundo matemático platônico que gera, por assim 
+dizer, o mundo físico. Isso se opõe 
+ao que normalmente se crê, quando se mantém que as investigações 
+sobre o universo é que nos induzem a construir determinadas teorias matemáticas (cálculo diferencial e integral, teoria do potencial, 
+análise vetorial etc.); ou seja, que a 
+matemática nos ajuda a compreender o real, mas que as estruturas matemáticas não são os 
+componentes últimos do universo.
+A OBRA
+O Grande, o Pequeno e a Mente Humana 
+Roger Penrose 
+Tradução: Roberto Leal Ferreira 
+Editora Unesp (Tel. 011/223-9560) 
+195 págs., R$ 22,00
+A explanação de Penrose sobre o 
+espaço-tempo e a cosmologia afigura-se sumamente pessoal. Ele 
+considera certos modelos do universo, definidos pelas equações de 
+Einstein (que descrevem a forma 
+do universo como um todo), trata 
+dos cones de luz da relatividade 
+restrita, discorre sobre os tensores 
+de Weyl, de Ricci e de Riemann 
+etc., sempre de modo razoavelmente claro e peculiar. Todas as 
+noções discutidas mostram-se, 
+obviamente, necessárias para que 
+as teses de Penrose possam ser 
+examinadas e defendidas. No final 
+do capítulo, uma passagem ilustra 
+bem seu modo particular de ver: 
+"Tenho falado de precisão -como a matemática e a física concordam entre si com uma precisão 
+extraordinária. Também falei sobre a segunda lei da termodinâmica, que muitas vezes é tida como 
+uma lei um tanto vaga -ela trata 
+de aleatoriedade e acaso-, mas, 
+mesmo assim, há algo de muito 
+preciso escondido atrás dessa lei. 
+Quando aplicada ao universo, ela 
+tem a ver com a precisão com que 
+o estado inicial foi determinado. 
+Essa precisão deve ter algo a ver 
+com a união da teoria quântica 
+com a relatividade geral, uma teoria de que não dispomos. No próximo capítulo, no entanto, vou dizer-lhes algo sobre o tipo de coisa 
+que deve estar implicado em tal 
+teoria".
+O capítulo 2 ("Os Mistérios da 
+Física Quântica") destina-se à 
+discussão dos fundamentos da 
+mecânica quântica. Tópicos variados são debatidos, tais como o colapso da função de onda, o problema do gato de Schrödinger e o significado da "experiência" de Elitzur-Vaidman. Mostra-se que a 
+mecânica quântica é intrinsecamente diferente da clássica e que a 
+passagem da primeira para a segunda, de acordo com Penrose, 
+oferece obstáculos que ainda não 
+foram completamente superados. 
+Ele acha que surgirá uma nova 
+teoria que unificará a relatividade 
+e a mecânica quântica, isto é, uma 
+futura teoria da gravitação quântica; todavia, ele não aprecia as tentativas unificadoras já em fase inicial ou parcial de desenvolvimento, como a teoria das supercordas. 
+Embora aqui não se possa entrar 
+em maiores detalhes sobre o pensamento do autor, o certo é que 
+em quase tudo o que sustenta sobre a teoria quântica, ele é original.
+No capítulo 3 ("A Física e a 
+Mente"), Penrose oferece um panorama geral de sua concepção da 
+mente. Sua tese central é que a 
+mente pode ser explicada em termos da física e que ela não é um 
+computador tradicional, uma espécie de máquina de Turing. 
+Apresentam-se quatro alternativas no tocante à natureza da mente: "a) todo pensamento é computação; em particular, sentimentos de receptividade consciente 
+são evocados simplesmente pela 
+execução de computações adequadas; b) a receptividade é uma 
+característica da ação física do cérebro; enquanto qualquer ação física pode ser simulada computacionalmente, a simulação computacional não pode por si mesma 
+evocar receptividade; c) a adequada ação física do cérebro evoca receptividade, mas essa ação física 
+não pode sequer ser corretamente 
+simulada computacionalmente; d) 
+a receptividade não pode ser explicada nem em termos físicos, nem 
+em termos computacionais, nem 
+por quaisquer outros termos científicos".
+Penrose filia-se à corrente do 
+terceiro item. No entanto, para 
+sustentar sua tese, ele apela para 
+resultados variados da física e até 
+da lógica. Assim, recorre ao que 
+chama de uma forma do teorema 
+de incompletude de Gödel (-Turing). No fundo, esse teorema 
+consiste em determinado artifício 
+que os matemáticos batizaram de 
+"diagonalização", que hoje pode 
+ser encontrado em qualquer texto 
+de lógica ou computação que trate 
+da teoria da recursão.
+Diversos dos temas centrais para 
+Penrose são delicados e, às vezes, 
+um tanto imprecisos, dado que 
+pertencem às fronteiras da ciência 
+estabelecida. Assim, em "A Mente 
+Nova do Rei", ele aceita como patente a tese de que a natureza produz processos não computáveis, 
+embora nenhum em nível clássico 
+(dentro dos domínios da física tradicional, não-quântica, digamos a 
+mecânica newtoniana). Porém, 
+por meio de métodos algo indiretos, pode-se demonstrar que tais 
+processos ocorrem mesmo em 
+mecânica clássica, o que pode parecer à primeira vista surpreendente (2). Na presente obra, contudo, Penrose não toca no assunto.
+Muitas de suas propostas não 
+nos parecem conclusivas. É preciso que se note, de início, que o platonismo inerente à sua postura 
+não parece ser necessário para estabelecer suas teses referentes à 
+IA. Por outro lado, sua maneira de 
+considerar a mecânica quântica 
+como em princípio errada (devendo ser substituída por uma teoria 
+inteiramente nova) mostra-se, ao 
+que tudo indica, questionável. Finalmente, o papel da biologia para 
+a solução dos problemas da mente 
+não é sequer mencionado, pois 
+aparentemente essa ciência não 
+seria imprescindível para a investigação de semelhantes questões 
+(talvez pela circunstância de que, 
+para Penrose, a biologia reduz-se à 
+física). Aliás, Shimony, Cartwright 
+e Hawking fazem observações similares em suas ponderações críticas. Por seu turno, as respostas 
+de Penrose são dignas de meditação, embora não consigam convencer totalmente.
+Não há dúvida de que a concepção de Penrose é de fundamental 
+importância sob todos os aspectos. Porém, ela deve ser vista mais 
+como um plano ou programa de 
+pesquisa do que como uma teoria 
+propriamente dita. Seguramente 
+esse programa nos conduzirá a 
+novas diretrizes e a resultados surpreendentes.
+O livro de Penrose não é de fácil 
+leitura para leigos; no entanto, todos, leigos ou não, poderão participar de sua aventura rumo ao conhecimento da natureza e da mente.
+Notas:
+1.
+Dois erros de impressão merecem atenção: na pág. 120, em vez de "sentença P1" 
+deve-se ler "sentença Pi1"; na pág. 121, o 
+procedimento A está mal definido, pois 
+parando ele ou não, daria sempre o mesmo resultado. Isso pode ser facilmente 
+corrigido pelo leitor atento.
+2.
+Cf. Newton da Costa e Francisco Doria, 
+"Classical Physics and Penrose's Thesis", in 
+"Foundations of Physics Letters", vol. 4, nº 
+4 (1991), págs. 363-373.
+Newton C. A. da Costa é professor do departamento de filosofia da USP e autor, entre outros, 
+de "O Conhecimento Científico" (Discurso Editorial) e "Logiques Classiques et Non Classiques" 
+(Masson).
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0f9ce1604eee60d67612c664143b2a883cc9d57d6646d16cad9b9ecc51a737a6",
+    "mention_text": "NEWTON DA COSTA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce04a36de24109ae3702144b31fec7c5544b11d49487e23e6613f6a97c1bca97",
+    "mention_text": "Roger Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "956a73d0978b284d58cee138348f99464f1149569cef4a4476bdcb9cc67ca894",
+    "mention_text": "Campus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2a17668686a9f6f06d36a92db4ee0b0f7b590a72e7bd2f3e93acf1ce1c93feb",
+    "mention_text": "Rocco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3b14633b08cdb33d1c83c8317f56bfaab91c8e0c65ae9f548c731a24bb73153",
+    "mention_text": "S. Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f61293a24ba61dbe67c21ea2bfe98090fd62001aac8a4d7149e649dae315715",
+    "mention_text": "Campus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63bde8c7f7c5c9b1d719f1aa8512d1e6fe097a79b28af8eac6bc89ee0d810bfb",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5416bb2792c92c54bebb82ccfa54c63dfc92de46b874a3b57ae52c9de3d5deb",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "70d3f93e29c4d296fc5a224c4d0f8f04a9d45a9862a7ae844fc8dba26936c332",
+    "mention_text": "A. Shimony",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b275342f10b4ea619d277e90e98f22a004be00dc42130bd5df8673e09a73769",
+    "mention_text": "N. Cartwright",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ba7ba7329cc06498bb57f495b3c71496c81d3e048ec7f5f3242293e4df07c801",
+    "mention_text": "Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f58c1e1e7059b897fa7511cb05e324a8e9de9f1a988d73c175895adf1cf9bf8",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1289998720518578f31b507cc0b7b71f85007d13d5292749a39113e6646c687d",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd29786ff8eb21b8140c971ac39756cb1c8df94ed57f4f6f0d4c850854ea07d3",
+    "mention_text": "Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9849bb1d92ee2abc11d20e1c1764718082be57788cca3e18e54cef6f6db6b2b7",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b6f3c2fc4bfe111cb72c7837060d3057a83fdc49add30f73007984b942134ae",
+    "mention_text": "Roger Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19df3e3ea125562625a66926dfdc782bebd2473724a652206f636c47829b3353",
+    "mention_text": "Roberto Leal Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "645d6af02c7eedda27542cbbeb54edccdf50a316eb43520361ad54db55b3939b",
+    "mention_text": "Editora Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ef7e45cc12a2a8905f678d19818879ffd4a34cdee055e3c7a1b0a33e3ecb78a",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd414b26f5595a8d42eee019f1ab58e737365fdb723d1049f38b99bce50eeca6",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "874921d6d38d53608a72d03c14998a74c003aace28fbd51eb6a69b7422f195e2",
+    "mention_text": "Weyl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1319308282ba8fdccaafcea6f0b1684c4f00a4a24db06d39b9681ce0f07bb1bd",
+    "mention_text": "Ricci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01a9f6bdcddd7a1e5712c991fbc92d1658e2af83c5db8406dc41ade5a829f467",
+    "mention_text": "Riemann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0900bad0a67b86161a16ce2cfc503b314b9f2a4a142ec107dfe780eda5db6e0c",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "766afd17d604972bfa601068ba0e007d40dcba2376d54e8d56758803d651615a",
+    "mention_text": "Schrödinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d09f836dcaabc2df8968bf8a9b7840eb20e60183f3399b2a3b40935d320ac3c1",
+    "mention_text": "Elitzur-Vaidman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "04c380c9a7d27c26fb80e51d0dd027a6e77b976882de2cffd553241e02234054",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd141a6dc81810c833ddd7cf2e74c3214a23fbd95675c953b8aa147ea9efc5e6",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cff64b8dd347d3cd0994b4f5cc770999aec3b530a0f7dc964b157663f04c76b4",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c66eff802ce43b243cf638ed280bc4be8b7176c395c9e446d2640f2bc444671",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a855de40a602b08cf59aa7eac2b031c9ff0fe8059b2653c2f5608342d1c0162",
+    "mention_text": "Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6cc2ee349c9e623cc9f01a05ce7485bd3444ed551480d5f5a3d39d7f984833a",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34c9753d854221a40b892aa4752f72659d8a5359c2108b2159c5ef3dabaa7b12",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26c4b489407723bccd6156e3302e1962ff8fc85a2b496058502dff0bab1cce12",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ceb2a8f7c732c5c95033c3c3201fb7d07965186f13019b59fd7a4eae7d61dfa",
+    "mention_text": "Penrose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3cb04966a52de0ca0e20729c6cedd2247a01ee394b76b437a450c0b4993409c9",
+    "mention_text": "Shimony",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6c2db34209eb9fb412809404fa16e51669804f464b299ddadce44a046921213",
+    "mention_text": "Cartwright",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ea81e1c8a2bddbd9dd6fc865ae1ffb802a7f1bfe734e2c4c0e00a64e7e899da",
+    "mention_text": "Newton da Costa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbd521b12cc59d76b682c2e4db1d33db1673684acf20de2adf7442b7f5d12c28",
+    "mention_text": "Francisco Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a5abc9b3e260f728e0c236edcb10da162c2917a2126be4ce4a2be4bf2e27c94",
+    "mention_text": "Newton C. A. da Costa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54c11e5a4eae228c2114e1c3b3387246abcbd9cd1c9289f4b5da700d52e96fa9",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3edd4761c57df029d472c11f501c0597618c5231ba405c1a985d8f5a747ee6f6",
+    "mention_text": "Discurso Editorial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4742ce8a044640dc0bbbb5cd63f1e9da3d155fd0cbd498706b380e76543dd02a",
+    "mention_text": "Masson",
+    "categoria": "ORGANIZACAO"
+  }
+]

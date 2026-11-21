@@ -1,0 +1,420 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 347eedcbcc766e0c3831c7b958d661a4af31d6e38092184d572bbc678c59b901
+
+TEXTO:
+Tec-tec-tec
+
+Tec-tec-tec
+Google, Yahoo! e Microsoft juntas por melhores buscas
+GUSTAVO VILLAS BOAS
+COLABORAÇÃO PARA A FOLHA
+No oceano de informações 
+que é a internet, ficar perdido é 
+fácil. Por isso, três grandes faróis da rede -a Google, a Yahoo! e a Microsoft- se uniram 
+para ajudar os criadores de sites a indexar o conteúdo de 
+suas páginas e, de quebra, oferecer ao internauta uma melhor experiência de busca.
+As três empresas vão utilizar 
+o protocolo SiteMaps (
+www.sitemaps.com
+), criado no ano 
+passado pela Google, para otimizar a leitura dos robôs-buscadores. São eles que varrem a 
+internet atrás dos endereços 
+que aparecem nos índices.
+A unificação ajuda quem tem 
+um site a dar informações mais 
+precisas a esses robôs. O protocolo está sob a licença Creative 
+Commons.
+O gerente de produto da Yahoo!, Priyank Garg, disse, no 
+blog do buscador, que a união 
+permite que os mecanismos reflitam com mais velocidade as 
+mudanças na rede e propicia 
+resultados mais relevantes aos 
+usuários. Quem tem um site e 
+deseja ajudar os robôs a decifrá-lo deve ir ao SiteMaps, mas 
+usar o protocolo demanda a 
+edição de códigos. A adesão não 
+é obrigatória para o site ser encontrado pelos buscadores.
+RÁPIDO E RASTEIROS
+Segundo o portal News 
+factor.com, sites piratas já colocaram no ar um crack para 
+enganar o registro do Vista e 
+permitir o uso de uma cópia pirata. Já o site Arstechnica. 
+com confirma que cópias ilegais da versão empresarial do 
+Office 2007 estão circulando 
+na rede. Sites que fornecem 
+cracks e programas piratas são 
+uma das portas de entrada de 
+softs maliciosos e de vírus.
+PRECISÃO
+A tecnologia de reconhecimento de imagens continua 
+amadurecendo. Agora, uma nova ferramenta (
+www.alipr.com
+) coloca sozinha etiquetas 
+(tags) nas fotos indicadas pelo 
+internauta. Os criadores incentivam os usuários a aumentar o 
+vocabulário e a precisão do soft 
+na hora de identificar o conteúdo das imagens, aperfeiçoando-o. A Folha tem testado a 
+engenhoca desde seu lançamento, no início deste mês; é 
+possível notar avanços em sua 
+inteligência artificial.
+SUPERMÁQUINA
+A Intel anunciou, na semana 
+passada, o primeiro processador para desktops com quatro 
+núcleos. O Intel Core 2 Extreme quad-core QX6700 é descrito no site da empresa 
+(
+www.intel.com
+) como um 
+"monstro multitarefas".
+HIPERMÁQUINA
+A USP foi a primeira universidade brasileira a adquirir um 
+supercomputador do ranking 
+dos 500 mais poderosos (
+www.top500.org
+). Segundo o Centro de Computação Eletrônica 
+da USP, ele tem o poder de processamento de 3.000 PCs.
+MAQUININHA
+O tinytube.net adapta vídeos do YouTube para o celular 
+convertendo o formato flash 
+em 3GP, amigável ao aparelho.
+DESCONECTADO
+O Núcleo de 
+Informação e 
+Coordenação do Ponto 
+br (
+Nic.br
+) divulgou 
+uma pesquisa sobre uso 
+de computadores e 
+acesso à internet nos 
+domicílios brasileiros. 
+O trabalho identificou 
+que 85,3% das 
+residências do país não 
+têm acesso à rede.
+É O PREÇO
+As principais barreiras ao 
+acesso em casa são o preço das 
+máquinas (67,5%) e o custo da 
+conexão (31,7%). A questão 
+aceitava múltiplas respostas.
+COMPUTADOR?
+A pesquisa mostrou que a 
+maioria da população nunca 
+usou um computador 
+(54,35%). E 66,68% dos brasileiros dizem não ter entrado na 
+internet ao menos uma vez na 
+vida.
+TEM E NÃO TEM
+Na classe A, 81,5% dos domicílios têm acesso à rede. Na 
+classe B, as residências conectadas são 51,2% e, nas classes D 
+e E, esse total é de 1,6%.
+ABC
+De quem usou a internet nos 
+três meses anteriores à pesquisa, 64,39% fizeram uso da rede 
+para a educação.
+HACKERS EGOÍSTAS
+Segundo o portal Eweek. 
+com, hackers russos surpreenderam pela engenhosidade na 
+montagem de sua rede de PCs 
+zumbis. O trojan SpamThru, 
+instalado pelos criminosos, vinha com seu próprio antivírus, 
+para expulsar concorrentes e 
+garantir toda a banda da conexão dos micros invadidos.
+FRASE DE GAMER VIRA MANIA NOS EUA
+Criada por um anônimo durante a disputa de um jogo on-line de estratégia, a 
+frase "I'm in ur base killing ur doodz", 
+algo como "Eu estou na sua base matando os seus carinhas", virou moda entre 
+os internautas norte-americanos e tema 
+para um sem-número de paródias. Montagens com políticos, artistas famosos e 
+animais em situações inusitadas viram pano de fundo para as infames versões alternativas. Nancy Pelosi, escolhida pelo Partido Democrata para a presidência da Câmara dos EUA, ganhou uma homenagem com 
+uma montagem que trazia sua foto e a frase "Estou no seu Congresso pedindo o seu 
+impeachment".
+Próximo Texto:
+Eventos on-line/Acontece na internet
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "5aa5ccb114a1bbfef662fea631f03c4eb8b1e62fbcbce8a5a97ca27344afce8c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c74fe63d78bb51d8de726de94e61896911cdef462dd8ee66e28a2d19e22f9365",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b295ff9811865959862a6a46542cd4c61734cc3ab3dc551cb07af4e75b337dd",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f650d79ef20be96c460c051e36fced400ac60e39e80be30c94eca8851fe2de64",
+    "mention_text": "GUSTAVO VILLAS BOAS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "197bfc38c1cd84794b04b71b17d9e3966292156fc211360fa7a947fe436b61d3",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edd521af46d24e489446d477b05e3b59605172be05e843cfaaca235c1472ab3e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20a0c893ccf5b7059137e3a7480bfc761677cc5101763efdd01beb075a6afce9",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d2de592b0fd0bd4527c7727aef7320fe62e8ca505a1961f0ff0ad34b77f6d1a",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "55a2d2637f6aa767b78ae06806ce20aa1de8360c164b7bba1c86929e720c7969",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eef0e7aa8ff6ac2f005636dc7e3314195c10b13feab1fbb6af670d45dc5bf29e",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f72a57d58df0ad888e50f8a703a2824917f1fd4cb0c4456dd03c344a8180f7a0",
+    "mention_text": "Priyank Garg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c925d9daa9449c06993c252dd7085f50eaaef9d4eb0c6b9a5cf784cb5e25032",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e10002a5d799b50b2a035838c50f63de401c546f4b082be281860a03c22620c8",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29b7f9f989f0bba0e7e96e84f0d58cf62f5e1911d216998f62394456cdb7edd1",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90e26627d86caa514df7bf89ba1c2ad67da0f1cbb90188e9b286e007caed01de",
+    "mention_text": "tinytube.net",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "510d0ea755a2f6ca37b02ef94db1008cda9baa9a47ea9568e272cd5789f490bc",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc3482f897082bb77972ec82c3417099497055224fb974fe211676f7b1c497f1",
+    "mention_text": "Nic.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c90349606b1ff1823a4b559fd99e9793c67df5f7bcaa03b6603f0ed16fef16a7",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65ce8d2cffd52efcd3e148b36d726d9b7890d21dfc8c9105cfb5004afa15f053",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b9861753398ed1e5a6b6c9574f0ddd8f24bda499078bc27f117144aa6c17131",
+    "mention_text": "Nancy Pelosi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f1829cec7b920d8da6e333e2c24d2a37b0872efc7a83f56ee7f78f2438cfc20",
+    "mention_text": "Partido Democrata",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a135e312a50984e69e6ebc5c1768b6e89ce03c2584cdaace6a194d6c3cfc2a51",
+    "mention_text": "Câmara dos EUA",
+    "categoria": "ORGANIZACAO"
+  }
+]

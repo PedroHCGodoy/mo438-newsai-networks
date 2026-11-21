@@ -1,0 +1,454 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f5c3b2f759c81908789a44b36cb0fd346f7b7a194613dd82205aee62448c43c9
+
+TEXTO:
+A nova fronteira
+
+A nova fronteira
+da Reportagem Local
+"Espaço, a fronteira final", diz 
+o seriado "Jornada nas Estrelas". 
+Para Keith Devlin, essa frase precisa ser alterada, já que a mente é a 
+próxima fronteira da ciência.
+Devlin é professor da Escola de 
+Ciência do Colégio Saint Mary, na 
+Califórnia, e pesquisador da Universidade Stanford. Como divulgador de ciência, não pára de escrever. Só no ano passado, três livros seus foram publicados: 
+"Goodbye, Descartes", "Life By 
+the Numbers" e "The Language 
+of Mathematics". Para este ano, 
+prepara um novo trabalho.
+Devlin falou à Folha sobre seu 
+último livro, em que descreve a 
+linguagem matemática, e sua busca por novos conceitos para lidar 
+com o pensamento humano.
+Folha - Para quem "The Language of Mathematics" é destinado?
+Keith Devlin -
+Para o leitor que 
+provavelmente lê revistas como a 
+"Scientific American", que entende algo de ciência ou que pelo 
+menos teve uma boa base de matemática no colégio. Imagino alguém de 18 anos, que se interessa 
+por matemática, apesar de não ter 
+certeza se é esse o caminho que deverá seguir. O livro lida com conceitos colegiais de matemática.
+Folha - O livro ajudaria a disseminar a matemática entre os leitores comuns?
+Devlin -
+Espero que sim. Meu 
+livro anterior, "Life by the Numbers", era mais voltado ao público 
+em geral. Eu tentava explicar o que 
+é a matemática em seu dia-a-dia.
+Folha - "The Language of Mathematics" cita o projeto Gimps, que 
+usa computadores pessoais conectados à Internet para realizar cálculos. Qual é a importância da Internet para a matemática?
+Devlin -
+Em primeiro lugar, a 
+Internet é um meio muito eficiente 
+de comunicação. No caso de cálculos complexos, o projeto Gimps 
+é um bom exemplo de como computadores pessoais podem se tornar poderosos ao funcionar em rede. Essa união traz uma força 
+computacional enorme, que antes 
+só era obtida por computadores de 
+milhões de dólares.
+Folha - John Horgan, em "O Fim 
+da Ciência" diz que a ciência já 
+descobriu todas as grandes questões possíveis. Você concorda?
+Devlin -
+Se você ver como ele 
+define a ciência, como biologia, 
+química e física, cada qual atrás de 
+cinco ou seis principais questões, 
+então eu concordo. Mas isso não 
+significa que tenhamos chegado 
+ao fim do processo ao qual chamamos de ciência. Estamos vendo 
+novas áreas surgirem. Acho que 
+haverá o desenvolvimento de novas matemáticas, como a que procure explicar a mente humana. O 
+processo a que chamamos de ciência não deverá parar.
+Folha - A matemática poderá reproduzir a mente humana?
+Devlin -
+Minha pesquisa é sobre a mente humana e a comunicação. O que eu argumento em 
+"Goodbye, Descartes" é que o 
+uso da matemática na física tende 
+a reduzir os fenômenos a pequenas peças, como moléculas e 
+DNA. Mas o reducionismo não é a 
+melhor forma de estudar a mente 
+humana. Devemos ter uma abordagem holística, e precisaremos 
+usar um novo tipo de matemática.
+Folha - A matemática, nesse caso, seria menos precisa?
+Devlin -
+Eu chamo isso de 
+"matemática leve", porque lida 
+com assuntos pouco definidos da 
+mente humana. Nesse estudo, a 
+matemática não deverá ser um aspecto dominante, como no caso 
+das ciências naturais. Os resultados não são totalmente precisos. 
+Acho que já temos exemplos do 
+que seja a matemática leve, em 
+economia, finanças internacionais e em alguns casos de ciência 
+política. Nesses casos, você não 
+pode ter só uma resposta. Mas isso 
+não deixa de ser matemática.
+Folha - Essa abordagem poderia 
+levar à inteligência artificial?
+Devlin -
+A inteligência artificial, como a conhecemos hoje, 
+não vai ser bem-sucedida. Não 
+acredito que um computador digital, por mais avançado que seja, 
+passe pelo teste de Turing, ou seja, 
+converse com um ser humano. 
+Você pode conseguir computadores que executem rotinas de forma 
+racional, mas é fácil fazer com que 
+a inteligência artificial dê errado, 
+porque, para programar o computador, é preciso reduzir o comportamento a regras simples, e o 
+comportamento humano não pode ser reproduzido por regras.
+Folha - John Allen Paulos procura semelhanças entre a matemática e histórias. Você acha possível 
+unir esses dois conceitos?
+Devlin -
+Acredito que sim. Estou terminando um novo livro, 
+em que procuro responder como 
+as pessoas obtiveram a capacidade 
+para criar a matemática e porque 
+ela é tão difícil para alguns. Um 
+dos argumentos é que a matemática é como seguir uma história em 
+nossa mente, uma novela. A nossa 
+capacidade de fazer matemática é, 
+na verdade, a habilidade para 
+acompanhar e construir histórias.
+A dificuldade pela matemática 
+ocorre porque, na novela, os personagens são como pessoas reais. 
+Na matemática, os personagens 
+são muito abstratos, não têm 
+equivalentes no mundo real. Acredito que é a abstração que causa a 
+dificuldade, não os argumentos.
+Folha - A fala pode criar novos 
+campos da matemática?
+Devlin -
+A estrutura mental para a matemática e a linguagem é a 
+mesma. Só a espécia humana pôde 
+construir estruturas de linguagem 
+e criar a matemática. As chances 
+de uma mesma espécie desenvolver essas duas habilidades é tão remota que a probabilidade sugere 
+que elas vieram de uma mesma 
+origem. Se você tem um cérebro 
+que entende construções gramaticais, então você tem um cérebro 
+que pode entender a matemática.
+Folha - O estudo da mente humana pode ser o próximo grande 
+movimento da matemática?
+Devlin -
+Logo no início do seriado "Jornada na Estrelas", um 
+narrador diz: "Espaço, a fronteira 
+final". Acho que não é bem assim. 
+O espaço foi a última fronteira, e a 
+mente humana é a próxima. Acho 
+que a frase em "Jornada nas Estrelas" deveria ser trocada. Outra 
+grande fronteira é a medicina. De 
+certa forma, ela ainda é muito rudimentar. Essas áreas deverão ser 
+muito interessantes nos próximos 
+séculos.
+(MF)
+A OBRA
+The Language of Mathematics
+- Keith Devlin. Freeman. 
+344 págs. US$ 24,95.
+ONDE ENCOMENDAR
+Os livros podem ser encomendados, em São Paulo, à Livraria Cultura (av. Paulista, 2.073, tel. 011/285-4033), ou, pela Internet, na Amazon Books 
+(
+www.amazon.com
+)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b8371482f5abea3f58f076d404d82f56c44c87fb7253619c12dc96b03452f4cf",
+    "mention_text": "Keith Devlin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a2294e0f6afc1459a241f4e75abb94f443057588a610e9e62b34508640a23ce",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b427944a89c9efe0a9790ace06573d9c3f5f3eff6dc532cd690662f06489987d",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12c3446fd492ee3618d6a445a6256122272fbaf90111cb19522f24e347e2266a",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bba8694c9550b26fdbf286487e3783c82275abf539c0fe8a8f595bea7451b033",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70095beeaf1cc2f57ec89255c7f788487f8ccd0e2819aa9d29e27b23bc9a740d",
+    "mention_text": "Keith Devlin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8af21cb7c329262f8fa8cdd2f0584d5449fab26e282dd8f9e94077fc518aebd2",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac3d9aecce6024c8b1a2ffb9e10916d992494efba5ad0ed2ff640ad5ad18af31",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17deecf142b761f314394c60a5e5a263bc0a09848aa8954ad7c7efc862f70324",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28a81f276a967d10b8874305e2d79b0562120f02c34493196bbe53296a3a8074",
+    "mention_text": "John Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a159469d52979f29c3092e61f66d91dce751aa0e512395a8d99b6dfac8be0406",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bb5eeabcb2c729d5e71463a5c52ee49103b3b3b86d0d63cfa0dec5e75ecc60b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7967f56c649499de3085beffda53dfca90227ee728b737ac8e048934070267b1",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83aa1c37b0786612681aa6e346a8604c2006cf1d4d9bcbfe27c62a69e33132e4",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57abce43204f9d32edc561f24c433cf0a88ebff148b7935fd376a865850bfe06",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "91dcec081fea81a12a4df41d9ddfa7e32f42e40eccbd923319865dadc87a04b5",
+    "mention_text": "John Allen Paulos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8916184a901dce46241a9d1904048e2d721054d8bbe180225c50006c60f81a4b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6de3cefa93db92e2064e2d0b4bd1eda66af585ac3650f024bb315910b8e0d672",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e95e14540486ca92b503617d91bce12762502aa80538024692942d1d35a6a62c",
+    "mention_text": "MF",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d708a987f1e393c2554c595c305c830309217e1dd41f39c4b341af942749d61",
+    "mention_text": "Keith Devlin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51ca0638f562c8a64f188c44e29335ce6d2216a27ffc4013824a98cff39d4f5c",
+    "mention_text": "Freeman",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a33bd046737479b5f126ef4a1fee24fad2f731fc0ea4f055bbfccf39df108ef2",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2d696b326337a8d8f811e0b3a303d7d4ffa3b78190f201711073f48d25e96c39",
+    "mention_text": "Livraria Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40e15277b855a21068a938ab2e5de974b688ae975924f86acb604312cf3922d2",
+    "mention_text": "av. Paulista, 2.073",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8038c45a88de921066d58c2ac16e13c99a2f341d2ee569dc7e7116d12fe9f796",
+    "mention_text": "Amazon Books",
+    "categoria": "ORGANIZACAO"
+  }
+]

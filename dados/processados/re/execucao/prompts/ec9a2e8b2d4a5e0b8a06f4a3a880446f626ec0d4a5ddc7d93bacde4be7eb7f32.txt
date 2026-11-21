@@ -1,0 +1,557 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f04c98917bb2f589311e501eefc66ad24ea3d31e123b69d0090a0c5fcb9317d6
+
+TEXTO:
+Filmes
+
+Filmes
+Pequenos Guerreiros
+Record, 16h45 (Small Soldiers). EUA, 1998. Direção: Joe Dante. Com Gregory Smith, Kirsten  Dunst, Jay Mohr, David Cross, Denis Leary, Kevin  Dunn, Tommy Lee Jones, Frank Langella.  Uma indústria de brinquedos decide fabricar uma nova linha de bonecos de  guerra. Entretanto, neles, acidentalmente, são incluídos chips militares de  inteligência artificial, o que faz com  que ganhem vida e iniciem uma inusitada guerra.
+Passe de Mágica
+Globo, 15h55. (A Simple Wish). EUA, 1997, 89  min. Direção: Michael Ritchie. Com Martin Short,  Kathleen Turner, Mara Wilson, Robert Pastorelli, Jonathan Hadary, Deborah Odell, Amanda  Plummer, Alan Campbell, Lanny Flaherty.  Em vez da fada madrinha, é um mágico  atrapalhado quem ajudará uma menina. Premissa batida para uma história  infantil, mas Short e Turner são presenças valiosas (porque raras no gênero) para um filme destinado ao público  pequenino.
+Spawn - Soldado do Inferno
+SBT, 22h50. (Spawn). EUA, 1997, 96 min. Direção:  Mark A.Z. Dippé. Com Michael Jay White, Martin  Sheen, Nicol Williamson, D.B. Sweeney, Melinda  Clarke, John Leguizamo.
+Agente da CIA assassinado faz pacto  com o diabo a fim de ganhar uma segunda chance na Terra e rever sua mulher. O que esperar desse filme, que só  tem a favor a presença de Martin  Sheen e John Leguizamo?
+Intercine
+Globo, 1h20.
+Os filmes oferecidos ao público são o suspense  inédito "O Inimigo" (EUA, 2000, de Tom Kinninmont, com Luke Perry, Roger Moore) e a comédia  "Pagando Pecados (EUA, 1991, de Alan Myerson,  com Kevin Conroy, Catherine Hicks).
+O Último Ninja
+SBT,2h45. (The Last Ninja). EUA, 1983. Direção:  William A. Graham. Com Michael Beck, Nancy  Kwan, John McMartin, Richard Lynch.
+Temos aqui um ninja diferente: ele é  um expert das artes marciais, um  "marchand". E ele é convocado pelo governo para salvar um grupo de cientistas seqüestrados. Mas esse tal Graham não é um expert em direção, e o  filme é uma confusão só. Feito para  TV.Para São Paulo.
+Os Homens Preferem as Louras
+Globo, 3h. (Gentlemen Prefer Blondes). EUA,  1953, 92 min. Direção: Howard Hawks. Com Marilyn Monroe, Jane Russell, Elliott Reid.  A história é simples: duas amigas, uma  em busca de um ricaço (Monroe) e a  outra (Jane) procurando um verdadeiro  amor. Howard Hawks assina outro  grande filme, o que já é óbvio, mas partindo do espalhafato do musical para  fazer comédia em cima da guerra dos  sexos ou entre amor e dinheiro.
+Operação Cupido 2
+SBT, 4h15. (Parent Trap 2). EUA, 1986, 81 min.  Direção: Ronald F. Maxwell. Com Hayley Mills,  Tom Skerritt.
+Duas jovens fazem o possível para  aproximar o pai viúvo de uma e a mãe  divorciada de outra. Filme doce, o que  não necessariamente faz dele um  grande filme, mas ao menos algo digno. Somente para São Paulo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6ad2487eaf31829547e1e7ab46c16e51a715d471537bbb7bab4eb639a1ee187c",
+    "mention_text": "Record",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "76b551685501010ad927027d60265665592180960ec7e41021a0346b483004fa",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d1644ea7f940bb7b1728c8b9a16cebae183615df896691b2364ca221f0d9c01",
+    "mention_text": "Joe Dante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8fcedce1251caf304f8d30efbcda8ecf1342c6c63c58e768e1bf191d5ba0e298",
+    "mention_text": "Gregory Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31df8e7773e9da876980fac6c80551eb772ee338d39547b60ccd256e4c65cfdc",
+    "mention_text": "Kirsten  Dunst",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "659c474d024b124461d0605ff95596ea5363385a943a53283a18e12717996f46",
+    "mention_text": "Jay Mohr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3db249a8279b717f34ff8a9a5eaf865789b099b084070dd8fabeac50caf4b24",
+    "mention_text": "David Cross",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfc6362fe556e3c8656fb0a8d9d771c2771a0dd761fd21e80c245ff5c19d3941",
+    "mention_text": "Denis Leary",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aad2dec4f6e75adfec69fad8a5dba4b6c6f64dde7df40dcc396bc6be85c40df0",
+    "mention_text": "Kevin  Dunn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3dc4b8439ce6137bb91be1a78f59bbf41014fec8975403b66e17cb60716911b",
+    "mention_text": "Tommy Lee Jones",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cc5e13104dc9d17b38d76ac8d42c1977fe359c08d589de64d15d163046129e5",
+    "mention_text": "Frank Langella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fea6bf7c3fe4553e6790588b2bf27eddee380607be09bea7666e3daa227dbbe",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dadd63a341c71d6937dfa26d1fbbc80b5cde4802f01c4a0b8f54d01967864d2b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c0b3cbd95c3886cc4e40f841221091f5f454f608430236e4a13419d55fc3d7b9",
+    "mention_text": "Michael Ritchie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "628abfd7f459bdaf174c95167160a607a55e633b704f30d389c9fd759f44c294",
+    "mention_text": "Martin Short",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3ea111e1efb00ec8c6d2a73ecbbbadc7595ccfdbee22fe480fc51115fcb317a",
+    "mention_text": "Kathleen Turner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d99f32772b1bda0963fb7a467fcb4ddd69c49229c7fafcc5aa0fc80759afe4a",
+    "mention_text": "Mara Wilson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "781c3c22819c6a3cf0e774c2debbcf6d5f5526f20365bc731447865410e249b7",
+    "mention_text": "Robert Pastorelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69b59854892ee8954bd41493921887069f5dc9483da2cb106cd3790f9e256a69",
+    "mention_text": "Jonathan Hadary",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49ae1bfac59413720cfb05733c96e3d25ad01aefede4d5bedaf3bc788bb9120d",
+    "mention_text": "Deborah Odell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cb53bc2bd23a027c4e19bc01121952c6bc1a9ff2a408f547d0600e825c961e7",
+    "mention_text": "Amanda  Plummer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91e03b1fa62b6f091aa463efb5e53769892d7cd2accae3082c9f287080c3ab18",
+    "mention_text": "Alan Campbell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0522ed7944e8b65032d5f9f67fda40ec61c11fd5a99c56848a7089c12f09bb01",
+    "mention_text": "Lanny Flaherty",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18656e9e85e71fdfbcef782cf00d39aaa49ff890b7fbb3471c6ed991c419a449",
+    "mention_text": "Short",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2427dc98015e4048f83c9c335759a3dedc5f6ff593a9425f6bcd7e9241bc7fb0",
+    "mention_text": "Turner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e06d5abc3e9f67c9c47c9031010d619ec3e81a188924553db2139f489f71b7a0",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c78c9faccdb811f54b37a83275342adce470d860ba1c52a4063ffc4f8cb2e0ff",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f314a190f406eb518b7d47432c334c07994554b8557a9b1a8c166fe411f6aa0e",
+    "mention_text": "Mark A.Z. Dippé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8fdbb767eb09e49ee26bd7e13b07ed2aae92aa0db5f14d2adbc8139b896b83ef",
+    "mention_text": "Michael Jay White",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a089ff511bf4aba25eb3e7f9481da8304c4a51209a9a4384d1468c475e69b4e1",
+    "mention_text": "Martin  Sheen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0dce823f3cae6f3f504f91d634ff0a2c390a31531063bdd48f7adddb913dff7c",
+    "mention_text": "Nicol Williamson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe8c273fcfa7684e53c737b65dfc86634e37a6896bd1cef901186cdb15ff95b2",
+    "mention_text": "D.B. Sweeney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbb046e87215b54a1e03a4876c2c5092c84fbe71fd20e88736ef252288c75a11",
+    "mention_text": "Melinda  Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcc6d0f5d880b9281fc004bbacfed91aba1daf36010c6ebd93c4c2087ca2ea8a",
+    "mention_text": "John Leguizamo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "addbb4dbdecd8153f585b485fe658cafb3fb4dba7c3230589adede694e9b7e70",
+    "mention_text": "CIA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbeef6c0182909afd044b1cc6f82d732dcac7693493828addffc5cff7b8e8118",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04c0ef2c937dfdb44b8d26820e3eb505157b114181e0527dc7b3b30a19856021",
+    "mention_text": "Martin  Sheen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c3be073f3ad47a999fa3c562c745a47b5b36efcd1abd26916ba917c0bf4d337",
+    "mention_text": "John Leguizamo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "879e5b2dfca180cad590137750d2086bee0e3fb373c537c8ecc112ab979d7d60",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a7454f8b5faea3f20d63ebbca028c0ff2708236044a485ba34d953f75775902",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "00196cb8f60f6574b1e9bc29f92f9e45b794159cf937d6c54ace072fdf701eb4",
+    "mention_text": "Tom Kinninmont",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5cdf2ef4c3ecb1e510e4fe03c8ed0668f68aba3839e6ca18cc31bdc7fc5ea8e",
+    "mention_text": "Luke Perry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86f01b3249226d7fba3bf370f3cd836cab40844c67f814a03f7d9dc048ac041d",
+    "mention_text": "Roger Moore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3a6a2a8d21fc34ce08503eba5f7d160212de397e2aab6f0f0f10b11cbc41b38",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93be74189545a93dba4211ba459dcce9b42a3e4d38d1abecd676dffa77a3e063",
+    "mention_text": "Alan Myerson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "095152277a90c6cbeee8d36c4341c8e7e2a75da41bd10b53bbb972061e1b3efd",
+    "mention_text": "Kevin Conroy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77aae40a5c95767bdd81d92612e72384d91a7ce868823a3bba5fc47584ae9179",
+    "mention_text": "Catherine Hicks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3cab370dbb4fcd02ad1d244ef27b36748e6afa80f2c884d9556989717a842c8",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d9c10e0afbc115ddc2dab33a76db41a10229ab9f6c135a11298f8b0f8455193",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "de7bdbe835d2679ff96f634056be7377878c856a1a146d00f0d1fe0ce25fdc39",
+    "mention_text": "William A. Graham",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b45b6302e3bae460860c27c06cc894144c1dad519a2930031d0594d457b5e2e",
+    "mention_text": "Michael Beck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f01c9b492cd73c047f117ccecf3ca9bd11b4249a13384fa9120d984be48e1d4",
+    "mention_text": "Nancy  Kwan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e6c98c498c576b58e096f55dbed83dbe1185ab8a9ab7bb843bf141a844b91c0",
+    "mention_text": "John McMartin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa003810211220969242a1d64107b0a179f55ec4158b1d1196a6c8a3165b7171",
+    "mention_text": "Richard Lynch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "078060c6f0cfe37b9da81f8512e11bc02a60768428cbadd74327e91baf43c171",
+    "mention_text": "Graham",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "235f73173e6a7eb6c041821af5199d57b502d90bb7788feb6982b5369117fa7c",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17e740f0893de22d2e24c2f1c16fdb7792c52a9a5d920dc22023daccfc106409",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00bad91af5b8a107909a1b8e7c645cffbf9f05f426eb749e6d64eb3281ea05b7",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a4af0896f70977cbaee6b2411ca5eadab2e0226b317d47ad4e4a2566c486ebb0",
+    "mention_text": "Howard Hawks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08da8b4f10e16e73a9781c055a3330d8d66f82515bb7bb1fda7dc7d9e19f2c31",
+    "mention_text": "Marilyn Monroe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abbc4fbb8d1620ed357678df8b40ad5a677183f438f6504b618276f7539006d0",
+    "mention_text": "Jane Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f11cdde17438fcab9a7cee06c05f4cbadbf15e0964829b1f412cd8b640044bad",
+    "mention_text": "Elliott Reid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e24341e69ea7a6978ce7953d64be7693c1b1fa044fcb93fb85d7df95a61df10",
+    "mention_text": "Monroe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d80e38e466679960ff8a4fa50345f722033c5e92ba3dda64957a67c3cc6187e4",
+    "mention_text": "Jane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c8f423469cccf7914b547401bb05661a4710e8d7f27e19e46797bb7bb755e9a0",
+    "mention_text": "Howard Hawks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2bf5801c73aae9ffe29014eb950879d4392c264899a84b09419b513720d505d8",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c647ad02ba473cf371ff7315b830b635b5e18694a93d4556ba3ac5a4ffe0fad",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cc1d38baf27cb2a2f8a59203c0e88896ea4edebf2405c56c4295500f79ac7ac1",
+    "mention_text": "Ronald F. Maxwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99ef6062c6dd7b658dc7267757c973cf5fb2a90fc93a3ecb7d69253965f67c13",
+    "mention_text": "Hayley Mills",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72790b70b503cdca07cdd5925f13c2eaa9b045a7d3de06b3e2bfbae135d53bdd",
+    "mention_text": "Tom Skerritt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca5f24c188e116b6c9e726026724b5e638f4b4f925740a16ee9b7306aa73bde9",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  }
+]

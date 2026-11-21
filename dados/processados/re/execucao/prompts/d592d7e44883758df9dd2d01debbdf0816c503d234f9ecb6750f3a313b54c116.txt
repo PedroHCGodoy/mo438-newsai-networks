@@ -1,0 +1,438 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 09b9d7170172aa156db5ab61b1c7c32b55a6dde97be38ae1019fbcbab71bcd05
+
+TEXTO:
+O "design thinking": outra chave para inovar
+
+A inovação tecnológica sempre requer engenheiros, empreendedores e financistas atraídos pelos riscos e pelas oportunidades que ela oferece. Cada um cria sua receita. Não existe uma só. O que conta é a mistura, a combinação entre esses elementos distintos que será ainda mais rica, e potencialmente mais perturbadora, caso a ela for adicionada uma boa dose de design.
+Foi Silvio Meira que me ajudou a compreender sua importância para a inovação nos países emergentes. Professor de ciência da computação em Recife, capital do Nordeste brasileiro, ele está convencido de que as empresas do Vale do Silício erram ao acreditar que podem manter seu domínio mandando fabricar seus aparelhos em outros países enquanto se dedicam ao design, seguindo o modelo da Apple.
+Meira acredita que "o design é 'brainware', e os cérebros brasileiros são tão bons quanto os demais". Ele usa o termo "brainware" em sentido semelhante ao de software ou hardware, para designar um produto da mente, do cérebro. Um exercício que pode surgir de maneira relativamente rápida no mundo inteiro, diferente dos sofisticados algoritmos que continuam fora do alcance de seu país e que custariam anos de educação de qualidade e formação de engenheiros de alto nível. Por isso ele defende o design, e contribui para fazer do Porto Digital de Recife (o terceiro polo tecnológico do Brasil, atrás de São Paulo e do Rio de Janeiro), um centro para as "indústrias criativas", nas quais o design desempenha papel chave. Ele mesmo acaba de criar a Ikewai.com, uma empresa de "designers de negócios".
+Um contraponto importante: diversos indianos entrevistados em minhas viagens afirmaram que seu país não lhes confere o valor que merecem. "No passado era possível vender qualquer produto, mesmo com mau design, desde que estivesse funcionando", comentou Kashan Kumar, presidente da divisão local da The Indus Entrepreneurs (TIE), associação fundada no Vale do Silício para fomentar o espírito empreendedor indiano em todo o mundo, financiada com o dinheiro e a experiência de seus compatriotas que conquistaram o sucesso. "Aos olhos da classe média, o design pode ser desejável, mas não é imprescindível, porque se pode viver sem ele. E além disso custa mais caro. A arte tradicionalmente está inserida no território dos ricos".
+"Contamos com centenas de universidades que formam engenheiros e muito poucas que formam designers", acrescenta Kumar. "As belas artes são consideradas como hobby e não profissão".
+Em Israel, Yossi Vardi, padrinho de tudo o que o país realizou no campo da tecnologia da informação e comunicação, reconhece que "esse é um elemento importante" no processo de inovação. "Hoje em dia a Internet e os aparelhos móveis se tornaram obras de arte, uma nova forma de arte", afirma. "A tecnologia é um suporte, uma capa, como uma tela ou uma folha através da qual o talento e a arte se expressam. Sem esse atributo não é possível atrair usuários".
+A empresa que mais lutou para que compreendamos e aceitemos a importância transcendente do design é certamente a Apple. Provou que não importa apenas ter uma máquina funcional --um computador ou celular inteligente--, e que a estética e facilidade de uso desempenham papel relevante na decisão de compra. A inovação no terreno da tecnologia da informação e comunicação pode ser compreendida melhor, portanto, como fruto da tensão criativa entre engenheiros e designers.
+Basta recordar aquela que existia no início da computação pessoal, no Vale do Silício, entre os partidários da inteligência artificial agrupados no Laboratório de Inteligência Artificial de Stanford (SAIL) e aqueles que defendiam, em lugar de sua substituição pelas máquinas, "a expansão" do espírito humano por meio do computador e, por que não, do LSD. Os líderes do movimento eram Stuard Brand (criador do Whole Earth Catalog, a bíblia dos hippies), e Doug Engelbart, inventor do mouse e primeiro promotor da interface gráfica e dos links de intertexto. A revista "Time", em artigo de 1995 intitulado "Devemos Tudo Isso aos Hippies", retomava essa tensão fundamental para a compreensão da história da história da tecnologia. Não por acaso, Steven Jobs fazia parte do segundo grupo, mas as coisas mudaram desde então e os designers de hoje têm pouco a ver com os hippies da década de 60.
+O design deixou de ser assunto exclusivo dos artistas. Essencial em algumas concepções dos processos de inovação, se tornou um verdadeiro método para abordar os problemas da maneira mais criativa possível: o "design thinking".
+De acordo com Tim Brown, presidente da IDEO.com, as três etapas principais (outros observadores falam em sete), descritas em seu livro "Change by Design", consistem de "aprender a vida dos demais", ou seja, observar, o que significa "contemplar o que as pessoas fazem" e "escutar o que dizem". A ideia central é que os grupos de foco usados em pesquisa de mercado não conduzem a lugar algum.
+É preciso investigar as necessidades das pessoas, começando por aquelas que não as expressam. Também é preciso demonstrar empatia, "deixar de analisá-los como ratos de laboratório" e "colocar-se em seu lugar" para entendê-los melhor.
+O procedimento requer trabalho em equipes multidisciplinares, com fases de interpretação, geração de ideias que resultam em múltiplas discussões, e sessões de brainstorming, seguidas por testes de protótipos para conhecer quais das ideias previstas funcionam melhor.
+Tais etapas se desenvolvem de maneira linear. Devem ser abordadas de forma parcialmente simultânea e repetidas tantas vezes quanto seja necessário. Implica um enfoque evolutivo em cujo transcurso é imprescindível acompanhar a implementação da ideia e do protótipo para determinar como evoluem e como podem ser melhorados.
+O "design thinking" passou a ser lecionado por número crescente de universidades. Visitei uma delas no Rio de Janeiro, a Escola Superior de Propaganda e Marketing, e uma em Potsdam, perto de Berlim, o Hasso-Platner Institut, mais conhecido como d.school. Criada em 1998 pelo cofundador da SAP, a maior empresa europeia de software, a d.school inspirou a criação de uma escola com o mesmo nome na Universidade Stanford, em 2004.
+E não é fato que a influência onipresente do Vale do Silício pode ser encontrada no "design thinking"? Não resta dúvida, para quem detecta a influência alemã na d.school. Mas o argumento de Silvio Meira continua válido: o ponto é o brainware, um método fácil de importar e adaptar em outras partes. Requer educação menos dispendiosa e longa do que a formação de engenheiros capazes de produzir algoritmos de alta complexidade. E nada impede trabalhar ao mesmo tempo em ambas as direções, como acontece em Recife.
+Andrea Bohmert, diretora executiva da Bandwidth Farm, uma incubadora sul-africana, adota o mesmo ponto de vista. Considera que a Cidade do Cabo, onde vive, seja o "principal centro de criatividade" de seu país, e talvez de todo o continente. "Sonho", ela me disse, "criar uma escola de 'design thinking' para os mercados emergentes". Não creio que deva demorar muito a aparecer, lá ou em qualquer outro lugar do planeta.
+Francis Pisani viaja pelo mundo para descobrir o que está sendo feito de inovação tecnológica ao redor do planeta. Com longa experiência na cobertura da área, ele tenta, por exemplo, descobrir se a próxima Apple poderá aparecer na África, na Ásia ou na América Latina.
+Acompanhe o projeto em francês , espanhol e inglês .
+Comentar esta reportagem
+Termos e condições
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0be412046831079f0695acc1993d65643ca9d8678058556dca38bc7585888e22",
+    "mention_text": "Silvio Meira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f020797c48fecf7c6a99c4a92ba8c8e923b313a33ec907cfa8f004259b3d5565",
+    "mention_text": "Recife",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "151f853b850d55a61cec67b671c1032986b94d66eeed068a40c6f252f4c2a97a",
+    "mention_text": "Nordeste brasileiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08a609b97b1c35ae3700b6185bc4b9d14728269b85243091a8c0368bc8db5bdf",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e728b6bf56a02abc26640ec7f05bd9c769c42ed09b97b855c8ea6dbb5e999f8",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a036b48836e178cfbb5a67b9b56f2d6833fe28a33a68f243a5f797132aa2d508",
+    "mention_text": "Meira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8de34bcfd468dc22abe0e84f07cc718d00197342c3543bdb854570be4c82802f",
+    "mention_text": "Porto Digital de Recife",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "709a1af4eb0e594baf76e6060fac939a7075688ec83e6a5a6a37c813dcdc04ef",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10a3db9c242ecb74a7ae309e239088c48caf1871bdc1db361af43908420bb880",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b36b982f662c4a6c0ca19e33f993ebd981e30a205bdf13db6142a26720855616",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "85e683eba15a2949b621c8817939d4d5e3876144f36064f5dfa049cc52e6e6f1",
+    "mention_text": "Ikewai.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "976df1f748f461c1d233feec82683b17421dfb9727c9cb2d53c9ac83fe8c1e16",
+    "mention_text": "Kashan Kumar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80f6f1c2f95b9fd6fd2a195288ec1084dd55dfe3f731bd722e6ecd775fb3c022",
+    "mention_text": "The Indus Entrepreneurs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5124060ebf6395f87c8495a7183d1891856a7d873a16cb67fdc722c3612978b5",
+    "mention_text": "TIE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65dfc0c28fbb77d5ab8e2e76a1fd7b9d56dd064d92e165109af63abd0dc247e8",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38632a5f878f3ebf1e9f1a02b692b7d379ffa34932a4e9000474b1c8452aec55",
+    "mention_text": "Kumar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9b12a083b9177d13aa6477ed309cc200c70c36a1c1140113b3dcabf7735131a",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46310e6d98c47bb2d042b6da29ebaa83c82ebda9e5b2e372b35986802ef17374",
+    "mention_text": "Yossi Vardi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ab9a65d62baa4469a327a81965a68c9ab920cabed465a53d320b91672b05650",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8c5573a80dfb76798415410ecf8c769bcfdbafbdc14e9bc67a16cda946d0ab3",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f93aa7e9e116527bb4697cdbcd8c1463ae7245ff5a6cc4a68c775de85d332dfa",
+    "mention_text": "Laboratório de Inteligência Artificial de Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8d55d02770be7270350ce244ca16a9fa9195d78f3ecd664a1628911b5a9c767",
+    "mention_text": "SAIL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a878a00d5baea62389bf6132ae1f288591061258fd0a33415d425e5b6597b3ab",
+    "mention_text": "Stuard Brand",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f876b7a7f67f4ef4dcdb155e287bd734ce8d803532f216110f8906c771b0c3fc",
+    "mention_text": "Doug Engelbart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5a8dd9c051c08b5fe5a0bd1848adcf968c642dccfc53b29f0abff656e4146ee",
+    "mention_text": "Steven Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1977f9abe7b9084bf952f4da9da2c0c58a8920955357a2f0dd5d151e254e2a82",
+    "mention_text": "Tim Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "67bbaf0baf615860efc4f73d734fa80c7ea8e3bec604f312dcb82b626d28b583",
+    "mention_text": "IDEO.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edf7b78d8098f1d9e8cba6fe84a5dd32001b15fb4667daf7b00b5b3c14505d6c",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "395c8ed8d0077d5b5a76c825ae1f6a661f5cae31b913348cf620cb2491328bc2",
+    "mention_text": "Escola Superior de Propaganda e Marketing",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb6d7533b8cc81935dea4274633b958e1f5598b8167e1120d3bc111fdf8680d6",
+    "mention_text": "Potsdam",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8254848b8d67d5df1c25acbf46007f9a3abf290031b8a7dcb573ba701d1b7c3",
+    "mention_text": "Berlim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "85d063c996ce8ba845354c3c3dd6bcc1d72be3e1ec9f00fce9ca6468e2b0f051",
+    "mention_text": "Hasso-Platner Institut",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ff232fe27705ac35ab3fe61f5be67affc438697a66311bb35e0cdbc03b50ed2",
+    "mention_text": "d.school",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1bf65fb28678eaa2f09137461488779a21a3ac5d5e73ad3f3c875bea724cd0be",
+    "mention_text": "SAP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff2ab4297b73c03fb2956d88362113b67551a8ce3d493ce898ace9ef607e23c0",
+    "mention_text": "d.school",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "563d69d720ac161b531591c89209df276fc39cfa37477e908877b6a5f1d779d3",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47a25fb80b93fd55e8adc5bbf32cee65b38c7e5660f93cd14d733d517001f888",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "accd26c9436a367873104418ea85c9e5ddeb5204e0079b37ba2ce2c7a0695341",
+    "mention_text": "d.school",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73fcaeb45d58ccc36f5ac9a22cc1eb580f0431d23a59d86bd3cbdd07d66622fe",
+    "mention_text": "Silvio Meira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "050cb61615cdb2b0a736719035cb407f249d89254097af600f6b32d85871b111",
+    "mention_text": "Recife",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "67f3fbef4c8ee153c1a75d144e55127c865f195dcd6935d701a64730296e4b43",
+    "mention_text": "Andrea Bohmert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40e8d8b00717561d78b82acd3b1f6d10ecfdfdb15a52c37b38772a9b7786d0e9",
+    "mention_text": "Bandwidth Farm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "411191cd045949972e4370e45ae000818509fa81bfd00815ccb663c4392d583a",
+    "mention_text": "Cidade do Cabo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac7d4a9090b214ba2861f265a61783c780e2c897868e5fcadb77f2563644a200",
+    "mention_text": "Francis Pisani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ec509a7b79ab7513da15cf530272f50960d4016176e550f8692badd7d2fb719",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "da04fce213b7d4971b4c425f6e8cd7f02485b96ab22f5e2c2d13aeadf68f98aa",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "321bcc1c4907fd11305bc0a2575e756b69788ba3e7af432e1b317e796c6ff5de",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  }
+]

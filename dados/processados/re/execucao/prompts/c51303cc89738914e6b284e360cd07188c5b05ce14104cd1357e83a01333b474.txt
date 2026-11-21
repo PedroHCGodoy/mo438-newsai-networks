@@ -1,0 +1,397 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9c0bd08b6a85789bb31cd9bad462d4e902f2b9aa5199ec0807a24ee31219bdd5
+
+TEXTO:
+Filósofo da internet sugere pagar ou sair das redes sociais
+
+Jaron Lanier, 58, não poupa críticas ao modelo de negócios baseado em publicidade, que sustenta a maior parte do que conhecemos por internet hoje. Serviços gratuitos como Facebook, Google e WhatsApp, no fundo, cobram caro. Na visão de Lanier, manipulam, mudam comportamentos e, muitas vezes, nos tornam babacas.
+Com o saudosismo da internet descentralizada dos anos 1980, Lanier defende que é possível reconstruir uma web economicamente igualitária.
+Em seu quinto livro, “Dez Argumentos para Você Deletar Agora suas Redes Sociais”, recém-lançado no Brasil, o cientista da computação e precursor da realidade virtual encoraja as pessoas cuja vida financeira não depende das redes sociais a abandoná-las —ao menos por seis meses —, para retomarem a “consciência de si próprias”.
+O sr. fala em recriar a internet. Como?
+Chegamos aqui por vários erros, muitos cometidos por pensarmos que era o caminho certo. Alguns são econômicos e vêm desde o início da internet, quando predominava o pensamento de que tudo deveria ser feito só por empresas de tecnologia e sem interferências. Uma ideologia libertária forte criou monopólios. Tínhamos a ideia de que a única forma de inovar e manter o serviço livre era com um modelo baseado em publicidade, o que nos trouxe a um contexto de vigilância universal. Defendo algumas possibilidades, como um sistema em que as pessoas possam ser pagas pelo que fazem online e paguem pelo que gostam de fazer on-line. Isso tira o dinheiro da publicidade e torna a relação mais direta e honesta.
+A comunicação no WhatsApp não é mediada por anúncios.
+A experiência da superfície é diferente, mas se trata da mesma coisa do Facebook, que leva em conta as métricas do WhatsApp. Se você destrói uma coisa pelo preço de ajudar, não ajuda. É o que está ocorrendo com serviços gratuitos: o lixo [de informação] deles está acabando com a sociedade.
+Como as pessoas seriam pagas?
+Os dados são captados das pessoas por plataformas que as vigiam o tempo todo, incluindo o WhatsApp. Esses dados são usados para programas de inteligência artificial, que acabam roubando empregos. Podemos encontrar um modo de compensação. Além disso, quando pagamos por algo na internet, fica melhor. O exemplo é a Netflix.
+Não há risco de criar novos ciclos de monopólio?
+Sim, mas a Netflix está muito longe disso, não há comparação com Facebook e Google. A Netflix criou competidores com preços diversos e conteúdos que agradam às pessoas.
+Por que o modelo de anúncio nos transforma?
+A publicidade tradicional era uma comunicação de via única. Quando você olhava para o anúncio da TV, ele não estava te olhando de volta. Na internet, é diferente: há mais informação sendo tirada de você do que que oferecida. Ferramentas em qualquer site captam como seu corpo se mexe, onde você está e tudo sobre seus dispositivos. O que você vê é a menor parte do que acontece. Toda informação tirada de você é usada para mudar sua experiência online e criar uma sistemática que te prenda. Isso é chamado de engajamento. Chamo de vício. É quase como vício em jogo, há busca por satisfação, e a punição é severa.
+Os dez argumentos  de Jaron Lanier
+VEJA A LISTA DOS LIVROS MAIS VENDIDOS NA SEMANA
+Práticas e pessoas
+1º/2º A Sutil Arte de Ligar o F*da-se,"‚ Mark Manson, Ed. Intrínseca, R$ 29,90 2º/-    Crença Inabalável‚ Sandro Rodrigues, Ed. Buzz, R$ 49,90 3º/3º  Seja Foda!, Caio Carneiro, Ed. Buzz, R$ 39,90 4º/4º  Me Poupe!, Nathalia Arcuri, Ed. Sextante, R$ 29,90, 5º/5º  O Poder do Hábito, Charles Duhigg, Ed. Objetiva, R$ 49,90
+Teoria e Análise
+1º/2º  Arriscando a Própria Pele,"‚Nassim Nicholas Taleb, Ed. Objetiva, R$ 54,90 2º/4º  Rápido e Devagar,"‚Daniel Kahneman, Ed. Objetiva, R$ 62,90 3º/3º  Loucura da Razão Econômica,"‚David Harvey, Ed. Boitempo, R$ 55 4º/-   Sprint‚ Jake Knapp, John Zeratsky e Braden Kowitz, Ed. Intrínseca, R$ 39,90 5º/-    Desafios da Gestão,"‚Harvard Business Review, Ed. Sextante, R$ 49,90
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "030939e1f5ea1ee3678ea9fff362151e6740c37093062535eed6a5dca40214bb",
+    "mention_text": "Jaron Lanier",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "017a5a698d6c5ad6c509c5239062e96357bc683bfab7076e6befcd270a65299c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "765502ed21b101252567afca25c90cd83def46853f8173e45fc2942468b74ab4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20702a7e300be045330d08bb2b187594ecc3f6a1d61e12a33f60145a4bbb3bd6",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bed7a4f126b2f7e815aeb2ecce28af35782963b6e4ef95be6cc7a17dc4b85744",
+    "mention_text": "Lanier",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64516ba830fb7641e9a47e1f1663a7281e59cd4bbbc42152fd1de696f5a0d2ad",
+    "mention_text": "Lanier",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17887fcdb7cc2c1b82e685b0a18f07abe1ae5d649cdd58030862fc016a5a7d39",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5b20bfb82648b32f9a5b9ca8d25a826e07af7c5233580fb9acbe075ad72ed2e",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c6da6654a2fb046e8abbc5209bba70a6ae15d82c4aa0f76982135a60333dcd0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b10a79eeecdf0d92e0c981a8f07516cbb6a18d1e5c509a50898b87dd81b92c9d",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fead2c6177ac586d3e408fdd7fb89812e07dc44a2181ab6b135a360cd149b62",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46a1f18df8723236bf797f5c578c23178d7384204d985ac468544662b1afed71",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2aa882f79bd5200c6488355ad0f14ce73638384336fc18795db6efa6396a474a",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7c363861d21cf695b327f253929462f2c8b8ecc7d3c3ba4c4d89e9fea10d7e0c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e9e15071b129e7562d15a3d7aeae4cdc19458559fe429453970f9f992f5300ef",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba24261702e4a43173baca9b38ec09754a15a2c015d9d72ad25dc7731031be53",
+    "mention_text": "Netflix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46a01a50f1be58ef4cc9425054f630342af181fa2bb35b670bf65f18de2fa53f",
+    "mention_text": "Jaron Lanier",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "991ca10ed489558e042e59beb025fec8f16511b5d84cfaa5cdc717f7162ea583",
+    "mention_text": "Mark Manson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a716f04a83b33f6d67c8d37c70861018dd888290f150dae45b9353b268b193d",
+    "mention_text": "Intrínseca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "742ee5d16efb2a49face8a2a5c7316f03357f53763139f416bf0561684254ce0",
+    "mention_text": "Sandro Rodrigues",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6dd4ca4c945aa75f70263d9cccb61fc584cc5f81d1df6d2a30162fba1806552",
+    "mention_text": "Buzz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0cc723864c702f80a0d76b763a8c29620dfa5915d9e6a544a6a7611a396c469f",
+    "mention_text": "Caio Carneiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85640a653f091cbe505f63ac0a1020e9bb6d5f53c9fd7dc85d85ad4563799d3f",
+    "mention_text": "Buzz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "853ee7b191fb5ba5d23b5b551eb3f9b2da437219fe089d234c1dbcba92113d37",
+    "mention_text": "Nathalia Arcuri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f8108398e1fd321b4ec071ce5d9dea25637962734f1304d6845c26b78403f9f",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1756a547a3dd512feea9f6862a4d936c8d24059a8b44db8a26acb6d0cef519bb",
+    "mention_text": "Charles Duhigg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "881b49ad6996f4b1c1be4660aae5800a24656285561085cd54ce5766e749e4db",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "951d7bc34d3735e911c4b0c9f4f31fa9b9ecc9b885cfd8f9ed0ccf093ec64624",
+    "mention_text": "Nassim Nicholas Taleb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bf921cb8d5c75e7717b866ef8bfdcc0a5deae4fed692205707e389efe1eea4d",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6070da9395cf2028f5a233178a199101e58ffb97d8aefc055677d4fbb1e4e7e8",
+    "mention_text": "Daniel Kahneman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe1c6993fc72b81d33715a7000128aece6f5cb46f4cc2c465a9608bd7817e29a",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6286583fa5f4772fb5ecbf86804f78d03f0d4903592544079beecaeb8e3d217",
+    "mention_text": "David Harvey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "313dfd5c9f57adc26128b5af34fdd246cca21aa9a9f548464c312e6a86f89899",
+    "mention_text": "Boitempo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d30af5661adee297c5de1c519e7a4828c40f6466c8e037a7c5264df6c96ceb0",
+    "mention_text": "Jake Knapp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "067a8a036baac9b53fd0e685c221745d3cf450a8f8fe861fb7641ddc65c75c88",
+    "mention_text": "John Zeratsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b27b2a91d0979b79b9c7492829a8b6b8e7461c4334a79e00a04ee37cf3eb41a",
+    "mention_text": "Braden Kowitz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0e40c79ffb2d203b81273103b8665fcb0af460fc554bc0666b1de79358967a3",
+    "mention_text": "Intrínseca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e40a625ffd68fb6d1982af95c90060ccd76e5c136f9cd6a78b04eb720c9484d4",
+    "mention_text": "Harvard Business Review",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36b110ef7f5a062a827ac6361090f969dac1c8d55c0d635641023092688822a3",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  }
+]

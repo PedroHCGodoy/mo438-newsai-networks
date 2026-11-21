@@ -1,0 +1,409 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b27806b3bfd2556e7b5c035c688de0fb87ceb7eea3f2bbc171af4963d0319123
+
+TEXTO:
+Aplicativo FakeApp permite manipulação realista de imagens
+
+A cena começa em uma sala com um sofá vermelho, um vaso de flores e quadros inócuos como os usados para decorar o consultório de um terapeuta.
+Dentro da sala, Michelle Obama ou alguém muito parecido com ela. Usando um top decotado, que deixava visível um sutiã preto, ela se contorcia lascivamente diante da câmera, ostentando seu sorriso inconfundível.
+E depois a dublê da ex-primeira-dama dos EUA começou a tirar a roupa.
+O vídeo, veiculado no fórum online Reddit, é um dos chamados "deepfakes" --vídeos falsos altamente realistas realizados com a ajuda de software de inteligência artificial. O vídeo foi criado usando um programa chamado FakeApp, que sobrepõe o rosto de Michelle Obama ao corpo de uma atriz de filmes pornográficos. A combinação é impressionante --quem não estivesse informado poderia facilmente imaginar que estava vendo Michelle Obama.
+Até recentemente, usar um computador para criar um vídeo realista era uma empreitada trabalhosa e viável apenas em produções de grande orçamento em Hollywood ou para pesquisadores em instituições de ponta. Apps de mídia social como o Snapchat incluem tecnologia rudimentar para sobreposição facial.
+Mas, nos últimos meses, uma comunidade de amadores começou a testar o uso de ferramentas mais poderosas, entre as quais o FakeApp --programa criado por um desenvolvedor anônimo, com base em software de fonte aberta desenvolvido pelo Google. O FakeApp torna relativamente simples a criação de manipulações realistas de imagens faciais, sem deixar muitos traços da adulteração, e a custo zero. Desde que uma versão do app foi divulgada no Reddit, em janeiro, ele foi baixado mais de 120 mil vezes, de acordo com seu criador.
+Os "deepfakes" são uma das formas mais recentes de manipulação de mídia digital e uma das mais evidentemente abertas a trapaças. Não é difícil imaginar o uso dessa tecnologia para difamar políticos, criar vídeos pornô falsos para fins de revanche ou plantar provas contra alguém em casos criminais. Legisladores já começaram a expressar preocupação sobre o possível uso de "deepfakes" para sabotagem e propaganda política.
+Mesmo em sites com padrões morais elásticos, como o Reddit, os "deepfakes" causaram preocupação. Recentemente, o FakeApp causou pânico depois que o site de notícias tecnológicas Motherboard reportou que usuários do app o haviam empregado para criar "deepfakes" pornográficos de celebridades.
+O Pornhub, o Twitter e outros sites proibiram rapidamente os vídeos, e o Reddit fechou alguns dos grupos que distribuíam "deepfakes", entre os quais um que tinha quase 100 mil membros.
+Alguns usuários do Reddit defendem os "deepfakes" e culpam a mídia por exagerar a possibilidade de danos. Outros transferiram seus vídeos a plataformas alternativas, antecipando, com razão, que o Reddit reprimiria sua veiculação, nos termos das regras do site quanto a pornografia não consensual. E alguns poucos usuários expressaram reservas morais quanto à difusão desse tipo de tecnologia.
+Mas eles não pararam de fazer vídeos.
+Depois de passar algumas semanas lendo as mensagens na comunidade de "deepfakes" do Reddit, decidi verificar se seria fácil criar um "deepfake" usando meu próprio rosto --um vídeo não pornográfico, apropriado para o meu local de trabalho.
+Comecei por baixar o FakeApp e buscar a ajuda de dois especialistas técnicos. O primeiro é Mark McKeague, colega no departamento de pesquisa e desenvolvimento do New York Times. O segundo é um criador de "deepfakes" que conheci via Reddit e usa o apelido Derpfakes.
+Em razão da natureza controvertida dos "deepfakes", Derpfakes não quis revelar seu nome real. Ele ou ela começou a postar vídeos "deepfake" no YouTube algumas semanas atrás; sua especialidade são brincadeiras como Nicolas Cage fazendo o papel de Super-Homem. A conta dele também oferece alguns vídeos de instrução sobre como criar um "deepfake".
+O que aprendi é que produzir um "deepfake" não é simples. Mas tampouco requer ciência avançada.
+Escolher a fonte de dados correta é crucial. É mais fácil manipular vídeos curtos do que vídeos longos, e cenas gravadas de um só ângulo produzem resultados melhores do que cenas com múltiplos ângulos. A genética também ajuda. Quanto mais os rostos de parecerem, melhor.
+Sou um homem branco e de cabelos castanhos, com barba curta. Por isso, Mark e eu decidimos procurar diversos outros caras brancos e com barba por fazer. Começamos por Ryan Gosling. Também enviei a Derpfakes, meu consultor terceirizado sobre" deepfakes", diversas opções de vídeo para que ele me ajudasse a escolher.
+Em seguida, tiramos centenas de fotos de meu rosto e recolhemos imagens do rosto de Gosling, usando um vídeo de uma entrevista recente dele na televisão. O FakeApp emprega essas imagens para treinar o modelo de aprendizado profundo e ensiná-lo a emular nossas expressões faciais.
+Para obter o maior conjunto de fotos possível, virei meu rosto em ângulos diferentes e posei com o máximo número possível de expressões.
+Mark então usou um programa para recortar essas imagens, isolando apenas os rostos, e apagou manualmente as fotos menos nítidas. Em seguida inseriu essas imagens todas no FakeApp. Usamos ao todo 417 fotos minhas e 1.113 de Gosling.
+Quando terminamos de inserir as imagens, Mark apertou o botão de "start" do FakeApp e o treinamento começou. A tela do computador se encheu de imagens de meu rosto e do rosto de Gosling, enquanto o programa procurava identificar padrões e semelhanças.
+Cerca de oito horas mais tarde, depois que nosso modelo havia sido suficientemente treinado, Mark usou o FakeApp para concluir a combinação entre meu rosto e o corpo de Gosling. O vídeo resultante era bizarro e distorcido, e o rosto de Gosling se tornava visível ocasionalmente. Só uma pessoa praticamente cega confundiria aquele rosto com o meu.
+Depois da experiência, entrei em contato com o criador anônimo do FakeApp, por meio do endereço de e-mail que o site oferece. Eu queria saber qual é a sensação de criar uma ferramenta de inteligência artificial muito avançada e vê-la adotada por pornógrafos que não se incomodam demais com a ética.
+Um homem me respondeu, se identificando como desenvolvedor de software, em Maryland. Como Derpfakes, ele não me revelou seu nome completo --apenas a inicial. N. Disse ter desenvolvido o FakeApps como experiência criativa e que lamentava ver a comunidade de "deepfakes" do Reddit usando o app para fins nocivos.
+"Eu comecei a participar da comunidade que girava em torno desses algoritmos quando ela era muito pequena [menos de 500 pessoas]", escreveu, "e tão logo vi os resultados soube que se tratava de uma tecnologia brilhante que deveria estar disponível para todos. Decidi apostar na ideia, e preparar um pacote de uso fácil para permitir que isso acontecesse."
+N. disse que não apoiava o uso do FakeApp para a criação de pornografia não consensual. E disse concordar com a decisão do Reddit de proibir os "deepfakes" explícitos.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "788ee6871612d1ceacfe1763df5a9b55268d2d208e891c44a8fb40f1c7f72cf9",
+    "mention_text": "Michelle Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbadb7f1810d90fa3adb62720c7abaeb2cd5b5eef59a73d52306d8393bd0c590",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b58b4f94b66365ff20757526a1104a53658e531e4ffc70c8845382cc4e8fe4a",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e630598f54f1bfc93afa29f5da6eb83d74571fe33d3bf75c40d7bcf462066c4",
+    "mention_text": "Michelle Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34a769b57bf6b0fe5c65c2c0f11a9fa2a5c9f4c493f4d100fae02791e2cdfe23",
+    "mention_text": "Michelle Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "507150b2e0580f8367a1671cd5b7a833dd6dd302c717919e9342ccce5de5e1b9",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a66bb7db209960ecab1eaadb1ac4f001e95ceb84fb3c548ab01ce75b72612c1b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a05faa84ddf512285339c9eaeaa7d540660275aa4356a9f273eb1603dbc41434",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ce88d280451443b0e744129fbaea5cb0667861d2d7a9556f3cfac5445f4d4da",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c0534d4dae99b434141f2e7b24d77630ee59b1d2e7333fb62ed7cb3d2bf2144",
+    "mention_text": "Motherboard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bc7e87a2c892edbf6785c60fa28a61aac7ee97541bd4cebf4e930f1d6c6d5a8",
+    "mention_text": "Pornhub",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72ab4d61e06f1c5b38c35906529fb340e1564698be6211ac8495ad7d095f758c",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba557ad09caa3d24a4ab17ee765efe61dca39decec9c770ba7d169732aba5933",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ade95cfc5f8a1e8355308011d96e060c59240ee01e3665dfc1a9cf356b5c85f4",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f64a09054556e4aafd081cdcecddd1b9367ebec0ed11e091db9e65b21dfdf7a",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80acd21ec7f446859977ad3ab40a84aa12de4a56965d3e3bbeb0c41d6522a65a",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dedab977c41a9b81320580dfee6816af6e52af69376c49c0d3e7fd158a3398ec",
+    "mention_text": "Mark McKeague",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "670b0ae5dea9c7cfe9174e09842fe8bda2902a97144d1821974625c53da3d5c2",
+    "mention_text": "New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04997e1d55e1868cadcbdca6e9a955c95b6f66d2f4b63d8a77598cade416c6b3",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82c5b9b3beae8cb54e66253d8e894543f5f036acd4f19254ecc46e936b0e1425",
+    "mention_text": "Derpfakes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe4ccac00c261107c0d7d1ea071a9a0ca2c7944176a26430164a3e9482d39cec",
+    "mention_text": "Derpfakes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2ad7eb84e6276b142d864d89b5d39cf19d93d60b3b6962a361ef7bb148cb58b",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4c673dce9dccdfcc75c097885169ee729e78ff86968d0b4bf752bb6fa68766f",
+    "mention_text": "Nicolas Cage",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8dbbe8f424020351be4bff79f476271e871f21fbfc045be4c9bc620fbce9953e",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3382e26dcc779b29bf791b10260fed9da41c401301692aa1a0ff79a78f3084d3",
+    "mention_text": "Ryan Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "216a6445ba9b5c7e5c5d1076d5be3245364540d861055d4dcc5c44cd4ccad98e",
+    "mention_text": "Derpfakes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fbcad8dc59c67f3bf4c32f700570c44f9bedfd107ccde5f26899bf9681cf68e",
+    "mention_text": "Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c2a8484e1c3a61e13687a87eea6eb27a8286f1c736a77e3cecb7392f477bb9d",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4dcfec1bce6d7a86481bf1e7b9e76dbb60910b2cc0ce55c8cd932079b1e5be39",
+    "mention_text": "Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bed6b22f667c8b690b69be7b62644e8758abd23c10953e9ed0ba9275d2ad5e8",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "301a96c5f1e761db9f0f60c9d0e80fa7a5f44a6b1d9c66b3418c88d3270c53c0",
+    "mention_text": "Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e2f50e60c63f5781fc1c543ed28a70154e7f76b0d7ed46795f887e3ebb4c8ee",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54e3a13ac208bd181dcca14187eb5b56ae1de766ffeb9720d6838f3b5b01d53e",
+    "mention_text": "Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df1743909ad77799702abc72a6a6999e75de4ec4a1a476d0741cc7b9350e7d36",
+    "mention_text": "Gosling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed82df40a306a7ec8e53da8c93da8261c32c800fcaf8aac688afb18ab2a537a0",
+    "mention_text": "Maryland",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf209b542853822c886e4234a80af8594ea79dc689a74e4dec5a4d74009ca491",
+    "mention_text": "Derpfakes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de63ddbcc9fc3eb99c23fdac00dced2624c27ea1cdff70f2ae2dd9393a995481",
+    "mention_text": "N.",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ad8da5b8da7c5e8d0929494af65d91dbc129fbe3511a094a75b1e097bb6160a",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ffa4acca5b9e713738def2300a7f4c3d0568aaacc916506b67d4007955d4b1c",
+    "mention_text": "N.",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8efe492a929c819b249750f18b3e1426b602d40a1a3ed46cdc41f30c66b7f3f6",
+    "mention_text": "Reddit",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,735 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6befc3a6146070c7f940b757b22c2aef5a5f2b40598ed32208d915d91c398971
+
+TEXTO:
+Google acusa Uber de usar tecnologia roubada em carros autônomos
+
+A Waymo , unidade de carros autônomos da holding do Google, acusou o Uber de usar propriedade intelectual roubada por um dos antigos líderes de projeto do Google, em um processo aberto na Justiça federal dos Estados Unidos.
+Em petição a um tribunal federal de São Francisco, a Waymo afirma que Anthony Levandowski, que comanda a divisão de carros autoguiados do Uber, baixou 14 mil arquivos dos servidores do Google um mês antes de deixar a empresa para criar uma companhia de veículos autoguiados chamada Otto. O Uber adquiriu a Otto por US$ 680 milhões cerca de sete meses depois que Levandowski deixou seu emprego no Google.
+"A Otto e o Uber se apoderaram da propriedade intelectual da Waymo de forma a evitar sofrer o risco, demora e despesa requeridos para o desenvolvimento independente de sua tecnologia", afirmou a Waymo em sua petição. "Esse roubo calculado supostamente teria valido mais de meio bilhão de dólares para os funcionários da Otto, e permitiu que o Uber reanimasse um programa estagnado, tudo isso à custa da Waymo".
+O Uber não respondeu a pedidos de comentários.
+Na petição, o Waymo afirma ter recebido inadvertidamente uma cópia de um e-mail de um de seus fornecedores, contendo desenhos da placa de circuitos do Uber para sua tecnologia LIDAR, que embasa os sensores laser de luz e medição de distância usados nos carros autoguiados. A Waymo afirma que o projeto do Uber apresentava "notável semelhança" com o seu design, exclusivo e altamente sigiloso, e que o desenho violava patentes detidas pela Waymo.
+A queixosa também afirmou que diversos funcionários do Google, que posteriormente deixaram a empresa para trabalhar com Levandowski, baixaram outros segredos comerciais de seus servidores, antes de se demitirem. Entre eles havia listas de fornecedores, detalhes de produção e informações técnicas, segundo a Waymo.
+O processo acusa o Uber de roubo de segredos comerciais, violação de patentes e competição desleal. em seu esforço por recuperar o atraso no desenvolvimento de sua tecnologia para veículos autoguiados. A Otto foi criada por um grupo de antigos funcionários do Google que foram pioneiros da pesquisa sobre veículos autoguiados, na gigante das buscas online. Levandowski, que trabalhou no Google por nove anos, comandava esse esforço.
+Ele é uma figura proeminente no mundo dos veículos autoguiados, tendo trabalhado com essa tecnologia por mais de uma década. Levandowski conquistou certo renome quando fazia sua pós-graduação na Universidade da Califórnia em Berkeley, em 2004, onde projetou uma motocicleta autoguiada que participou do primeiro concurso de veículos autoguiados promovido pelo Departamento de Defesa dos Estados Unidos.Mais tarde, quando o Google começou a trabalhar com veículos autoguiados, adquiriu a startup de Levandowski, a 510 Systems.
+Ele deixou o Google no começo de 2016 para fundar a Otto com Lior Ron, que também tinha experiência na pesquisa de veículos autônomos e sistemas de mapeamento digital. A Waymo aponta em seu processo que a venda ao Uber foi coincluída pouco depois que Levandowski recebeu seu pagamento final "multimilionário" do Google.
+Empresas do Vale do Silício e de Detroit estão apostando alto na tecnologia para veículos autoguiados. E o intenso interesse deflagrou uma sucessão de investimentos de alto valor e de processos judiciais.
+No ano passado, a General Motors pagou mais de US$ 1 bilhão pela Cruise Automation, uma startup de tecnologia para veículos autoguiados, e a Ford recentemente anunciou planos para investir US$ 1 bilhão, em cinco anos, na Argo AI, uma startup de inteligência artificial criada em dezembro.
+Em janeiro, a Tesla abriu processo contra Sterling Anderson, um de seus antigos executivos, afirmando que ele havia violado seu contrato de emprego ao tentar recrutas funcionários da empresa para uma nova companhia de carros autoguiados. O processo da Tesla, contra Anderson e seu sócio Chris Urmson, ex-funcionário do Google, afirma que Anderson roubou informações confidenciais e tentou apagar seus rastros destruindo informações da empresa.
+Em dezembro, a Alphabet, controladora do Google, anunciou a cisão de sua divisão de veículos autoguiados, até então controlada pelo X, seu laboratório de pesquisa, e a criação de uma empresa separada para cuidar desse segmento, a Waymo.
+A Alphabet afirmou que sua decisão de estabelecer a Waymo era sinal de que a empresa considerava que sua tecnologia para veículos autoguiados tinha deixado para trás o status de projeto de pesquisa e estava pronta para comercialização. Os executivos da Waymo afirmaram que ela está aberta ao uso de sua tecnologia de muitas maneiras, entre as quais um serviço de carros para concorrer com o Uber.
+Para o Uber, a Otto representou uma aposta significativa quanto ao futuro dos transportes. Levandowski foi apontado para o posto de vice-presidente de tecnologia de veículos autoguiados e se reporta diretamente a Travis Kalanick, o presidente-executivo da empresa. Levandowski comanda o Centro de Tecnologias Avançadas do Uber, em Pittsburgh, o epicentro dos esforços de teste e desenvolvimento de veículos autoguiados.
+O Uber anunciou que pode levar anos para que os veículos autoguiados entrem em uso comercial amplo. Mas a empresa já começou a conduzir testes de rua em Pittsburgh e Tempe, Arizona, onde o público pode usar protótipos de seus veículos. Em Fort Collins, Colorado, a Otto recentemente realizou a primeira entrega por meio de um caminhão autoguiado, um percurso de 200 quilômetros com uma carga de cerveja para a Budweiser.
+O Uber também fechou acordo com a Volvo para desenvolverem juntos um veículo autoguiado, o XC-90. Versões iniciais do modelo já foram lançadas em algumas cidades.
+Em dezembro, o Uber encontrou oposição a um teste de seus Volvo XC-90 autoguiados em São Francisco, que o Departamento de Veículos Motorizados da Califórnia considerou ilegal porque o Uber não tinha as licenças necessárias. Uma semana depois, a empresa cedeu e transferiu seu teste a Tempe, retirando sua frota de carros autoguiados região da baía de São Francisco.
+O Uber, que ainda não abriu seu capital, tem seu valor avaliado em quase US$ 70 bilhões e obteve um montante espantoso de investimento junto a grupos de capital para empreendimentos do Vale do Silício.
+Um de seus primeiros investidores foi a GV, a divisão de capital para empreendimentos da Alphabet.
+Em agosto, David Drummond, veterano executivo da Alphabet que teve papel central na decisão da GV de investir US$ 250 milhões no Uber, em 2013, renunciou ao seu posto no conselho do Uber porque estava se tornando claro que as duas empresas estavam em rota de colisão.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "26dbb04dc92aca7b4a54be5e4f0ab28945b725cb5367fcaad1d4d9991f13435a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b13c67020629095ba03a30840a2955af28d90d05b67a821ee5ccc542be045d7",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6114e9c25ba3692ee4573a5a9bc3187b6b1d20894640bab5544a5b573333fbc",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c009b02ed90f652d4a15353fdc5c05d4578b40271357e1b1b21e058a0615f1ac",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3204504db0825b4b518b21040950a44d93aad9dfd2bba5962c68bca05c5b956d",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdcaea22c2c3f16737db0b70c6172d8be0dc190c4f4217d199646eb19a242759",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10ee38d670af33a92af78a56c67e7d00a84e2fee21ce0abd6abb6abc1341ea35",
+    "mention_text": "Justiça federal dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7d34fa3b617cde45684764d8c4858b671e0beb9290474737d49d51aaf9cf95e",
+    "mention_text": "São Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb04c292f63144c801016114967641671274ebf83b442297f479b115b5b939ed",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f01369d1571d07007b706b6c63532333f37e5539204d9ee928c3f99ffaca733",
+    "mention_text": "Anthony Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2775415b68cbb524cc59b24ff35fae49c0c5ec1e69f7733f1a78b8ddce9b4854",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "952b9e32dc1a01fc9eb6ca6622cb1631f6571366d6fe0182bfa5fa8440e85657",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dff4c771a4f22765ecfaef82a5cf0d56ecbf5b3f1ee183e202def13d749fe86a",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4496cb32f4f60f1327b5442b7c422ca2d025e0c0ff3f38a732b4606d605fa5e7",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bcbfa38d3bb29f7f5b1cb6bc9a3f8f9d32db4e6addf0d149b56f62bd8fd464d",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01af4ba1f2f03ebdf092d911240bbbaecd2899227cd4f86a5648f713bd53fff0",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2889f20f394c359a3e29db5426976d8db86eb14d46668981031c721936b22aab",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "436f870668c7a2deb28f3cc4345538987d1962da93d024b8bfeb32bf2baf3b5e",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a38d9c7bdaf4b309ad4e08f447226694665d8a30a2eeefbc9656c2dbeb6f4608",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ef93cfd402d84c4fb081bed5c7e58b99e932f98cd8e6414102510942957890c",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e700e53b86938d3fa2f70b5ae26d5be16b101fa973cc457877485e3d6e567d23",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04dcc7a6143ea12cade9dc6b1c5f420a8b5420f210f1b42c9bc60a3e511a905d",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "233cbbbd6f94291d742a24bab87bce40eef20aeb1b892c303a68ca0c44cca6c8",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50d52e0d0891ab6dfafb979275344d3aa8221dacbc70400662b4d6aab3c34735",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20a8878b3989747122d04ca98dc7aeeea23bf346719fbd5efc21864ec24f3e35",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "487ca9195d1beca55ca3944cebb36e585460438b193b139cc68cbb1760dd4066",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4faec5c5f5fffbd576ce97c3fe1989e779c6804a857f7ec1d33a5d1f1e25011",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6aed28e19ee90500760c64a5e4e43de3878c2e1143a6620c3e0827e0d0094a5c",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fc1c319845d2d71973924f9a04666622af1f0c99241447ebf3683becd0ff22b",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39c5279679fdc11b66994f0ee612490e0cb9312f8e4dede7947edcee74d32216",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c97ca2c31c6011b99c14e207a6911563b977c9230e6b4a5dc9edc3db72b8e0d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a725d631969cfc4d398bff6474f3f7d2ce71cb85be21cffa2670ad1d6a6d7b4c",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a83d5a214aa412f94096b76170caad4743b3df733af7ae02db72a3553118d84d",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a05a287f0aeba4657533888784c34bef41a011321562656619d61c7b97e29204",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ed5a9cc24f0e5b51bf0c19d4ae81ee0c42b669f0da43726a2682dd6afc16a77",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c035d4b8855bc79314e92eadd62e92cb57978809337ae6e959ad92200d8dafb5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9dccc382024f6f00756ff4614be235c2bc3c206758f35e435413165d5e05151",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f89bf07ac4ca77f339cef79e1a74a6beb478fb6922e846ff9328626459396355",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b2c7e0588ff2ee0d96beeb46a4f805cda345ee14902bb12678f63a9a924d8aa",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16fbef9f18d81f86b332e5a1299e2b56b4686fcb4ef32fe49aefd4c1b2a54e2c",
+    "mention_text": "Universidade da Califórnia em Berkeley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "804bbcfbe06a2912b9529f04c3de5ec6d6684d26ba1a0113792d341b4ba8745e",
+    "mention_text": "Departamento de Defesa dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee6856205483dceb47a0c2aefbdfa12cdfaaa5bc5aa09180645282010220c974",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d628c9870b5e289133e70b3f76642fa457df735914edcabd671d4329f9fce7ab",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0946bb5f8b11527587a732587faba70ed373f93d3a8a80c0ed5295768f2a51f6",
+    "mention_text": "510 Systems",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea1113ab989caf13f3cafbb666dc2bfd06b2e5e8f0690392e8cc166db8ba10fb",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "441b87d2143e5b9ee1e0e8961a7881e1d285ca6b0aae2e03c4d6aee6560635be",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d5349ec606951f8484d9e3b24080fc99ff9c9016e59a6caaa667abfd45db6e1",
+    "mention_text": "Lior Ron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "430ceeac029a5881c5c07ac464d32c74777ea00e1ff5f7915b45e804b27b2b1c",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35925bea8403f669242ef27c2c01728149b4953048e6331f9120101714a27b32",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a86479fd084d1c0975629bc44d5d9e4a930572fe60911c2e4e329ec6725273c0",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5ce1c265d2369c248122b0dce3d19537e7fd8448f653229c03eac6c4f962095",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a9a9655fffe20ff1ecdc865af24d56ad65a96083629f2c561254a2f7230910d",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "932deab846dc62ae5a3bfa48b658f9b7cac97183533a8957052b0c251ba5bba0",
+    "mention_text": "Detroit",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd9cf7dbe2ceb24c1da53795d64717e832b5e582ad32427b553c38ed03c23353",
+    "mention_text": "General Motors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81cf9d4a9d433c7aba1e488a2997b639ba9ea07a91efe4e475665a54e30179b3",
+    "mention_text": "Cruise Automation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9ba8e56bdc45318bfb193fbd5169067a9cbb4c0ca57faf230d8d5e1d192a504",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0d109b1260838c47c24de257ea20786339596ca74dd82242b4c991922712260",
+    "mention_text": "Argo AI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "169f845a2aac46a0f3517dc4ae9f6ed891f0d972794b93f2e7ae2d3b15db2418",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c24795f5f43a4bf70b298817f84b7fb6cc5db07a6315c78b7f79b0a48d7bb86",
+    "mention_text": "Sterling Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce5ee595161dbf077a819197af4d81ce3bfb347caa53cd9518dc8f9daf106571",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24f9f1570e3f981187e2768dce6a517dfdec3cc9e3f0a2ade795843e9af4a10a",
+    "mention_text": "Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "358ce52d74f4ed83e03e88782d1fac233752efd2639fb2bcd7b108c6c71cecb8",
+    "mention_text": "Chris Urmson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac3556c4c0224ae3c35ca9feae5bd5cc78b720495724dec6a2d17871088a94de",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37a42c5535990f8033173240cdf4be345fd9a6b279f86080514e63f0547f1efd",
+    "mention_text": "Anderson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d972c00994f3545f88b5326a77fcd838c2c44e67f1e7afa6ee853b7447c9dac4",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "458aa641780dd8f963233c751a07dffc24e41029daccf9385b5fab82c2d81693",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a4c2ce8826eb1bb61acd640f3eb1a0d071c2e146df47872e226a4de06aaf80b",
+    "mention_text": "X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "267c1117a811fb389ec81260935322a56bcf56f40d8205f145bd534aff77c326",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f79ed9fcfd0a8caa55fe9680c68c7be637316bf5c5e6a2023525c358daedc91",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9bf500471c4e6f900819d6dcf37ff2ff742707ea6228a4f15bb7b6cfac9ff2db",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b26d10a0292eb58a522ed6a0b7ad95f5cd0176967fa36461c0a231800ed3a58",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3add5614176ca5e9b240f3e896c52fd6cd68dac7ba9556640ca8b36a6380f8ac",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9fc8fa46da5b0af0b78bb4e3cd7a55b4518717f6f8ad71537cd226a7ebfb1185",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8efaaa2b4cf3582bb32fc6547915b42f2c27690c4126783e5f7439b52aae735f",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21bc1abd07cf56ec710bc87792e2d914feab999cc2ef8740ac01f523a4993030",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c2b484e116ec0e781ddd6d697c1efa57eeafac28f5ccff32c3a34516b229797",
+    "mention_text": "Travis Kalanick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88b86f05ee8866c49f7eeb22d8d392616ae2424de4d1efe48b1d0c78711a3ebc",
+    "mention_text": "Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b846c7dbc2a2c1d5d7e08afcce688fe6efdecd20ade50a50bf2689b750bc7330",
+    "mention_text": "Centro de Tecnologias Avançadas do Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6158b1d9c4847f20c07a918da87a47eeabd0c810f1e6f260eb7ba4ac1aedefff",
+    "mention_text": "Pittsburgh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1aa75aec19faa67dbbc7c3521620bd1be25e43818a1111206bd61bd4fa60f6a6",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ac9e98b28594a22e0c67d217e6ac10b53ff87ef00c927b33eeca3e2e212ef9a",
+    "mention_text": "Pittsburgh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e7afcef6ffef135b63aa36a91cb94336f2c838d802acbeb8503a51f715926bf1",
+    "mention_text": "Tempe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7fa5d7ad72bf014450915c4943628776c23a1840acde747bb270ec7e7a9900d8",
+    "mention_text": "Arizona",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "32980092f34b0503de8b5528ad7f2ede632f413a3ad59746d2987d89b7ff0716",
+    "mention_text": "Fort Collins",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b493e8ecddb9a5412a1afbd468fbdaf847ac9230c41ebce367da707ba0680546",
+    "mention_text": "Colorado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "def69042f9483568f4dec96354296220758dc0e62435a734863b4aa8e4db81e5",
+    "mention_text": "Otto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7f4e7c102962c940bcac7fd5d592f0fbaec923c8e5dc9d2529a09a7bcbcb9f2",
+    "mention_text": "Budweiser",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77ba9a89fb88ce57d0c589dbb2aaeca7b8fb41e5152525c4d76297b4e407fb2c",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b04bff08c379c7bd874499619c56699196c8bd8213b17e064b9ebcf15950b638",
+    "mention_text": "Volvo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb5739e2e3abc0334fd0dd2809cc33348cab139f96d730c7e0e2536d619e480c",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1ce4222a030e1fe9d741f56ed4c8afb6c026a5feb75b64f61520bcc900ca977",
+    "mention_text": "Volvo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20ff4f61c611609c7ee69273ddc000bef7a03a1dac4918e3fa9a568706c85f74",
+    "mention_text": "São Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c84c0ffdff8a0d0ba392a0f8192fba3e490807432abb0ea8af8a9ea15134dfa",
+    "mention_text": "Departamento de Veículos Motorizados da Califórnia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "409bd576db79554a56493736dd7c97641dc2cd67a5effae10cd96ffdcb681d69",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b812ab11a387252c285946391fa702594940981436dbc244e38d2d70867828ce",
+    "mention_text": "Tempe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2bf1c862994c52210dcf6c4a93ae3ba57f0e76feeb94eb07febc8cbd09b9282c",
+    "mention_text": "São Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44d7b57e621419780a721cfdd84b72f8aa70dae69eb9c85b187e092c55118472",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "716d758444dac271b3191c798b9167aaa29375f46fe964f6a93a5daa9905926a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7310e3668da94084bede4b7f4755d4d1870684f7cc47e32cafeb2fa271e17118",
+    "mention_text": "GV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e23b1d90f79c4e4ee09d0ee3814c26aecf6a935c56cd0cbb878010c20c3913c",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6152d7e4b92185c3843fdb6538229835ae124afa527024bb7d0e6cad2eb38f7b",
+    "mention_text": "David Drummond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fdc714b561d8f080b9108f67b9b04ceda83fef1d42f8395af65a7464c6fc846d",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a52fdd66c9b2dfe4cfaf2b0b2e4283543ad06a8ee7c00645fb9c36e6d7f4ff0",
+    "mention_text": "GV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbeb5b8b33e4088c49c88374423db2666c3d41c201ecbedd809bb3ee3a384c66",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e44c601f69828737654fa525053657b4eb11726a10ce5866028d3c6d684019e1",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b3221fd14087a27c351e0ee4131c71ba5f18b786404acd7537da107a6c68404",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,296 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 5da5ac8a1015a0be8d632660c01a0a3dee0fc54fdac4de23a7965e81261d4cf6
+
+TEXTO:
+Empresas de saúde se associam a startups
+
+Nomes tradicionais do setor de saúde como o hospital Albert Einstein e o grupo diagnóstico Dasa se aliaram a startups para rastrear inovações e fomentar iniciativas que variam de óculos de realidade virtual para estudantes de medicina a tecnologias que checam laudos médicos.
+A chegada das empresas tradicionais oferece às novatas ajuda especializada na criação de seus produtos e permite que sejam testados com médicos e pacientes, etapa fundamental para atuar no setor.
+O Einstein já investiu entre R$ 200 mil e R$ 500 mil em 12 novatas. Ao todo, o grupo tem algum tipo de parceria com 25 startups, 18 delas participantes do programa de apoio de sua incubadora, a Eretz.bio, mantida desde o final de 2017.
+"Há uma confluência de novas tecnologias baseadas na digitalização que permite que surjam novas empresas de base tecnológica com capacidade de crescer rapidamente", diz Claudio Terra, diretor de inovação do Albert Einstein.
+Entre as investidas pelo hospital estão a MedRoom, que desenvolveu sistema com óculos de realidade virtual para treinar alunos de medicina.
+Vinícius Gusmão, presidente da companhia, diz que a Lucy, personagem virtual que pode ter os órgãos internos examinados pelos alunos, foi aprimorada junto à faculdade.
+Fundada em 2015, a startup tem 28 funcionários e faturou R$ 760 mil em 2017. Além de atender faculdades, faz projetos sob medida para hospitais e a indústria da saúde.
+Já o grupo Dasa, dono de laboratórios como Delboni Auriemo e Lavoisier, assumiu um andar dedicado a startups de saúde no Cubo, do Itaú e do fundo Redpoint eVentures.
+A empresa já investiu na Beep Saúde, que permite chamar médicos em casa a partir de aplicativo.
+A Unimed de Porto Alegre fez parceria com a aceleradora Grow+, que apoia a criação de negócios para encontrar fornecedores inovadores .
+"Em uma operadora de saúde tradicional, é difícil trabalhar inovação. A operação é intensa, você acaba se envolvendo nas coisas do dia a dia" diz Salvador Gullo Neto, diretor da Unimed.
+Em 2017, após receber 128 inscrições de interessadas em ganhar R$ 100 mil para investir (dividido entre aceleradora e operadora de saúde), a companhia fez parceria com a Predict Vision, que usa inteligência artificial para analisar exames de retina.
+O serviço será usado para auditar laudos dados por médicos (para checar se o diagnóstico é coerente com a imagem) e fazer acompanhamento de pacientes a longo prazo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b1484dd8bef0e329dd0a7f1c163f6f7a7b14585f941398c49db7e62e15489aea",
+    "mention_text": "Albert Einstein",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85604589598fb17814c47aff8f8ca46271511b208bd9303f9dc3bed2c6ccfd55",
+    "mention_text": "Dasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "544dbeec8cbc6b7c3370f0283e17c4a941f22913252e2d7c8a2254eae56906e5",
+    "mention_text": "Einstein",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c2bd6fa8b3bbee8ca2d97ebad6de3dd87954ff6cdc441c7e6bf204ddccdc430",
+    "mention_text": "Eretz.bio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "530b06a2af63be13c0a8b741d4238dc43cfe39e5f875097f8cca29fc8f85b209",
+    "mention_text": "Claudio Terra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2dfe8ca12f8d543fbede5c599e3bfa023cf1298690e744bc29d7fceca2fcfd9d",
+    "mention_text": "Albert Einstein",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ba530f9ce341e422f923c3466c8ebce66b3253470930a6659eefebfaf456b33",
+    "mention_text": "MedRoom",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75c6c6020285abb0c3635799966566fe28dc2027470ce568174003d1803ddb92",
+    "mention_text": "Vinícius Gusmão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b24504723dfe3b59247d55933f9d7c3dee6202fc8af00181e8b7113b2f14ca5b",
+    "mention_text": "Dasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77ebf808922df0987bce0de03a4385dcc52da192ca35dbe32cfe27e8b9b10b08",
+    "mention_text": "Delboni Auriemo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87b9b0ab6981a586642de5d4b21a7c2b795bd6467d3a85595313470619b2c6c5",
+    "mention_text": "Lavoisier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71c527eec8fde93b537d7208d8eb2c6388d0562bb912ab57689880dc106c17f3",
+    "mention_text": "Cubo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6607052857ca3b29f2c8a9e525105c1960d78f4259b9d9ce01103f83210eb7a",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ee9da2fd14dff782c0d87e782b9e2d92929e174bb4fe2692ce9ac4f742f874e",
+    "mention_text": "Redpoint eVentures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35f57828cf789eba4d5cc123264396333b0dfa38a7bb3f733ff23028357a4af8",
+    "mention_text": "Beep Saúde",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdf2650e2bebf0433521685af10f37e65b243f7b5ab0235e5b31782f68edfef6",
+    "mention_text": "Unimed de Porto Alegre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6b814955c42c450bec2a77ccbce01249de26abc4581b059b4df8381cf2602e6",
+    "mention_text": "Grow+",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b47a5922ee5648c45bcc55ce67489df71b5cf1094fd9ad99e63a90e963e9b57",
+    "mention_text": "Salvador Gullo Neto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0aa1f7118fc34addd0d93121adaa5958b5a0483cf01b10f36c9a604bfdf47924",
+    "mention_text": "Unimed",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7c2cf052c574ce3c9abff46d92312be1a9ad5146bbeaecb301f5ff6347be65c",
+    "mention_text": "Predict Vision",
+    "categoria": "ORGANIZACAO"
+  }
+]

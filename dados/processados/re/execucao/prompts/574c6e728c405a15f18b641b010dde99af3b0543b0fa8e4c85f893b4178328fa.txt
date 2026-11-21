@@ -1,0 +1,449 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a71eef6b465fd7b8432ea7c09f26bedab4dc4427f3e1fc72bea554804b62bc9a
+
+TEXTO:
+Robôs já conseguem ocupar até vagas que exigem empatia
+
+O meme da "invasão dos robôs" se tornou alimento básico no mundo do livro. As tramas são conhecidas: robôs e computadores superinteligentes estão substituindo os seres humanos até mesmo nas tarefas mais complexas. Eles antecipam nossas necessidades e tomam decisões em nosso nome sem que nem mesmo percebamos. Fascinação e medo são as respostas naturais. Ficamos atônitos, ao contemplar nossa crescente irrelevância.
+Agora chegou a hora da segunda parte da saga. Se estivéssemos em Hollywood, um bando determinado de desajustados se uniria para combater as máquinas. A humanidade, apesar de toda a sua imperfeição e de seus esforços ocasionalmente infrutíferos, sairia vencedora.
+No entanto, a narrativa que se desenrola na mais recente leva de livros sobre robôs não é tão simples. Não estamos no mundo de "Independence Day", e as coisas certamente não voltarão a ser como um dia foram. Mas uma visão mais nuançada sobre o efeito que as máquinas inteligentes terão sobre o nosso mundo está tomando forma. É uma visão na qual o ser humano não é inteiramente sobrepujado, e na qual os homens continuarão acima das máquinas - desde que façamos as escolhas certas, e logo.
+Em resumo, é mais que hora de recolocarmos o ser humano no futuro dos robôs. Quando o assunto é contemplar o futuro do trabalho, porém, essa não é uma tarefa fácil. Tentar acompanhar as capacidades rapidamente crescentes das máquinas é como tentar atingir um alvo móvel. A cada vez que alguém identifica características distintamente "humanas" que nos tornariam singulares, as máquinas não demoram a desenvolver poderes equivalentes.
+ILUSÃO
+Uma década atrás, Frank Levy, economista do MIT (Instituto de Tecnologia de Massachusetts), previu que a capacidade de solução de problemas complexos colocaria o ser humano em vantagem diante das máquinas por ainda muito tempo. Hoje, essa afirmação parece melancolicamente otimista. O aprendizado mecânico –a mais recente manifestação da inteligência artificial, baseada em formas sofisticadas de reconhecimento de padrões– é capaz de desenvolver todas as estratégias flexíveis e avançadas de solução de problemas que o professor Levy tinha em mente. Todos pensamos, lá no fundo, que somos especiais. O assustador é que provavelmente não somos.
+Em "The Future of Professions", os autores, Richard e Daniel Susskind, pai e filho, desmantelam com impiedosa eficiência as ilusões que a maioria das pessoas entretêm ao se compararem com as máquinas.
+Para profissionais como advogados, médicos e contadores, acreditar na excepcionalidade do ser humano é especialmente tentador. Muitos deles podem admitir, secretamente, que o conhecimento especializado que adquiriram com tamanho esforço em breve será equiparado pelas máquinas. Mas ainda gostam de acreditar que trazem algo mais ao trabalho que fazem. O julgamento pessoal e a adesão a um código de ética são traços que distinguem os profissionais liberais. Há também a importantíssima interação pessoal: os melhores assessores e especialistas sabem como antecipar as preocupações de seus clientes e sempre encontram as palavras certas.
+ESPECIALIZAÇÃO
+Richard Susskind, professor de Direito e especialista em tecnologia no Reino Unido, vem pensando sobre essa questão há mais tempo que a maioria das pessoas. Nos anos 80, ele foi um dos primeiros empresários a criar um negócio usando "sistemas especializados" - software que emprega "árvores decisórias" para tentar mapear o pensamento dos especialistas - a fim de lidar com questões jurídicas. Mas os problemas do mundo real se provaram excessivamente complexos.
+Hoje em dia, de acordo com os Susskind, a maioria dos trabalhos dos profissionais liberais podem ser "desempacotados" em forma de conjuntos de tarefas distintas. Isso de fato vem acontecendo, já há algum tempo. Muitas pesquisas jurídicas são executadas por sistemas avançados de busca computadorizada em linguagem natural que vasculham pilhas de documentos muito mais rápido do que um ser humano poderia.
+Quando as tarefas são separadas, há surpreendentemente pouco que uma máquina não possa fazer, de acordo com os Susskind. Assistentes de pesquisa jurídica ou enfermeiras, com a ajuda de máquinas inteligentes, podem executar trabalhos que no passado requeriam profissionais mais bem treinados –para não mencionar sistemas online de autoatendimento que substituem de vez as pessoas, a exemplo de sites que preparam declarações de impostos.
+EMPATIA
+Há paralelos claros, nisso, com as consequências da industrialização para os trabalhadores artesanais. Quando as tarefas são padronizadas e transformadas em rotinas repetíveis, o que resta? É verdade que novos empregos, baseados nesses processos, emergem, quando esse tipo de desordenamento ocorre. Alguém precisa organizar as tarefas em forma de sub-rotinas, alguém precisa analisar os dados. Mas essas funções não parecem tão atraentes quanto os empregos que substituem, e muitas delas também podem vir a ser automatizadas no futuro.
+Como muitos dos que pensaram sobre essas áreas, os Susskind descobriram uma qualidade que parece unicamente humana: a empatia. Mesmo que as interações humanas de outros aspectos do trabalho dos profissionais sejam eliminadas, eles sugerem que pode haver um papel a desempenhar por especialistas em empatia, capazes de cuidar do trabalho interpessoal complexo que um computador não saberia fazer.
+Qualquer busca por algo de singularmente humano, porém, pode conduzir a certas percepções perturbadoras. Uma delas é que máquinas talvez sejam melhores que as pessoas em termos de empatia - se definirmos empatia como o reconhecimento das necessidades emocionais de uma pessoa e o consequente ajuste de comportamento necessário a satisfazê-las. A computação "afetiva", o mundo das máquinas que observam os seres humanos e analisam seu estado emocional, já é um ramo estabelecido da ciência, como apontam os Susskind.
+Mesmo quando as máquinas não estão tentando decifrar nossos humores - algo que muitas pessoas considerariam profundamente repulsivo, se soubessem que está acontecendo -, elas ainda assim estão começando a ser vistas como substituto aceitável do toque pessoal. Desde as primeiras experiências envolvendo seres humanos e máquinas "pensantes" rudimentares, os pesquisadores de inteligência artificial constataram que muitas pessoas na verdade prefeririam lidar com computadores, que parecem compreendê-las melhor do que outros seres humanos. E mesmo que a interação humana seja algo que todos desejamos, não há motivo para que a procuremos junto a um cirurgião ou advogado tributarista –muito menos um atendente de call center ou caixa de loja. Se todas essas funções puderem ser desempenhadas eficientemente por máquinas, devemos levar nossa busca de companheirismo para outro lugar.
+VANTAGEM HUMANA
+Geoff Colvin, editor sênior da revista "Fortune", também procura esperança no lado mais terno da natureza humana. Em "Humans Are Underrated", ele defende o argumento de que não faz sentido tentar derrotar as máquinas no jogo em que elas são melhores. Computadores podem não pensar de fato, mas fazem ótimo trabalho no uso de capacidades maciças de processamento numérico para emular nossas funções cognitivas. Qualquer emprego que dependa de aplicar a massa cinzenta está sob ameaça.
+A ironia aqui é que a difusão da tecnologia da informação gerou grande demanda por capacidades analíticas. Na educação, ciência e tecnologia são a carta da vez. Mas esse tipo de trabalho é aquele que as máquinas são mais capazes de copiar. Aprender a escrever código de software pode ser a resposta errada ao avanço da computação, porque esse é o tipo de trabalho que os computadores mesmos um dia farão (o que gera todo um novo conjunto de ansiedades).
+O que torna as pessoas especiais, segundo Colvin, é sua propensão inerente à interação social. Trabalhamos bem em equipe - comunicando-nos, colaborando e, sim, exercitando a empatia. Isso dá vantagem às mulheres, ele diz. Elas são melhores ouvintes e se comunicam melhor. Nossa esperança está naquilo que nos torna diferente dos processadores lógicos.
+PAPEL CENTRAL
+Mas em longo prazo, será que grupos de pessoas têm mais esperança, na corrida contra as máquinas, do que os indivíduos da espécie? A resposta de Colvin é que só os seres humanos podem descobrir como satisfazer necessidades humanas, porque eles são os melhores em identificar aquilo que interessa aos demais humanos.
+Seria agradável acreditar que ele está certo. Mas a tecnologia muitas vezes define nossos desejos e até nosso senso de identidade. No mundo do Facebook, Instagram e Twitter, nossos relacionamentos –e nosso conceito de nós mesmos– se reduzem a likes, selfies e tweets. Nessa era, aponta Colvin, empatia verdadeira é escassa. O que temos simplesmente não é um caso de pessoas dando forma às ferramentas tecnológicas, mas de ferramentas tecnológicas dando forma às pessoas.
+Assim, se os robôs se encaminham inevitavelmente a um papel mais central em nossas vidas, como poderemos aprender a conviver com eles? Na imaginação popular, os robôs se assemelham a uma forma de vida alienígena, quase. Seguindo uma lógica inerente a eles, desviam-se com grande facilidade dos desejos e vontades de seus criadores humanos. No triunfo da tecnologia, quando a automação assume o comando, o humano é muitas vezes esquecido.
+AI VERSUS IA
+Esse é o risco identificado por John Markoff, repórter de tecnologia do "New York Times". Mas em sua envolvente e informativa história da robótica e inteligência artificial, "Machines of Loving Grace", Markoff argumenta que as coisas não precisam ser assim. Ele identifica uma falácia comum. Já que o avanço das capacidades tecnológicas é inexorável, o resultado muitas vezes é visto como inevitável: tudo que puder ser construído, será construído. Mas só porque as máquinas estão se tornando mais poderosas, argumenta Markoff, não quer dizer que vamos lhes dar o domínio das esferas mais importantes da existência humana.
+Ele descreve o futuro, em lugar disso, como uma escolha. E acredita que os tecnólogos estejam fugindo dessa escolha entre tratar as tecnologias cada vez mais avançadas da robótica e da inteligência artificial como substitutas do pensamento e ação humanos ou vê-las como ferramentas para aumentar a capacidade humana. É uma escolha entre inteligência artificial (AI), de um lado, e "aumento da inteligência" (AI), do outro - ou seja, tornar as pessoas mais inteligentes.
+Como repórter veterano no Vale do Silício e historiador da tecnologia, Markoff está bem posicionado para descrever como chegamos a esse ponto, No seu relato, os heróis são os humanistas que sempre viram a tecnologia como algo que deve ser posto a serviço das pessoas. Entre eles estão Doug Engelbart e Alan Kay, dois dos pioneiros da computação pessoal, bem como Terry Winograd, professor da Universidade Stanford que se desiludiu com a inteligência artificial e, como orientador, teve poderosa influência sobre as ideias iniciais de Larry Page, um dos cofundadores do Google. De acordo com Markoff, o Google agora está à beira de uma escolha que definirá o futuro da tecnologia –e talvez da espécie humana. Seu serviço de busca é uma das glórias da inteligência artificial, estendendo o poder do indivíduo de uma maneira que seria quase impensável duas décadas atrás. Mas agora o Google está determinado a levar adiante projetos de inteligência artificial, tais como carros autoguiados e o esforço para construir uma máquina superinteligente, apelidada Google Brain.
+INTERAÇÃO COMPLEXA
+Também é essa a questão que ocupa David Mindell em "Our Robots, Ourselves". Ele oferece uma perspectiva refrescante, em um campo que muitas vezes pode se perder em desdobramentos hipotéticos. Como engenheiro aeronáutico, piloto e especialista em exploração submarina, ele trabalhou em companhia de máquinas autônomas, e pode falar sobre a experiência.
+Se você deseja compreender de que forma os robôs mudarão o nosso mundo, ele diz, estude os campos em que eles já foram conduzidos aos seus limites: a exploração submarina ou espacial. Nos exemplos de Mindell, os robôs não são "o outro": eles respondem aos seus controladores humanos. Até mesmo sistemas supostamente autônomos e completamente automatizados incorporam os valores que lhes foram atribuídos por aqueles que os projetaram. Se desejamos compreender os robôs, ele diz, precisamos primeiro olhar para nós.
+Está muito bem. Mas a busca por uma resposta humanista à ascensão dos robôs enfrenta dois grandes desafios. O primeiro é a dificuldade de administrar as interações cada vez mais complexas entre humanos e máquinas. As máquinas são nossas ferramentas, mas talvez já não sejamos capazes de controlá-las.
+Mindell descreve um exemplo cautelar. Em altitude elevada, sobre o Atlântico, dois pilotos inexperientes da Air France se viram apanhados de surpresa quando o piloto automático se desativou e lhes devolveu o controle do avião, por motivo completamente rotineiro. Eles interpretaram incorretamente a situação e causaram o estol do aparelho, que caiu no oceano com a perda de todos que estavam à bordo.
+DESAFIOS
+Esse problema da transição de controle entre máquina e pessoa está a ponto de se tornar muito real, para os carros autoguiados. Em sua primeira encarnação, eles não serão inteiramente autônomos. Manterão o curso em vias expressas, avançarão aos solavancos nos congestionamentos e se estacionarão sozinhos. Mas quando as condições de trânsito se tornarem mais complexas, eles precisarão de mãos humanas no volante. É difícil ver como um ser humano, com a cara enfiada no celular, conseguiria responder em tempo. Diante desse tipo de problema, a resposta é projetar sistemas que prescindam completamente de pessoas. Isso é o que Google decidiu fazer com sua grande aposta em um futuro de carros sem motoristas. A motivação para construir máquinas que nos substituam em lugar de nos melhorar é compreensível, ainda que torne o ser humano irrelevante.
+O segundo desafio é econômico. Não é tanto uma questão de tecnologia mas do sistema sob o qual ela é projetada. Se o retorno sobre o investimento em um processo plenamente automatizado superar o retorno de um processo que combine pessoas e máquinas, substituir trabalhadores por tecnologia é o óbvio ululante. Pedir que os tecnólogos pensem duas vezes antes de agir é muito bacana, mas os incentivos estiverem pesadamente distorcidos em favor da automação, o que os levaria a hesitar?
+No entanto, vivemos um momento que não será repetido. Mergulhar nesse futuro sem pensar duas vezes seria ignorar uma responsabilidade histórica. Como Markoff e Mindell sugerem, não basta divorciar a tecnologia do humano. Criamos máquinas à nossa imagem, e elas por sua vez ajudarão na formação da imagem que temos de nós mesmos.
+Em última análise, os robôs somos nós. Precisamos decidir como desejamos viver com eles - antes que seja tarde demais.
+Richard Waters é editor do "Financial Times" na costa oeste dos Estados Unidos
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c6348ad04cf0bcad8482f72f60d04be1f98dd2831f8c2eef0526ef6e4a396b9c",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd8915257a319295bb2b864de7b375169b80b96e3e24e95777684b65072f0e7e",
+    "mention_text": "Frank Levy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d03de154babbe72a6ed1ac1a6364230f774a081454be53f892bafa1ed959872f",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81cda8fa3ac6bddaf0bbc2cc94b9247d9207a20340838a305fbe4f8cd0a1d313",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b44f1691df4fac4291ca59e706a7bdd5674af36dc56845210b52afd2174b768d",
+    "mention_text": "Levy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3fe26fb29cc9d06aa799a493197d9174c813b5e6c4d54cb6ed1fa5f4e5af4a2",
+    "mention_text": "Daniel Susskind",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4a125d4d6791336a8371550c0de43328c124ade4b55798f9fba62c6ade5ad63a",
+    "mention_text": "Richard Susskind",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5021be74b3042e9dd0efe6c76a1514544c117286ff1ea39f21230c7020cb99f4",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3b6e0e18efb85a5a85eebf4f7e4e64bee3db5b431dc21669edddc07a8be6383",
+    "mention_text": "Susskind",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "628572c1712438dc3897abb270271ff3717b04e559346aa3efca44f776e0d4a0",
+    "mention_text": "Susskind",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10a62cc27665af833fdee258266c26d9af723cd11198fd55b381933843c5ebe5",
+    "mention_text": "Susskind",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c694f98c0388b9af641c82bbdb3ba7c9d0f6a86ffb91f80ddd79f077e56ffd5f",
+    "mention_text": "Susskind",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "832d190fe37125828497c1cd81cf91d9c735dfdb0c69ee11548031043927bf33",
+    "mention_text": "Geoff Colvin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a0b9f6e270a538292d6bfb40c69e87bd5ffe02a23f94f0b9c131956bcd23bd3",
+    "mention_text": "Fortune",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f750cd099c44207cea28c02c6d7fc46bb15cd40b369b5c70dedc6d7c6bc17e4",
+    "mention_text": "Colvin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60f0f2e199f8a8368d50947e59e84a78f4107ca492a30725b1e5e373f3df65fc",
+    "mention_text": "Colvin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a46b3b2c7c44227310dcbae1a14c1ca323a1201f6589c66081466d3a75ddeeb3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88e597e7e9dc266eb475713d445ba3e531048bca6f45ae47a0204abf88e1d678",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57551e5ccbb44e2ea12da1e380afcd4a20915cf9ff4b87e13de4ca8deed42673",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3a26d20357555cf51c1f5155b77eb421249b234e34d5bd20512002edfaa0ebe",
+    "mention_text": "John Markoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b21032fe71525b35464a727592fb45f1a8a732af73a6c9fd4605d704a514ab02",
+    "mention_text": "Markoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee9643dbb9bdebbc4ee92f1168b3c64e90b495281daf5d524e279c17749cb6d1",
+    "mention_text": "Markoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3031b194b0f59fa2a2c5fbd3eb143c39e6be4c3f21f189436276d3cd08f4c5bf",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e6745a1fb2d7f62701f902442f5bd899aad90bf6515ba4efae1e5093560d287",
+    "mention_text": "Markoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbe166cf4bf04468fff466367c9d88a47b05c0dcc222d81eaefa42303596c3f4",
+    "mention_text": "Doug Engelbart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eccec7823ce75921940b2e8e456b27ca48329646cdd2a545815e61c78499358d",
+    "mention_text": "Alan Kay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ba25cbf59caa2701462f1ddca3eaa636ce9108355a383cb116bca0d9285c3255",
+    "mention_text": "Terry Winograd",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ac02e3a59fff17e2bbba4e413b619ba7e69a3d056b23564625f5cba6e2e4893",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f37d88b85e45394c0d0bf02ec250c04883820db26190338b00f34ab881876c70",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28ded02dc9622b0c0df5c6d4c76b45d2943a5250acce1a499c09f9f3b9b582b6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb8c507cf54bf2ccce2f0d4f4da1a6276de05c3086f075d060031ab5ce64ecf8",
+    "mention_text": "Markoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e001ee88ae29cf8ccef72cf7156326540258a67a95ffb07c808ff270848d6cd5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9dc9191cc893961df3ba5b5b574c468b66d23fc7b6e66975c928a9feed2ee71d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e666e10dd215b7178d5794f33a846befbb231c287abe5307db71c714e897000c",
+    "mention_text": "Google Brain",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f75b4d4bcc6ceec68b53956e9d70e098b3ba4173e7e1a1b49c9d9c4ff6a2f02",
+    "mention_text": "David Mindell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c9f157831d0be0d14d05972d747b38ea4b0e6ecc1d2b3dbd35330becc94f171",
+    "mention_text": "Mindell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbf2bf8f6d4057dda04bb72ecfdf199b4f820cd8192ba0b25c3f6644e9439ef1",
+    "mention_text": "Mindell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9fc38d70df51b8f6f9a048e779661486059e6e5d8bfd42ff4180729f99642b4",
+    "mention_text": "Atlântico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a92a5f0cf6028e23ef1169f9889f3eb3fa9cb952bf6bcf529c0d93f6b5b58454",
+    "mention_text": "Air France",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc1395bc42faaacfde904c3cca5aa690f241899fcf9b5e45e55ea6a035877dbb",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fca41c8f6bed305d10482ff6b1df9895e3e60e25dc065e4156b3fa3361790e8b",
+    "mention_text": "Mindell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48f3fa6540f226871aa655a79aa6800163e1c8c7c955408d2d3869d85b0e14d0",
+    "mention_text": "Richard Waters",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4521f743f796d9620205152f9ae019317100ea25f7db7fbe2647f6d7e0858a0",
+    "mention_text": "Financial Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7bd4e1d0b097246652215393becefe92169029584c110477f9fff686932468a",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "951bc50c43bfe02b385bea04103cde3f08686cfa50a56f828849e6279ad49df6",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,405 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8e1ff5f66c3eaa90c9adcb2b1476afa4292c8e5695514296a5919abaef9c98eb
+
+TEXTO:
+Negócios com a China, exercícios militares com os EUA
+
+Há uma semana, de Xangai, a agência Xinhua noticiou que, ao receber o chanceler brasileiro, o presidente do banco dos Brics anunciou a abertura de um braço da instituição no Brasil neste ano.
+E o ministro Aloysio Nunes disse que o banco, sediado na China, compreende as necessidades e o desejo do Brasil de maior proximidade.
+Por outro lado, no final da semana, da base Shafter, em Honolulu, o jornal militar americano Stars and Stripes noticiou que “a China está fora, mas o Brasil está dentro” das operações navais programadas pelos EUA no Oceano Pacífico.
+Washington desconvidou Pequim dias antes. E “será a primeira vez que o Brasil se junta aos exercícios” Rimpac, como são chamadas as operações, iniciadas em 1971.
+Paralelamente, o ministro americano da Defesa “avisou que haverá ‘consequências muito maiores’ no futuro”, para além dessa “resposta inicial” às movimentações navais chinesas na região, segundo o Wall Street Journal .
+O WSJ também informa que o Google decidiu, após revolta de funcionários, “não renovar um contrato” com o Departamento de Defesa dos EUA, pelo qual ajudava a “identificar e rastrear, por inteligência artificial, alvos potenciais de drones”.
+Porém “o Google segue na concorrência com Amazon e Microsoft por um contrato multibilionário para levar os dados do Pentágono para a nuvem”.
+Uma semana atrás, o South China Morning Post, de Jack Ma, dono do Alibaba, e o site americano Politico anunciaram uma “parceria inovadora” —visando “ampliar a cobertura especializada dos laços EUA-China”, segundo o SCMP , ou “iluminar a relação dos EUA com a China”, segundo o Politico .
+E agora o canal estatal de notícias CGTN passou a contratar 50 jornalistas em Londres para lançar operação até o fim do ano, informa o HuffPost .
+Com o enunciado “Brasil, o gigante paralisado”, a maior rede da Alemanha, ARD , destacou os efeitos da greve dos caminhoneiros, enfatizando que “os preços no país aumentaram visivelmente” e a expectativa é de uma queda de meio ponto percentual no crescimento. De maneira geral, “o clima no Brasil é miserável”.
+No New York Times de domingo (acima), “caras frescas enfrentam a velha guarda no Brasil”. São “empresários, executivos” e outros que pretendem disputar com “as duas facções” dominantes nas últimas três décadas, “o esquerdista PT e o mais conservador PSDB, ambos mutilados pelo escândalo de corrupção”.
+O jornal destaca o RenovaBR e o Agora, que “fechou acordo com PPS e Rede para fornecerem plataformas para candidatos não filiados”.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c6dae13c9a4720d955d32e31f0fd0a61ea45aa7d64fa7b3f878d0b60e2c40bf1",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7597a28a41195ce84677036729ba124d60348e70c4dbb363630186e59c500436",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "adc1f38f93a03c98d85daffd5ea8d5b2fdfb7b64c04ddb067be4fddf06ac8c1a",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea4c3719f10fec35d20145ca18a5f4e057d5858179c6665df69994c2fdf46e3e",
+    "mention_text": "Xinhua",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9a0acec721aafee43509a343dc335f15f6008eeb975937f646f1f0957246790",
+    "mention_text": "Brics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9310a4f89983644b709217f55940d9c0f46a92a1d0b13606ad11bf6c717818b5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d4b7f1f6a2007758a626d56d50920914c140ae4ed93c74c43560c23f27721c26",
+    "mention_text": "Aloysio Nunes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "692311b7b5c55f208ad86bfe12f36ee08da45ec7731f8142a96e08986ed8d82d",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4678368e153e9823d9980d313bb2b838791c4657277a03b3343d9a75f62f6819",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f4252167414f0413e9de4135303709bacfe5410574e69b550c676f52d9477910",
+    "mention_text": "Shafter",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aeaffadb2280b03ed00bb8ca81800acd69887c8b0a617deb131d45be9a8f9578",
+    "mention_text": "Honolulu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07b848889788a8461ec0178c1d9db3e518668bba959e506aaf7321a37593ed31",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "592b94a7f483679951f70e99f04da0f4ef5540fde7be004338f7b923a30fea27",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e543099941dcb3cec03c0d0ca05b4ccc82d015eaf4db2d5f6a26c2128d8e96ca",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d336560f8ff5f10969958f5d9fd073a0c2df960ed396bd6f048e7e6944cb19d8",
+    "mention_text": "Oceano Pacífico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7f5bcd4d2511a8660b777a5ae507819340effc265b0f954c6e03e23b78012cf4",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c9c51e20eaa3271437c585091fd88d5acb63f7547a218ec93b14b06711c87a9",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d477de4c970adf99273f2281be9466eeea61e8dc1db07c4a981b937d2ec479c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88c408bd6baab1fe23988fe2ca34071fa236ea50fb787b83b55595f98e63d7e6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b271331e27b1758a3e5a200944e373f35f83b99d8edf89b586bd9a06ac97b144",
+    "mention_text": "Departamento de Defesa dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "007b4e95b882ad9c743510b0a9e0b75d6e5705076a9344df5e5ea1558140df41",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d7139eb6ce3b797c10073594efacdea7211e70c7bfdad5027e217017dce12ca",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "740139c0b7830ccec32ef3c2cc0a0681a0b074b28e2bc7ef6fe9fd97a829e5eb",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "825513a62716ef015ece5fafc4f68f794f80b8180372bf76e30ca2a7ee154c5c",
+    "mention_text": "Pentágono",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "278ffd67a5c90fce18e7b16f239ade0db4d28f086addeadca26994b3ff0101b3",
+    "mention_text": "Jack Ma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43096e3639e765d1d9586ba09b299122b2860429c3123c67f75dada2eabd1ab1",
+    "mention_text": "Alibaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16cff7820d077ae056e9c6be88443eeba080f3fd07d3240d5acc9f893c1d668a",
+    "mention_text": "EUA-China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b1bb893359de7a3fbc342a23b163c8c486c589bfabe2f55f612d510f615ef99",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a99bcac91abb2a305790ca6ea57cac737f3279af6bbad0307af36908d1544f2",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0b03628dafc62b879dfd4025b29a5435b6a5a09bf886d9393aec1b677859948",
+    "mention_text": "CGTN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15313c2cd84398947876ef861a9907d4840b2f40860419fd1d27a2086ec1e993",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f70fedf92f8dce636392fe2d1e5d7e6eac83c67ac672c4d7781bcb176d144a22",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "500519824488b99d65f24cbbb9bcb81f52706b2be200b5c180cbfc09ef296872",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79c9b73a8b7fb0d5d9c63a0163610b9148293d78306b94c13bb3a088a5e8f207",
+    "mention_text": "ARD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fade5703be48db055c291c2f05b967df726911f0bf1d33d5c726b71e7606b430",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5b6a73ac809a9085a9c8564ffe20776a9e812de421233f3bc8f6a833eafd519",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d4d6bd78904c73974cf94f0a83f4320ae545748c42c65926a3ee56f3ae25d9b5",
+    "mention_text": "PT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fba8c0822c0dc41b1555545e29cb7db68640d43fdcb49d19a88c71abaddbb754",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "383f439970d0c1aa74dbda84e7fd901cfadd7f3ee7ab44163b752989283b14e0",
+    "mention_text": "RenovaBR",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c726dd820017f548bedcc711c0723df54edcad289a2a04a3a1361d64fc6713e7",
+    "mention_text": "Agora",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "489b40b1b8fdfdac1036071be140f28f29eebaf6caa63730a48fc1ac9e4b0c56",
+    "mention_text": "PPS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac74e2e1646d4ff29b2760ea7cdbcf07c201330d43758712bd25d195eae4f79b",
+    "mention_text": "Rede",
+    "categoria": "ORGANIZACAO"
+  }
+]

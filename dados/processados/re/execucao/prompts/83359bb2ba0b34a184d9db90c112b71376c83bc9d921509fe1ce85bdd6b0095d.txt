@@ -1,0 +1,406 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 287561908ed5bbb161d608efbaf0b2ba72742297be495fc2cbe8b00f9df8df54
+
+TEXTO:
+Físico diz que emoções poderão ser 'copiadas'
+
+JOSÉ LUIS SILVA
+ESPECIAL PARA A FOLHA
+Tudo o que o homem é, pensa, sente e deseja não é mais que efeito das leis que regem as partículas físicas de seu cérebro. O homem é dominado por seu cérebro. Essa é a síntese do pensamento do físico, matemático e filósofo americano Douglas Hofstadter, 50, do Centro Para Pesquisas Sobre Conceitos e Cognição da Universidade de Indiana (EUA).
+"O cérebro é o dispositivo físico responsável pelo pensamento", afirma. "E, uma vez que as leis da física não são místicas, meu próprio cérebro é, no fundo, determinado pelas leis que governam as partículas". Materialismo mais extremado não há, nem talvez possa haver. Se há espírito, ele é idêntico ao cérebro.
+Daí à idéia de se reproduzir de modo mecânico a inteligência humana é só um passo -ainda que previsto para se realizar daqui a muito tempo, de modo gradual. Hofstadter não hesita em dizer que, se um dia um robô humanóide vier a existir, os sentimentos e as emoções nasceriam, de modo automático, como um efeito de sua complexidade.
+Na imagem de Hofstadter, os afetos -aos quais o homem sempre se aferrou como prova de sua singularidade entre os seres animados ou inanimados- surgem no momento em que uma criatura qualquer passa a saber que existe, a ter consciência de si mesma entre os outros objetos e seres do mundo.
+Hofstadter nasceu em Nova York, em 1947, e foi criado na Califórnia. Segundo diz, o nascimento de uma irmã mais nova com uma lesão cerebral grave e irreversível foi decisivo em sua opção pela investigação do cérebro e da mente.
+Graduou-se em matemática na Universidade Stanford e doutorou-se em física na Universidade de Oregon. Depois, seguiu para a Universidade de Oxford (Reino Unido) para trabalhar com o filósofo da mente inglês Gilbert Ryle.
+Há 20 anos, cria modelos teóricos do cérebro humano, a partir do que se sabe sobre o funcionamento dos computadores. Seu último livro, "Fluid Concepts and Creative Analogies" (Conceitos Fluidos e Analogias Criativas), descreve os modelos criados nestes anos.
+Escreveu, entre outros, dois livros que se tornaram best-sellers nos EUA, "Gõdel, Escher, Bach" (a sair este ano pela editora da Universidade de Brasília), e "The Mind's I", livro de contos de ficção científica escrito em parceria com o filósofo Daniel Dennett. Hofstadter falou a Folha, por correio eletrônico.
+*
+Folha - O sr. acredita que a mente humana pode ser replicada por completo de modo mecânico?
+Douglas Hofstadter - Sempre percebi que o cérebro é o dispositivo físico responsável pelo pensamento. E, uma vez que as leis da física não são místicas, meu próprio cérebro é, no fundo, determinado pelas leis ou regras que governam as partículas. Isso significa que, em um sentido teórico, meu cérebro -e também minha mente, minha alma e minha consciência- é um efeito de leis regulares. O que quer dizer que ele poderia ser, ao menos em princípio, modelado por um computador de suficiente complexidade. Mas penso que temos um caminho bastante longo a percorrer antes que nossos modelos computacionais estejam apenas remotamente perto, em complexidade e sutileza, de nossos cérebros.
+Folha - O que é próprio da mente humana e ainda não foi alcançado pelos modelos computacionais?
+Hofstadter - Assinalar padrões ocultos, extrair essências profundas, formar altas abstrações, fazer analogias sutis -isso para mim define o nó da mente humana. E é isso aquilo sobre o que nós, em ciência cognitiva, deveríamos estar focalizando nossos esforços.
+Folha - A dor pode ser replicada?
+Hofstadter - Acredito que, quando os sistemas artificiais forem complexos o suficiente para passear pelo mundo por si sós (como fazem os animais), dirigidos por seus próprios objetivos, então, como nós, eles irão ter a experiência de frustração e satisfação, dor e prazer, sofrimento e alegria.
+As emoções irão aparecer de modo automático, como uma função de suas complexas auto-representações. Quando os sistemas de inteligência artificial (IA) tornarem-se ricos e sofisticados o suficiente, então a auto-referência inevitavelmente entrará em cena, como pela primeira vez pensou (o matemático e lógico tcheco naturalizado americano) Kurt Gõdel. Neste ponto, em minha visão, a consciência começará a aparecer.
+Folha - Como o sr. vê as críticas feitas à IA pelo filósofo John Searle, segundo o qual só organismos biológicos podem pensar?
+Hofstadter - Em sua insistência em que somente cérebros orgânicos têm a "coisa certa" com a qual pensar, Searle é tão tolo como o grande pioneiro em IA Herbert Simon, quando ele afirma que o Deep Blue estava pensando enquanto jogava contra Kasparov. Ambos os pontos de vista são, para mim, absurdos, embora opostos.
+As pessoas querem acreditar ou que computadores já pensam, ou que nunca irão pensar (ou ser conscientes, sentir emoções, etc.). Mas essas dicotomias simplistas de sim/não são apenas pensamentos carregados de desejo.
+Folha - Pode-se prever quando as máquinas serão inteligentes?
+Hofstadter - Creio que os modelos da mente irão, aos poucos, desenvolver um tipo de inteligência, de autonomia e de auto-referência genuínas. Talvez isso se dê tão devagar, que não teremos consciência de que em algum momento eles ultrapassaram um limiar mágico. A partir de então, poderemos chamá-los conscientes.
+Folha - Como o sr. vê a relação entre a IA e o cartesianismo, que considera a alma como uma substância distinta do corpo?
+Hofstadter - Não é uma idéia muito boa. A IA vê a mente como um efeito muito complexo de leis físicas, não como algo externo ao corpo. O cérebro é parte do corpo. Ele é composto por um fantástico número de "partes móveis" -os neurônios e suas partes menores. As leis que governam essas pequenas entidades determinam de modo indireto tudo o que somos, sentimos e pensamos.
+Sou uma "vítima de meu cérebro". Quer dizer, sou determinado por uma estrutura física sobre a qual eu mesmo não tenho controle. Nesse sentido, sou "dominado" por meu cérebro, mais do que o inverso (eu poderia ver minhas idéias como algo que "dominasse" os elétrons e as outras partículas em meu cérebro).
+Folha - Como a IA irá modificar a vida cotidiana dos homens?
+Hofstadter - É difícil dizer. De modo gradual, as idéias da IA sempre terminam em produtos. Suponho que, devagar, encontraremos nossos dispositivos tornando-se cada vez mais parecidos com agentes autônomos que tomam suas próprias "mini" decisões -exceto que o prefixo "mini" irá tornar-se cada vez menos válido. Até que um dia, surpresos, nós nos encontraremos rodeados por "seres" que nós mesmos criamos. É como a garota Gigi, que, enquanto seu amigo mais velho Gaston não estava olhando, tornou-se, da noite para o dia, uma linda mulher.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c772d51041db3ac07fdd828a19d3c493f2b81ac70aa314c3bd4740f338b6d0be",
+    "mention_text": "JOSÉ LUIS SILVA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a5e94bdc39e9b17570ec6c29aeb53f2d9a85404039ea261bee6e9f178779e8f",
+    "mention_text": "A FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98e136c50e0342fa46be8cfb84b4f802ec35403dd01457a2ea451404dd43e791",
+    "mention_text": "Douglas Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51df2b9f4ec20ca867dfa4c49b10168868bf7fa1be0794eba363a0451fa24525",
+    "mention_text": "Centro Para Pesquisas Sobre Conceitos e Cognição",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb31f4c2f109d1989b1870ac0bced3e6a5c6b21f4f6c23bee1b14d62283e2fed",
+    "mention_text": "Universidade de Indiana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edf82dc80673576538f4f1142db97ba151ca443a12466e828f03f4580317053b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc95c0696ada60c615a7993ff232c2b74e2a2c123c332572c36321d9131df513",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ad4fd479f13e0a37c6b8b8ddbbd51a2e5181233c85bbeb6ecce282f09ff45c5",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52a21095bd6e7e4b7f51d7c99b6043d06ccf6b0b17bf98f76fd79a6b9d5afcf7",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd08309ea3c49cfd451247f41e1f2396c5c907fb40f512ba2c0c1dec18b465f2",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8e35be3888a11f23cbb87bc98416799749fe6af2994e15c2f734ad5658a940cf",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "61b03b7133d84115811e542a019b82760f91902e7902bf47037bad3b017a1ebe",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86b3455bb805ff6fe9512a49deae423357adeffde2a3b8f0d81bf025cecdc3f6",
+    "mention_text": "Universidade de Oregon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b653147c8180be01eaa04b1576255c3a0f9a9af1a6ef6c095cc0409fef71d87",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa22b2cc24bc9dfbb8cbe35197c19ff90fa37775ae12331fe2e7d3e388f78948",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b160bc8866f9b4377c7dda2515c3b32380ce1f776223ab2c5d2377b29b06115",
+    "mention_text": "Gilbert Ryle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d09116ab57dcb1792a345050b5b973e9157175dee57a8449d11ba426fb72ad66",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c808894466cce345d14ad614394ec80e9877cbbf85f286c2891ede9d03fbff04",
+    "mention_text": "Universidade de Brasília",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43fab1c8f35de8eea6eb5cc72c89e24243a917c7c4a3a96bd0071e203b926012",
+    "mention_text": "Daniel Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "93de2d806980d52d8733ee77983bc58dc3b81eaa2a980bce618b195b46fbbdc6",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5a640c30e18a00fec66c9d70e04130d2894f05a42d650f06c782d56e8537813",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd4d42aba279e633d0b8c743465f5a4b2a0b5e2433284e1e44e3d16082b03bae",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed06d1993d348a4bcc1871872d04258ec3b07483bd87939d68e0309ae5fa311e",
+    "mention_text": "Douglas Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2378bed231723818088d9ae22f309cb75b8b7f24bfca74f1662869361756f906",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54b189ceafc43088f3edebe63c02137fe551a1400b01a02ab9cc37844eabb004",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0bf1856774b3b8fd443a3a702461c50b4aa7c6f260cec33cbc802b22be3f2cd6",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb87b1f76a2a159ec47bab695646ae9006f4cb839b8b327b21ef22bf208a1359",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dcd80fa045fcead9b703962c71860469ea206db2e9da5d4b4e1b502545c00650",
+    "mention_text": "Kurt Gõdel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "077e2f6049d042e94f678f40f72e7aa0c8dc1681f0212cd60f47d38e676f5253",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7513c7d7c89caf0014d9c7d87ce6090c8daef58d385918033955b6d04344fea0",
+    "mention_text": "John Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "edcb8697f318c27d2fe443f526439ad712bd6eaa5a0af8d03f972b7a64d74726",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76c6de1ef76c843d2b9e10a8b2f905b40f051595c3e92b05b2a60b4fff73f436",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a564af74f72cfc33374075a284ef2480130455402ed3c8b0384b717508abfebf",
+    "mention_text": "Herbert Simon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "444a7029738aa6fcba58451cbd36f03696b926c60cd484c5c2093956ded2aaea",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "858653189b254ef43e57b5994adaa5fa2e856e929f05d6bb3ce00f3b46c4ef75",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8b18601041ac49311c8765254d15ddcf4604ebb8074be7b94b87895f7761390",
+    "mention_text": "Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d1749f9969dcf1399dccd1905fc636b0a53ee8e2cce5678e1322057e18dcba8",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3be11c0a938f0f052364bf4d67d7c40dc7f0c93ff929ec05c716bdf12523acd7",
+    "mention_text": "Gigi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cee2535c39736f8684e3db5a95d14e231924aa93599f98e7a14943e542c14487",
+    "mention_text": "Gaston",
+    "categoria": "PESSOA"
+  }
+]

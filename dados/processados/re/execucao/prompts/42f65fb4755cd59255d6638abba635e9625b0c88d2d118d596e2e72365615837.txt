@@ -1,0 +1,787 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 61c9670a86eb7baf0d12640ef535c514b61b66c9799ac3a011b37792f12a0d81
+
+TEXTO:
+OPINIÃO: Google e Facebook se preocupam apenas com os próprios interesses
+
+RESUMO Autor afirma que gigantes digitais como Google e Facebook não merecem o benefício da dúvida em relação às situações comprometedoras nas quais se envolveram. Ele sustenta a necessidade de romper o monopólio dessas empresas, antes que elas consigam controlar —e manipular— todos os setores da sociedade.
+*
+Há pouco mais de um mês, Mark Zuckerberg escreveu um breve texto no Facebook , ao final do Yom Kippur, pedindo perdão aos amigos não só por suas falhas pessoais mas também por suas falhas profissionais –sobretudo "a maneira pela qual meu trabalho foi usado para dividir as pessoas, em lugar de uni-las". Atendendo ao apelo do Dia do Perdão judaico e refletindo sobre o ano que passa, ele prometia "trabalhar para fazer melhor".
+Uma declaração soturna e autocrítica como essa não é típica de Zuckerberg, um sujeito em geral ensolarado que certa vez exortou seus comandados no Facebook a "agir rápido e quebrar coisas".
+No passado, será que Zuckerberg ou qualquer de seus pares teria sentido necessidade de pedir perdão pelo que faz no trabalho? Por ter criado sites incrivelmente legais que conectam bilhões de pessoas a seus amigos e ao imenso repositório do conhecimento mundial sem nenhuma dificuldade?
+Ultimamente, porém, tornou-se impossível ignorar os pecados da ruptura que o Vale do Silício lidera.
+O Facebook vem enfrentando constantes revelações negativas sobre o uso de sua plataforma por agentes russos, que promoveram o ódio racial com o objetivo de influenciar a eleição dos EUA em 2016.
+O Google teve papel semelhante ao direcionar mensagens inflamatórias durante a eleição e, meses atrás, pareceu fazer papel de vilão quando um importante "think tank" progressista, o instituto New America, cortou laços com um renomado estudioso que é crítico ao poder dos monopólios digitais.
+Alguns integrantes da organização questionaram se o pesquisador teria sido dispensado num esforço para apaziguar o Google e o presidente de seu conselho, Eric Schmidt, ambos importantes doadores de verbas para a organização –ainda que a presidente do New America e um representante do Google tenham negado qualquer relação entre os fatos.
+Enquanto isso, a Amazon, ao adquirir a cadeia de lojas de comida natural Whole Foods e construir lojas físicas próprias, parece seguir uma estratégia espantosamente lucrativa de tentar alavancar o monopólio que exerce online também offline.
+CONTRADIÇÕES
+Essas ameaçadoras reviravoltas vêm causando inquietação no público, contrariando tudo aquilo que o Vale do Silício costumava pregar a seu próprio respeito.
+O Google, por exemplo, diz ser seu objetivo "organizar a informação do mundo, tornando-a universalmente acessível e útil" —missão que poderia descrever tanto sua biblioteca local quanto uma megacorporação. Em tom similar, o Facebook almeja "dar às pessoas o poder de construir uma comunidade e aproximar o mundo".
+Até a Amazon olhou fora dos limites da empresa para realizar-se, buscando se tornar, nas palavras de seu fundador, Jeff Bezos, "a companhia mais obcecada com o consumidor que já existiu na Terra".
+Praticamente desde que foi criada, a world wide web gerou ansiedade pública –seu computador se tornaria parte de uma rede sobre a qual você não teria controle e poderia enviar diversos tipos de vírus até você–, mas ainda assim tínhamos a tendência de dar a esses diligentes inovadores o benefício da dúvida.
+Eles estavam do nosso lado tornando a rede segura e útil, o que tornou fácil interpretar cada mau passo como um acidente infeliz no caminho da utopia digital, e não como um subterfúgio cujo objetivo era garantir hegemonia global.
+Agora que Google, Facebook e Amazon se tornaram dominadores mundiais, as perguntas do momento são: pode o público ser convencido a ver o Vale do Silício como a máquina de demolição que ele de fato é? Será que ainda dispomos das ferramentas regulatórias e da coesão social necessárias para restringir esses monopólios antes que eles destruam as fundações de nossa sociedade?
+GOOGLE
+Até onde se sabe, todos esses programadores que viraram empreendedores acreditavam em suas nobres palavras e se mostraram, inicialmente, indiferentes sobre enriquecer com suas ideias.
+Um estudo acadêmico publicado em 1998 por Sergey Brin e Larry Page, então alunos de pós-graduação em ciência da computação na Universidade Stanford, enfatizava os benefícios sociais de seu novo serviço de busca, o Google, que seria aberto ao escrutínio de outros pesquisadores e não teria a publicidade como força motriz.
+Era preciso assegurar ao público que as buscas seriam incorruptíveis, que ninguém influenciaria as respostas de uma pesquisa no Google por motivos comerciais.
+Para ilustrar seu ponto, Brin e Page se vangloriavam da pureza dos resultados de uma busca sobre o termo "telefone celular": uma das primeiras respostas levava a um estudo que alertava para os perigos de dirigir falando ao telefone.
+O protótipo do Google não tinha publicidade, mas e os demais, que tinham anúncios? Brin e Page expressaram dúvidas: "Antecipamos que os serviços de buscas bancados por publicidade apresentarão resultados inerentemente distorcidos em favor dos anunciantes e contra as necessidades dos consumidores."
+Era crucial que houvesse um "serviço de busca competitivo que fosse transparente e estivesse no âmbito acadêmico", e o Google foi criado para ser a ferramenta de internet nessa torre de marfim.
+Até que Brin e Page fossem varridos na onda de empreendedorismo generalizado em Stanford —uma reunião com um professor os levou a uma reunião com um investidor, que lhes deu um cheque de US$ 100 mil antes mesmo que o Google se tornasse uma empresa.
+Em 1999, o Google anunciou uma rodada de capitalização por investidores de US$ 25 milhões, insistindo que nada havia mudado. Quando repórteres perguntaram a Brin como o Google planejava ganhar dinheiro, ele respondeu que "a meta é maximizar a experiência de busca, não maximizar a receita com buscas".
+FACEBOOK
+Mark Zuckerberg escolheu um caminho parecido nos primórdios do Facebook. Uma rede social era importante demais para ser maculada com comércio, ele disse ao jornal "Harvard Crimson" em 2004. "Claro, podemos ganhar muito dinheiro –mas a meta não é essa", ele disse sobre sua rede social, então ainda conhecida como thefacebook.com.
+"Qualquer pessoa de Harvard pode arranjar um emprego e ganhar muito dinheiro. Nem toda pessoa de Harvard é capaz de ter uma rede social. Eu valorizo isso mais como recurso do que, tipo, qualquer dinheiro."
+Zuckerberg insistiu que não cederia aos que buscam lucro, o Facebook se manteria fiel à sua missão de conectar o mundo.
+Sete anos mais tarde, Zuckerberg também havia sucumbido ao capital de risco do Vale do Silício, mas parecia lamentar o fato.
+"Se eu estivesse começando hoje", disse a um entrevistador em 2011, "acho que teria simplesmente continuado em Boston". E acrescentou: "há aspectos da cultura aqui que eu acredito serem ainda imediatistas demais de uma maneira que me incomoda. Você sabe, seja por pessoas que querem começar uma empresa simplesmente por começar uma empresa, sem nem saber do que gostam, só para vendê-la".
+Por fim, entretanto, os fundadores do Google e do Facebook tiveram de enfrentar os fatos. Os investidores não haviam se alistado por caridade e começaram a exigir prestação de contas. No final, Brin e Page aceitaram, sob pressão, que publicidade fosse veiculada ao lado dos resultados de busca e também permitiram que um executivo de fora da empresa, Schmidt, fosse nomeado presidente-executivo.
+Zuckerberg concordou em veicular publicidade no feed de notícias do Facebook e transferiu um de seus programadores favoritos para a divisão de publicidade em dispositivos móveis, dizendo: "Não seria divertido construir um negócio de US$ 1 bilhão em seis meses?"
+A verdade é que havia fortunas de bilhões de dólares a serem feitas pela exploração do nebuloso relacionamento entre o público e as empresas de tecnologia. Todos nós sabíamos que não existe almoço grátis, uma sacada encapsulada de forma memorável em 2010 por um comentarista do site MetaFilter: "Se você não está pagando por algo, você não é cliente, você é o produto que está sendo vendido".
+CONFUSÕES
+Mas, de fato, como saber? Tanto do que está acontecendo entre o público e o Vale do Silício não é visível —estamos falando de algoritmos escritos e controlados por magos capazes de extrair valor da sua identidade de formas que você jamais seria capaz de fazer.
+Quando Brin, Page e Zuckerberg voltaram atrás quanto à busca de lucros, eles perceberam algo de estranho: o público parecia não se incomodar.
+"Você sabe qual a reação mais comum, honestamente?", Brin disse em 2002 quando lhe perguntaram como o público reagia à presença de publicidade no Google. "É: 'que anúncios?'. As pessoas ou não fizeram buscas que resultaram em anúncios ou não perceberam sua presença. Uma terceira possibilidade é que tenham visto anúncios durante suas buscas, mas logo se esqueceram disso —o que me parece o cenário mais provável".
+As interações entre pessoas e seus computadores sempre estiveram destinadas a ser confusas e, para programadores, seria fácil explorar essa confusão.
+John McCarthy, pioneiro da ciência da computação que cultivou os primeiros hackers no Instituto de Tecnologia de Massachusetts (MIT) e depois gerenciou o laboratório de inteligência artificial na Universidade Stanford, preocupava-se com o fato de os programadores não compreenderem suas responsabilidades.
+"Os computadores terminarão com uma psicologia conveniente para os seus designers (e eles serão bastardos fascistas se os designers não pararem para pensar)", ele escreveu em 1983.
+"Os criadores de programas têm a tendência de pensar nos usuários como idiotas que precisam ser controlados. Mas na verdade deveriam pensar em seus programas como servos, cujo mestre, o usuário, deveria ser capaz de controlar."
+IGNORÂNCIA
+Podemos definir o dilema como o "problema Eliza". Em 1966, Joseph Weizenbaum, professor do MIT, revelou um programa de computador, o Eliza, que imitava o comportamento de um psicoterapeuta.
+O programa, seguindo um roteiro, interrogava o interlocutor sobre os seus sentimentos em relação aos pais ou tentava estimulá-lo a reformular o que havia dito em forma de pergunta.
+O programa imediatamente tocou um nervo e se tornou uma espécie de fenômeno nacional, para surpresa de Weizenbaum. O jornal "The New York Times", por exemplo, perdeu o fôlego: "Computador está sendo ensinado a falar inglês".
+Eliza não entendia nada, na verdade, e nunca seria capaz alcançar uma percepção compartilhada com um "paciente". Eliza mecanicamente respondia o que quer que aparecesse em sua tela.
+Uma típica sessão de terapia logo se tornava um quadro de Monty Python. (Paciente: Você não é muito agressiva, mas eu acho que você não quer que eu perceba isso. Eliza: O que te faz pensar que eu não sou muito agressiva? Paciente: Você não discute comigo. Eliza: Por que você acha que não discuto com você? Paciente: Você tem medo de mim. Eliza: Te dá prazer acreditar que eu tenho medo de você?)
+Imagine a surpresa de Weizenbaum quando sua secretária interrompeu um diálogo com Eliza, olhou para ele e disse "Você se incomodaria de sair, por favor?". Ela queria privacidade para conversar com a máquina!
+Weizenbaum, chocado, percebeu o potencial de estrago por programadores que poderiam manipular os computadores e, potencialmente, todos nós.
+Ele, rapidamente, mudou de rumo e dedicou seus anos restantes a protestar contra o que considerava a imoralidade de seus colegas na ciência da computação, frequentemente se referindo às suas experiências como um jovem refugiado da Alemanha nazista.
+MANIPULAÇÕES
+Em sua épica obra anti-inteligência artificial da metade dos anos 70, "Computer Power and Human Reason" (poder da computação e razão humana), Weizenbaum descrevia o cenário dos laboratórios de computação.
+"Homens jovens e brilhantes de aparência desmazelada, frequentemente com olhos afundados e brilhantes, podem ser vistos diante de seus consoles, braços tensos e dedos preparados para o ataque aos botões e teclas que parecem controlar sua atenção da mesma forma que dados controlam as atenções de apostadores ao serem rolados".
+"Eles existem, ao menos quando estão tão envolvidos, somente através e para os computadores. Eles são como parasitas de computadores, programadores compulsivos."
+Weizenbaum se preocupava com eles enquanto jovens estudantes desprovidos de perspectiva sobre a vida e se inquietava com a possibilidade de que aquelas almas perturbadas se tornassem nossos novos líderes.
+Nem Weizenbaum e nem McCarthy mencionaram, embora fosse difícil ignorar, que aquela geração ascendente era quase toda formada por homens brancos com forte preferência por pessoas como eles próprios. Em uma palavra: eles eram incorrigíveis, acostumados com controle total do que aparecia em suas telas.
+"Nenhum dramaturgo, nenhum diretor de teatro, nenhum imperador, por mais poderoso que seja", escreveu Weizenbaum, "jamais exerceu tamanha autoridade para organizar um palco ou um campo de batalha e comandou atores ou soldados tão inflexivelmente obedientes."
+Bem-vindo ao Vale do Silício em 2017.
+Como temia Weizenbaum, os atuais líderes da tecnologia descobriram que as pessoas confiam em seus computadores e ficam lambendo os beiços diante das possibilidades.
+Os exemplos de manipulação pelo Vale do Silício são numerosos demais para listar: notificações forçadas, preços de horário de pico, recomendações de possíveis amigos, sugestões de filmes, pessoas que compraram isso também compraram aquilo.
+Bem cedo o Facebook percebeu que era difícil convencer as pessoas a ficarem conectadas. "Chegamos a esse número mágico de que você precisava encontrar dez amigos", lembrou Zuckerberg em 2011. "E uma vez que você tivesse dez amigos, haveria conteúdo suficiente em seu feed de notícias para que em intervalos razoáveis valesse a pena voltar para o site".
+O Facebook projetaria seu site para novas chegadas de modo que tudo girasse em torno de encontrar pessoas para adicionar como amigos.
+EFEITO REDE
+A regra dos dez amigos é exemplo de uma forma de manipulação muito querida das empresas de tecnologia, o efeito rede. Pessoas usarão o seu serviço —por mais cretino que ele seja— se outros o usarem. Trata-se de um raciocínio tautológico que se provou verdadeiro: se todo mundo está no Facebook, então todo mundo está no Facebook.
+É preciso fazer o que for preciso para que as pessoas continuem conectadas e, se rivais surgirem, eles devem ser esmagados ou, caso se provem persistentes, adquiridos.
+Crescimento se torna a motivação suprema —algo que é apreciado em si e por si, e não por qualquer coisa que propicie ao mundo.
+Facebook e Google podem invocar uma utilidade maior que deriva de serem repositórios essenciais de todas as pessoas, toda a informação, mas tamanho domínio de mercado tem suas óbvias desvantagens, e não só a falta de concorrência.
+Como temos visto, a extrema concentração de riqueza e poder é uma ameaça à nossa democracia por eximir certas pessoas e empresas de responsabilidade.
+Além de seu poder, as empresas de tecnologia têm uma ferramenta que as demais indústrias poderosas não têm: o sentimento em geral benigno do público em relação a elas.
+Quem se opõe ao Vale do Silício parece estar se opondo ao progresso, mesmo que o progresso na prática possa ser definido como a criação de monopólios online, propaganda que distorce eleições, carros e caminhões sem motorista que ameaçam os empregos de milhões de pessoas e a "uberização" da vida profissional, em que cada um de nós deve lutar por si próprio num mercado impiedoso.
+Como está se tornando óbvio, essas empresas não merecem o benefício da dúvida. Precisamos de maior regulamentação, mesmo que isso dificulte a introdução de novos serviços.
+Se não conseguirmos barrar suas propostas —se não pudermos afirmar que carros sem motorista talvez não sejam um objetivo nobre, para dar apenas um exemplo—, será que ainda estamos no controle de nossa sociedade?
+Precisamos romper esses monopólios online porque se algumas poucas pessoas tomam as decisões sobre como nos comunicamos, compramos, recebemos notícias, de novo: será que controlamos nossa sociedade?
+Por curiosidade, outro dia pesquisei "celulares" no Google. Antes de encontrar um artigo minimamente crítico quanto a eles, tive que passar por anúncios e listas de aparelhos à venda, guias para compra e mapas com a localização de lojas, cerca de 20 resultados no total. Em algum lugar, uma dupla de antigos estudantes idealistas deve estar dizendo: "Está vendo! Eu não te disse?".
+NOAM COHEN é jornalista e ex-colunista de tecnologia do "New York Times". É autor de "The Know-It-Alls: The Rise of Silicon Valley as a Political Powerhouse and Social Wrecking Ball" (os sabe-tudo: o crescimento do Vale do Silício como potência política e bola de demolição social), de onde este artigo foi adaptado.
+PAULO MIGLIACCI , 49, é tradutor.
+BRUNO WINNGIDO , 31, é artista.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "025677401078f5de36b12718d4dd9d9f7b3eb03727ba17731acc1dd95c45ca5e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6649fa323d4c6a8040a1547262b0157044d7740151c1174a101bec222c15e788",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a3f01546aa04625f7e0d94c166d5af8812ae671f0102a419725d1774b5a5ecc",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3205f7d6ec8a29cf2fd4b334fb675b528f2e47273bf5ddc6d95cf4094591af97",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f4b63236e8137a84af63a4816c2aea2a6f685d79161de24468227bad65f0e8f",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7552cb9cff60f9b467a47933efb6faedf218da96241fe0128ad4defc934a087",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38adf1cbcbcf41c7610236432d022606be457d882764186f6b913950d9fbb472",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "142bc1e1b39d6c2e8358ae9ea7c21649c44dff91ab7c6d4e631addf3d7d53e54",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be7e3e7e5d3048b26570e08144c4b52838473d5b950acdbc955156c8cb7b4e4e",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c25316c03342f2ad06e51135b7257a7388d5bdc420e0206c6e1a74cf7244a677",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c0e54448487aa12b13e5b62d071430c7bcc3a66735ea0b375bb5bbc5df4e191c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70954775c34b6de30bca410cafa6e712be312c7b9d1ed89ae5e9934c7fe87439",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c17602890d354f90c8be6185f6f287c1bcd8efdae4a2de24505d62d9c25f2455",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d72ec11eb3c2e2b361ff3245f2e9738eeb44cace87e4818508271095485e3fe5",
+    "mention_text": "New America",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a947bfd21d240fb982153264632914b887b5373a384425b2d3b229c6a2fefb2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38934abf95367eceded239b2c92ad13876acd0db04c74fbc9d3eace8e9bd66df",
+    "mention_text": "Eric Schmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f75f2b9b486f2e58dfb3d6d3a9a7f9401d077c3770e7cf97c62c0724fd29410",
+    "mention_text": "New America",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "364ef26688f0c935073d7ac59a4547b979c9efecaf6de331cf25bb481f0fa1e5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd3c8f770e666d1947bee5df5cd3fdc8081f7d43d8899a884f19556591c99457",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a7f02056f86b82f6b0d8ea3c7a1241ea71070583e1e5eb0ec259875c5b05060",
+    "mention_text": "Whole Foods",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e29756932863daff00be7077b9faba2d924b47e65c3b64ed22e6df1aaab55c3c",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2134759002994ee8e704c2de92be5b46b5f8f004f5af52b60647ccf17268719",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1280c16958a8745244558e11448403f3c37021433fccc90bf246cdb7dfb3a339",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "867a1b68715ec083a33e6c78c99f91f001d663fd9bd8c2e7e4e650577c0c2fff",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ffca29d05c7438f894a3801527bd60b18075f12eacee358fb04870c94779fc52",
+    "mention_text": "Jeff Bezos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65864a21f313a52e87a5821ddd39a547f64667e74a29334eac821ffd4cd9c71a",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aea8688098d52975729a036cef974754ecccb2d8fadae4e770e58899b816ee93",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b15b0d20459e80b5ab604d8ff6458b354bfac99631922c43202c45c9eb471cc3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f13eda8dafa8a8bfdf5793f5f18089299a2b40a32e74496652dc9f05ab27b93",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63028d4070c0149533f9854b9add74c155259aa6cd42f1a1c1a7b8b9e86515fe",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea0f72ea65c3d9fedc70b779dc6c7fdf292a32fae2b9197e91f16a22abbadce6",
+    "mention_text": "Sergey Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b5ce37bb4798c970f98866657be17f59cce6ff8924dbe4ad55deeafb3c5db22",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5da83962372e15d52f99a12ba573d8bffaaf6fa0505b764b204c49e6fff50cd4",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7d94f1453ae3aa2573168af451ddead0a3906272efe913a9eff21682efe887e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f2cdfa9d4ee7f3c1cae78d744635219566b82c807069d33e642ed876f8e16a5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ead34efe4e3fb8d0c7e59e933514c05548067e1e93468ac48c95c1e8cf76f070",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d8258ee37fd6953f1c72baf5f48a66111b7a7d21a0dbebb69144ecff5ce205c",
+    "mention_text": "Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "774daa0c632405159a4861c28c7276c96592380467159249a85577f4f52cd6d7",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93f5ea9c5e1d01d3f1151323a5f84860bc47ee56b2e5c34179de768a5ec50b13",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3e58e87e4c4534720873e9fc78484dda2d68dfb095350d5c6be5068079ada4c",
+    "mention_text": "Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09c68cb9ac3534cc635884279f7a8788d08e56dbbf6834fe9145452e6e7653a9",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "925047336c09f98670b9c2be36c8460dbd67e9168e7a910fa90d83fe383cbd8c",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d63ac8b5697f3538c535056fc46b5060b23dd9f6f357daf28ad90141e4f0b3ae",
+    "mention_text": "Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a639d99e44aeef9831132701ea568f22dc1f3cdede99aa0a6ec2bb947ec40a46",
+    "mention_text": "Stanford",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "58f8309077283e609e0c963500bed849e4d5a0595c6115d234454209f001be8e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6845923684fca4d4f72f501c838e41c0068672235947bb0f5184e2ae0bcbc8e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "003140bec9460e95715fcec5d863ad8d052ed7633c3062c13ad4fa346ece94d2",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2192c6f541954332075ebd8a297cda16cf4298d3e0c92c1a2a779c0d0a964b3c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ae96f18b42e1c83e55133ac2bca0f553903932e1f112b624cc50cb5ba7f5826",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f45afc62b8bc979dde50ab7d706efc51b62466955972cd7d144222cfaa1c8e81",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "835061c4e7d5ed6b0f7085a4c7990ddff7fe950a381736d8e2715d19e87d48b7",
+    "mention_text": "Harvard Crimson",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f274d8158a64ecc21f6861e4f37e1b8f27fcb1bc88dbcf21120ac1eabb9ea134",
+    "mention_text": "Harvard",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f0f38f52f9dea58e84514801a4264a4d918260f6a0c041aef5783e6fee4f867",
+    "mention_text": "Harvard",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d22690c7be625f3f51ff370e25a3beb45e3452913255e3f47f47ec3563555eb0",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b147591c90b8d660ac2b38e6dd12cb339912ca2c2b0e5a48ff1986302fe81e59",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c73d7f3fcc8f96514ad233b50e4f4c1d3d82b277e47cc3ffd91470f3385d5e8d",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ac7e8165b5325d660034e892b40679b59e0f1d77c636b090def8184ef9ae44f",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d81836c87cc2b304b8f6717323d9a0ea3d941d1e003754e7ca056f730bce5694",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a1c903c6b7f130bfb0f986cbea8c78df2d98f82278da8f77b80829c740bf0998",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4155d55454d4651e18ca5da1ec0e4918e5f9b7c34f7f421903ff410d31febc33",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19c2ecddd741291115929e649efc4e5a0ba9ffdf0490811389785d55cc2c0238",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50bd1ddb4f291697692e12bac836b3ee695778dfc732f799ffcfa3e87bbc2f0c",
+    "mention_text": "Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f8e8ec1bb858be69ed79e5006af0ced9bb159808a4cfab43be426c87eddce97",
+    "mention_text": "Schmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02327ee3b692878d69cd931574c8dda7aef7d373e9099dd5caf63efc269ff0ba",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce78865cbef56d3bf6f75f6c2ef4ee97e3df411541258955e3d628e1d1e098a6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "665662cd37ebcffc66344030c64d588229b35cc32c06f0e40c37096d972e7255",
+    "mention_text": "MetaFilter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "639616be8e3229985112efa15623a8b2c7eff4f2e3f7bd3e995ff3eb73f3ba80",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53717147ed6f230571fd7499606958a454e671cc040c8d2a573eae92769f5e9e",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28cdd30d92cf8538a7783c4870aaaef4232f34974949fbe3131e3eae77d7320a",
+    "mention_text": "Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4c5245708db9add562fdf53beffd887de45ed94e5c1d77123e1aa41466fe4ac",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ae9add5cda6b3011e378c782017dc1ce5ec43eb6f84384e811675bab096bd9de",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87ceced4f9f14a5bc2653283eb70d30e577812d75090c785d5839882131bafc5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7096cebaa19e616a89c2499f1330bcd6448a919f78e2ebe7e85564352c4d50ff",
+    "mention_text": "John McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7c4519eed0d67cb42c6a89fb2cf06b5399fad3e58edb8ef584f3ab7bb3c5211",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f7d512649c982e3955d2568ff5d0b7c9b2eb2c38ec5c6aa683fdf83d0c5fb29",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2be8b632f09447be3917cdc4cc0053241b7626b9c32cdea543633b2f778fa5dc",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77eacc063e1e5ba0639e320495d91ad0f1a5ab998e12b150ea21db229976ab3f",
+    "mention_text": "Joseph Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "67f1ec040a0f4d024207f7c93c2227187dd4f7ca7e289e1c1601e498525e9bd4",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ee3dd199cd847fb4070abdc81ab7275cc531a0654be776fc51a07b90c6cdd62",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10573fbd8d9cf56559f7cef553bf27819c7f507e09ad3723817eafab784df575",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "383881588549e6e195994d333232c41519b5417b363201f242fb8b064c55528e",
+    "mention_text": "Monty Python",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "745f9668fd372703f69dec31199fe66a3832ceaa5e71713d3d1fdc2a9ab975b7",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "00405a32b5ad14e66d7bfca47bb92a41b92aad23d5ef339e166e6999d1042de0",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d762809465e1263bf10ef92c597c0fe3738a8f6d0f0847af28cc27be0c2bb1a",
+    "mention_text": "Alemanha nazista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "437ad8b7a9517a272ea79a15943b2d55dc1d3ce8541ecc4b438fb0ee818c17dd",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2572b9d3bbd2c29e679da637c57afc6a2758cc0b087abf265c94bea1b0eef46",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca79486804991611dfca333dc3579320c852db01c62e480fe6dafb7a4942e348",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0fddcf9f54b0221a48a140bc971829a538a018714014c1398c338ac55d2345b",
+    "mention_text": "McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c35a9a505f8ebca450ed2290ba75b43addb0f8ce0692f6acdee7b2e682a2946d",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "359b81a8bbae1943e34672aa4917df831322fd553ae10a82a731ba251ce5591a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9cdfb4cb8b4de9bff0f4a92216d41ae05527c0015cde9e57626a0d01f3fa7f9",
+    "mention_text": "Weizenbaum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad7c1b21576ca29a4f6e301db87003f67e51610345b3e5fc801f04dffcf65345",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96b46e805127a4706e11bb72cef1bc1f677cfc3999bd4b297fe8521709e84bbc",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6cf9cebebdc11863eed2dbff47df841f0be08ea6375a84611767e1c546cdb5c",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aaac42adaaef46302dab902e2547cb7d79e57a8c473dc2c4e82d76b4a04a6321",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4b184e71bb196f0780a743d761c3bea8948a1d36cf4db59e1e0296b080bbcc0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7876cd7a32f939435fb934c10fd29555d837d08ebb9334686272e6affdda9327",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4114ad6049c9679ea7893ddbdb3611e83d5ed9c2c86da5d61135d6c8d6bd4f3b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "895540aa096eeed74d3c23da1bced5e1eb7d88f8f4f33b1c2cbf1299de770b57",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b7b874c03db6cc24c1bcebdba62f8a877e03a0a0e61b8f944435ef68a663b488",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f900933782a40fa92a4a3021f35297d29b1e664cb76fd32ff404941b0b59ef48",
+    "mention_text": "NOAM COHEN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "185f2577c237313b8ecf819a2a1926d73dc27c3ddc1b1ab5683744c358cba77b",
+    "mention_text": "New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "100fbf55e49cc8539113aff9b2d7e77ddf3f50e8e555ad0b6a0170e64b3e5a06",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3433802b826bc4efa668119407e4581901bde86ce464f51d41a89ab4d979c8ae",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "024bba7736ad653e8122f135172dcfe84d202ff60c9ab1db0c59d0433d221acc",
+    "mention_text": "BRUNO WINNGIDO",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,433 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0dbeb7629ff28b0fdc6b4b27c37b188779bcbc83efdac67a3093d0d3368ccd7e
+
+TEXTO:
+Museu do Louvre cancela exibição de obra devido sua 'conotação sexual'
+
+A monumental "Domestikator", do ateliê holandês Van Lieshout, deveria ser instalada no Jardim das Tulherias durante a edição de 2017 da Feira Internacional de Arte Contemporânea (Fiac), que será realizada de 19 à 22 de outubro em Paris.
+Mas, há poucos dias, o Museu do Louvre resolveu renunciar à exibição da obra devido à sua "conotação sexual".
+Com 12 metros de altura, a instalação é formada por grandes blocos geométricos vermelhos de material reciclável e sugere uma relação sexual de um homem com um animal.
+Segundo a galeria Carpenters Workshop, que representa o ateliê Van Lieshout em Paris, a obra faz parte do projeto "CryptoFuturism", em que o coletivo holandês revisita o futurismo italiano - movimento cultural revolucionário que pretendia transformar o mundo através da tecnologia e do progresso, mas acabou por glorificar a violência e a guerra e terminou com a emergência do fascismo.
+"'Domestikator' se inscreve, antes de tudo, na crítica da dominação. Essa obra monumental estigmatiza a força dominante do homem, seu frenesi pela domesticação e sua irreverência diante do mundo natural. A representação sexual e o aspecto provocante de sua exibição pública são apenas os reveladores da violência e da dominação", salienta a galeria Carpenters Workshop.
+"Domestikator" foi exposta durante três anos, até o início deste mês, em um parque da cidade de Bochum, no oeste da Alemanha, onde foi aclamada pela crítica. Na França, apesar de estar prevista para que fosse exibida no final de outubro, ela não chegou nem mesmo a desembarcar.
+"Infelizmente, entre as obras selecionadas, devemos recusar a proposta do Atelier Van Lieshout, Domestikator", diz o comunicado assinado pelo presidente do Museu do Louvre, Jean-Luc Martinez, e enviado à direção da Fiac.
+O documento reitera que, "apesar de expor de forma lúdica e artística a dominação do homem sobre o planeta Terra, é impossível ignorar a conotação sexual da instalação".
+Além disso, "circulam informações na internet que atribuem a essa obra uma visão brutal que pode ser mal interpretada pelo tradicional público do Jardim das Tulherias", completa o comunicado. O local "é muito frequentado por famílias" e, perto de onde "Domestikator" seria instalada, "há um parque infantil".
+"Não posso validar a apresentação de uma obra que corre o risco de atingir a sensibilidade de alguns de nossos visitantes e peço que ela seja retirada da edição de 2017 [da Fiac]", conclui a nota.
+"É CENSURA", DIZ ARTISTA
+Em entrevista à RFI Brasil, o artista Joep Van Lieshout, classifica a atitude do Museu do Louvre como "censura". "De que outra forma poderíamos classificar essa decisão?", questiona.
+Van Lieshout se diz surpreso com o cancelamento. "Meu trabalho não tem sexo explícito ou nudez. Há muito mais sexualidade nos nus expostos dentro do Museu do Louvre do que em minha obra", argumenta.
+Segundo ele, o objetivo de "Domestikator" é mostrar o quanto o ser humano controla a natureza, domestica e transforma o mundo. "É o que nos faz humanos. Desenvolvemos relações, sistemas sociais, de saúde, de educação, de inteligência artificial, mas nesse processo de domesticação e de aplicação de novas tecnologias, também ultrapassamos e mudamos as fronteiras éticas. É nesse momento podemos nos questionar se esse caminho que estamos tomando é o correto."
+O artista ressalta que jamais quis confrontar ou insultar as pessoas com seu trabalho. Ao contrário, sua proposta era de realizar uma reflexão. "É preciso ir além do que está explícito. Antes de opinarmos, é preciso pensar. Acho que o diretor do Louvre estava com medo da opinião do público. Mas ele deveria estar orgulhoso que a arte pode iniciar uma reflexão. No próprio Louvre há muitas obras que falam sobre liberdade, nudez, bestialidade, ética. Ou seja, há muitas similaridades entre a arte clássica e o meu trabalho", defende.
+Para Cyrielle Hervé, diretora de vendas da galeria Carpenters Workshop, o sentimento com o cancelamento da exibição de "Domestikator" é de decepção e incompreensão.
+"Sabemos que isso passa uma imagem de uma França medrosa em relação às obras de arte. Mas queremos deixar claro que essa decisão representa apenas o Louvre: não queremos englobar uma ideia única e uma concepção geral sobre a arte na França", enfatiza.
+Outro aspecto em relação ao cancelamento da exposição que incomoda a galerista é o fato de o público ser evocado todo o tempo, mas não ter sido consultado em nenhum momento: "a censura se deu unicamente devido ao medo da direção do Louvre", sublinha.
+"Ter essa atitude é ceder a uma consideração simplória sobre as obras de arte. Para a França, onde a arte sempre teve um espaço importante, é uma decepção muito grande se recusar a receber peças se limitando com a justificativa do visual delas."
+Por outro lado, ela lembra que a polêmica em torno da instalação de Van Lieshout resultou em uma importante publicidade para o artista. O caso chamou a atenção da imprensa francesa e anglo-saxã, que publicou várias matérias sobre a questão. "O que é fabuloso é que, graças a essa censura, a mensagem do artista está sendo divulgada no mundo inteiro", comemora.
+POLÊMICA FIAC
+Essa não é a primeira vez que a Fiac causa polêmica com as obras selecionadas para suas exposições em espaço público. Em 2014, a gigante "Tree", do artista americano Paul McCarthy, exibida na célebre Praça Vendôme, estremeceu Paris. O motivo: a "árvore" de 24 metros lembrava um plug anal.
+Depois de ver sua obra ser vandalizada diversas vezes e ser ele próprio fisicamente agredido no local, McCarthy desistiu de exibi-la, mas deixando claro a principal característica da instalação. "As pessoas podem ficar ofendidas ao pensar que a árvore é um plug anal, mas para mim, ela não passa de pura abstração", declarou na época.
+No hall das obras que chacoalharam a capital francesa recentemente, também está Dirty Corner (Canto Sujo, em português), do britânico Anish Kapoor. Exposta em 2015 nos jardins do Palácio de Versalhes, a polêmica começou quando o próprio artista descreveu o trabalho como "a vagina de uma rainha tomando posse". Dias depois, a obra amanheceu pichada.
+Na época, Kapoor reagiu indignado, dizendo que o ato de vandalismo reflete "uma certa intolerância na França". Segundo ele "o problema é mais político do que relacionado à arte em si".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2d44cd672a54479b12c72703f306bdd59b8fb662a3044fde03a5c2264fdef388",
+    "mention_text": "Museu do Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab448a52ec54066273e98ecc26582a5b8930c6d64e346721dcb9f512924bf6d7",
+    "mention_text": "do ateliê holandês Van Lieshout",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6db76dc739e76a3f624af42dd777406da26d62b2cba7f1a224dee8592b503fb2",
+    "mention_text": "Jardim das Tulherias",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bcb8a04c2070f6848d61b0e4114474acb060c0299717a27ebf16a1c0acfe0567",
+    "mention_text": "Feira Internacional de Arte Contemporânea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "923ee24dd233147ba94cbf3039e6079b8c71309684dfca44233d104afc49b635",
+    "mention_text": "Fiac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a1091845b336e5d92d2f20918f8423c383007156fa6ce8d89e2c508b7924183",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75e0269626d847985b594513fac484b87fa5d65800c0fc13d79642670c02328a",
+    "mention_text": "Museu do Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0c69951dcd1244bc093fc121506699985a2840d02130ee6e4eee4fc8d401e01",
+    "mention_text": "Carpenters Workshop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "854032fb596dc317415346843a8a878d4186210119bd1e6f0748f0651f883857",
+    "mention_text": "ateliê Van Lieshout",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "03616dd5a2084f7bdbc0dac0ed40eaf4a59493cf227feac24442cb5c512795d7",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b6c8ef26dbb70a805926501ab8aa13eef6b747087319176ef9feb3e98c74091f",
+    "mention_text": "Carpenters Workshop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b2549683a8516f5eaf2af51d2a057008e1ab5575da862a0915c5a016c98d585c",
+    "mention_text": "Bochum",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2866427b38566ff7c0d0649a307c9446bceb091744d5e35c70c2b1cf6e575963",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3178bf46d3220ba5c1bfcc0589f18e86c687607a6f2c162b9ea995836c86fe80",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d373c89b58ab7987b0f20cb0e9d68a3e5b8f97a9f19a35dad90fc860a0203345",
+    "mention_text": "Atelier Van Lieshout",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66d5fd5d5eb112a03b83ba17e84bfde9a1dcaa5430f94e245d252bc92bca9dab",
+    "mention_text": "Museu do Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d466320b79fd70e92f22b4eb4a4bfc6e3ec881ee0acde2198418ddd973f528c",
+    "mention_text": "Jean-Luc Martinez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20503ee273e9fb754a3f0485aa1c90b8554dedf5619182c32d44b6908901ea55",
+    "mention_text": "Fiac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4270cc79044716893804e7f1f8275faf848081fc1e8b1551756262652f2d7bd",
+    "mention_text": "planeta Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6404c84a527ede76540d28781090775060137b7231182c51073125cde28f1ef3",
+    "mention_text": "Jardim das Tulherias",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b0776b796d48a3b3681de906b95a780c5badfb41cde1f0bb12b23398e56eb22",
+    "mention_text": "Fiac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "453364bf2f2f73d0536b679066c5e51c906446e8041163fde599473915daa7f3",
+    "mention_text": "RFI Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09d6ba97e03b87f6a1e56bb2c3b275fd4ec9acfa9cdbcd64ab0e436934416a65",
+    "mention_text": "Joep Van Lieshout",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f540ab8aee9a16e974fc0cf75b785f456d99016a990d8bcf788417066815579",
+    "mention_text": "Museu do Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "741b1efe4bab28e03e7b5c358d5b9467f70bcf6fd6ef46af06aef422da0d80ad",
+    "mention_text": "Van Lieshout",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6849a08e6934e61438d20a4f1aaa94f9df1901a3c75db34ca83cf138336c0585",
+    "mention_text": "Museu do Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fecb331c8b904aa33e026ad3a64fd7fb64334cbc77c7a9021222b9c4f3debec",
+    "mention_text": "Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ca7aaa23b6b3ecb0d6af46537c6198389022073b372dbdee2a6a9c34bc311f4",
+    "mention_text": "Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c5fd125a8bfb5cd8d485402037caf94dca24a08c8d4cbc36fa1a1d35ca91f80",
+    "mention_text": "Cyrielle Hervé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40320750a24c81661f3a4aa67787fddc4e4405507e48d407c3d39b396235936c",
+    "mention_text": "Carpenters Workshop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1aee3f0e35dd7b53e00ed652ccb19b9b28ea60b908b6000af62352249f425129",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ab803b7cc930dd9a42def9c11c717849d64f9c925168c3b9c79b32959676ce45",
+    "mention_text": "Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7194865e7d5c12fb573e7d15ed58cc0d954b9c31c00b8baf76753bda5acbc1e5",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6adb2c51d68deb539869c6e9c9dde5f2ba458722fe1a3a12de543388868d0c58",
+    "mention_text": "Louvre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54b3dcea630daec8dbb2d51697b1b4133c23c44218297ce0ca30e6a33ab1f83d",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e28846d8defdfc2bb81a93743844b16b59772b603cd04dfe43e5fd9879ffba1",
+    "mention_text": "Van Lieshout",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be9ee57ba9945a6e511495a100fd839dd4ba0d9bdf37e6e0bd638c9b48afb546",
+    "mention_text": "Fiac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4662e59f82cb1596deb044feeed64f14a998d38a98eb7010107f674dc129cd0d",
+    "mention_text": "Paul McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5715be42706f3a8ad12fa925e47aa308d0a34e30f106102107c6bbef313e5f2a",
+    "mention_text": "Praça Vendôme",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bbb38825e71997b850a5cf9742d1fbce7a985feac25e0680f1dec3a01f42b758",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e7a7b11cc85a58147c1edacc62845c66fcc2a34f96738dfd1f4f05628ca05024",
+    "mention_text": "McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6e83289c16fbaa19645d92e23a701f16454af216ce32b292f6c0f79d010014e",
+    "mention_text": "Anish Kapoor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2a835ea4fe650a2c60497e0e9e0bd7bd31833cd64eabf8d70d155356b4b4684",
+    "mention_text": "Palácio de Versalhes",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a36490a5db5dc7e2f0760a542e5bc49e0de036def44529dc2973e47cd71dc82",
+    "mention_text": "Kapoor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "926dd6245acf46db4da2b657d1afc84d7d2810c4d119454958af80aefec7bc43",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  }
+]

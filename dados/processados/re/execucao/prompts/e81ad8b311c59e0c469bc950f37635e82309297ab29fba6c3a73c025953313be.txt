@@ -1,0 +1,476 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: fadda0f5a1bb39b9b0ae791c7b199d8d47705e15de75920a392d9b76ae6c6c4a
+
+TEXTO:
+Segundo show de Paul McCartney, ainda com ingressos, é destaque de quarta
+
+Esta quarta (27) é a segunda e última apresentação do ex-Beatle Paul McCartney em solo paulistano , parte da sua turnê 'Freshen Up Tour'.
+Depois do primeiro show, na terça, com ingressos esgotados, ainda há tíquetes disponíveis para a nova apresentação, novamente no Allianz Parque.
+Quem preferir uma programação alternativa, pode conferir outros artistas que também se apresentam na capital, como o saxofonista Kamasi Washington, a banda  Maglore e a cantora Mariana Aydar. Além dos shows,  vale conferir a última semana de apresentação das peças 'Amigas Pero no Mucho', 'Até que a Morte nos Separe' e 'A Casa de Bonecas - Parte 2'. Confira essas e outras atrações selecionadas pelo Guia para aproveitar a quarta-feira em São Paulo.
+Paul McCartney O ex-Beatle quase brasileiro desembarca em sua oitava série de shows pelo país e passa pelo Allianz Parque  com a nova Freshen Up Tour, que inclui o álbum mais recente, “Egypt Station” (2018). Ele apresenta clássicos como “Hey Jude”, “Let it Be”, “Something”, “Eleanor Rigby”, e “Maybe I’m Amazed”, e deve homenagear a sua segunda casa com “Back in Brazil”. Allianz Parque - Av. Francisco Matarazzo, 1.705, Água Branca, tel. 4003-5588. Qua. (27): 20h30. 16 anos. Ingr.: R$ 240 a R$ 890  p/ premier.ticketsforfun.com.br.
+Mais
+Jazzmin’s Big Band Formada por 17 instrumentistas mulheres, a big band apresenta, ao lado da clarinetista israelense Anat Cohen, ramificações do jazz brasileiro com arranjos próprios para a formação. “Doralice”, de Dorival Caymmi, aparece no programa. Sala São Paulo - Pça. Júlio Prestes, 16, Campos Elíseos, 3367-9500 1.484 lugares. Qua.: 21h. 120 min. 7 anos. Ingr.: R$ 80 a R$ 320. Ingr. p/ tucca.byinti.com. Kamasi Washington O saxofonista americano, um dos principais nomes do jazz atual, volta ao Brasil para apresentar a turnê do álbum “Heaven and Earth” (2018), que também tem referências de hip-hop, soul e funk. Audio - Av. Francisco Matarazzo, 694, Água Branca, tel. 3862-8279. 3.200 pessoas. Qua. (27): 21h. 18 anos. Ingr.: R$ 120 a R$ 140 p/ ticket360.com.br.
+Mais
+Maglore O quarteto baiano radicado em São Paulo segue na comemoração de uma década de existência com o show que passa por seus quatro álbuns e mistura pop, indie rock e MPB. Z - Largo da Batata - Av. Brig. Faria Lima, 724, Pinheiros, tel. 2936-0934. Qua. (27): 21h30. 90 min. 18 anos. Ingr.: R$ 20 a R$ 35. Ingr. p/ ingresse.com.
+Mais
+Mariana Aydar A cantora paulistana resgata ritmos como o forró, xote, samba e xaxado em composições como “Gostoso Demais” e “Tenho Sede”, de Dominguinhos, e “Frevo Mulher”, de Zé Ramalho. Ela recebe o cantor pernambucano Otto. Sesc Bom Retiro - pça. de convivência - Al. Nothmann, 185, Campos Elíseos, região central, tel. 3332-3600. Qua. (27): 21h30. 90 min. 18 anos. Ingr.: R$ 9 a R$ 30. Ingr. p/ sescsp.org.br.
+Mais
+Sterblitch Não Tem um Talkshow No espetáculo, o humorista Eduardo Sterblitch subverte o formato do talk show, no qual um apresentador de TV, em geral sem papas na língua, entrevista personalidades. Aqui, os convidados não são famosos, mas membros da plateia selecionados pelo comediante. Teatro Procópio Ferreira - R. Augusta, 2.823, Cerqueira César, região oeste, tel. 3083-4475. Qua. e qui.: 20h30. Estreia qua. (27). Até 2/5. Ingr.: R$ 80. Ingr. p/ ingressorapido.com.br.
+Amigas pero No Mucho Ao longo de uma tarde de sábado, quatro amigas interpretadas por quatro homens conversam sobre cotidiano, corpo, trabalho, família, amizade e como conciliar tudo isso. Teatro Folha - Av. Higienópolis, 618, terraço, Higienópolis, tel. 3823-2323. 305 lugares. Ter. e qua.: 21h. Até qua (27). Ingr.: R$ 40 a R$ 50. Ingr. p/ teatrofolha.com.br.
+Até que a Morte Nos Separe Ao comemorar 40 anos de casados em um karaokê, um casal revisita as cartas de amor que trocou dez anos antes. Os escritos dão margem a situações cômicas. Teatro Itália - Av. Ipiranga, 344, subsolo, República, região central, tel. 3255-1979. 274 lugares. Qua. e qui.: 21h. Até qui. (28). Ingr.: R$ 50. Ingr. p/ compreingressos.com.
+Casa de Bonecas - Parte 2 O espetáculo imagina eventos subsequentes ao fim da clássica peça de Ibsen, Casa de Bonecas. Na trama, a protagonista volta para casa 15 anos depois de abandonar o marido. Escritora de sucesso, ela quer oficializar o divórcio. Teatro Faap - R. Alagoas, 903, Higienópolis, região central, tel. 3662-7233. Qua. e qui.: 21h. Até qui. (28). Ingr.: R$ 80.
+Lugar de Escuta Encenado por um elenco exclusivamente feminino, o espetáculo musical do coletivo M.O.T.I.M discute, em meio a músicas originais, temas como feminismo, lugar de fala e as várias adversidades enfrentadas pelas mulheres no cotidiano. Teatro do Núcleo Experimental - R. Barra Funda, 637, Barra Funda, região central, tel. 3259-0898. 60 lugares. Ter. e qua.: 21h. Até qua. (27). Ingr.: R$ 60.
+Consciência Cibernética [?] Horizonte Quântico A coletiva, sequência de “Consciência Cibernética [?]”, de 2017,  discute inteligência artificial e computação quântica a partir de nove instalações e softwares que exploram características do processamento de dados. Itaú Cultural - Av. Paulista, 149, Bela Vista, região central, tel. 2168-1777. Ter. a sex.: 9h às 20h. Sáb. e dom.:  11h às 20h. Abertura qua. (27), às  20h. Até 19/5. Livre. GRÁTIS
+Festival Ouvidor63 Resiste! A ocupação artística realiza um festival para financiar a reforma da estrutura de sua sede, que corre risco de desapropriação. A programação conta com shows, oficinas e exposições. O músico e compositor Chico César se apresenta na sexta (22) às 20h. Centro Cultural Ocupa Ouvidor 63 - R. do Ouvidor, 63, Sé, região central, s/ tel. Seg. a dom.: 15h. Até 31/3. 18 anos. GRÁTIS
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a48fcdc1bb3efe07b207e1238b8bcdb04fb0c0170ef8649cec5e3506dcd8c9b7",
+    "mention_text": "Paul McCartney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fcdfd9202352e0e3d87b77716d30dd95fd9d29531b9e4d46041b1650694e3e9",
+    "mention_text": "paulistano",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ba796c9b5132ca935b4f16ffae9fd0d764ed0f87cbccc3975942cfa3bd2aa1e",
+    "mention_text": "Maglore",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e8e81ab5caa07dd5b9e7e61e20c75615fa5e62bb9d8b2e8c85f9e0daca15352",
+    "mention_text": "Mariana Aydar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1c9c3457b5da26bf5ae782656c87a1f0fd8597f96362f8975af6b5e5baca3b5",
+    "mention_text": "Guia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d11b5b14e78088e06f85238a3cc2020a434cb8d9c90b442028b4012ccaecf21a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "748cde685a073b1663a5fee31d93227f68bb733af06e05d209a99c6d55489112",
+    "mention_text": "Paul McCartney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9eea7f95db8d04e60ae068dfc6b38a0c19827481a9c3fcb9ccbfcc5276feb2ee",
+    "mention_text": "Allianz Parque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a70779ebad6b687acfc9ed421c68ddf4b68632c7bba3b13af5c50b640ed3dfc",
+    "mention_text": "Allianz Parque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "844324b33c6baf49f7fb46bc00fa8f688f86509d9ac69cc0a98119967798e679",
+    "mention_text": "Av. Francisco Matarazzo, 1.705, Água Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2736e7f2c461d78f205e7b67c033bb8130d81684a21c08d1fd61cbe99145bc4c",
+    "mention_text": "premier.ticketsforfun.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "199b6e5ae6490b03a9ca6d2029896b84ea24d8e3e5d63d8f49ca8e941d33a123",
+    "mention_text": "Jazzmin’s Big Band",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a23db1b1713793b6fbe8bbc7e3b6250cca65e377a8b748599a893a71aea523c2",
+    "mention_text": "Anat Cohen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca455001e80db653d843fdf54fb060cccc135db49008fcc5cce3c08d3c1c97d9",
+    "mention_text": "Dorival Caymmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd0669263af7f3f81c7426fcac3e4f4b846f651c3428c52b4d7633d4ed37e952",
+    "mention_text": "Sala São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e43589ebc12fb6dbfac4ff32f92925da2bf746a3783080eb2cf5e0d14fb01ac8",
+    "mention_text": "Pça. Júlio Prestes, 16, Campos Elíseos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "178b6e53ea7980640147a2a93b556de1c199a647a89795bdd48afe51b86876a3",
+    "mention_text": "tucca.byinti.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfb261aac54fa1ef054122b2e56c181ebba868777655fbbeae94cda8b69f9cca",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eafbcf895025d10cd285a09bfeb0db2c58575f25a906465a1ac585543223e8f1",
+    "mention_text": "Audio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a445754b8d1c065372f8c75406043bdbcce767abf43053ea9345e530486450b9",
+    "mention_text": "Av. Francisco Matarazzo, 694, Água Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "937184075c2379bbc3f773899a8a52a3f64ec609c8ff660694034ddafadfa535",
+    "mention_text": "ticket360.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9942dfe09f3822b7b71b92b71f7b3018ea1fc32af4156355a7829f023ad8908",
+    "mention_text": "Maglore",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22db75fb8e84cf34d223a6f3394bc5d4eef7c1fb439f42c6fdba44c6f0be6e4e",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94c952e83dbe2440784c8f687d8ef7c22edf69ca7fe4187857beba35878ea44b",
+    "mention_text": "Z",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c46297697ae04ea1b88e116fa8901118c21d8fd8d02738661cb062689067804e",
+    "mention_text": "Largo da Batata",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "84ae201fdf1f3bb4912478718a86b57f36e809d1a2185435216d9958425dbe7b",
+    "mention_text": "Av. Brig. Faria Lima, 724, Pinheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "49796fa6a99ad0054560207c41fa0dee990c98543a0b6fbc7600a4abb74cab5d",
+    "mention_text": "ingresse.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b70b87261aa32a32ebfc8d2164dc75a8109114ac80c3ab2ba6b1df45f23a2dec",
+    "mention_text": "Mariana Aydar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa32aeadb8e256119ffb4d2203681fac8800807cf7246b1ee0503eb0df684f9c",
+    "mention_text": "Dominguinhos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25085d1cba054a8ca8e0e05230afa2b6f1044424a71c72270dbe4488d23c7c15",
+    "mention_text": "Zé Ramalho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1fe52075fdbe3083c78ac4a2f81781b1a40be8d669ff49ee2613364afe9a248",
+    "mention_text": "Otto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8e046cdaad1a0d1afa19fd75075104b5675dee3b754840ae91d034a7db7c656",
+    "mention_text": "Sesc Bom Retiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "708de80a4d13d57f2db069a9fe7df2477c2acdcf5577aa0db9d71896a14bbd5e",
+    "mention_text": "Al. Nothmann, 185, Campos Elíseos, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "db5966450754d048a5d115c44bd9cc8d5f9f07ec81fdd1de2bb3e0e6bedfe257",
+    "mention_text": "sescsp.org.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2521d38c8274c10521566165dd466c0460e896b2e564a13d0f859ed4524b628b",
+    "mention_text": "Eduardo Sterblitch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f418da422f2caf60fbe7eed1daf0a205a56762e46a913027dd5dacd929a37c90",
+    "mention_text": "Teatro Procópio Ferreira",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e003ed4ed89eeaea7c7c07a35fd3f1694f41d2f0e1a79e41ebcc3501e9084c2a",
+    "mention_text": "R. Augusta, 2.823, Cerqueira César, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76b0b815acad2b1a15fcd92e55e524b74f873032afaea6938dcb7046e4b64ae5",
+    "mention_text": "ingressorapido.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef6b75b149424df0747851f1e39dd096dd04aa194224ceb902a81d27c746e305",
+    "mention_text": "Teatro Folha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c18ed11f1bcf8bdda81b4434834fa00e0b38a792edecbb66e331bfe11edfe899",
+    "mention_text": "Av. Higienópolis, 618, terraço, Higienópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6fffe52215569f2f3b007f73fb1e252f41d83f4baa517ad7b7141e8563daf0e4",
+    "mention_text": "teatrofolha.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6bcd0211d3cb868a1df230e7deff2493b9cea0a08cf4ff316e1f0b140ff3984",
+    "mention_text": "Teatro Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69d95bf20d71623c1402887a63a27060d82eb186374dbbbcf60825ebe94310a8",
+    "mention_text": "Av. Ipiranga, 344, subsolo, República, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b129f6a3fa8ae7660c9aa03ed172213c3714ffc3da89f424e8b6b3a72312197b",
+    "mention_text": "compreingressos.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d3205e90a8f3b1f2f3d17c4c90c00007bddb6a7b0fa706a3181d2fd5c99339a",
+    "mention_text": "Ibsen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a680532f093cd88c4143df94fd3f4ce00f809a620385fc5649d28c53011ec70e",
+    "mention_text": "Teatro Faap",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f19f1ea1ac3b5fe07d4ad8c1984fc819eb4f7923780eb50057e65e41347ad155",
+    "mention_text": "R. Alagoas, 903, Higienópolis, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a9616e1b889c61ebfbed9dfbdd923eddbb81d6cf21de2cc583898d8385d8b1a",
+    "mention_text": "M.O.T.I.M",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a1597ddee3994afeaaee9c41e2cb57c1af6391c40a4d201d284e2b6a979198f",
+    "mention_text": "Teatro do Núcleo Experimental",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44b9ae8d8fdea5a56408c80ffeaab881868f600c2eff81a1776711d18e31f6e6",
+    "mention_text": "R. Barra Funda, 637, Barra Funda, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b772000520e99dfd5962708696b4d74dd464288aaa7dae37d5e927129c2900b3",
+    "mention_text": "Itaú Cultural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2bbc593ef86d85e1b191b42489b5eeab683b41256c9a293302f0d08c42cea8b7",
+    "mention_text": "Av. Paulista, 149, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cec6ba4bca1299796402e29d03a0e6381eca5f1e9d71730a47c0a3eb2ba434e0",
+    "mention_text": "Chico César",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95dc57de6df7d3f1b11411cb6e440f54aecbc676e0e345e4f01a554ab21ef961",
+    "mention_text": "Centro Cultural Ocupa Ouvidor 63",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15689b864993d74ca7cdd60be688de3210adc6cc8a89bedf42538e68c7304cd0",
+    "mention_text": "R. do Ouvidor, 63, Sé, região central",
+    "categoria": "LOCAL"
+  }
+]

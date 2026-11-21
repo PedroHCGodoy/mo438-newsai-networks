@@ -1,0 +1,393 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e288da5f3048be412ec01b666fee1531327ba25df29b5a3f19299b1ab4a1c736
+
+TEXTO:
+Estúdios se renovam com curadoria de som para ambientes reais e virtuais
+
+A demanda da televisão e do cinema por trilhas sonoras e o interesse de empresas por curadoria musical fez com que crescessem negócios especializados em som. Produtoras desse tipo podem não ter o glamour do cinema ou da TV, mas tendem a apresentar lucro maior.
+Formado em música pela Unicamp, Kito Siqueira seguiu esse caminho. Há 13 anos comanda a Satélite Áudio, produtora de trilhas sonoras para empresas.
+Antes de abrir o negócio, em sociedade com Roberto Coelho, também músico, Siqueira passou dois anos nos Estados Unidos, onde estudou música e foi estagiário em estúdios de cinema.
+Hoje com 22 colaboradores, porte considerado grande no segmento, a Satélite prefere produzir para poucos, mas grandes clientes. A carteira  hoje inclui Itaú, Vivo, Volkswagen, Ford.
+“Em uma área tão competitiva como essa, leva muito tempo até construir o nome no mercado”, diz Siqueira. Também é preciso estar preparado para as mudanças tecnológicas, para a oscilação da demanda e para as negociações, que, segundo ele, estão cada vez mais agressivas.
+Seus projetos incluem diferentes versões para as trilhas criadas, com tamanhos e formatos para a veiculação em TV, cinema, rádios ou internet. A Satélite também é contratada para criar e apresentar ao vivo músicas em eventos corporativos e produzir para o cinema, em menor volume —é um nicho que diz não ser tão rentável.
+A produtora Lucha Libre, criada em 2014 em São Paulo, uniu sócios de vocações distintas, algo recomendado pelos especialistas em gestão: a criação cabe ao músico e produtor Paulinho Corcione e a administração e relação com clientes fica a cargo da produtora-executiva Daniela Celer.
+Após mais de dez anos de experiência em produção, Daniela chegou a empreender como dona de food truck, mas voltou ao audiovisual há quatro anos, com foco em conteúdo para marcas.
+“Tivemos um crescimento acelerado, hoje trabalhamos com as principais agências do país e clientes como Chevrolet, Hyundai e Banco do Brasil”, diz Corcione.
+Em 2017, a Lucha Libre fechou uma parceria com o estúdio americano Drac, do músico Matt Sorum, ex-baterista do Guns N’ Roses. O acordo permite que façam mixagens ali e facilita a contratação de músicos internacionais. A produtora já tinha parceria com um estúdio em Berlim, de olho no mercado europeu.
+“Em um primeiro momento, a parceria funciona para trazer o know-how e a qualidade da produção internacional para a publicidade brasileira”, diz Corcione.
+O momento é favorável para o tipo de negócio. “Apesar das incertezas e da sazonalidade do mercado nacional, estamos vivendo uma fase de crescimento. Em quatro anos, conseguimos quadruplicar o faturamento”, afirma o empresário.
+A produtora, que tem hoje 14 funcionários, tem expectativa de crescer 25% em relação a 2017. O montante faturado, no entanto, não é revelado.
+A empresa tem investido no mundo dos games, criando projetos de softwares de realidade virtual e jogos em parceria com o estúdio alemão. “Nosso parceiro é superespecializado nisso e tem uma boa experiência em inteligência artificial ligado à música, que é uma tendência do mercado”, diz Daniela Celer.
+As parcerias ajudam também a minimizar os efeitos da alta do dólar, que impacta diretamente na contratação de serviços no exterior.
+Outra possibilidade de empreendimento nessa área é fazer curadoria musical para empresas —selecionar, por exemplos, as canções que estarão disponíveis para os passageiros em aviões. É o que faz hoje a Superplayer, criada em 2011 em Porto Alegre pelo engenheiro mecânico Gustavo Goldschmidt com dois de seus irmãos, com o objetivo  de ser uma espécie de Spotify.
+“A ideia era mimetizar o rádio no ambiente online, com listas de músicas para relaxar ou para praticar esportes, com possibilidade de fornecer publicidade orientada de acordo com o perfil do usuário”, diz Goldschmidt.
+No início de 2014, a Movile, dona do iFood, entrou no negócio como sócia investidora. Com o aporte financeiro, a Superplayer começou a faturar por meio de assinaturas e publicidade, chegando a 1 milhão de usuários ao mês.
+Aos poucos, marcas começaram a procurá-los para projetos de curadoria. “Acabamos mudando de rumo, concentrando o negócio em produtos para empresas, e não tanto para o usuário final, à medida que outros aplicativos entraram no mercado brasileiro.”
+Hoje com 20 colaboradores, a Superplayer já teve mais de 4,5 milhões de downloads e estima um alcance de mais de 2 milhões de usuários ao mês. “Temos dobrado de tamanho a cada ano, e temos a expectativa de alcançar R$ 20 milhões de faturamento ao ano, em um prazo de 24 meses”, afirma Goldschmidt.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "768a0a27ce6e2d206998326b11f9aeff93e198c33c4c0b5d50d652826d848ca0",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2308d210989b8156ecd8a3b34e83ada69c0aad34fe9a8165d5c3151f0238302b",
+    "mention_text": "Kito Siqueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6a128f4a06b01c6546636aac5a9ade4d4b984865c3a7afc68636afa21363f52",
+    "mention_text": "Satélite Áudio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6afb7c0cb88195c41b50ecba259139932dc17a43c6fd40a7ae122bd1385061e",
+    "mention_text": "Roberto Coelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c665971e8d0a03b7aca0efd467a8325d5339be9f96262a2915a061f52926cf1e",
+    "mention_text": "Siqueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "884b5994f3e168706561f21a053415d620314562325ff9c37169fe62f4540c4e",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "795b137850ccf61d15ff15e31816a3e8c0c9e0aa3a7b33e6699e4a09296facaa",
+    "mention_text": "Satélite",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ab28d8162fe130383fddf87a76cc2896b6a1a21ecbe71223a98b933cb154553",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0de0024e60f07d67a96ab50c4c909680777231b63d880b4737ecb1bde4a15c24",
+    "mention_text": "Vivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cecf910faac7ef9d34311f387781a2730b82b5580e39ad29587832cf5696c057",
+    "mention_text": "Volkswagen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ca2f2d5492826ac8565f7d9af8e3a4005af125086bcbddd11b7634988844a45",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00ea9135efadcab6aaa59433cc3e7c9680646f5ccb01a217c374277725db2bdd",
+    "mention_text": "Satélite",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a701e294585955f4ec199e5a273d1bcf726790e71451343058242e9aea774a43",
+    "mention_text": "Lucha Libre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19affe71c00fcc18b14f67c1870d23fb3dacf4a58ab842b01c03f10b18c7f558",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "678e0f689ba66539c87dca5c6786347d1523f91246b86a59a7aac4a9ebc7d6cb",
+    "mention_text": "Paulinho Corcione",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ff3f6ae8aff5242efeaea2e5ab058237f591febf40c8fc78e65cdb5d49338f8",
+    "mention_text": "Daniela Celer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9946a7c49bf47785f06e8a21339a7dd346a9f1992f8500df8c21e82a62f0cc4",
+    "mention_text": "Daniela",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b74487401bb94aec440447caa9027668165b17d01f3e4d1ad5e1fd54bdccd73",
+    "mention_text": "Chevrolet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98ba96fcde6c217413e04f288294b38313b40395faf2ff515eb6069fad791182",
+    "mention_text": "Hyundai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e71505d1bcae0d5650bb938772ad2e005a76d840d6d192c2f7637f005a0723a",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7015dac94e58008eeb3d45331b843c4d302f7fc1e25596cd3f2ad84d554097df",
+    "mention_text": "Corcione",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a4bbccc6e6f582d41622c476d993c8307135192c3b0e4fc305ec0ecd9859b8d",
+    "mention_text": "Lucha Libre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a24df5dc23ce17e30d1db4b471f76aa55a4faf6b9d8ca399d27a706e92d664a",
+    "mention_text": "Drac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "463d9ad4be06067116e34f859cb238bd524fc018c347ff601c11fb330d25d05b",
+    "mention_text": "Matt Sorum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f19e23fed6e4b50cdbd2c3fcc100f8f8855d6b57cf0397293f5ed8992a63080",
+    "mention_text": "Guns N’ Roses",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b1ec3343a4fd1f0fac7e95100deebe360cdb224d9c33fd7215348cc8f2061b6",
+    "mention_text": "Berlim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2adf386eaa85e3c54f6fde58d1aba9d8564f196d1bc0882ec7fdf0392e436f0a",
+    "mention_text": "Corcione",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ef9d99b4dc00244a630796f89011ffb669f38c524d77a93315c4c71722091c0",
+    "mention_text": "Daniela Celer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56fe3be16704a35f82d34b949a5feab18cd3b0f87d4bc2a9f427a73c487b51d3",
+    "mention_text": "Superplayer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c12463826b4b3062de6c6d52dce87bca46c352cf3f784ebd84988f8730f28f4",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb85bc4181b6d10cb7d2fe3efc750773e0b7e0c8f74bd6c689f04cab57b12ed2",
+    "mention_text": "Gustavo Goldschmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8dfb4ec31296099af7ed1bb2890c8dc214e44fd3cd3dc2b4ceaefc35037ebe2e",
+    "mention_text": "Spotify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5dd812b8c55f7d2b607fefc9cb4a90b8d022aab44ec49573cf1164f1feb106f7",
+    "mention_text": "Goldschmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c3561c73bfe53a38d20a10b1ad6cea03e7c3a5b84c2df9cb7310bbdb60b494e",
+    "mention_text": "Movile",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aae61631fcccddbad7a80dd5e25141981ee01aedff2e977081450be364c77864",
+    "mention_text": "iFood",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d36a3526296a2d388105a15b1a6008cabcd0fc56cb76b9cce6dfc3bfc904c924",
+    "mention_text": "Superplayer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69093733177ad937f8082013a41e6457ebd2066223de86f9143b34f7c1a29587",
+    "mention_text": "Superplayer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ce83b80e4f88532881c4988390a194d621353679c562caa8c7c4090e1f8924f",
+    "mention_text": "Goldschmidt",
+    "categoria": "PESSOA"
+  }
+]

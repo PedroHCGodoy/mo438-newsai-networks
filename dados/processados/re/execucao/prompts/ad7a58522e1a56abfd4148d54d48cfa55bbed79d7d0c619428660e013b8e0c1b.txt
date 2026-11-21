@@ -1,0 +1,768 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 877fa36afe214eb5d1e28c6efb23c36794367f8a55d59a65e01266b876ef46eb
+
+TEXTO:
+Magnatas financiam projetos e mudam dinâmica acadêmica
+
+Enquanto cortes nos gastos públicos resultam na desativação de laboratórios, na demissão de cientistas e no cancelamento de projetos, uma profunda mudança está ocorrendo na forma como a ciência é bancada e praticada.
+"Para o bem ou para o mal", disse Steven Edwards, da Associação Americana para o Progresso da Ciência, "a prática da ciência no século 21 está sendo moldada menos pelas prioridades nacionais ou por grupos com revisão entre pares e mais pelas preferências particulares de indivíduos com grandes quantidades de dinheiro."
+A ciência está cada vez mais se tornando um empreendimento privado. Do Vale do Silício a Wall Street, a filantropia científica está na moda, pois muitos magnatas buscam se reinventar como patronos do progresso social por meio da pesquisa científica.
+Mais de uma década atrás, Paul Allen, um dos fundadores da Microsoft, criou um instituto de ciências do cérebro, para o qual doou US$ 500 milhões. Fred Kavli, bilionário dos setores imobiliário e tecnológico, fundou então três institutos cerebrais. Foi essa pesquisa ricamente financiada pela iniciativa privada que deu origem àquilo que o presidente Barack Obama chamou em abril passado de "o próximo grande projeto americano" -uma iniciativa de US$ 100 milhões para sondar os mistérios do cérebro humano.
+Os muito ricos também montaram uma guerra particular contra doenças, com novos protocolos que derrubam as paredes entre a academia e a indústria, transformando descobertas básicas em tratamentos eficazes. Eles estão financiando a caçada a ossos de dinossauros e a criaturas marinhas gigantes. Começam até a desafiar Washington nos grandes projetos científicos, desenvolvendo navios inovadores, equipamentos submarinos e telescópios gigantes -bem como a primeira missão privada para as profundezas do espaço.
+São pessoas como Michael Bloomberg, ex-prefeito de Nova York (e fundador da empresa de mídia que leva seu nome), James Simons (investidor de fundos hedge) e David Koch (petróleo e produtos químicos), entre centenas de doadores ricos. Têm especial proeminência, porém, alguns dos maiores nomes do mundo da tecnologia, entre eles Bill Gates (Microsoft), Eric E. Schmidt (Google) e Lawrence Ellison (Oracle). Esses doadores se dizem impacientes com o ritmo deliberado, e muitas vezes politizado, da ciência pública. Eles estão dispostos a assumir riscos que o governo não consegue ou simplesmente não cogita assumir.
+No entanto, essa definição pessoal de prioridades é precisamente o que preocupa alguns no "establishment" científico. Muitos dos patronos, dizem eles, estão ignorando a pesquisa básica para privilegiar um amontoado de campos populares e "alto astral", como estudos ambientais, a exploração espacial e, como no caso do russo Dmitry Itskov, ex-magnata da mídia, avatares com consciência humana.
+A "Nature" alertou que, embora "aplaudamos e apoiemos inteiramente a injeção de mais dinheiro privado em ciência", o financiamento poderia também "distorcer a pesquisa" para campos mais em voga do que cruciais. "A física não é charmosa", disse William Press, assessor científico da Casa Branca.
+Está em questão, dizem os críticos, o contrato social que cultiva a ciência pelo bem comum. Eles temem que os bilhões da filantropia tendam a enriquecer universidades de elite à custa das mais pobres e a minar o apoio político à pesquisa patrocinada pelo governo e seus esforços para promover uma maior diversidade de oportunidades -geográfica, econômica, racial- entre pesquisadores científicos.
+Mas Martin Apple, ex-chefe do Conselho de Presidentes de Sociedades Científicas, disse que, inicialmente, também viu os doadores como diletantes super-ricos. Agora, acredita que eles estão ajudando a acelerar a ciência. O que o fez mudar de ideia, afirmou, foi vê-los perseverar, ano após ano, em busca de objetivos ambiciosos.
+"Se eles têm como alvo a poliomielite, vão atrás até conseguir -e ninguém mais tem como fazer isso" disse. "Na verdade, eles têm o poder de liderar onde o mercado e a vontade política são insuficientes."
+O impacto dessas pessoas tende a crescer. Os cerca de 40 mais ricos doadores para a ciência que firmaram um compromisso de destinar a maior parte das suas fortunas à caridade possuem, conjuntamente, ativos que superam US$ 250 bilhões.
+UM NOVO MODELO Quando Ellison ouviu um biólogo ganhador do Nobel dar uma palestra sobre inteligência artificial, ficou hipnotizado. Era o início dos anos 1990, e a ideia de aplicar computadores rápidos para charadas genéticas era nova.
+Ele convidou esse cientista, Joshua Lederberg, da Universidade Rockefeller, em Nova York, para visitá-lo em sua propriedade na Califórnia. Em 1997, a amizade deu origem à Fundação Médica Ellison. Centenas de biólogos já foram beneficiados, e três deles ganharam prêmios Nobel. Até agora, Ellison, listado pela revista "Forbes" como o quinto homem mais rico do mundo, já doou cerca de meio bilhão de dólares para a ciência. Não é que Ellison seja o maior ou o mais visível dos filantropos (Bill Gates já doou cerca de US$ 10 bilhões para a saúde pública global). Mas o seu trabalho serve como paradigma da nova ciência privada.
+No mundo tradicional da pesquisa patrocinada pelo governo, comissões de especialistas se debruçam sobre os pedidos de subvenção para decidir qual deles deve obter financiamento, pesando fatores como mérito intelectual e valor social. Por outro lado, a nova filantropia científica é pessoal, antiburocrática e baseada na inspiração.
+Para Wendy Schmidt, a inspiração veio em 2009, de um recife de coral nas ilhas Granadinas, no Caribe. Foi seu primeiro mergulho autônomo e uma experiência que lhe abriu os olhos para a extravagância da natureza. Ela falou sobre isso com seu marido, Eric, presidente-executivo do Google, e os dois decidiram que a oceanografia precisava de mais recursos -a frota de pesquisa do governo dos Estados Unidos foi reduzida em cerca de um terço e está sujeita a mais cortes. Eles então montaram o Instituto Oceânico Schmidt, em Palo Alto, na Califórnia, onde despejaram mais de US$ 100 milhões.
+George Mitchell, considerado o pai do processo de obtenção de petróleo e gás conhecido como "fracking" (ou fraturamento hídrico), doou cerca de US$ 360 milhões para campos como a física de partículas, o desenvolvimento sustentável e a astronomia -incluindo US$ 35 milhões para o Telescópio Gigante Magalhães, que está sendo construído por um consórcio de empresas privadas para ser instalado no topo de uma montanha no Chile.
+Eli Broad, que ganhou dinheiro vendendo imóveis e seguros, doou US$ 700 milhões para uma parceria entre a Universidade Harvard e o Instituto de Tecnologia de Massachusetts (MIT) para explorar a base genética de doenças.
+Gordon Moore, da Intel, destinou US$ 850 milhões para pesquisas sobre física, biologia, ambiente e astronomia.
+O investidor Ronald Perelman, entre outras doações, deu mais de US$ 30 milhões para o estudo dos cânceres que afligem mulheres.
+Nathan Myhrvold, ex-diretor de tecnologia da Microsoft, gastou muito na descoberta de restos fósseis do Tyrannosaurus rex .
+Para ajudar os cientistas a estabelecerem vínculos rapidamente com potenciais benfeitores, surgiu um pequeno setor que oferece oficinas, treinamento pessoal, exercícios de interpretação de papéis e produção de pedidos de patrocínio em vídeo.
+A Advancement Resources, de Cedar Rapids (Iowa), já realizou centenas de oficinas para cientistas, tratando daquilo que a empresa descreve como a arte de desenvolver doadores. Até a "Nature" publicou um longo artigo dando dicas de como "vender a ciência" e "seduzir filantropos". Elas incluíam treinos para um "pitching de elevador" -um resumo de pesquisa interessante a ponto de atrair rapidamente a atenção de um doador.
+LIMITES DO FINANCIAMENTO PRIVADO Mas Robert Conn, presidente da Fundação Kavli, que já destinou quase US$ 250 milhões para a ciência e é parte do esforço privado pelo aumento do financiamento à pesquisa básica, advertiu: "A filantropia não é um substituto do financiamento governamental. Não há como dizer isso em tom suficientemente alto".
+O deputado americano Lamar Smith, republicano do Texas que cumpre o seu 14° mandato, discorda. "Devemos reconhecer melhor o que o setor privado pode fazer para auxiliar nossos esforços de proteger o mundo", afirmou ele no ano passado, depois que um meteoro explodiu sobre a Rússia, ferindo mais de 1.200 pessoas.
+Smith, presidente da Comissão de Ciência, Espaço e Tecnologia da Câmara, disse que a instalação de novos sensores no espaço seria "fundamental para o futuro". Então, ele promoveu uma audiência para apresentar um telescópio, montado em um satélite, que varra o Sistema Solar em busca de rochas velozes que possam ameaçar o planeta. O dinheiro para a empreitada vem dos líderes de eBay, Google e Facebook.
+Décadas atrás, essa tarefa teria cabido à Nasa. Mas, na audiência, o responsável pelo projeto, Edward Lu, ex-astronauta e hoje executivo do Google, declarou que o custo do aparelho espacial -US$ 450 milhões- seria aproximadamente metade do que o governo gastaria.
+O diretor dos Institutos Nacionais de Saúde (NIH, na sigla em inglês), Francis Collins, disse que os filantropos são "incrivelmente importantes". Ainda assim, ele e outros especialistas são rápidos em acrescentar que a onda privada é pequena demais para substituir o financiamento público. Só o NIH tem um orçamento da ordem de US$ 30 bilhões -do qual metade vai para a pesquisa básica. Pelo menos por enquanto, disse Press, o assessor da Casa Branca, as doações privadas são ainda "uma gota no balde".
+ENFOQUE NAS DOENÇAS Grande parte das verbas da ciência particular se destina a campanhas para alguma cura.
+Essa guerra particular contra doenças resultou não só em avanços significativos nos tratamentos, mas também naquilo que especialistas descrevem como um grande avanço na forma como a pesquisa biomédica é feita. O método derruba bloqueios que tradicionalmente impediam descobertas básicas de serem transformadas em tratamentos eficazes -especialmente para doenças raras, que as companhias farmacêuticas evitam por falta de lucros em potencial.
+O primeiro êxito veio na luta contra a fibrose cística, que surge quando um gene defeituoso entope os pulmões e o pâncreas com um muco pegajoso. As pessoas com fibrose cística sofrem de tosse, cansaço, má digestão e crescimento lento -e morrem relativamente jovens.
+Por volta de 2000, uma onda de doadores ricos começou a fazer grandes contribuições para a Fundação da Fibrose Cística. Tom e Gina Hughes, de Greenwich (Connecticut), tiveram duas filhas com a doença e doaram milhões de dólares. No início de 2012, já havia surgido o primeiro tratamento para uma causa subjacente da fibrose cística. A droga controla uma mutação genética que responde por 4% dos casos nos Estados Unidos -cerca de 1.200 pessoas. O medicamento diluía o muco mortal, reduzindo drasticamente os sintomas e melhorando a qualidade de vida.
+O sucesso gerou uma corrida mundial para transformar descobertas básicas em tratamentos, um campo agora conhecido como ciência translacional. Também inspirou doadores ricos a oferecerem mais dinheiro a pesquisas contra doenças.
+OPÇÕES PESSOAIS Muitas dessas iniciativas estão profundamente enraizadas em traumas pessoais ou familiares. Uma análise dessas campanhas concluiu que, como no caso da fibrose cística, um número significativo de doações se destina a doenças que afetam desproporcionalmente as pessoas brancas.
+O câncer de ovário atinge e mata as mulheres brancas com mais frequência do que as mulheres das minorias. Em 2012, depois que sua cunhada morreu vítima da doença aos 44 anos, Jonathan Gray, diretor de negócios imobiliários globais do Blackstone Group, uma firma de investimentos privados, doou US$ 250 milhões à Universidade da Pensilvânia para a criação de um centro de estudos do câncer feminino.
+O melanoma, o mais mortal dos cânceres de pele, também ataca e mata preferencialmente brancos. Debra Black, mulher do financista Leon Black, sobreviveu a um caso grave. Logo depois, em associação com Michael Milken, ex-financista conhecido por negociar com títulos "podres" e cuja entidade filantrópica FasterCures presta assessoria sobre como acelerar pesquisas, o casal fundou a Aliança para a Pesquisa do Melanoma. Ela rapidamente se tornou o maior patrocinador privado do mundo para pesquisas sobre o melanoma, oferecendo mais de US$ 50 milhões para atividades em Yale, Columbia e outras universidades.
+É claro que a maioria das doenças é onipresente, e por isso a maioria dos filantropos oferece ajuda médica independentemente de divisões raciais ou étnicas. Quando Milken soube que tinha câncer de próstata, criou uma fundação para combatê-la. A entidade já arrecadou mais de meio bilhão de dólares, ajudando a salvar não só ele, mas muitos homens negros, que desenvolvem a doença com mais frequência que os homens brancos.
+DEFININDO A PAUTA No início da década de 1980, Leroy Hood, biólogo do Instituto de Tecnologia da Califórnia, propôs a criação do primeiro sequenciador automático de DNA, que ele ofereceu ao NIH. Rejeitado, ele se voltou para Sol Price, magnata do setor de armazéns.
+O avanço do sequenciador de DNA levou ao Projeto Genoma Humano -iniciativa federal que, a um custo de US$ 3,8 bilhões, mapeou todas as unidades hereditárias- e, mais recentemente, ao florescente campo da genômica pessoal.
+A filantropia científica, disse Hood, "permite que você empurre fronteiras". E o governo, em vez de ditar a pauta da ciência, cada vez mais vai atrás da liderança privada.
+Há uma década, Anousheh Ansari, engenheira do Texas que fez fortuna no setor de telecomunicações, financiou uma competição com prêmio de US$ 10 milhões para a primeira nave privada que pudesse enviar três pessoas ao espaço. Seu sucesso gerou um boom. Doadores privados atualmente patrocinam dezenas de prêmios científicos, e o governo oferece centenas por sua conta, motivado, segundo um estudo da Casa Branca, "pelo sucesso de prêmios filantrópicos e privados".
+Às vezes, os doadores privados saem em socorro do governo. Quando os cortes orçamentários ameaçaram paralisar um acelerador de partículas gigante em Long Island, em 2006, Simons, o investidor de fundos hedge, que vive nas proximidades, arrecadou US$ 13 milhões para impedir que isso acontecesse.
+As doações privadas para a ciência tendem a se expandir. A razão principal: em 2010, Gates, sua mulher, Melinda, e o investidor Warren Buffett anunciaram a campanha Giving Pledge. Cerca de um quinto dos quase 500 bilionários americanos se comprometeram a doar a maior parte das suas fortunas para a caridade, com quase metade deles manifestando o desejo de financiar estudos de ciência, saúde e ambiente. Vários deles estabeleceram metas que são bastante extraordinárias.
+"Queremos erradicar o diabetes", escreveram Harold Hamm, figura de destaque na corrida do petróleo em Dakota do Norte, e sua mulher, Sue Ann.
+Jon Huntsman, bilionário de Utah, disse que sua atividade filantrópica irá "assegurar que o câncer seja liquidado".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ef505b6eae558649473faaaaf0c59add8da5671c3b8e43c2932e011c1ccc6418",
+    "mention_text": "Steven Edwards",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35b710886c7a6bbfb5d80b4bbee40bc18a5cc6e04b5b13d018075376a69f00fe",
+    "mention_text": "Associação Americana para o Progresso da Ciência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94810a883c184527ede0e6452dedb7154f6faa985dcd382b140e836767e3bbee",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f450c6d95061ca8aa7ed18e0117850c24c37d61ae49ae84973dd60886a05e46a",
+    "mention_text": "Wall Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "404d6c3740b491c9ea576d1fb7e107939b2d24bd4888c5a6a04034ee6fd1a716",
+    "mention_text": "Paul Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a8ea1977ca33df9356804694fb12a998a8b1025d1ac4b957924e541cab43e51",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "174278a829f1bc7a003219bf51794209a8726a0dd46a0ae032c0496197fbbc93",
+    "mention_text": "Fred Kavli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c877bd941eff30128d2f61ae35f339fc1232146236db9fe272c854395a002fd8",
+    "mention_text": "Barack Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebd640b81daa0ba48c602deb9372d054c77b120638f17cbad0acb4c125e6ca1f",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "674c663592a75db4d98d92f4b4a996799aa2eb7fcd5547843f1767c39b831368",
+    "mention_text": "Michael Bloomberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e74a944cc47bca83e29a9043152a05e998a5e4ab039cb818d9d84359cec734ed",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "41080f9263e4d1ab7c14e8cb66c9675811d847618b6b8f3b38275dcea39dfa86",
+    "mention_text": "James Simons",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd8fa70370f84c68ccfad621482fa5539599e5264076b0150522931a8c7224d3",
+    "mention_text": "David Koch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0814612158d11a18e828b84636c35f26c3092434a6033987066179922afc092f",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ae82e528748783354e58a35392a96ca83c8930301acd1b644d8d6b683a22801c",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1294377ef42f9319c20f43fe97be429ff9213b6bbede6521edc55c8db875066e",
+    "mention_text": "Eric E. Schmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a7dde245c365d08fedf15e4a3e266016c7956de047319a01bcbdd57e5d19f59",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69af7115a84a4da74185df0b4268f1f74cafd0d18afa0959090ba7b479bff2b5",
+    "mention_text": "Lawrence Ellison",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6235eec4f93cf32c6225fd60185247f0e0b0f6361be2c8f35aba516d210b8c9",
+    "mention_text": "Oracle",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c82c5b6d1ebb1c07250684319f2dac64ab4ccbc9675842a22220ffcff6d9f00b",
+    "mention_text": "Dmitry Itskov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff771edcc03d5ddf2b67501e50d54d011547810aa70bcf617dcd7a647a28c3fc",
+    "mention_text": "William Press",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eefbc141fe320c983269ee0ceaca124934008baf007723bbd3365eef00aaa51e",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3e6afa9b59bbe1200ac4c2fbbfe4c5291515f4f0275b8faae2b4aac841510b1",
+    "mention_text": "Martin Apple",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "189e418edac7251a441b742c3eb487c31dd6762718e779de611c861ab1d34cba",
+    "mention_text": "Conselho de Presidentes de Sociedades Científicas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "224b8c774efcaf908c578a2d9ba188d1c751d1674fb2f8989dd30405d0bc4854",
+    "mention_text": "Ellison",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "faaa628ad465953b6459192d2cfbb78ccc5fff1dc59790bdfc17c2cfb059413f",
+    "mention_text": "Joshua Lederberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55f3b572501d74328d87995a2add4cefd41e31270293a50cf057dea5a3d6be96",
+    "mention_text": "Universidade Rockefeller",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0578344e8a49db51cc2294522feb81ee0c8d28ff46eb6696e17260dd510fe8b6",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f593a929b36c7c6fa428d44f3b9af38f5eb471ceaa4d9ae8c201a9a9969dffe",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e3fd42339a080f677e4debb73edf0eeefc1067c1bdf602555495b2eb2050857",
+    "mention_text": "Fundação Médica Ellison",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50f66a82ea3ef65f442bab877b373f0dbb8125ba906b37cc8f2c294bbee3b7cd",
+    "mention_text": "Ellison",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb31941f5c73744d442e665eaff7c5c310a89054f420e5e60b4c13fa0285802a",
+    "mention_text": "Ellison",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "381a6edc4c289ff15974976c44e0f03e5bd0db73016aa286bc6fbf1de85f95c1",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3516be8f8dff6a20b21b2696a0fdd8b73d92c0fecc2142459017fbfe68100c43",
+    "mention_text": "Wendy Schmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29632697371fcca0a0b52695f76ef96c30701da96a76b6805159175e9d529ce5",
+    "mention_text": "Granadinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "446b91c89783614f207473a09029626c25e7ca23c81eaddbd1640f8b1de323d2",
+    "mention_text": "Caribe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5533fa3a04bea066fcb23e55062dfff3109907a10e6cc9b1de6673dd68521b7",
+    "mention_text": "Eric",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db5389b7b9aca5d4d2a9237a62354679d66a109a8b53079aa70599ad76ecb292",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0273ccb60748739e1eaff2e56426139084a2d334c2222bc7fd36753c08d6cd2",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7afee9a0f010ac45e2931933dbb27f5e1cae9278d103a39841f35a5e7d025ebf",
+    "mention_text": "Instituto Oceânico Schmidt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae815f73c0c56d7f37fb39a748d68f7e90bb5e89fe6b9540993991d4f6269d97",
+    "mention_text": "Palo Alto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fbec4358db09af904d2051395a019d8b35b8d008550acdd398f0dd697421a0c1",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bd663906650a6bbf37f5df5cbfdc73109b61e8e6e8d7ea59c21409cbcc549f3",
+    "mention_text": "George Mitchell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "addd54f85fb388e2c3fc9d7f05a02890388f18b4e2e6f29d60a9985dce75ca35",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6acfdc2849a5ed313dc9caf0dc3d655dfca08a8c9894a46ec5ef6f524dbb505c",
+    "mention_text": "Eli Broad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2d9e289689f127b9a6c642028aa5980aa9598d4d2c2f360f800ce1762f41cb0",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f5eb90689a118ab93def2c54295776e5e7a141bc0b63b95e48ef411900cfca5",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f344d8c394fd7e22ddc065b9517e8aaceae2a299aa0eca8a4b4e23a97f70794",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62ec39bf7cf250e0abc9d42be346ddefc1450406859b4e25af01ade10a235ee3",
+    "mention_text": "Gordon Moore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3555e13b085c77d4a55875ed8b279bf421b477e2ef70553160779f297cc29d59",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bce054a53c9f6fed0c6652a8e8a81bc1ac9a05a0d9eea4735e81542c0b93b112",
+    "mention_text": "Ronald Perelman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7756458b2fd6851f9e0e73629bcee401088af8b6255dd8ce76db0adbd8f2a94",
+    "mention_text": "Nathan Myhrvold",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25a7ef71f30cc0db8704a2b89a910d4e548cd54f1205ad3a3825275752f7605b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd2394dd143b3da330bff61518b4bc46d594ecf4b9f8320e768783c18e91c9af",
+    "mention_text": "Advancement Resources",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a0468d0203279660e4f3dbff5f5d568ea4790a5a8ff859dcdc6a0d6599b697c",
+    "mention_text": "Cedar Rapids",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d6f3653a4705c8cd7333be47e16eebd1f35b0a17cca1154e3ed9b739589c4da9",
+    "mention_text": "Iowa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "71cb15ed7d92721dd5c4d8ee73e018cc6bc88fa7ddf3553210f9a75b0a6d90fc",
+    "mention_text": "Robert Conn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b667c43389cb7d9c059642a7b0fe1b995167fae12786a317c72777b99089aa49",
+    "mention_text": "Fundação Kavli",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "630b5e84542bb271a1bfcb8699227e293d05138739cb53c387c00642abe707d8",
+    "mention_text": "Lamar Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df8ddb4600dcacb0cea9b7c45ee8398a8f61ec188f93a370370dced6781f764e",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "925542d3030d3ee0846af7c584085077eaf1f7403ac139f5a67c4d2eb67170c5",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cdfcc7d6fce3de5816ed72bb166597b380af07fb171f7d34c2c13a2285748da4",
+    "mention_text": "Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa599bd660e5316fa5634092710b4fbd39a0174779d9908b6e3ec8c51ca141fb",
+    "mention_text": "Comissão de Ciência, Espaço e Tecnologia da Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9841cf86b64e04d7350dd1beb0f69c729af5e6ed4e70e9b121e0699099933707",
+    "mention_text": "Sistema Solar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8e8cb42b2a6fa4e7dc38991db804bbc15ab5e5abae54ebcafefe66fe191cc384",
+    "mention_text": "eBay",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b110109704264f2b64a0482184f614f38cedff59ea2f4855a7739552c87106e1",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47e7ae0ff40b60100c7e016cd348b3e695efafd5cdfdd180b5256d1f0a75ffe3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9341686667c842e7142de2aff60f5d89fc2dc4d4a0ad943eb36bbc50fd739efc",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08f1d8139609a5ffcb2f102640a84afc69f09f49fe3134921d3a59b9356f74b9",
+    "mention_text": "Edward Lu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8aca0a3ae0f778177378a982090877235ca5cd2593d8964f3c233a824c201b0",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04b91f60462fb2d7c87c9f991ea73b3b8215451ec9118834ffb20ef75dad9129",
+    "mention_text": "Institutos Nacionais de Saúde",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06699c81672c4d1040bf962cb72c55ad8e4b69681fdf3b50ff2f3de9aca678a1",
+    "mention_text": "NIH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c87ea905104dfb98923c880a02df1a8d5fbe8f712d395e5b37e74401bdf4f45",
+    "mention_text": "Francis Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6426591f13ae50def3b716db263ac10650ed5298f66dbee920b24d3b95980e98",
+    "mention_text": "NIH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "753e665586280a2947fde1f48d910628b02e651a46067a49e03a618e22f57461",
+    "mention_text": "Press",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd0f13f20467b85a7d1e1522f848a5fd3393057797dfbfe715e432059bebc3e3",
+    "mention_text": "Casa Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d27839af952bf1638b448d2c445107047784a795d91da5196a38b80af2418ed",
+    "mention_text": "Fundação da Fibrose Cística",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b970e6142c756ef4c1b29dd36d27d75593e46b9a12154c15093cb74cb78f372f",
+    "mention_text": "Tom e Gina Hughes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14e348b30880628012c1ec896e9f949a3598176a64eb849e745deaa9f54ae346",
+    "mention_text": "Greenwich",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89bb03df04db4a1ef65f2faa4d565e74af9a9f415758671a9ab3f559b7a4ab03",
+    "mention_text": "Connecticut",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b973df706a38c14aa56f9902f9960a2ddf92a8712949573e081453b1a888151a",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "57047e3446b5c51541d5875bfabe8df8fd7cc9173ff38ea387369d3991f3f78d",
+    "mention_text": "Jonathan Gray",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59e33da4c1f3530efa3fdb05e179b8673463ea8ecc7b91344deebbb1696c0825",
+    "mention_text": "Blackstone Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ba34532806ad48aa7a9d8666eb994fc89bef3654168b5f218dd905ef2dc9f5b",
+    "mention_text": "Universidade da Pensilvânia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54bc9e8fbf915bca649a192ab78a8716a8a15df67d74238909d44491243d2edc",
+    "mention_text": "Debra Black",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a821cfebc7a4a65fd0be5d3c28169a12a928d892d2a14b41e161659cba2166d",
+    "mention_text": "Leon Black",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd5480e9ad67803f66489a862289b71afefb8f65c0857f434d3bdf9cd5749892",
+    "mention_text": "Michael Milken",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c31f20a3fd1bc90439eb0ab81e4d456a902f5e430230cd8ca32bd010429f6c83",
+    "mention_text": "FasterCures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54bfd2a2b172ab376923964e8284d25ee7e979608908a8abb91e3f5c4863e9ce",
+    "mention_text": "Aliança para a Pesquisa do Melanoma",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8dfc3d1a35f81e26c900740b9dd49c9d4f30913a6214250db619a847333df4c",
+    "mention_text": "Yale",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de8e5082bd6bf2c51af10fc4dfde4df5abb1b032534c1932c65626761bee34ea",
+    "mention_text": "Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d58a6def6f389e9769c633b72bd7bf09d366a7a68c333836b1f3e5181d63e38a",
+    "mention_text": "Milken",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74b77cf40ad10210c7d39425bf2ed1fc623cb0d7b7c5e56770ad77f5df8d71bb",
+    "mention_text": "Leroy Hood",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cae2bcd65749069309b7799a14df41b426d21c303105c26829396113942de639",
+    "mention_text": "Instituto de Tecnologia da Califórnia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e3347c8bbba5f2b5bc54780733d56c4924476d7feb25431dc0638d79ce3e6da",
+    "mention_text": "NIH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21d89c4b777644afb379d7b6899fcf2a5b7071ab940cae19f1f8af06ab38eb71",
+    "mention_text": "Sol Price",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eaf4f316c0fac5c01593a55ed4b7fc5d19ddaf34de5830cd4f0f502ed372d699",
+    "mention_text": "Anousheh Ansari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb7687a664f1afe827fd0f7d69b64d680365219334916dd1b86bf3f189a8ae7d",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "996355be6c1aa45c6e48db180d1baff86620b4bf8fcf68e32872336fe3cde2d3",
+    "mention_text": "Long Island",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7aa85c464c5eb61f740632e06b4f80d21195400fd737319306ba92138da3a632",
+    "mention_text": "Simons",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "090f870b0169a2a4012e90a8557969c159a923feb423cef4c78e4e383891f260",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c8d9b2f6c05d78d60c6f6c7c26e12c9ef5f215008af9a0435fc61921caddf23",
+    "mention_text": "Melinda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30c107eda990c5f1db0157d53de33daf5c7bf7a83d1a4db1ca232f21bcbb9582",
+    "mention_text": "Warren Buffett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44a30d3f0a47d53731b3aeb175a5db5d04a8f5b914656fe95a6449e2b1e3c4b9",
+    "mention_text": "Harold Hamm",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f46e1cbeaa30149cbdde5088b3ea0f626b3655bff465489b36ff51ed38822fa",
+    "mention_text": "Dakota do Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "678b2a80f608cac91bc8a8e580724eeab5a02ba47bfa1772b4737c320db263dc",
+    "mention_text": "Sue Ann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc89ae94fbd108137a97c20761a4cde62477fe9b09b42b7282b0f4f828e73b9e",
+    "mention_text": "Jon Huntsman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74141ceb6cf61a298750f16371d514c8cb72d3dd3109c46dd242509aef1d9c03",
+    "mention_text": "Utah",
+    "categoria": "LOCAL"
+  }
+]

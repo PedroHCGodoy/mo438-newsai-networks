@@ -1,0 +1,370 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 54cfa980230de7d5a1c236f7ca49936f480c2c5e8f060e008157781b5c7191ee
+
+TEXTO:
+Em Paulinho, europeus descobriram um novo tipo de meio-campista
+
+Recebi um convite inesperado, para fazer um comercial de uma marca de TV ao lado de Tite, que já é garoto-propaganda da empresa . Fiquei curioso para saber por que me escolheram, se Tite sabia, o que pensaria e qual o roteiro dos marqueteiros.
+Recusei. Já imaginaram um comentarista, que elogia ou critica o técnico da seleção, aparecendo na TV, um milhão de vezes, ao lado dele? Seria antiético, e eu perderia a credibilidade. É ou não é!
+A moça que me telefonou me perguntou se eu tinha alguma coisa contra o Tite. Ela não entendeu. Pelo contrário, tenho admiração pelo técnico e por seu comportamento, apesar de seus sermões. Não vejo também nada errado em ele fazer propagandas comerciais, desde que não haja conflito com seu cargo.
+As perspectivas para o próximo ano são desanimadoras na política. Como escreveu Fernando Gabeira, homem livre, a única esperança para 2018 é que as coisas ruins sejam diferentes das ruins de 2017.
+Ganhei ótimos livros. Um, com dedicatória e beijo do Gordo, "O Livro de Jô - Uma Autobiografia Desautorizada", escrito por ele e por Matinas Suzuki Jr., da Cia. das Letras. Tenho em minha casa uma coleção de miniaturas de personagens que admiro. Um deles é Jô Soares.
+Estou terminando outro excelente livro, "Sapiens - Uma Breve História da Humanidade", escrito por Yuval Noah Harari, especialista em história mundial. Ele conta a extraordinária aventura humana, desde os primórdios até os computadores.
+O autor diz que os humanos entendem cada vez mais a linguagem tecnológica, mas pergunta se a inteligência artificial vai compreender as contradições, os devaneios e os sonhos dos seres humanos.
+Esse livro completa outro magistral, "Totem e Tabu", escrito por Freud, sobre o desenvolvimento da psicologia humana e como a repressão e a sublimação dos instintos (o homem paga um preço por isso) possibilitou a criação da civilização.
+O futebol continua. No sábado (23), o Barcelona venceu o Real , por 3 a 0, em Madrid. Os europeus descobriram um novo tipo de meio-campista, Paulinho, mais atacante que armador. No meio-campo, ele desarma e toca para o lado, para não errar. Porém, em uma fração de segundos, chega à frente para fazer gols ou para chamar a atenção e abrir espaços para Messi e Suárez.
+Enganei-me duas vezes sobre Paulinho. Achava um retrocesso ele ter sido convocado por Tite e não entendi sua contratação pelo Barcelona. Como o time catalão possui três excepcionais armadores (Busquets, Iniesta e Rakitic), não precisa de Paulinho para ser um organizador, pensador, e sim para se tornar um terceiro atacante, como ele faz na seleção. Mas falta ao time brasileiro um craque entre Casemiro e Paulinho.
+Zidane pisou na bola ao escalar mais um volante no lugar do meia Isco ou de Bale. Evidentemente, não foi só por isso que o Real perdeu. O Barça brilhou, e a equipe de Madri, principalmente Cristiano Ronaldo e Benzema, passa por mau momento, uma das explicações para ganhar do Grêmio apenas por 1 a 0 . Outro motivo foi a ótima atuação do sistema defensivo do time gaúcho.
+Achar uma única explicação para as vitórias e as derrotas é uma obsessão dos pragmáticos, dos pensadores operatórios. O futebol tem muitos mistérios. Comentaristas costumam fazer ótimas análises sobre o que desconhecem.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ec41039579dc7749a23093e88a1608d3ad7b5d07d83dadeac8a66110f672d533",
+    "mention_text": "Paulinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d52143a2b557da1c3036676d424f26b2a27a12a2c50bbeb016d30440240df62",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c62eefbf0af6ac8429d51a085de4d4df61be94ca379a8e95b943049a9c34787e",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5de3d1445badb223b4056b66803d8c9bc35577766abd254b0079c40ffbb9387",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6ea09ca8c6c4bc62228c5b220bb5a3d4c80c53129a4e769d18275c417c12ded",
+    "mention_text": "Fernando Gabeira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "265a09358b64e86da1b1a9d9e95fa23d5b1812d82f2b48029dacdc847b29e48f",
+    "mention_text": "Gordo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40563e0972b42f5186ded516f5ecb47456aba3c244752827d4fe10a663a70038",
+    "mention_text": "Matinas Suzuki Jr.",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e245d6e3fc99bfac6eb2e59bf77ffc859671948f1e2122587a5c2417fd4d22b4",
+    "mention_text": "Cia. das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d9a4bb186f7ba0b3bb003acb267730da902aa47a773d51ce3067fc95fc02c69",
+    "mention_text": "Jô Soares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc0fcd879bda69724e359afc016a94c034b41abe78e248ada2464a789e1b1c81",
+    "mention_text": "Yuval Noah Harari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69fa518647f4220d308b048b51f95a3ebc7987667ddbd408f29eb2422e3b4c72",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "947ecc795800d31c6c0f54f37149cbb67188f372328d5f86a032cdb9b080a953",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb79c3a78a2abcf2399cc0f807f15a6526c28b08a537d33b4d555190e7a71dc4",
+    "mention_text": "Real",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e0dc125d10110bcd542333863af63e5aa3d7809bec72259a18578fda0824972",
+    "mention_text": "Madrid",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "849acd2e48575808b80c986786b646687c9cb9cbd12f3327e99fc1bd10a64b02",
+    "mention_text": "Paulinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7bdc2706d8bfc0996738bc29620514f739988fb0e501a38b35a6f68b2a6d991",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfbc6c1804ee94132ae55221ac52bf472fdd4f1c4e09a064721b238224d0c5c9",
+    "mention_text": "Suárez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b0852da4a45e26535dad5ab9a26890b1daf5a5382b8e044db827d15020fc176",
+    "mention_text": "Paulinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71dc46458f3077aaaa132e63f0d356a5defcf45940eaa2a798a12ef560db7f2b",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1696f8a381dca154198dc2dd267d7d8e9763272e433eb01b76bf140a026b56d",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a1dcbc8061f621e9b4ac100df7495f0c505ccec058cb10757ef205b8d625f3f1",
+    "mention_text": "Busquets",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c9651d42b21c4f6fb4387f5dadd6a3e78dfa7d738115ad3ce8f9117902a31b9",
+    "mention_text": "Iniesta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d12f029ae9dba31cbec8b6f75bcab31c5d8c0d6d2c0b12f62aee4e79375baf3d",
+    "mention_text": "Rakitic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62bc9d30babcb9e67c3fe7797e78600d5fd8a94bf3ada92f3efa29da848a51a2",
+    "mention_text": "Paulinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a57ff43cbc807e41ca22fe9592102da289c0042239e968aaf56791677435e16",
+    "mention_text": "Casemiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ccf715ac89bd95f8a0c45d3feb8aa9ae6c1434c29633c72bbdd4d064c28b087",
+    "mention_text": "Paulinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3be30a4e2e644f54a84b6817a114bdc104598d8e79d49475558e3d3e157773d6",
+    "mention_text": "Zidane",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5929ba529c7a0b997a3679318d9768e7e81534939bf35ba5e9eae21f8dc19068",
+    "mention_text": "Isco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b50496fbcd8fc64c57c3356ddff67aa616b2ecbe7d5c7f59e21197705b50e94",
+    "mention_text": "Bale",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5e38d15863afa36fdc6dd8ab3ed73361c414cb09f2cc1d6abd536cda2a4b4b5",
+    "mention_text": "Real",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47b97aaa0f1087e832d86eab3a172aa5f20831e23918a0306712c4edffb99929",
+    "mention_text": "Barça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbf9269a4fbf7c5654ed7e17bca425a85b4518e1c444ead8fa8089c8b9258f6e",
+    "mention_text": "Madri",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "90605cc08ade1788a6c7657b0e16bbf53e007feb6773ac7b20984034a22b4da0",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c791298400c13c1b09f9f002151739f531ec6e24f64c31a812e5c5ce714288a",
+    "mention_text": "Benzema",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9047e7e503bc8ebf8cfacfa0bc51780e909a5d24cb6639c2d3f65ab79ca41a87",
+    "mention_text": "Grêmio",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,449 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f1420dd0297cb47538691a6d382fac3fcc4f601aa7cedff4869695ee0e4344af
+
+TEXTO:
+Veja os profissionais que podem perder o emprego para robôs
+
+Se você está sentado em frente a um computador, dirigindo um táxi ou fazendo faxina, pare por um momento e pergunte a si mesmo: um robô poderia fazer este trabalho melhor do que eu? Provavelmente, a resposta é sim.
+O debate sobre se as máquinas vão dispensar a força de trabalho humana já não está mais restrito aos filmes de ficção científica.
+A consultoria Boston Consulting Group prevê que, em 2025, até um quarto dos empregos seja substituído por softwares ou robôs, enquanto que um estudo da Universidade de Oxford, no Reino Unido, aponta que 35% dos atuais empregos no país correm o risco de serem automatizados nas próximas duas décadas.
+Mas há outras profissões que estão sob ameaça?
+A BBC enumera alguma delas.
+MOTORISTAS DE TÁXI
+Motoristas de táxi ao redor do mundo vêm travando uma batalha com o aplicativo de carona paga Uber. Mas tanto o Uber quanto fabricantes de veículos e até mesmo o Google já estão buscando criar um serviço que dispense a presença do motorista.
+No final deste ano, módulos de táxi automatizados vão começar a operar nas ruas da cidade de Milton Keynes, na Inglaterra, oferecendo corridas pela cidade. O governo britânico está atualizando as placas de trânsito para viabilizar o funcionamento dos carros sem motorista.
+No entanto, para Steven McNamara, presidente da Licensed Taxi Drivers Association, o principal sindicato da categoria no Reino Unido, carros sem motorista não ameaçam o emprego de taxistas.
+"Veículos autônomos vão precisar de mudanças na legislação para poderem operar nas ruas britânicas, a tecnologia ainda engatinha e não foi completamente testada em ambientes urbanos. Na realidade, há dúvidas sobre se os carros automatizados vão compartilhar o mesmo espaço com veículos tradicionais".
+OPERÁRIOS DE FÁBRICA
+A primeira fábrica apenas operada por robôs está sendo construída na cidade de Dongguan, famoso polo operário da China.
+A planta, controlada pela Sehnzhen Evenwin Precision Technology, busca reduzir a força de trabalho dos atuais 1,8 mil funcionários em 90%, segundo Chen Zingui, presidente do Conselho de Administração da companhia.
+Mas as ambições chinesas vão além de uma simples fábrica.
+Desde setembro do ano passado, um total de 505 fábricas em Dongguan investiu o equivalente a R$ 2,6 bilhões na aquisição de robôs. O objetivo é substituir mais de 30 mil operários, segundo o Escritório de Tecnologia de Informação e Economia de Dongguan.
+A Foxconn, por exemplo, que fabrica aparelhos eletrônicos como os iPhones da Apple, também planeja um exército de robôs, embora suas ambições sejam muito mais modestas - com a substituição de 30% da atual força de trabalho nos próximos cinco anos.
+JORNALISTAS
+Cada vez mais companhias vêm oferecendo softwares capazes de coletar dados e transformá-los em textos minimamente compreensíveis.
+Isso significa que, em um futuro próximo, as reportagens não serão mais escritas por jornalistas.
+Kristian Hammond, chefe-cientista da Narrative Science, uma plataforma que gera conteúdo narrativo automatizado, estima que, em 15 anos, 90% das notícias serão escritas por máquinas.
+Ele diz, contudo, que isso não significa que 90% dos jornalistas vão perder seu trabalho.
+"Isso significa que os jornalistas vão poder ampliar seu campo de atuação. O mundo das notícias vai se expandir", assinala.
+"Os jornalistas não vão precisar escrever reportagens a partir de dados. Tudo será feito por máquinas", acrescenta.
+MÉDICOS
+Robôs podem não ser os melhores acompanhantes, mas certamente são capazes de analisar dados para descobrir possíveis tratamentos para doenças.
+O Watson, um supercomputador da IBM, está atuando em conjunto com dezenas de hospitais nos Estados Unidos para oferecer recomendações sobre os melhores tratamentos para diversos tipos de câncer. E a partir do software desenvolvido pela companhia, também está ajudando a detectar câncer de pele em estágio inicial.
+Por anos, robôs também vêm ajudando médicos a realizarem cirurgias. A velocidade é um fator crucial no sucesso de tais operações e as máquinas são capazes, por exemplo, de costurar vasos sanguíneos muito mais rápido do que os humanos.
+A cirurgia automatizada, contudo, não é infalível e um relatório de segurança recente mostrou que essas operações estavam associadas a pelo menos 144 mortes nos Estados Unidos na última década.
+Atualmente, homem e robô vêm trabalhando lado a lado na medicina, mas talvez o cenário mude no futuro, acreditam especialistas.
+"Dificilmente os médicos vão ceder o controle do tratamento dos seus pacientes às máquinas", afirmou o cientista Jerry Kaplan, em seu livro Humans Need Not Apply.
+"Mas futuramente, quando houver evidências de que as máquinas são a melhor opção, pacientes vão pedir para serem diagnosticados por robôs, que são definitivamente mais baratos do que seres humanos".
+BARMAN
+O cruzeiro de luxo Anthem of the Seas lançou recentemente uma ideia pioneira: um bar automatizado a partir da Shakr Makr, uma máquina desenvolvida pelo MIT (Instituto de Tecnologia de Massachusetts, nos Estados Unidos) há alguns anos.
+As bebidas podem ser pedidas por meio de um tablet e usuários não estão limitados ao menu que recebem à mesa - eles podem, inclusive, criar seu próprio coquetel.
+O braço robótico mistura o coquetel e o coloca em um copo de plástico (para evitar acidentes) que é acoplado a uma tina (as habilidades da máquina ainda não são muito precisas).
+A reportagem da BBC provou dois coquetéis feitos por um robô e dois outros por um barman.
+O resultado foi heterogêneo. Na opinião da reportagem, as bebidas preparadas pela máquina, no entanto, não eram saborosas: faltou-lhes apuro, como o toque final de limão que o barman adicionou.
+FUTURO
+Os exemplos ilustram ambas as possibilidades e as limitações dos robôs.
+Mas cada uma das profissões poderia ser, em certa medida, substituída pelas máquinas. Algumas delas, inclusive, já vem sendo cada vez mais automatizadas.
+Mas o que os seres humanos vão fazer quando suas habilidades não tiverem mais utilidade?
+Para Martin Ford, autor do livro "Rise of the Robots" ("Ascensão dos Robôs", em tradução livre), o mundo enfrentará desemprego em massa e um colapso financeiro a menos que sejam implementadas mudanças radicais, como a garantia de um salário mínimo.
+Por ora, o que os humanos vão fazer com o seu tempo livre é mais difícil de ser avaliado. Alguns pensam em passar mais tempo na praia, outros defendem a manutenção do toque humano no local de trabalho.
+"Espero que professores, médicos e juízes permanecerão humanos porque às vezes você precisa de alguém para conversar", afirmou à BBC Nello Cristiani, professor de Inteligência Artificial da Universidade de Bristol.
+Os gráficos foram baseados nas seguintes fontes: 'The Future of Employment: How susceptible are jobs to automation', de Michael Osborne e Carl Frey, da Universidade de Oxford. As estimativas representam o número de empregos no Reino Unido e salários médios a partir de dados do Escritório Nacional de Estatísticas (ONS, na sigla em inglês) e da consultoria Deloitte.
+BBC Brasil - Todos os direitos reservados. É proibido todo tipo de reprodução sem autorização por escrito da BBC.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "fb14853c2c248e4d6312dc63732246f855a385cd0282e23e8a7cbe95cd810d55",
+    "mention_text": "Boston Consulting Group",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e3b0bbcf0e4b62fa9017055398fceec66eeef3a254d225011ba84238d9276cf",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6acc91bd6f3754c691f1ffcc16120373973881ee44b399e3561da74e371d3287",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0a8edc9cb16db52fac2744515eb75458be9eeb3cd907ef46e2518f2d14f02e2",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2de2e745e140973764ea44d7fc587f7f042c302e301d8324a35308e06b4086b",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "887285cca061c6b93c8e9af63db3c693faa43771bc83063593a24f37c5b60356",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1664d7a13867f864df1ec80d7d46294311a66792c36ebaab262f00a15ba5b6a7",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f8c1b1060dddda7e72ea58ea2f6b2f7f1ac4c7b5ab1abdbf6ff7f6ba287d411",
+    "mention_text": "Milton Keynes",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e482472a7e7f4b36ef417b8cca19b2bb382e9ba3b6b74cdaa9489b317042370",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3452f01e46533d30965545f9b31a57d68d015fffd08a732407c1467d5d14ef34",
+    "mention_text": "Steven McNamara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ff951b01e5a6250b5ad224c79985290b5d0923de55aaae0c4e4a7c954217739",
+    "mention_text": "Licensed Taxi Drivers Association",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56de1c3ab2e0b0a5849b216b4a88ae1cc0d10f1096abb61190b0c788017199a2",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "67a11d4d518719e5cb678cd62b7e5cfe530b0a9f37f616ef38dcee74eace1733",
+    "mention_text": "Dongguan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5bf303c15e75461d49540d1b8e297cd427f981d2d73c1d36ba574ec2dc12ba0b",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "48660d6b140f3b89acb5559bbd6203ebcf71deae71ece5b923e8bee6318eee7c",
+    "mention_text": "Sehnzhen Evenwin Precision Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0cc19cc6dae5bae78e4c73849d61b9bca4cf7efe6f9a8127a096a1ed7de4122",
+    "mention_text": "Chen Zingui",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f611b9db8ba9d23542a507166cf8d97079c340241945d556f7614f92642f42b6",
+    "mention_text": "Conselho de Administração",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09e838f6e69009fbb064b507b306adaee0734109b25871bce9b223399794229a",
+    "mention_text": "Dongguan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94aaf7bb6b6724789b061da61708b5a8832acbf046777ba3c7df2434ec5ea994",
+    "mention_text": "Escritório de Tecnologia de Informação e Economia de Dongguan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e56734ef8db73f93d64cde827bedeee4c3147a45a4fcdde56ed1c0a95466b7f8",
+    "mention_text": "Foxconn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78b84a38693a77011d4526ae9446102feb1202c95cf6bc74fafc983bca84858d",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3257034e585ecc0a76bf4fc0845effd50f59b73bba6077ee4aeb1209203c2913",
+    "mention_text": "Kristian Hammond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "96246a6d209df3012d4f4070b395e3e4c96cfe192dcc210d79194a9e8dd475c4",
+    "mention_text": "Narrative Science",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd2ac5f67483981b5eac1fed3383852ad1a59213858cc1039d163fd12abba0bc",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c1db73eff2542598106a51650d69dd935e0a8e4204d258c85e44825519cda84",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2fb1c518794f43c4d44091326749b6688d642c5e461c69879d488ba7279f875a",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2a92d4c391e6a67f3c34f4af96dd86273b238d83b5bdf76804dd77521349c6c",
+    "mention_text": "Jerry Kaplan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbe8e116f1132c0600bb3f2acbdfa7084161f0f86b0a56643c74f525e06e8d9b",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39b72054d50952357896e24e0c669669e0b7b8c968061fb33f1d9e14efa36632",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10c5f43090c7b2ea1ea58a8f1c7ca399d46270701bfe08ee477642e570d422c6",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca04ce02f318662f58b9f6cffdccf8fd01bf408dd047fa2ff9565bd08ca0942a",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f8ff40dc723fcf1366a13b71a5d70d9e0e8091e1188d98b58bbec19efd6203a",
+    "mention_text": "Martin Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df7683941fecfb1c282b37b5fc3ed8229b4488dff24246f68075af8545cfc742",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1615f3696b06826d28ba9491e562f665cbd6dc742cf387d55948ef878236966b",
+    "mention_text": "Nello Cristiani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f84860902377df9aa7833f9d789c2c7311ea6a7c41668d9312d952a07ccaf144",
+    "mention_text": "Universidade de Bristol",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ec3c4fe23981f0b979d478196039fe1694de4ea0a97f3bedd6b01bae2ee06b6c",
+    "mention_text": "Michael Osborne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b214e0eb064bd2382c42472d6b787166f9e6d00fc1ebb9fb7fb75f9c542fc745",
+    "mention_text": "Carl Frey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14a0298d1bf08b38e3007a9dcc727cdf3c9872a30a3e2236d3347b4a2c70a342",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2dfa07808a830ec895b175fcbb16ab82e667f1c55a242b5ac0a693e56c3b44e4",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9dd9ee6e3120c16ec6df5d1a18db16dbfdf724c1e15a493fe5fb50aaea7d7940",
+    "mention_text": "Escritório Nacional de Estatísticas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c0b1b6fa1848206aed67077758581aa113101745f217077c350fa67d6308fe5",
+    "mention_text": "ONS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efbe6bb3893c614268befff5a274e64a1d1d805322b6616efea15639d314d8e5",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d0621a5062094fc585539ae1c3ffb14fff9d3244eef1d5d5d5b7c0caa2d8114",
+    "mention_text": "BBC Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b90b5af61c6da52206d278990a5189a5ec5e7e0037819b124dd727bcdd98bba",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  }
+]

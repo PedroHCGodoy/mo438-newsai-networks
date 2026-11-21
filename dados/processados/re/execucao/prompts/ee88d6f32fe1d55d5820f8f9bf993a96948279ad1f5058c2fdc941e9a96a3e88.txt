@@ -1,0 +1,373 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 3b8e7fb3c2086a7f1563336d9f3dffafafdf7990df9849d7652e9d6e104911e6
+
+TEXTO:
+Inteligência artificial antecipa problemas na área de Recursos Humanos
+
+A compilação e análise de informações e desenvolvimento de plataformas de inteligência artificial crescem de forma acelerada no departamento de recursos humanos de empresas brasileiras.
+Em alguns casos, a tecnologia tem ajudado a antecipar problemas. Na Serasa Experian, provedora de informações econômicas, hoje com 2.600 funcionários, um algoritmo foi desenvolvido para monitorar a chance de surgir um pedido de demissão.
+Alimentado à base de um volume grande de dados, o sistema ajudou a deduzir as variáveis mais relevantes a serem acompanhadas pelo RH. “Partindo de mais de 100 informações, escolhemos as 15 mais relevantes, incluindo histórico de aumentos e promoções, avaliações do chefe, inadimplência, entre outras”, explica Guilherme Cavalieri, diretor de RH da Serasa Experian.
+A partir daí, a empresa criou uma nota com o grau de risco de demissão. Se um funcionário é apontado como insatisfeito, o próprio sistema sugere ações para reverter o quadro, desde acelerar uma promoção ou um aumento a uma mudança de área.
+Em operação há apenas quatro meses, o sistema já ajudou a estreitar o relacionamento da Serasa com os seus funcionários , diz Cavalieri.
+Na B3, resultado da fusão de BM&FBovespa e Cetip, um sistema de inteligência artificial analisa milhares de variáveis para entender o fluxo de informações na empresa, hoje com 2.100 funcionários, todos em São Paulo.
+“Através de um aplicativo e algoritmos pudemos entender a rede organizacional da companhia, saber como a organização se relacionava, levando em conta a comunicação entre áreas e profissionais”, diz a diretora de Pessoas e Marca da B3, Ana Buchaim.
+“Identificamos os funcionários que tinham muita importância para a disseminação de informação e cultura, fazendo o corte não pela hierarquia, mas pela capacidade de influenciar”, explica Buchaim, que a partir daí desenvolveu estratégias para engajar esses profissionais.
+Outra plataforma foi usada para organizar e resumir cerca de 2.000 textos em que os funcionários falavam da sua relação com a empresa —e davam subsídio para capturar a cultura da empresa.
+À frente de uma equipe de 30 profissionais, Juliana Zan, superintendente de RH da seguradora Tokio Marine, coordenou a criação de um personagem virtual baseado em inteligência artificial para otimizar o trabalho da equipe e melhorar o atendimento aos funcionários.
+“A nossa equipe de TI teve de despender muita energia para a máquina aprender a responder às perguntas das várias maneiras como poderiam ser feitas”, afirma Zan.
+Desse esforço surgiu Marina, uma atendente virtual de “personalidade bem humorada e simpática” responsável por tirar dúvidas dos 1.800 funcionários da Tokio Marinne no país.
+Antes dela, o RH da seguradora atendia cerca de 2.000 ligações ao mês, principalmente de funcionários com dúvidas sobre direitos e benefícios.
+Após seis meses de operação, o número de telefonemas para os funcionários “reais” do RH caiu 60%.
+Segundo especialistas da área, a tendência é crescer o uso de inteligência artificial no RH. Para Luiz Eduardo Drouet, consultor e diretor da regional paulista da ABRH (Associação Brasileira de Recursos Humanos), a atualização tecnológica tem o potencial de melhorar o ambiente de trabalho.
+“As novas ferramentas permitem a tomada de decisões a partir da análise de dados. A seleção de pessoal, por exemplo, passa a ser pautada pela inteligência artificial e é mais assertiva”, avalia.
+Nesse contexto, tudo o que cai nas redes sociais tem alta chance de entrar em um pacote do tipo big data, cuja análise embasará as decisões dos gestores.
+“Se por um lado fica muito mais fácil localizar os profissionais com potencial para determinada vaga, por outro traz à tona a questão da reputação digital, que precisa ser construída pelos candidatos”, afirma Drouet.
+O arsenal tecnológico também funciona para o RH ter mais foco em novos projetos e atendimento interno.
+Um algoritmo para selecionar milhares de currículos economiza muitas horas de trabalho. E o sistema tradicional nem sempre era garantia de qualidade, dizem os especialistas.
+“Quando a seleção é feita na unha, nem todos os currículos são lidos, daí a importância das ferramentas que filtram não apenas pela formação e o histórico escolar”, explica Drouet, que destaca o uso crescente de games e simuladores nos processos de seleção de pessoal.
+Segundo Everton Charmen, doutor em Ciências da Computação e Matemática Computacional pela USP, a diferença entre a computação tradicional e a inteligência artificial está na maneira como se lida com os parâmetros de funcionamento de determinado sistema de informações.
+“Na computação, sempre foi necessário definir todas as regras levadas em conta pelo sistema. Já a inteligência artificial aprende as regras por meio da coleta e análise de dados, trata-se de um aprendizado supervisionado por humanos”, diz Charmen, pesquisador do Labic (Laboratório de Inteligência Computacional), do campus São Carlos da USP (Universidade de São Paulo).
+Segundo pesquisa global da consultoria Deloitte, divulgada em abril passado, 33% dos executivos brasileiros afirmaram estar preparados para adotar já a inteligência artificial na gestão de pessoal. Foram ouvidos 350 profissionais no país.
+“Na pesquisa global, com 11 mil entrevistados, metade respondeu que já via o uso de inteligência artificial em sua empresa ou considerava esta uma tendência forte nos próximos anos”, diz Kelly Ribeiro, diretora de capital humano da Deloitte.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "93ebda8200a52568418357051b1996373abd5e5f3634052f30438f2f0c334c2c",
+    "mention_text": "Serasa Experian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2b95d4dd9e2769cacf159e57795231a5fd8418fd6a316ae279dabf48f2d2eaa6",
+    "mention_text": "Guilherme Cavalieri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c6ee09da38956cb88f8ada5f0db872183a597d70fdec1ac70f0284250bcf1c3",
+    "mention_text": "Serasa Experian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b077dd40f3647807c9ade936e06aa67847178a2c0962ac1b03656c1a7c20873",
+    "mention_text": "Serasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eea9de42e09b8a3cda4ba710941f2aaf5476ae9ba00403f9707859b5c1216a11",
+    "mention_text": "Cavalieri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "837ec941db86d762f40afdbb60ea754ffe3fdd1a4fdfbe253eaa3891ebb43412",
+    "mention_text": "B3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5383a0bd83aecbd1ddb6f08a2bdbf4766bb815382bc304e865f6a33b92329aa1",
+    "mention_text": "BM&FBovespa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6646b8d682af724e120e17417cb4810bfd080763f655d81359f7a440c4d97fd7",
+    "mention_text": "Cetip",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5d3edd1f7afec72725724aceab57e84284c385ab24e1c09e5074dac1c5dea0f",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e7cba8a4558bf4adb49db3e86664e3da24fde1bbbfb31af414095b544103a2eb",
+    "mention_text": "B3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9980cd6e1de4e136bc25a3359da83a3c5bf3b5a2546ec1aaa1b9c31e314f6ef3",
+    "mention_text": "Ana Buchaim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9ef1cd7b4208da4dc759e4a120d8b6c6ae2e8cf33040345324e1304c6ee14ea",
+    "mention_text": "Buchaim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f06e16ace1d762f256e276b1f024ccde7bb202424d037e8363664ab25326ee8",
+    "mention_text": "Juliana Zan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a4f5687fbadab3b802171489e4de3270e77ca72dcefd42804276c8622f99d4b",
+    "mention_text": "Tokio Marine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94d3f640fddeb0bbf76b468cc035502f2f17108f1b5c2f98805f9f99da49eb10",
+    "mention_text": "Zan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8f175cb7cf4d6982b29e34f36ec7575ff26cce1865a8fc2be4845db95305281",
+    "mention_text": "Marina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59fd793d1f520f7859fd01fffa9afa5599b0f61ec102b2cb8cb6d84b599e8903",
+    "mention_text": "Tokio Marinne",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97990d92c0fe4b9b37070c3423b1676931e08adb2563ddf65952b0dda78451a7",
+    "mention_text": "Luiz Eduardo Drouet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c30523966d14422efb68f381ba8bdc945ae33b36866fa3b864f2678a5b261f8",
+    "mention_text": "ABRH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b2427b6867688dc25eaf3bcbe956f8d66beb9f6d580e92fb797ee29c4dc1040",
+    "mention_text": "Associação Brasileira de Recursos Humanos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66b817717b136310313e3afc23de0b31e0df965d5a9741dce517faaaad585bdd",
+    "mention_text": "Drouet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd34725e2ded053e3179f7108f60ec76f756f2185dcbb5becb17fe3ddbe5bdfc",
+    "mention_text": "Drouet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eaeb022c664f534d2a0bda5c9c711ccb247c1bd6f51ee131ff9bbebd41ed73b1",
+    "mention_text": "Everton Charmen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4c733c6eb4bb8bbb757fe9f48659ebb2d2bd74685eb0046a6e2f3ef5f7a399b",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "428d721db8814b978d2af250edef4dd073eff7b80cf376eb1f37112a30f9e484",
+    "mention_text": "Charmen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eaa8dfbbbe72555f50d2cc82cd992de34d4c408912c93f6293a9c85315141b96",
+    "mention_text": "Labic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebb6a33aa5b3c408f0c47ab0bb50e1ff1bb3a3fe30b1ee3c83fbc549b596aa8d",
+    "mention_text": "Laboratório de Inteligência Computacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "111a1787c05020d4519bb7de8a04c3dbd34485b14afad1055f52b9ed237c8515",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28cbe24260f0268d9ee1a1b322b7899bbf1c275cdc16acca7b840462711e80cf",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f975182ed5ed87db2e30ed47d2e022f6d0a9c543e767f93304cbb63b1aa06045",
+    "mention_text": "Universidade de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4d560701ec7e779b0eefb41d5d58ab1394bed217356931e76a206ab9c75ef06",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e432114d84f50ab36a80e6d2aed466505d0e142364fd903a3c86056b1414eafa",
+    "mention_text": "Kelly Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "816a1a38f84785dee033f0dd5988bcb4de45f4581aaa81cb5bc1be4c315a9448",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  }
+]

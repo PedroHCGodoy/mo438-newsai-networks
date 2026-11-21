@@ -1,0 +1,551 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0011606387de1e5309ee82935a9f77ab928f56d2ee7e3f53a9d36da349f2ca0f
+
+TEXTO:
+Filmes
+
+Filmes
+A.I. - Inteligência Artificial
+Globo, 13h15. (A.I.: Artificial Intelligence). EUA, 
+2001, 146 min . Direção: Steven Spielberg. Com 
+Haley Joel Osment, Jude Law, Frances O'Connor.
+O filme que Spielberg herdou de Stanley Kubrick versa sobre uma espécie 
+de Pinocchio moderno, isto é, um menino-robô que sonha ser menino-menino. 
+Kubrick lutou vários anos com o argumento. Spielberg fez pá-pum. Mas parece que fez culpado: o filme pesa como 
+chumbo.
+Ruas Sangrentas - O Acerto Final 
+
+Record, 22h, não recomendado a menores de 16 
+anos. (Waist Deep). EUA, 2006, 97 min. Direção: 
+Vondie Curtis-Hall. Com Tyrese Gibson, Shawn 
+Parr, Henry Hunter Hall.
+Em Los Angeles, garoto é seqüestrado 
+por criminoso, forçando o pai do rapaz a 
+voltar ao submundo do crime, do qual 
+ele não tem saudades.
+Premonição 3
+SBT, 22h30. (Final Destination 3). Alemanha, 
+EUA, 2006, 95 min. Direção: James Wong. Com 
+Mary Elizabeth Winstead, Ryan Merriman, Kris 
+Lemche.
+Adolescente tem premonição de uma 
+tragédia que se confirma e passa o restante do filme tentando driblar a morte.
+O Retorno da Múmia
+Globo, 23h35. (The Mummy Returs). EUA, 2001, 
+129 min. Direção: Stephen Sommers. Com Brendan Fraser, Rachel Weisz.
+A múmia de Imhotep, poderoso do Egito antigo, resolve re-ressuscitar, o que 
+traz de volta à ação o casal Fraser/ 
+Weisz, que estava retirado, cuidando 
+do filho -que era o melhor, vamos ser 
+francos, que poderiam fazer.
+Tempos de Rebeldia
+Bandeirantes, 1h. (The Last of the High Kings). 
+EUA/Irlanda/Dinamarca, 1996, 102 min. Direção: David Keating. Com Gabriel Byrne, Christina 
+Ricci, Jared Leto, Catherine O'Hara, Stephen 
+Rea.
+Em 1977, ano da morte de Elvis, e com 
+Dublin mergulhada no rock do Thin 
+Lizzy, o jovem Frankie (Leto) termina 
+seu curso secundário e, ao mesmo 
+tempo, pensa em se decidir entre duas 
+garotas, quando aparece, vinda dos 
+EUA, Christina Ricci. Gabriel Byrne entra como pai do garoto e co-autor do roteiro.
+A Lula e a Baleia
+Globo, 1h50. (The Squid and the Whale). EUA, 
+2005, 81 min. Direção: Noah Baumbach. Com Jeff 
+Daniels, Laura Linney, Jesse Eisenberg, Owen 
+Kline.
+O também roteirista Baumbach 
+apoiou-se na sua experiência com o divórcio dos pais e de certa forma a reviveu aqui: Daniels é o escritor cuja atividade como professor toma frente à sua 
+vida e a vê declinar sempre mais. Isso 
+até que sua mulher (Linney) começa a 
+publicar e é aclamada. Aí é que o caldo 
+entorna. Levado com humor e jeito. 
+Inédito.
+A Casa Amaldiçoada
+Globo, 3h10. (The Haunting). EUA, 1999, 112 min. 
+Direção: Jan de Bont. Com Liam Neeson, Lili Taylor, Catherine Zeta-Jones.
+Cientista leva três jovens à mansão para seus experimentos científicos que, 
+previsivelmente, não entrarão para a 
+história da ciência. Já o filme quer ser 
+um terror com elenco famoso, o que 
+não é próprio do gênero. Foi execrado 
+por crítica, público, bilheteiros e lanterninhas.
+(IA)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "bf1d7b967995d1da2158d20acde0a22b3ddd1294c24a4962f870b87097a9625e",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86056e962826ad31fbbe3d6633d0d44ddcb4541677f29e0a03d52b5f1e34514a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ba3d11a256a84b6765a17f18669600bed8f39b0b22e8155128a53318138c527",
+    "mention_text": "Steven Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d70a90548f859eea006e143bb487263d37c079e8a260f83737fc8f1daa8d9f6b",
+    "mention_text": "Haley Joel Osment",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2d9ffa2cc477a4e8e6c28f597837b224d2c1ab90cb2181343762ddfe335439e",
+    "mention_text": "Jude Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "099ed524f1aa16b7e2b4b3b93b63f6306a3c2a8a1fc2bced1150fcfefde76e59",
+    "mention_text": "Frances O'Connor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "626c14bd024b818b695edc84f078611b52ddb20d3efa1639ea3155e45b6f1d68",
+    "mention_text": "Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6709746b98212e5051d28fb95afcca99dbcb55bcc04d99761369188dd720057",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7eff7cecd35cd5fc28e304620b479fe14e891b477d223e23c40453a746221e3",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "339477dc6dc08fe7844af0aaa9daca1be0c39d87f1a0ca190e52839ef550ddf4",
+    "mention_text": "Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6420e8f4ffd80e167ef5826b18140a371cfb8218a58cbb41059d1abef803b03",
+    "mention_text": "Record",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aca68857a05af37681774641d87a36aa2c89f3ae1dba39110d8054a316ffd62d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d5c8a689be4ab088d4fb44139e02a041bd2f0ef4d2e22e4af5359ff4b4dd390b",
+    "mention_text": "Vondie Curtis-Hall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1d73dbd9d22042d920c2921529b2e94ff48737e2c3e0bbdc84f65a83e94b34b",
+    "mention_text": "Tyrese Gibson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "991f023a8a0d103c9e5728d67175cc123e02fd2eb6c5520e2c00cd2a89a47bd4",
+    "mention_text": "Henry Hunter Hall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1ee85758d82f9c6da177d73a4665b307c90b32baaeaaa6646f7f380b3b44a44",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52663573f76f176c34484a71dab9911700edd65d3e225c570b83b57709ca4b7e",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a1cacdfd50e838a33d6bfa22e1d33a333a6fcaac94096f30a8d6a07758dede18",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02fed878431724ee0a3a8ef6f4bac9cade646dadda6b97a34a2fb982aee95b62",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "717ef29c760636010c8130292618c226db94a3560f4adc12eb188839b32d43fa",
+    "mention_text": "James Wong",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a4a0918152b7d81cd8c5bf7d8b23ee19eeccab4be204e2e7df70ea028c0e298",
+    "mention_text": "Mary Elizabeth Winstead",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa5629aa8389bd95eadffe1dc30a29cc25494841519bd5f6bcba7c856de59e1d",
+    "mention_text": "Ryan Merriman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2c8ec4a3da3bd80a149b4711e032b8623d2ff3beba68f11656b346b27104c92",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c9a0010a0e7bea9fa2ab9d689884bce75b150ee012b136a34d80092ad9ab11d5",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e92af4917c83c707cb54c9008abcc407fbabb5e4109de679f5c606015f38f589",
+    "mention_text": "Stephen Sommers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aea94933ffba2e0784b436aec3ac9d08998234e49675251ed8f2b947c3b69ed9",
+    "mention_text": "Brendan Fraser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1f16aa315a3779950c5b3e88cb5a7b704948e026277bc80fb52198ca12a2c08",
+    "mention_text": "Rachel Weisz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d28b499db24d806d495c710dd5aad1db155c22e9c41c4f768fc557e8e618550",
+    "mention_text": "Imhotep",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbbf1146b85ae01f9cfb05bc34abff87231ea6aa1ec26d33382794144635f428",
+    "mention_text": "Egito antigo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "21ecdc84905ed3b6d5d7a2d40897249eae49e54edcc0b7e71f2519caa3bb656d",
+    "mention_text": "Fraser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97869f5c95a73314edbf411b2d0e99017752fdf08b2a5ca61566f81d527b8011",
+    "mention_text": "Weisz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71b2453d179e1ec2a53b1d6d8f611c7f799d68e9cbc48c6b6975e3e49e1624df",
+    "mention_text": "Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7e5d7939d8d51ee9589d43422b3a0c970df051f0c3feb0761259e98304ea3bc",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9aaa7d9600df4b835567065c3bc3308b8e83670b4cb7e159358020a44c7214cc",
+    "mention_text": "Irlanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74a49efd93986d6da707c798f2de2055ab269ef2303ff408f90d64fb56ba2c94",
+    "mention_text": "Dinamarca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f1dd27e95db8b742342ad1efaba2363ba718bc6b389488f87a4d1b3ef38737c",
+    "mention_text": "David Keating",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "582758eaaa343ce105dff300621f4d7444027c3923f665144d527c82e283855f",
+    "mention_text": "Gabriel Byrne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6e598512444dff640a142e025324e752a5f74b38cbc9ad41ffc83dd1372e523",
+    "mention_text": "Jared Leto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afd61e9d10d182b0bfce687cf68209efca0f0b55e83db676f0183766f704aa2a",
+    "mention_text": "Catherine O'Hara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bcf03995b34492ad2f459383f7cb75d1af1fe2dfc486aea76682c5288356d32",
+    "mention_text": "Elvis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78a84846079721febdda955975792d45a0c5f40e3c87603e7d7e38e67b5a2cac",
+    "mention_text": "Dublin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a7d5b0e19fabbd1aee2e87bb5a8b1f6af2b118e45f4c15cd17c439bcc01400d",
+    "mention_text": "Frankie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f416723206ceae82aa8d65591c4ecc05276656afacf9e4a7005e4c16b3fd5aa8",
+    "mention_text": "Leto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51e0e1881b7a7ff6888408e81f6ed43b70472fbd4004a2fafa12d4d1bd140759",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "edf5b0c9f9b0ab0958f50aafc827d101b179fcf1399dc8f132e6f5d9fc18d885",
+    "mention_text": "Christina Ricci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "919813b1b518a9d27023fa187d94548720ac6f72a2b167b837e0847249fc9295",
+    "mention_text": "Gabriel Byrne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25f2aadd5a6bb0545660935e0d1eefd01f1fdfc8864c8d4ca41ef001be2607ee",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85fffdf252fc3076dabd08d7ce9c3ff42570cdae44af78268faa7996a3a218d1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a5054ced2628e3f0293281d9513ff4c7be28ccc322009fad4cc14ccb7826c9c",
+    "mention_text": "Noah Baumbach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9294bc4981a8f06d6d64ec28e33d53fd5d46af2fe687dd59a1b755cebcd9fbb4",
+    "mention_text": "Daniels",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2464f92426c65f0aaaacecfee9eecab6595000a8997d3ed8c531673f5e00fa4",
+    "mention_text": "Laura Linney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "253c03cfe349ed3ce1536c553c953b5bd7b194ab80ce765c2acb64be92b60088",
+    "mention_text": "Jesse Eisenberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb3767cc76d1252f6001e11c849fb27754e565aafabad7ed87eaa6964a88dbf4",
+    "mention_text": "Baumbach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54d48571d8012b80d0d142b8317fb9df93e43f111af8c6838c0664bcdbeecede",
+    "mention_text": "Linney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "371c003aa4d9122371f97efcc3e54c1843b37b76101447cc07145a27af4949cb",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de6608b0c325e5b04fbc738f2062114c25d057ed83e9c18c5539f625d631f54d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e62064e8ea76b8d1e5decb2d0f287064967e23de141279eefefeae637c8c0686",
+    "mention_text": "Jan de Bont",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7ff3cfc85aae1125aca7b193bc4b26688d93ee66aecff33825dbf0cdbbf839f",
+    "mention_text": "Liam Neeson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a583a380aace5426f1b683d882e94bfa35b1ddccec53434b4c1e690960570b6b",
+    "mention_text": "Lili Taylor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7612dea748a3efa34268a0cb47b14f20c6e7f374dfa2da812e54ac9e7d0016d0",
+    "mention_text": "Catherine Zeta-Jones",
+    "categoria": "PESSOA"
+  }
+]

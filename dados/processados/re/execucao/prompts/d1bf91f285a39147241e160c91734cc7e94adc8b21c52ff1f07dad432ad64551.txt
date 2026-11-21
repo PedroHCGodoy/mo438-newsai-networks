@@ -1,0 +1,421 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: bfe19a6ae7e93d5900a86dfe100ac796d80268c93adb6efd49008a393298d936
+
+TEXTO:
+Empreendedores de sucesso contam suas histórias de fracasso
+
+Fracassar faz parte da carreira de quem empreende. E aprender com experiências que não deram certo é fundamental para prosperar nas empreitadas seguintes. As afirmações podem parecer clichês, mas histórias de empresários que já foram à falência e depois tiveram sucesso reforçam essas ideias.
+Hoje à frente da DataRisk, que fornece soluções de inteligência artificial e deve faturar R$ 5 milhões neste ano, Jhonata Emerick, 38, conta que já teve que fechar uma empresa de vendas de bijuteria porque, à época, não sabia fazer fluxo de caixa.
+Já Tatiana Pezoa, 45, fundadora da Trustvox, faliu duas vezes antes de vingar no mercado. Ela conta que começou o novo negócio não do zero, mas do “menos R$ 200 mil”, em referência ao valor de suas dívidas à época. O negócio prosperou e foi vendido no ano passado.
+Os dois dizem que levam em conta os percalços que já enfrentaram na tomada de decisões em suas empreitadas atuais. Veja abaixo essas e outras histórias.
+Eu tinha uma pequena produtora web junto com o meu marido e, em 2008, resolvemos mudar de ares: criamos uma empresa, chamada Client 2 Central, e desenvolvemos uma ferramenta para comunicação interna nas empresas.
+O nosso maior erro foi não investir em marketing e achar que o produto se expandiria organicamente porque ele era  bom. Nem Big Mac se vende sem marketing. Falimos.
+Anos depois, fundamos a Ledface, plataforma que se propunha a responder dúvidas online. Mas não conseguíamos uma forma de monetizar, e o negócio foi à falência também.
+Em 2013, eu tinha uma dívida de R$ 200 mil, com escola do filho e aluguel atrasados. Cogitei ir para o mercado de trabalho, mas resolvi tentar de novo. Comecei a Trustvox, que gerencia reviews confiáveis para lojas que vendem online. É confiável porque nos certificamos de que só quem de fato comprou um produto pode falar sobre ele.
+A plataforma deu certo e chegamos a ter 28 funcionários e 1.500 clientes. No fim do ano passado, vendemos a empresa para o Reclame Aqui, onde trabalho agora. Sempre falo para as pessoas que não comecei a Trustvox do zero, mas sim do menos R$ 200 mil, por causa das dívidas.
+Tatiana Pezoa, 45, fundadora da Trustvox
+Trustvox Serviço que gerencia resenhas online, vendido para o Reclame Aqui em 2018
+2013 é o ano de fundação; a companhia chegou a ter 28 funcionários
+Fundei, com quatro amigos, um clube de compras para um centro empresarial na zona sul de São Paulo, chamado Centroff. A ideia era oferecer cupons de descontos só para as lojas que atuavam nesse lugar. Na época, os empresários dessa área engatinhavam.
+Não tínhamos barreira de entrada nem competidor. Fechamos parcerias com alfaiate, lava-rápido, lanchonetes etc. Nosso maior case de sucesso foi com uma academia.
+Estava indo muito bem, mas com quatro meses de operação vimos que os sócios não estavam nem um pouco alinhados. Um já queria vender a empresa, outro queria continuar no centro comercial, outro queria expandir a atuação para outros lugares. Não estava mais dando certo. Tivemos que fechar a Centroff para cada um seguir seu caminho.
+Hoje, sou sócio da Promobit, uma plataforma que reúne as melhores ofertas da internet e as audita: descobre se realmente existem, se é ou não golpe etc.
+Aprendi na época da Centroff que os sócios precisam estar alinhados. Para isso, é necessário ter muita paciência, saber ouvir bastante e conversar. Até por ter tido uma experiência que não deu certo, sou até meio que o moderador entre os outros dois sócios hoje em dia.
+Nossa empresa já vai fazer seis anos. Claro que tem problemas, mas não são nem um pouco parecidos com os que tínhamos na Centroff.
+Leandro Menezes, 28, sócio da Promobit
+Promobit Plataforma que reúne ofertas da internet
+30 funcionários
+R$ 150 milhões gerados em vendas para ecommerces
+Eu montei em 2010 uma empresa que vendia bijuterias de porta em porta. Se chamava Maria Leva. A ideia era aproveitar a força de trabalho das mulheres que já fazem isso com outras marcas (Avon, Natura etc.) e oferecer uma margem maior que essas empresas dão. A ideia começou a dar muito certo, e eu cheguei a estar em vários estados. Só que eu não soube fazer fluxo de caixa. Vendia os produtos e recebia muito depois. Isso é normal nesse mercado. As mulheres não pagam na hora. Só que para repor o estoque eu ia na rua 25 de Março e pagava na hora o fornecedor. Colocava dinheiro do meu próprio bolso. Quando eu vi estava quebrado, mesmo vendendo bem. A empreitada durou cerca de um ano e meio. A questão de fluxo de caixa é importantíssima hoje pra mim. Se meus clientes pagarem já no primeiro mês, melhor. Alguns demoram para pagar. Temos um fundo que investiu em nós, o que ajuda nesse sentido. Minha empresa atual é a DataRisk, de soluções de inteligência artificial. O negócio ficou seis vezes maior neste ano.
+Jhonata Emerick, 38, fundador da DataRisk
+Datarisk Empresa especializada em soluções de inteligência artificial
+20 funcionários
+R$ 5 milhões é a previsão de faturamento
+2017 é o ano de fundação
+Em 2009, aos 22, montei um ecommerce de sapatos femininos, que se chamava Ela Brilha. Em quatro meses não vendi nenhum par. Transformei a empresa num outlet online, vendendo coleções passadas. Virou um clube de compras de sapatos, o Shoes Club, e estava dando muito certo. Vendia uns 500 pares por mês. Mas a margem de lucro era espremida, e eu precisava de fluxo de caixa, o que não tinha. O empreendimento morreu. Optei por fechar porque vi que não tinha jeito.
+Em 2012, resolvi que não queria ser uma empresa que usa tecnologia para vender, mas que vende a própria tecnologia. Criei a Wevo, primeiro como consultoria, depois como fornecedora de tecnologia de integração [para automatização de negócios]. Hoje, nossas soluções estão em muitos setores, mas comecei no de ecommerce, e ajudou demais ter trabalhado nessa área.
+Durante o Shoes Club, aprendi a negociar, a ler contratos. A lição que fica é a de que é necessário se adaptar. Você deve estar disponível para mudar a estratégia quantas vezes precisar, e a estratégia pode ser fechar as portas se for necessário.
+Diogo Lupinari, 32, fundador da Wevo
+Wevo Plataforma de integração de sistemas
+80 pessoas trabalham na companhia, que tem 120 clientes, em 10 países
+R$ 7 milhões foi o faturamento no último ano; o negócio deve crescer 50% em 2019
+Meu primeiro negócio foi na Argentina, o Cenaplus. Era uma plataforma na internet para reserva de restaurantes. Ainda estávamos na época do Blackberry, não tinha aplicativo. Éramos o primeiro negócio nesse sentido no país, e fomos bem no começo, mas não conseguimos nos preparar para o caso de surgir um concorrente. E surgiu um com muito mais dinheiro que nós.
+Tentamos por algum tempo, mas não conseguimos competir, e eles acabaram nos comprando. Não falimos nem nada, mas não atingimos o resultado esperado no sentido de que essa venda foi a nossa opção, mas não era o que a gente queria.
+Já no Brasil, abri a InstaCarro, plataforma de negociação de carros online. Uma das minhas preocupações hoje vem exatamente desse aprendizado na outra empresa, quando não previmos riscos.
+Temos uma reunião mensal na qual discutimos os problemas que podem surgir e o que concorrentes podem fazer.
+Luca Cafici, 28, fundador da InstaCarro
+InstaCarro Plataforma de negociação de carros online
+120 funcionários
+R$ 360 milhões de faturamento por ano
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "3dd55e3bbb6bb04a62625d300abfad7bf4f85d9ce5873feb838f6d53665889dd",
+    "mention_text": "DataRisk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4815b8ae02def705de33e05706b5ff8f57e7e6efc30166aba8c8b65ef1683c94",
+    "mention_text": "Jhonata Emerick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "920b1a36c868c6f72c28342500a4cf2888b1cf02484ec99ab24fda84a2118886",
+    "mention_text": "Tatiana Pezoa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3b5457cbe4e22062de4958bb9fb7306be532f6bc88ced08cb916564e0f735d1",
+    "mention_text": "Trustvox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a1dac413fb07a6ace45e4149581cd62c91c13d600bdb338c01481e93d1ae93d9",
+    "mention_text": "Client 2 Central",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e73cc8b29ad965302cf593cb4120fb26b46cf5676464ed3147e1e7b02ab5db8f",
+    "mention_text": "Ledface",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "899f84b279eb2b63bff839a051918c8eeee1af7fdf8fe16fb10c08d433dea9c2",
+    "mention_text": "Trustvox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ec09ce19c3e4f704a6a2e2cdff67066535ec7267fa5eaac10e417c6da4982ef",
+    "mention_text": "Reclame Aqui",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61f02a1360a41688e8c704a17d62cc28520e077cfd7cea0bf2c9ce8f7528fc5c",
+    "mention_text": "Trustvox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b43818d2b6c60d01dbd9380e828f2e782ec1987cdb2bec0690cc8c5823133524",
+    "mention_text": "Tatiana Pezoa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33a7098555b9e6b88855bf9ffc6f5715ae65fd6f933d1ae8b4b40b5476de2e39",
+    "mention_text": "Trustvox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f68bd63c81acbb5ecd4d9d03272029fc06d0275fac59b25a0c09174b4a474003",
+    "mention_text": "Reclame Aqui",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73b3c518eb5f9cd4a8f1bd3d02bd43d15f921cf77c3bc4ef68b49493fbde0e72",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "214455dc9bf20bf36361944f97df2d093e60fc491476b03468e213d01398f00c",
+    "mention_text": "Centroff",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a7a2382d4f9ae3be708a94b0574724d593e9f5ed0dd4da58d3ab9086a420ed4",
+    "mention_text": "Centroff",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a71630742b4cf7822f866abb8d52c5a28f95a7012c1cf3b7aed18ab7a37c2193",
+    "mention_text": "Promobit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fdbd73205185e50fd8baa7d6998fd42dab36a0b0f7c6d3ed1d32848feb4ad0a",
+    "mention_text": "Centroff",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "021260f624a323d420e98674a9416e6836e0056756b9ca1510f6b1599fc90138",
+    "mention_text": "Centroff",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "147ce4ae64673a454741760e5c36fb86779af15b496588fc30a7db59ddc4121a",
+    "mention_text": "Leandro Menezes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c3a916b9673588a729241057d869c8f007fbf5218624a5b11d573f61f55d5d4",
+    "mention_text": "Promobit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a16b3edbd46018af47b850e025e2ca5b3f45b3a36ed4b446aa60ff98025d008b",
+    "mention_text": "Maria Leva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a140100dbd057409afbfbe79a77d8573e2664b3ef430a3d28b1c11397b1838f6",
+    "mention_text": "Avon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b26e7c37703db6a6d2697c884c3494918d650ca891cb9f9e389da20d62bc1d3",
+    "mention_text": "Natura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a877f67dc1487de7e6c0e4199a8d4ab9679c1cf8f84d26fa4c4f4f9de840828",
+    "mention_text": "rua 25 de Março",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed7a741c6beddc75bc8fde682ea6047e61e6cb9a9daa04100f1e3c9e16a6c4c4",
+    "mention_text": "DataRisk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d222bf003ad19437fb61cd0bb500cfd2d5dc5985d428b4e645230defc9d1b28",
+    "mention_text": "Datarisk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a061fd2c8338370686190e5e1491249a11953917ac515efc7d2cf67013377b17",
+    "mention_text": "Ela Brilha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d89af758134e03521bb3bbfd595a50b63be128b9f5a40c2c8c9ceed0225167d1",
+    "mention_text": "Shoes Club",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88088943240d2c054434a8f8ec2de09cc5cf27f81eabb502b47c10059752cea7",
+    "mention_text": "Wevo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "206db3223257395277bcc045028c9e519db5e10e0eee4cb75150c0e2f369cd05",
+    "mention_text": "Shoes Club",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "281bb855a2fa46ef2d903796c0642e8d82d58e321d48edbd1c8363ba3271228d",
+    "mention_text": "Diogo Lupinari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fd5d2fb9103f991fa1b4a6f3bfd50a7381acb236c11d665f5753da759a1fc2a",
+    "mention_text": "Wevo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32ce1efc95ba3df7e2540edca7b04ae272f36461e1c4f0fc819715d23c709eb8",
+    "mention_text": "10 países",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b6560df462e5d693598de422480ae8a1ee562507342f8ff0ad580fd110811c42",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3711e5881c27862b415eb072b0527b6398fad382bcd897f065e878cf38785a11",
+    "mention_text": "Cenaplus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b273db9a084da710c90fa7dd940f41e0f559e4ec69374bef90fca313f06d25e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8646e7ca33bce4efcb0f0a02c7ab5b2f6c9e6c200f223daf5b2f3afa425a2ee",
+    "mention_text": "InstaCarro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e31e43c4aef869aa5bc76413bad7a2a3b6f73cdf8e3cc7a442a5197181a3933c",
+    "mention_text": "Luca Cafici",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "033837c7366d4e973b69f23454dcc5313266f79022ad4d601d1c200082c7b0cc",
+    "mention_text": "InstaCarro",
+    "categoria": "ORGANIZACAO"
+  }
+]

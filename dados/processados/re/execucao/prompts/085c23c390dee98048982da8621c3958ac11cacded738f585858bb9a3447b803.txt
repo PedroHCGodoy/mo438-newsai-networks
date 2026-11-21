@@ -1,0 +1,564 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2ef613bba2a59e7b97353073cee934107c132c9f806b8287bf2a889be0808d74
+
+TEXTO:
+A guerra mundial do software
+
+A guerra mundial do software
+Pirataria fica mais sofisticada, mas a Microsoft reage
+Repressão à pirataria pode prejudicar imagem da Microsoft
+HAZEL THOMPSON PARA O NEW YORK TIMES
+Donal Keating, da Microsoft, exibe imagens de certificados de autenticidade forjados; grandes falsificadores são o principal alvo da empresa
+Por ASHLEE VANCE
+A Família Michoacana, uma brutal quadrilha mexicana, chegou ao software. A polícia, no ano passado, invadiu uma casa com 50 máquinas usadas para copiar CDs e produzir versões piratas de programas como o Microsoft Office e os jogos do Xbox. Alguns discos vinham até com as iniciais FMM, de Família Morelia Michoacana.
+O cartel, evidentemente, vê a pirataria como um complemento de baixo risco e alta lucratividade em comparação ao tráfico de drogas, aos subornos e aos sequestros. E ele não está sozinho dentro do crime organizado mundial, o que agrava as preocupações de empresas como Microsoft, Symantec e Adobe.
+Grupos na China, na América do Sul e no Leste Europeu parecem ter redes de distribuição e vendas comparáveis às de empresas legítimas, diz David Finn, diretor de combate à pirataria da Microsoft.
+A empresa adotou uma posição linha-dura contra as falsificações e contratou dezenas de ex-agentes de inteligência dos EUA, da Europa e da Ásia, usando diversas tecnologias forenses para localizar e condenar criminosos.
+Mas a caça aos piratas acarreta um ônus para a reputação da Microsoft.
+O lucro da empresa com o Windows e Office continua causando inveja no setor de tecnologia, e críticos argumentam que a Microsoft, simplesmente, cobra caro demais por eles. Em países como a Índia, onde a Microsoft estimula a polícia a fazer apreensões, a empresa pode passar uma imagem de valentona, disposta a perseguir os próprios parceiros comerciais se estes eventualmente oferecerem programas piratas a quem não tiver condições de adquirir o produto autêntico.
+Mas Finn minimiza a acusação de que a Microsoft enfrentaria menos pirataria se reduzisse os preços. "Não temos visto conexão entre índices de pirataria e preço", diz. "Acho isso uma falácia."
+Ele argumenta que a Microsoft não tem alternativa senão lutar, pois sua imensa rede de revendedores e parceiros não consegue sobreviver em áreas inundadas por softwares falsificados. Argumenta que consumidores e empresas estão sendo convencidos a comprarem programas que não funcionam ou que abrem caminho para fraudes eletrônicas.
+E, o que é crucial, a falsificação de programas reduz os lucros da Microsoft. Uma entidade setorial estimou em US$ 51,4 bilhões o valor dos softwares não licenciados de todas as companhias no ano passado.
+A Microsoft tem demonstrado uma rara capacidade de obter a cooperação das autoridades -não só na Índia e no México como também em Belize, China, Brasil, Colômbia, Malásia, Chile, Peru e Rússia.
+Mas a busca da Microsoft por falsificações começa em Dublin, num dos dez laboratórios de criminalística da empresa. O físico Donal Keating, que comanda o trabalho forense da Microsoft, encheu o laboratório de microscópios e outros equipamentos.
+O agente secreto do grupo é Peter Anaman, um advogado nascido em Gana; ele ensinava combate corporal no Exército francês e aprendeu sozinho a programar softwares.
+Usando três personalidades virtuais, Anaman se aproxima de hackers que usam números roubados de cartões de crédito para montar sites de produtos piratas. "Isso é parte da coleta de inteligência humana e do monitoramento das relações", diz.
+Usando um sistema de inteligência artificial, a Microsoft vasculha sites populares suspeitos e pede aos respectivos provedores que os tirem do ar. "Os sites parecem profissionais", diz, "e alguns chegam a oferecer apoio ao consumidor por meio de call centers na Índia".
+Anaman diz que os grupos responsáveis por tais sites são "parte de uma web negra", ligados a redes de spam, vírus e fraudes.
+Cerca de 75 outras pessoas, inclusive ex-agentes do FBI, do Serviço Secreto e da Interpol, trabalham sob comando de Finn, um ex-procurador-assistente dos Estados Unidos em Nova York. Ele diz que a Microsoft gasta "para lá de US$ 10 milhões" por ano em operações de coleta de informações e cerca de US$ 200 milhões no desenvolvimento de tecnologias contra a pirataria.
+Os ladrões de softwares monitorados pela Microsoft têm diferentes formas e tamanhos. Podem ser universitários ou 
+avós.
+Mas os investigadores dedicam a maior parte do seu tempo a falsificadores de grande escala, examinando como eles produzem e distribuem seus produtos. A maior apreensão de programas piratas na história aconteceu em julho de 2007 no sul da China.
+As autoridades localizaram um depósito onde os operários montavam os CDs, os materiais de autenticação e os 
+manuais. Afinal, os investigadores encontraram US$ 2 bilhões em programas da Microsoft pirateados. Programas produzidos por essa quadrilha apareceram em 36 países.
+A Microsoft descobriu que as operações dessa dimensão tendem a incluir todos os apetrechos de empresas legítimas. Os funcionários passam anos construindo contatos com revendedores de softwares mundo afora, oferecendo-lhes versões com descontos dos programas. Muitos produtos da Microsoft obrigam o usuário a digitar um código de ativação. As quadrilhas também usam versões roubadas desses códigos e, às vezes, criam sistemas de autenticação on-line.
+Há dez anos, poucas empresas tinham capacidade técnica ou os US$ 10 milhões necessários para comprar máquinas capazes de prensar CDs e DVDs. Hoje em dia, uma prensa dessas de segunda mão sai por cerca de US$ 100 mil.
+Porém, o que é crucial para Keating, cada prensa deixa marcas distintas nos discos. Ele passa grande parte do seu tempo submetendo CDs a uma máquina brilhante, do tamanho de uma maleta. Leva cerca de seis minutos para examinar um disco e encontrar os padrões de identificação.
+Mas os esforços antipirataria da Microsoft podem ter uma contrapartida em termos de relações públicas. A empresa alterou suas políticas na Rússia após uma série de incidentes em que as autoridades locais apreenderam computadores de ONGs e jornais de oposição, usando como justificativa a busca por softwares roubados.
+Finn argumenta que os esforços antipirataria da Microsoft e o treinamento das autoridades são um benefício para os países que desejam desenvolver ao máximo os seus setores de tecnologia e mostrar que dão valor à propriedade intelectual.
+"A propriedade intelectual é um motor crítico do crescimento econômico", diz Finn. "Isso não é só para as grandes companhias mas também para as pequenas empresas e para os países inteiros. Trabalhamos com governos que estão percebendo que isso é do seu interesse."
+Próximo Texto:
+Venezuela, um ímã e porto seguro para migrantes
+Comunicar Erros
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b9e2dd69911e154feadfd4cc00986cb8200f5e5583c62ececd599d46a903d6df",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbedd51e441f7e62590034ac586a8bc95a0d91752c84445ff0f3728d903ea2b4",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45023984fa1d788efcbc13f610617fe7fdbdf1facb07581da0078897ace25ec5",
+    "mention_text": "HAZEL THOMPSON",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4ebbf369758182a415216e60e8b5c12357476126a037a628c7e939d7bce936f",
+    "mention_text": "NEW YORK TIMES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6f431a9f648056fb651c602d5930fe3e2ee2653c84223e7a4c9967def052d26",
+    "mention_text": "Donal Keating",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c31b661bc2a9052f0c0bacc8ca59001eab1824d751fe7bae4aa0402ea4ce4e19",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bb2cab728ba1e062b696a31b8f77d5bf2585607eec5a73f114502cb55414257",
+    "mention_text": "ASHLEE VANCE",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c83b03b916f9854532f88f20b5f5b14f4723d7bba52ca48bc72bf2aff707177",
+    "mention_text": "A Família Michoacana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7d0164e9ca8a0165e51fab7d6ca4dc96848fb23cee0b2e2126e55cf3425bb05",
+    "mention_text": "Família Morelia Michoacana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "417e98515364a7727e63dc17b76434a114fc067d3b79d0b3f021e305f9ec4c80",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86adc5984eecd830f64f34872c367bd93951e5f462068d2d42d1c8d433d1ccb7",
+    "mention_text": "Symantec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79fea524c81de853309fbb0009f3aa8d756f1526b621dc1661ad39c16870d5de",
+    "mention_text": "Adobe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "887e0904c8560fac1eba03d84bb4d851949bcf1431488aa5366917f05163b7bd",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19134ba9b6e0ddfbcb7639a0c3233ef87b98b2fe815b1998339194210db2c105",
+    "mention_text": "América do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0784d851ed364cefb72bdcfe2173c0be94ba191d7637f228397f8fd0589f3cfd",
+    "mention_text": "Leste Europeu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5f4cfc479df6ab094a3e0d9e522dd12a0e9529d3c6f958e6f40042710dfbcc0",
+    "mention_text": "David Finn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "586d391aa3b4258e2099c1ef191ad921bef3fa6ec4c645a5174ab574b47b78ac",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e318336b7ea11795fd8cc022c256209ceca37e1b5e7f9bfefa8953237032ba82",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f08c8c2b437720005f1941cdb5cce9c4c65abee3725ffb2fdba59b389ddc60ef",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c9aa9156e40be482963348a5d673f3c25f80e8197d48b0ce811778c0092f44b9",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca73af03e865adf77a99bd8994981161cc233bb2d5412bcad796a5358fe1295b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b8fde6c5a8c5342a3de96b2e0a039db82aea2351e8410c37060a810f968e788",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "848366a690d0fbef71d67a2ea1e16ca55c97eb47c582fd4101a78e8cf661766a",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ffa1ed15f040fd59856c2430b81317f4623c2ede615beece6c0bf31451ba2501",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84e68411e6c4c54342a93110b6e3810c9dc345aa42c1490cfb6f5fa240b24ce6",
+    "mention_text": "Finn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b7bf6c33e06d17a95cd0f5cc3765a1846bdc18ed2113a684b66438f5eeb86a9",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d02031c5adbe8f1749a62f5ca7be958b7fe29f3e6bed2a170a2b5d665a124e9b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d9e83c92718ebec682ad45e6ff4a432b6b4d158016365c44da11da494a6851e",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82b874bdab9307acc64e896f5bd604c15c6dfd39b98694b0414008afdfef7ef9",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "910c06ef1a01285a08e9490d37933c650454baa6931050cf60d8b47c533ba141",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1741566d5d3904cd8ea3c2b7b52c5907e05ea11e9bd4abee697b13b66d3f4e70",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3018ea21a2c7a0a2a2f84e4cce7681a6ef44d4f3b7006e179da3d8fec0dff670",
+    "mention_text": "Belize",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "78547d98369e856a81ed6bf97bc8aefd43f4e5161ae9928edbc78f34b38da0fa",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4cbc46f133cea6e6f2b48a13db979ba9f10b7c6e20eb7aa61b572dc6fe53686e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93508efb673996ff0e116ffa8ea25eaba8e93c71ec2faf3e5269f26675343e6f",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2bdeab19ea9cdfc9889b8ebead9e8a396c84d33ac605f1f709a065c09b35a88",
+    "mention_text": "Malásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17562cedf27f4c1a704cab82d1d59c5adb673d3cc04a1f61776cfbee14a565f3",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3f9d857fe9a491f4a2598d2de5db7ba2737038131015285d0995f1447cb79e41",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c579c5c675cc7ccc9e7d1ce29b70f980c58a9b53dc74d1c9ba70ce8d9b0b296b",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9aeef9109bfd21d7df732995acca1cf2ec5f176d5989f72633ccb18bc3a4f7be",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90b1819d6252aa2e375dc5edaf9048306f74b91afa5f0be6ae4e1f18de7a8cf0",
+    "mention_text": "Dublin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e7d3cd7530537ba2f2aa0da1a9dde32b3721d948576d1fbd6eb148bbd76a2de9",
+    "mention_text": "Donal Keating",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b72374111a5dde68325beaa6d8f046954de203c118e0141e91aa8e54614123b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d743c34dcf98e8a9ec6c6ed31a95c1658dfc2d788a9fd975805d8da80c2473eb",
+    "mention_text": "Peter Anaman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2161d1a54d3f907ebdcb982a44d6b0b9191ce8aad1e495708911dc68aeeaa97",
+    "mention_text": "Gana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "50a680f9adb1d89ddd32129f70c7b675d1b5ea9c4b7e450015fbd2c004c23bca",
+    "mention_text": "Exército francês",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8985273efef1345c7aacd365d8e35d6aa7973a49b28fd44211365a4164820e80",
+    "mention_text": "Anaman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09c5c8fdafa516550d45226344836958c889975812922ba5f8f6d2433e031c36",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23a5431121bfbaf79eee0b53bb69b80917f1eca3db081c4f67d58578671edd6c",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "004ad4e939be4e06f97458e2950ba8018df4c7f963fc8b8d0f5c860ac68f8bef",
+    "mention_text": "Anaman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "708dd45b89a5c42d1491fe6f1b0662018eb3ba1fd1ae912bacc624c29fc775bb",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38aba852cc5a1de2fac91b695e0be529eda732de2bc68c4413305379eb8beb6b",
+    "mention_text": "Serviço Secreto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95494156d9e2914ef5aa6da373aa918d206fab8a8a8d00a9aa0e8831be9cae5c",
+    "mention_text": "Interpol",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33c44ea2363cfee0bf12c85ae77a3801bf688ec1e05834ef0307e2731889064f",
+    "mention_text": "Finn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6db1357f291ba809456cddd3123d296e500bccd1f4e94e8febd4259a9739996f",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb6184ffe29fe4d4cbcdc99d92161f6d50dacaded109df2c57be3cac4cd921f0",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "620b8cce5c0478e9ebc0f9bb162011dab4e491c7fe2259b4c8b5ae3464a82c78",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04f3528e90087a43fb6d542c25e38699df5615c31368f8db5a68e85cf281e67c",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0856d6cfb0e161afede4d38de4070e0fdad6cb21915e30ed6cee030dbf585009",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ced4b0dc93d1e60001cf26a6ac2a9f050aa419951247dc3f89610430ebed7bf",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87cf1326e1dd0976d1ef34068fe11e9e08c73dddbb6759149409a16dfde3c1db",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5885110e098de4b4bb381c2a7d9e3bde0f197d4ba605b44396a96149bcdeb230",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a005f81e709698a169ec472e527ac6d4f68f53c9d4c26bd76437a9cf7a27edcf",
+    "mention_text": "Keating",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f63ccad516ebbec29bc96bf4f78ec47bee1dbe185e87f1159fe4f77290308de6",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "196a1864242ec0088af53de127d9cdac9e78c2c230b6b283166da64cf2a1d7ea",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d98e72b6bc23cc80c3518419bf551776e7a4d7697be4f03a36528e05127a88e2",
+    "mention_text": "Finn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c8cea0c8bb204de1adfa46582e860978a9911db48392e636c3fd392fcba7cab",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb52f76a7c21f8f1f9bb6882a06c96a53a1fdea4248145b24f15686d8f86b7ee",
+    "mention_text": "Finn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b330a9aaa23aec9b41bc18b2095a29c08341221609d908f6781a3acdd689445",
+    "mention_text": "Venezuela",
+    "categoria": "LOCAL"
+  }
+]

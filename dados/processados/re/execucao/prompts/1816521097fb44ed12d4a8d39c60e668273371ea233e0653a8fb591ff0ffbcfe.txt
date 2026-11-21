@@ -1,0 +1,496 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c2d0fc1921eac31673fa48c2d4c0d20a1eb49c724b1c928c5ec5a2c2f20ccc2e
+
+TEXTO:
+Folha promove seminário sobre o futuro do trabalho
+
+A Folha realiza, no dia 30 de novembro, a primeira edição do seminário O Futuro do Emprego e o Emprego do Futuro.
+No evento, serão abordadas questões relacionadas ao mundo do trabalho nos próximos 30 anos, perspectivas para o empreendedorismo no Brasil e alternativas contra o desemprego.
+Hoje, o uso de inteligência artificial e robotização suscitam questões sobre o impacto da automação na elevação do desemprego e na redução salarial.
+Dados da OIT (Organização Internacional do Trabalho) mostram que, desde 2010, o número de robôs industriais cresce a uma taxa de 9% ao ano. Segundo previsão do Fórum Econômico Mundial, entre 2015 e 2020, serão extintos 7,1 milhões de empregos no mundo, principalmente aqueles relacionados a funções administrativas e industriais.
+No Brasil, o futuro do trabalho ainda envolve questões tributárias e regulatórias, além da própria legislação trabalhista. Relatório divulgado em fevereiro deste ano pela CNI (Confederação Nacional da Indústria) apontou que 14 dos 24 setores da indústria brasileira precisam adotar com urgência estratégias de digitalização para se tornarem internacionalmente competitivos.
+Para a palestra de abertura, o seminário receberá Youngsuk ‘YS’ Chi, presidente da Elsevier, empresa global de informação e análise científica, técnica e médica. Chi trabalha com setores governamentais, acadêmicos e industriais no apoio a mais de 30 milhões de cientistas, estudantes e profissionais da saúde ao redor do mundo.
+Ele é professor visitante na Universidade de Yonsei, em Seul, na Coreia do Sul, e conselheiro independente das empresas Maropost, localizada no Canadá, e Ingram Industries Inc., nos Estados Unidos.
+Estarão no seminário também Robson Braga de Andrade, presidente da CNI, e o diretor-geral do Senai (Serviço Nacional de Aprendizagem Industrial), Rafael Lucchesi, que é integrante do Conselho Nacional de Educação.
+O evento, que tem patrocínio do Senai e apoio do Sebrae (Serviço Brasileiro de Apoio às Micro e Pequenas Empresas), acontece a partir das 8h no Rooftop 5 & Centro de Convenções (rua Coropés, 88, Pinheiros), em São Paulo.
+As inscrições são gratuitas e podem ser realizadas através do site Folha Eventos .​
+Dia 30 de novembro (sexta-feira)
+CREDENCIAMENTO E WELCOME COFFEE
+HORÁRIO: 8h às 9h
+BOAS-VINDAS
+HORÁRIO: 9h às 9h15
+PARTICIPANTE: Robson Braga de Andrade, presidente da CNI
+ABERTURA
+HORÁRIO: 9h15 às 10h15
+PARTICIPANTE: Youngsuk 'YS' Chi, presidente da Elsevier e diretor de assuntos corporativos do RELX Group
+MESA 1: O mundo do trabalho nos próximos 30 anos
+HORÁRIO: 10h15 às 11h15
+PARTICIPANTES: Fabro Steibel, diretor-executivo do Instituto de Tecnologia e Sociedade do Rio de Janeiro; Guilherme Thiago de Souza, gerente de engenharia e desenvolvimento da Roboris do Brasil; Luiz Arruda, diretor da consultoria WGSN Mindset
+MESA 2: Alternativas para o desemprego e mão de obra subutilizada
+HORÁRIO: 11h15 às 12h15
+PARTICIPANTES: Aline Cardoso,  secretária de Desenvolvimento Econômico da prefeitura de São Paulo; João Roncati, presidente da consultoria empresarial People Strategy; Paulo Feldmann, professor da FEA-USP e autor do livro “Robô: ruim com ele, pior sem ele”; Wasmália Bivar, professora da PUC-Rio, ex-presidente do IBGE e pesquisadora do instituto
+BRUNCH
+HORÁRIO: 12h15 às 13h
+MESA 3: Desafios do emprego no Brasil com a indústria 4.0
+HORÁRIO: 13h às 14h
+PARTICIPANTES: André Portela Fernandes de Souza, professor da FGV-EESP e coordenador do Centro de Microeconomia Aplicada da instituição; Rafael Lucchesi, diretor de Educação e Tecnologia da CNI e diretor-geral do Serviço Nacional de Aprendizagem Industrial (SENAI); Regina Madalozzo, professora do Insper especialista em economia do trabalho e da família
+MESA 4: O futuro do empreendedorismo no Brasil
+HORÁRIO: 14h às 15h
+PARTICIPANTES: Gilberto Sarfati, professor da FGV-Eaesp e pesquisador do Centro de Empreendedorismo e Novos Negócios da instituição; Heloisa Regina Guimarães de Menezes, diretora técnica do Sebrae; Nana Lima, cofundadora do Think Eva
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "5701083ca5e56a2ea856caace8327a4005a71ebb80f4fdb70fad30dd0c01d467",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd3bd5a97abad2ce51cdc2ef0f763ae5b7e84e79add0c52f298df6d0464f54ec",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28e998c7fc385fd71b0bd5969721e75420f13b6a29100edd2a203b1df4b47132",
+    "mention_text": "OIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19e8b66e2f82c5ce03886621a662440d4f9b1bd369304a556631c3158924c365",
+    "mention_text": "Organização Internacional do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f27fe42d3e21c69e6eeaeaa2b68894eb3e4877e6d2ed25278cad92e1cbd2ac32",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9211b4bde886d22f5e5ddb9037cd18ba42a8c7602df6ff533fcfe1b7e4a0822e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a1d91609076d6732e742a6529f56015b3a182a9511d9cf6fce8a8805814387c6",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce83c3ca63f144620d9a81a3fdd113d88c7ea36aaecfe81170ad4c7eed98f308",
+    "mention_text": "Confederação Nacional da Indústria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c46b1f096da776f88f55a2239eadf1760cb8761d1d18e6dccb0d10d21be1a446",
+    "mention_text": "Youngsuk ‘YS’ Chi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4643a384f7dd79ab257b526527837dd47544ae67f8c48a00a5d300211d824f8f",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d623a80ee5a6352d94f5752eda0a09700be6c096add0f438aeeb13019872630f",
+    "mention_text": "Universidade de Yonsei",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2fa8cdf4fb7f84f6f40f2cd18bde14c6addc512c3513ff17317c1974a8b4798f",
+    "mention_text": "Seul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c3d398a07b9066ba887f7f6b57311a025181fad13ca4b5d208ab84bd18abf7ea",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "64bcad8bb29a08380e3f7200a80001b38c38860e320325be3de3d4d341b282d0",
+    "mention_text": "Maropost",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a19bc06a1895bd1b0f294f9fcbf8353f056d53ef4a10b8572030bc9f26941c6",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1cbc57edb0ab7f813629f55a6057b0ba85500ff52f2e29dcdeff06aa18cc598",
+    "mention_text": "Ingram Industries Inc.",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d53e8e24e6f815b096c7d4324f6a019ab36f6427aa36317f654caa881da99ac3",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b65b89d5026ce24f059a67a745432b6aa8689bc0fdfbcf9cfc6ae0fc7f63707",
+    "mention_text": "Robson Braga de Andrade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08e56638f5643827b1c5b3315d657442dcac051366c432942a1a9d2ac346e5f4",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52bb3c19f44cde5df5c2280e78808734983587809aa0f79fb443ed7baf95925f",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3459619a03b775fe6d997982c4eb791548e81bbbf1f48b7d43d029c3c91f7f9",
+    "mention_text": "Serviço Nacional de Aprendizagem Industrial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2caa0d7d6f62a80b801f9a7465a1ac37664bc833ce9882e4b65f2f3f46be9a1e",
+    "mention_text": "Rafael Lucchesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b7a3927b7014509e56d63b78ba32a97cd8dfe33e8a67ea42565f1b0ebc12ec9",
+    "mention_text": "Conselho Nacional de Educação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92de4a866db4ab75af5b24a77d7d6a03cf3a406525f0f8bb4acf4b042175ca9a",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd01e71e3fc1a0e1a754be1b3658667cd204fa22c9c7f4c4fd4abb225ebc36a9",
+    "mention_text": "Sebrae",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36d4aca5a95192f8f07b9dfe77e1720eff2aaea2115239c9379a47f64f6f0e2b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "650c1831db529461d916c9192163f595e70a8dab15733217d8bec3da24c996b6",
+    "mention_text": "Rooftop 5 & Centro de Convenções",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46fe2850eb0ef10974f7e6739e3d3c6a66489d87f798d4d52547636a2a0e2d8d",
+    "mention_text": "rua Coropés, 88, Pinheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "323dd589cd76305559150033f467806c340a1f05ff229f3caf165b43a8f8300e",
+    "mention_text": "Pinheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c3e57e461ce0839c56db0c6a6e616a09fbccd01799ea16660a0371b1156ee90a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9e41ebda2945aa9f66ca9110f020276fe3409ec8c9484ae8efb60b7b8388d56",
+    "mention_text": "Folha Eventos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a68fc28fd861655dfe5294f5c47665687120fe8a6f458058a98a686fb911f2e0",
+    "mention_text": "Robson Braga de Andrade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a87fba9f098e6bea8fb03840531298550ae74039b5d608b0721486157f05e88b",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fddf469238e993f19b79b0ff0ddad3edc3bfc22bbf5dd39e3c49329217a69580",
+    "mention_text": "Elsevier",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1f6793b716dc095750c02f28033f8ed62e184e9f5791143350ced3d5190176d",
+    "mention_text": "Instituto de Tecnologia e Sociedade do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "847ac1ca40b83e0c081e45c7756f21b46eab114e44a8b19bdc1bfa19a52b080f",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20dcbd59a177aceb7b3ff719f185ab4f51f0270a76f067a042c8f8593197487d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52be5405a113249c963ebb1ac756d6fef86e6dbe4e4909177615352d8b2b710e",
+    "mention_text": "Luiz Arruda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ff0fa56d02b8a05aa3d96c183d369e33df2bd6be60c6272cfce5ea2142f484e",
+    "mention_text": "Aline Cardoso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f09b8b18b3863414d5f547e711b52227451df5fad2649d8997ed9ac6f4ee1038",
+    "mention_text": "prefeitura de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13b1bb6d8b15527b8ea78fa823f9d5ccdc5a2ea89b966509bd0577c1d1a17f85",
+    "mention_text": "João Roncati",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f88697e33a5c9b1afb45a923643834325e5babb9fded79eeabcfc57968846bbe",
+    "mention_text": "People Strategy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "067b9a83f8ed68e8df1a0b21434aa779263fbe229ddf6e9b31a7bc4b6c34df21",
+    "mention_text": "FEA-USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2ac978e13998c1f66884233f998015d2d1d71d16f327f4bccff7198c27c5782",
+    "mention_text": "PUC-Rio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c5dce78ad91d735eb3895330500f04dee0aab19d32ffaaa04a771ab90efa61a",
+    "mention_text": "IBGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5379438eafe4a08627ad8062357cc5489f81ff37ee45dde534f025c6b2e9fbd3",
+    "mention_text": "André Portela Fernandes de Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87b3a28e0832311302d3fdbd280fb9d9d6c2127f910db6f04d22458fbfee0b23",
+    "mention_text": "FGV-EESP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40d2b351d8a49605ab5560ec1223580dc1f2ccd3f98f7ae2ccd2f594e7203d05",
+    "mention_text": "Centro de Microeconomia Aplicada",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83e343361ffcd3eeda18a2392593d1226910382f9b5bc32d26f24ede22a7d56e",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ee45d0e7c160acc266d03d93a715312fed6af92611768761dcf5808049864a2",
+    "mention_text": "Serviço Nacional de Aprendizagem Industrial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e16f10f5657a8ff5d04dfcbbb323cbd309f02693a323d5a6bc3d7eec8d81fb20",
+    "mention_text": "SENAI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0e7b6051da42043cf93d68871acd21d414b99fd2e0d5cc8e4ee79b47c5516c5",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e7bcbb717e01c30847a8c693e68ed66ffa1d32e1e417e8f069aa64b424e2816",
+    "mention_text": "FGV-Eaesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75e8f3e0764e9cf87da6bc6d9a68f1186fa0cc106bc95451edc6d10c4eba2e91",
+    "mention_text": "Centro de Empreendedorismo e Novos Negócios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc52a9f6d41ba03119ad312f8bf7f45e3cd64f356c59f3ad67c53f4fb17c0bb2",
+    "mention_text": "Sebrae",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c4e3a786afe6c846548018ac4afdd11311e99a75b3f2a0cecf2e5eba67e9b217",
+    "mention_text": "Nana Lima",
+    "categoria": "PESSOA"
+  }
+]

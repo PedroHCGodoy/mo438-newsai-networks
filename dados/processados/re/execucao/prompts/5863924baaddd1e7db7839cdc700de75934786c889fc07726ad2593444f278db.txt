@@ -1,0 +1,386 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 3de01e78d7db48a71082c715617a35705bf0853339a5a6f6e0437b3648e3828d
+
+TEXTO:
+Apps de temperatura não se entendem e mostram até 4°C de diferença
+
+Além do desaquecimento geral, o paulistano tem outro desafio no inverno que começa nesta quarta (21): lidar com as diferentes temperaturas exibidas pelos aplicativos de tempo em seu celular.
+À primeira vista, o problema espanta, pois, se estamos acostumados a duvidar da previsão do tempo para os próximos dias, basta um termômetro para dizer qual é a temperatura que está fazendo neste exato instante. Acontece que o seu celular não tem um termômetro.
+Assim, cada empresa recorre ao seu próprio método de coleta de dados, programa de localização e cálculos matemáticos para chegar a uma temperatura aproximada de onde cada um de nós estamos.
+A Apple não divulga quais são os aplicativos mais baixados no Brasil (a Google não respondeu), mas deu a dica de quais têm mais destaque em sua loja: The Weather Channel, AccuWheather e Yahoo Tempo!
+Além de terem aplicativos próprios, os dados da The Weather Channel são usados pelo aplicativo de tempo padrão de todos os iPhones, assim como todos os celulares Android já vêm com o AccuWeather acoplados.
+O resultado diverge claramente. Na madrugada de segunda (19), podia-se sentir vários graus de frio, dependendo do seu aplicativo: 14°C (Yahoo), 16°C (Weather Channel) ou 18°C (AccuWeather). Abaixo, detalhes de como cada um funciona.
+IPHONE
+A julgar pelos dados passados à Folha , o aplicativo da Weather Channel (que abastece automaticamente os iPhones) tem boas chances de acertar a temperatura real no local em que você está.
+A matriz norte-americana enviou um mapa com milhares de temperaturas do mundo inteiro em tempo real ( www.wunderground.com/wundermap ). Aproximando a cidade de São Paulo, vemos cerca de 40 pontos de medição, mais dez na Grande São Paulo.
+"Recebemos informações de 800 fontes diferentes. A maior delas é a World Meteorological Organization. Muitas são estações de tempo privadas no Brasil", disse Andria Stark, gerente de comunicação da empresa.
+Se o seu celular estiver com a localização habilitada, você passará a receber dados de uma estação ou de outra, conforme se movimenta por São Paulo.
+ANDROID
+No caso da AccuWeather (padrão de qualquer celular Android), o procedimento envolve a medição feita em aeroportos. "Temos dados dos aeroportos de Congonhas, Guarulhos e Campo de Marte. Como as pessoas não moram nos aeroportos, as informações mostradas na tela são inferências baseadas na proximidade a esses locais. Mas há mais do que apenas esses dados, há muita matemática envolvida", disse o meteorologista James Andrews, da AccuWeather.
+O chefe dos meteorologistas da AccuWeather, Dan DePodwin, dá mais detalhes: "Além dos aeroportos usamos dados de alguns pontos de observações fornecidos pelo governo e algumas companhias privadas, permitindo mostrar uma temperatura mais representativa da sua cidade. Isso significa que a temperatura pode mudar dentro de São Paulo e, caso o dono do celular autorize o aplicativo a usar o serviço de localização, ele receberá a temperatura mais correta".
+Por fim, a Yahoo! não deu detalhes específicos sobre como atua na cidade de São Paulo. Informou que utiliza os serviços da Global Weather Corporation. A empresa possui um sistema de inteligência artificial que aprende a melhorar as previsões com o passar do tempo. Como base, utiliza os padrões de modelos meteorológicos e históricos de dados. Há pequenos ajustes humanos, informam. Não deixa de ser um alívio.
+TEMPO
+No primeiro dia de inverno, o sol voltou a aparecer na capital paulista, mas não o suficiente para afastar a sensação de frio. A temperatura média chegou a 19,3°C e a mínima ficou na casa dos 14°C. Algumas regiões, porém, registraram índices ainda menores, como Vila Prudente (12,8°C), Capela do Socorro (12,9°C) e Jabaquara (13°C).
+Nos próximos dias, o sol deve aparecer com mais frequência e as temperaturas sobem um pouco mais. O frio continua, principalmente, à noite e no início da manhã. Segundo o CGE (Centro de Gerenciamento de Emergência), da prefeitura, os termômetros devem marcar entre 14°C e 22°C na quinta (22) e entre 12°C e 23°C na sexta (23).
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9b6986bb37e303f54a84703e2debc314a665c1fa48e5f64c8ef90edf31e77cd2",
+    "mention_text": "paulistano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e42374407147446c0aab29fc39601a4ee7d3f885d54ecc385a25b1eda3c255ea",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d829784c21eb72ff54c22f0dd02803f63ea2ec8b09a48f0314a3de57dc31bdf8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76408c95173f8009e1ff3ddd1dec815461766c3d0021aea81a51c6de73ef0702",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "932966ba0ce19ebcab699440dffd58d6baa532ea4ad3a3c5e77d52310aa8bdf7",
+    "mention_text": "The Weather Channel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e80ccdce9311aab9ba3dc8c9ba2c864d2a07a5696b433c29704f6d2a3b94b268",
+    "mention_text": "AccuWheather",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e6a132f4865918ad26ca08ccd4c3f00ced2432ae77a31181c8bab7d0f35333e",
+    "mention_text": "Yahoo Tempo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cae4f3ae17df8ddfd6ba71c10532ba95799735468e0a19d2f3e7a8b324d882a4",
+    "mention_text": "The Weather Channel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16b5e2093098b2cb8cf6eaaf3e7a5b8ddbbde5266410e44f89a2a01e02c4f351",
+    "mention_text": "AccuWeather",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8e41d746ac8c112b124cd562d395e53e7aa2ae80fc4eee76326eec6b85cb8f6",
+    "mention_text": "Yahoo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1430c8ae0b9b340e16035dbcd1a0de0a59fb42e47a54ddc4d6cd2eaa719fc159",
+    "mention_text": "Weather Channel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a04f0072adbac280a25357f4c9933fa55532645c731eccf9697ffeefbed9c037",
+    "mention_text": "AccuWeather",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f4f4f31340fc187cbed55be9e72b2fcc9ad004ac4a69e8e25816525c268bf9e",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67bc19fb06905af069819131e7c489185e3aa4e4248e83eecf004a1106d0bab6",
+    "mention_text": "Weather Channel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6f82a15c92129a8568ed17bdaa09f2596ffe0f42f4a9631d2b93213fb381579",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e62774832771e94b7be0ed9f11ad68fd6a4e7f374bed4023abfd71176005f331",
+    "mention_text": "Grande São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca9b7a4cd35e20d2094a40679f231a5963555a8453db8dc44b95c9987cfe6a03",
+    "mention_text": "World Meteorological Organization",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68873830d2855e86b893715a9e33a44b08c976fd9ba6b996a21a0d2e77f1adfa",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8fff3c113e736b446fe626d1754947cd3da7cb1d44944297c8615145ba843d1",
+    "mention_text": "Andria Stark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4833db26d3a4a788ed86304c9555398ebd990fc3e7ad288fc8398600d2494e0c",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8646eef1ea8b55a9c2aefa6617f3fecc26e16e99de0a43f1befbb52fd1e42e9",
+    "mention_text": "AccuWeather",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b6598f19ee9e974b7a053734119f550977042b199ed7e6ccfb11ffa65e72e7b",
+    "mention_text": "Congonhas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4eab2f56ae61a534abd693609e6c89afdb68c30082563a4ba001cbe7b7e1a76c",
+    "mention_text": "Guarulhos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f21ca6f36a765e243160fed23db49215e8954249307e2564f46ab3060438b49",
+    "mention_text": "Campo de Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98f5080abe1ae194340cf2a8c150c3c67fb0f7dde09365fd5da02899d09be171",
+    "mention_text": "James Andrews",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4b0a81dade5f9173445365ad3ce482877331a226afce158a312c8b83f99ee41",
+    "mention_text": "AccuWeather",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a1f198318c3b5bf3ea8da98210b4848add8bc2b77c4b53bfccff408bf6812a8",
+    "mention_text": "AccuWeather",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12e3edcd816ec6347d6d46804de9ea9aad2db5bc4db4c2424125a974e2dbae9b",
+    "mention_text": "Dan DePodwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "472f8ef54eb717dbedd758ba11eea4a1064f79d439377b74a0d36207636a2194",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a091675571627d024e428af98f1053a84bc36ef7d4021c77781469eeaba0aed",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "278078f517627b10c677448ae3c2dde99a627e8433e14e3423d4815ddf833108",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "16e6f38229d0e2826527f4d7be01f30cbf5d2f5c797d43862c0fc3aa3889e166",
+    "mention_text": "Global Weather Corporation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "563fd4abb4b02e55ae7f3b6fdb478c6a2061433cd1368c7075cbd8970d2909dd",
+    "mention_text": "Vila Prudente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8593062613fff237469f9b182e9f7d9f01999ef332448aeeb0badf3b5232e46b",
+    "mention_text": "Capela do Socorro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47a6cced60a7a24a73ac531864f21183c3d973615468345b4251dd8c99149558",
+    "mention_text": "Jabaquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31e1a262132a9d3d7378d70c1bdfcf478c67973552e0c7a755ba2347fb33e359",
+    "mention_text": "CGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "416a1da9a0220bdd9e4788dbe5b3d53fbeb08e26e8ce9c4bf7ea29ae668b0ec9",
+    "mention_text": "Centro de Gerenciamento de Emergência",
+    "categoria": "ORGANIZACAO"
+  }
+]

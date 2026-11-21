@@ -1,0 +1,304 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ac2440c216c1392567485b189bd1871a572e67263693216f421486142dd13384
+
+TEXTO:
+Tecnologia ajuda cegos em compras on-line
+
+A distância entre uma pessoa com deficiência visual e o carrinho de compras de uma loja virtual costuma ser maior do que poucos cliques.
+O desafio está no grande volume de informações que as varejistas disponibilizam em seus sites, o que pode fazer a busca por um produto específico por quem não enxerga demorada e cansativa.
+Quem tem limitações visuais severas usa sistemas que leem, a partir de uma voz computadorizada, as informações da tela. Esses programas dão as informações seguindo a ordem na qual estão apresentadas no monitor, da esquerda para direita e de cima para baixo, conforme a pessoa aciona diferentes comandos no teclado.
+Novas empresas querem mudar o cenário usando inteligência artificial e reconhecimento de voz para tornar a compra on-line parecida como pedir algo pelo telefone.
+A Voice Commerce, criada em maratona de 24 horas de programação promovida pela Serasa em maio, desenvolveu sistema que, acoplado a lojas virtuais, cria botão para iniciar o serviço de compra usando a voz.
+A partir daí, o usuário pode seguir de três maneiras: escolher entre departamentos e ouvir o que existe neles; descrever especificações do produto que quer e ouvir as opções que se encaixam ou pedir diretamente o produto desejado, diz Eduardo Dotto Martucci, 36, sócio da companhia.
+É possível ativar a opção tanto no desktop como em celulares ou tablets.
+Durante a maratona da Serasa, os participantes entrevistaram uma pessoa cega, uma com baixa visão e outra que não enxergava com um dos olhos para entender suas dificuldades diárias e pensar produtos para elas. A companhia venceu o concurso.
+Martucci diz que o serviço da Voice Commerce permite, de um lado, ampliar o mercado para varejistas adicionando um público que não é atendido adequadamente e, de outro, aumentar a independência de pessoas com deficiência.
+"Nas entrevistas, vimos que, em muitas das compras feitas por um cego, ele precisa ser acompanhado por alguém. O uso da voz permite que se aumentem as opções de compra e o acesso a informações."
+Ele espera que os primeiros sites comecem a implantar sua tecnologia a partir de dezembro. A empresa tem apoio da Sevna, aceleradora de empresas localizada no parque tecnológico Supera Parque, em Ribeirão Preto (SP).
+NO APP
+Outro serviço, o James Delivery, quer que a voz sirva para pedir qualquer coisa, a partir de um aplicativo para celular.
+A empresa, que funciona há um ano e meio e está presente em Curitiba, São Paulo e Balneário Camboriú (SC), conta com rede de 400 entregadores autônomos que compram e entregam o que o cliente pedir.
+No dia 16, a empresa lançou a opção de fazer o pedido apenas pela voz, de modo parecido com a gravação de uma mensagem no WhatsApp.
+O cliente diz que tipo de loja quer encontrar, depois o produto que precisa. A partir das informações, o sistema reconhece o pedido e já é possível fechar a compra.
+Caso o programa não reconheça a solicitação automaticamente, o áudio com o pedido é ouvido por funcionário da empresa. Lucas Ceschin, 28, cofundador da empresa, diz acreditar que isso só será necessário em cerca de 2% dos casos.
+"Vimos que em um pedido normal pelo app se levaria um ou dois minutos. Com a voz, pode ser feito em dez segundos. Quando percebemos isso, notamos que poderíamos beneficiar ainda mais o mercado de pessoas que têm alguma dificuldade."
+Por outro lado, Ceschin admite que faltam ajustes para tornar o app totalmente acessível. Provavelmente quem tem dificuldade visual precisará de ajuda para cadastrar seu cartão de crédito e endereço na primeira vez que usar o serviço, mas, depois, as informações ficarão sempre disponíveis, explica.
+*
+COMANDOS Entenda como pessoas com deficiência visual usam a internet
+No computador
+>> Software lê ícones e textos selecionados
+>> Setas para baixo e para cima permitem ler diferentes linhas. As que apontam para esquerda e direita, letras
+>> Na internet, a tecla "tab" permite pular de um link para outro
+>> Atalhos de teclado são usados para navegação entre janelas ou fechar programas, por exemplo
+No celular (considerando comandos usados no iPhone)
+>> Recursos de acessibilidade que já vêm instalados habilitam navegação com apoio de voz sintetizada
+>> Um toque simples na tela faz o celular ler a informação que está no local
+>> O arrastar rápido dos dedos para os lados faz o aparelho ler a informação anterior ou a seguinte
+>> Para clicar em algo, é necessário dar dois toques rápidos na tela
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6c4706bd93b48f4237bc2b2b9789d62484063ba33bd496c708bebac3b9c21cfd",
+    "mention_text": "Voice Commerce",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c022b4845725eabbee2493f2ebbc4f20b8a46a11dfad09efe4cfcda3f3e4d8fa",
+    "mention_text": "Serasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "320693058508fdc4f68aa62c86d1dd0117b0374783700e4d816a28ee193dd635",
+    "mention_text": "Eduardo Dotto Martucci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42c0c8708214798c7a717c34b33bd890337acc087e73571bba5328b509ea3dcf",
+    "mention_text": "Serasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8abdd0292ca7c6e6170d8b8b85caef5fb3883f5f1614b6c355fa01dc80d65096",
+    "mention_text": "Martucci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "548c814cad539eead4c48c10b68b0d1fbf990d46c13dea5f6dffd023fd1836b7",
+    "mention_text": "Voice Commerce",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b966f0f48ebc0d4941b632edaee6753890eb9328474add39d8a3d0e556b49287",
+    "mention_text": "Sevna",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8c3135f7c97e8fb70a85372300ad728c6018745ebde66403dc751d247e041af",
+    "mention_text": "Supera Parque",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20202ba9ff325f2b7db598cb3479b7f8a3c71a994d4de67ca1a56ce4b418ed7d",
+    "mention_text": "Ribeirão Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52b6aaf156a999529a1df3a4c7726b151856324af10f45e6e6c652b4617f8f21",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1b0f7ecf078ffbc21e3dd354c6135724630fc0b1363294006dcd961431c3a6c",
+    "mention_text": "James Delivery",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8dec348a5f939bcf85b10e2149e80ce6f7ca64d298e3c177752e082dc5601da",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "430607a93648ab30f1cf6b548c64f5350377cacb8e71d15d5eb25512798f0ddf",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1b18a49db038008b251d87de8ae8eb3560f5701c27250aba9a6ae7156ced195",
+    "mention_text": "Balneário Camboriú",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8470db010d36235604da896afeec45d4966ab7a15146c09aba0587af42c3dad6",
+    "mention_text": "SC",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12a0646d6891b7a4a4655cdd51622dff280ca12755a988bacb6fa44adfb25b8b",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63995aba9170be300781479aae76b4cd9d2c3279255971c411bd9ccbf8d75b2d",
+    "mention_text": "Lucas Ceschin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e856e6874e58922493284b7c5bcba7d796a11ee626abcb1af1693d637c9e4a51",
+    "mention_text": "Ceschin",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,394 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 423d69bd020996fad885fb127089eaf0d88e483bfa57dbb7320de3333c0c5034
+
+TEXTO:
+Polícia do pensamento
+
+No ano que vem serão celebrados os 70 anos de “1984”, de George Orwell, um dos grandes livros do século 20.
+Engana-se quem imagina uma história desmentida pelo tempo ou capaz de inspirar programas frívolos de TV. Na ficção de Orwell, um novo idioma vai se disseminar em 2050, quando estariam inviabilizadas outras formas de pensamento.
+A relevância de “1984” pode ser aferida pela controvérsia sobre o tamanho do público na posse do presidente Donald Trump: o romance (1949) entra na lista dos mais vendidos nos EUA em janeiro de 2017 e a segunda adaptação do livro para o cinema (com John Hurt e Richard Burton) é exibida em cerca de 200 salas independentes como protesto político.
+Com o colapso do bloco soviético, o perfil do “Grande Irmão” está em aberto. O pensamento politicamente correto é uma das alternativas de poder: “quem controla o passado controla o futuro; quem controla o presente controla o passado”.
+O mundo sombrio de George Orwell (1903-1950) cancela, aniquila e “vaporiza” pessoas. Antes havia privacidade, amor, amizade. Agora, um dos desafios do “partido” é “descobrir o que um ser humano está pensando, à revelia dele”, é “arrancar” até o “último detalhe” de tudo o que se diz e pensa.
+Nas páginas do Facebook, rede que se apropria de informações de mais de 2 bilhões de usuários, aparece a pergunta: “What’s on your mind?”, “No que você está pensando?”
+No cenário de Orwell arquivos são reescritos, vocábulos indesejáveis são eliminados, pessoas desaparecem. O Facebook diminui a visibilidade do jornalismo profissional, controla páginas políticas, divulga e restringe “fake news”, remove grupos de ódio, terroristas e assassinos reincidentes.
+Em 2005, a Biblioteca Nacional da França eliminou do cartaz da exposição em homenagem a Jean-Paul Sartre (1905-80) a bituca de cigarro que está no retrato original.
+Para a mutabilidade do passado, Orwell cria a “despessoa”. Desejar é pensamento-crime. O Spotify remove o rapper R. Kelly (suspeito de abusos sexuais) de seus algoritmos e playlists. O cineasta foragido Roman Polanski é expulso da Academia de Artes e Ciências Cinematográficas.
+Se em Orwell crianças buscam sintomas de “inortodoxia” em seus pais, para denunciá-los, na Argentina, filhos de criminosos contra a humanidade reivindicam uma lei que permitiria o testemunho contra os próprios pais.
+“Oceânia” tem “Ministério da Verdade” (responsável por notícias, entretenimento, educação e belas-artes), “Departamento da Ficção” e “Liga Juvenil Antissexo”. O fundador do Facebook Mark Zuckerberg, o rosto ainda adolescente, sugere uma “Suprema Corte” com pessoas “de fora” para julgar conteúdo.
+Além de ambicionar o desenvolvimento “seguro” da inteligência artificial e a colonização de Marte, o milionário sul-africano Elon Musk promete um site (“Pravda”) para monitorar a credibilidade da mídia.
+A nova tradução de “1984” (Companhia das Letras, 2009) prefere “Polícia das Ideias” a “Polícia do Pensamento” (Companhia Editora Nacional, 1957), aparentemente mais totalitária e mais próxima do original, “Thought Police”.
+É fácil conceber o banimento de manifestações politicamente incorretas, como o verso medonho de Vinicius de Moraes (“As muito feias que me perdoem/Mas beleza é fundamental”), capaz de ferir autoestima, ou o banimento moral do poeta. A arte dependerá das atitudes e do juízo do artista?
+Na distopia de “1984” ninguém é cidadão. No Facebook há também “dois minutos de ódio”. A recente lei de proteção de dados da Europa quer proteger consumidores, mas cada vez mais somos produto.
+lfcarvalhofilho@uol.com.br
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "818597460bf2eff7f5770c09822ed8ef022e373dd26433d55e7a5df28f398984",
+    "mention_text": "George Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b27ef516ba57251ed12e209b4f7a973b6f179d5cd741093cd6bf139c6d02f3e1",
+    "mention_text": "Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b3ca0e51cf36f2af2fe28d76afbe3d86db12abac516a055175c25aced1b27b2",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c112026823df2219e9378db2290d88fe40c0c34a100cb8a5a611ea8607900780",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "22b7c4b96996f3fe3d2bed1f9f093c18f8a632c8e6f045b7811f119761cbc860",
+    "mention_text": "John Hurt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f388179310f78f8a01e3e31adb0fdadb361eb3d806b00db9d985d140fee97909",
+    "mention_text": "Richard Burton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce00537caf1d1eb11931734cb74e65977a7ecfdeae40569b27b8cd47f53e220f",
+    "mention_text": "bloco soviético",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85597ce77bf3998d8e448a4808ad1f4b55c55b20238f5e423683f64bf81ba96f",
+    "mention_text": "George Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f27927939709826527c46c21487c19c16daa0c01ed44a009f7cc100f1bf0cfe",
+    "mention_text": "partido",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59f8ae38f070053202af38232124d93d243b329796d293d99468f9fe0edc1f14",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db6d82ccec6be05458dac2feea97439269e61188345cc6ec9555462ed0ae7edb",
+    "mention_text": "Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3af89f3ec6c3080617901674b226bc3c96caa2108fac67e94dc37b873ed2a09e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8bb78affc430eb5a013cad8608eb25489e938ed7d979501d3e46de017b48793",
+    "mention_text": "Biblioteca Nacional da França",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97db9748345e9ecb8eddc49e037f09b3c341d967269dd5f616c57dbc581e68ce",
+    "mention_text": "Jean-Paul Sartre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75a3bf07ea6d2204700d66381d164b2a618357ab2960f068c5a53c236df6714d",
+    "mention_text": "Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8dd2c0d8f0bc22993fa72c34556382690176ceb56ff04fcf95b7a7bae030b369",
+    "mention_text": "Spotify",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8a4ae6eb40056327cdb6b8d683b11e58ab79023af33d5c89ada02bb7293bbdd",
+    "mention_text": "R. Kelly",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5da51ebaa4c7039a3cff899649336783f02133308cc1e0d4abd033773b30198e",
+    "mention_text": "Roman Polanski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f973853148167a788a8d6d010e19ea21246e62ef4737fc7e5b1a352ab3d70230",
+    "mention_text": "Academia de Artes e Ciências Cinematográficas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68a6910004a2237478de4011114a4fda46118f7ee636a0113b1ed4f3dd81dd48",
+    "mention_text": "Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b2d7c8197284897219cb55c845ca169fee03b512abfb1a9b8b4aab9ad0535b0",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dd413908147e5702080ef8bb5f31dff6030a44433db698349687c51ad7e2d51f",
+    "mention_text": "Oceânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e86ef60a33e4ceddb68d5c3be0ad9f15929c855e07a56faf1081918e0fa7d6f3",
+    "mention_text": "Ministério da Verdade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1371777d6e9136c94f0208601132a1f91f85be1e0afee8563ca4981a001b93d2",
+    "mention_text": "Departamento da Ficção",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "001eed44be4a724dc11ccf4f56b420a5c9ffc76254d386ada11a4fe6e0abc5a9",
+    "mention_text": "Liga Juvenil Antissexo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7035f642dc09fc0a06aed90071de4371b4f0a6b139fb19ffb71a9bd5f398fde",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac9ca267f2bffa3bd3a38f0c48aa60780dc0f3fa463fb7e005b31b9de9590aee",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b64a5721260fb0a341988b48339c02cbc0718dcb41ed11fd6de3565cd897f31a",
+    "mention_text": "Suprema Corte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc1770d51393d98c5e31e1d035788ce449224dde35d1ab2ef2f4d43af526e084",
+    "mention_text": "Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b67f10d6f5acdb201717741a722e3732bab3c3e1682f6111708266a85f597d5",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c83c3be68f6a019c28c3e07dd5423c95e51dd56a557d33a52b5d92d010ca2c8",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "91e0d6189a2c9edcf9ea7acb650fd4fab54ef1e4c3fd8712c4db4018ce0a96b5",
+    "mention_text": "Polícia das Ideias",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f5995cda83ecaa98ff9580d84cde4d1e4d1dbb422e7d4f53f12a8b8f21efada",
+    "mention_text": "Polícia do Pensamento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b739508ec1de4dce1ca02423fd812b10d088ecef3a79510f46bc9233fae8e60",
+    "mention_text": "Companhia Editora Nacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f04b7a84aaa1fac01e8c6825040a0b98ac62f9cb6ff3be9f2f945fde6311922a",
+    "mention_text": "Thought Police",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66574683964f95cec1d9a92665369026d5881107e429ce0a78ecdb78dad7dd8e",
+    "mention_text": "Vinicius de Moraes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "292c347f478f5560cb98ed664ddbf7694b7c5a0d5309a3a762a79da749eb1b8a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d0d87be5d0cb89b39f79ccc6650fe4eafdcdecbf7082f8e5168b1d920f71e94",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "434f5fb693f303d61f4873b4a81cd0c03354ac08cb024d0a200df31d274d0d7d",
+    "mention_text": "uol.com.br",
+    "categoria": "ORGANIZACAO"
+  }
+]

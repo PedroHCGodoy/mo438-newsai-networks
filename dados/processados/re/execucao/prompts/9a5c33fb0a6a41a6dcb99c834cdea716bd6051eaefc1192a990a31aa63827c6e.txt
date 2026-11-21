@@ -1,0 +1,392 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c2e1f308729dbb906893de6634b30ed6367e615bed67a6769a417b442b01415c
+
+TEXTO:
+Marcelo Gleiser: Será que máquinas podem amar?
+
+Qual o nível de sofisticação cognitiva necessário para uma criatura se apaixonar e sentir efetivamente o que é o amor?
+FIM DE SEMANA passado, revi o
+clássico de ficção científica "Blade
+Runner: o caçador de androides",
+de 1982, baseado no livro de Philip
+Dick. O filme, dirigido por Ridley
+Scott e estrelado por Harrison Ford,
+passa-se em 2019, numa Los Angeles futurística. O enredo levanta
+questões sobre a relação homem e
+máquina que devem ser revisitadas.
+Pela perspectiva de 2011, a primeira coisa que notamos é como a
+visão de futuro do filme está errada.
+Carros voam e Los Angeles, sob forte
+e constante chuva, está entupida de
+gente e sob noite eterna. Parece
+mais Xangai na hora do rush do que
+a ensolarada casa de Hollywood.
+Todo mundo fuma, até os androides. Difícil entender porque alguém
+queira viver por lá. Mas o filme gira
+justamente em torno da vida: do desejo de se estar vivo.
+O casamento da engenharia genética com a inteligência artificial
+atingiu um nível de sofisticação que
+hoje não passa de um sonho. Várias
+corporações produzem robôs/clones chamados replicantes. A Tyrell
+Corp., controlada pelo cientista Eldon Tyrell, tem como slogan "replicantes genéticos: mais humanos do
+que os humanos".
+Mas os androides foram banidos
+da Terra e trabalham como escravos em colônias do sistema solar. O
+enredo revolve em torno de quatro
+replicantes perigosos, que escaparam e se escondem no caos da cidade. Voltaram à procura de seu criador, Dr. Tyrell, para convencê-lo a
+aumentar seu tempo de vida, que é
+limitado a quatro anos. Máquinas
+tocadas pela vida querem viver
+mais: primeiro tema importante.
+Enquanto isso, Dr. Tyrell desenvolveu um novo projeto: Rachael,
+uma replicante belíssima que não
+sabe se é humana ou máquina.
+Tyrell implantou memórias em Rachael, usando a vida da sua sobrinha. Orgulhosa, Rachael mostra a
+foto de quando tinha seis anos, ao
+lado de sua "mãe". Quando você
+tem um passado, já não é mais um
+robô: outro tema importante.
+Ford é um "blade runner", um
+destruidor de replicantes. Ele submete Rachael ao teste de Voigt-Kampff (fictício) que determina se
+uma criatura é humana ou não.
+Mas os resultados são ambíguos.
+Temos o Teste de Turing, que tenta discernir entre humanos e computadores através de perguntas feitas em terminais. O assunto é controverso, mas algumas máquinas já
+conseguem enganar humanos.
+No filme, os androides são inteligentes e belíssimos, quase deuses.
+Ford se apaixona por Rachael, e a
+ensina a "amá-lo" de volta. Ou iludi-lo que o ama. Qual o nível de sofisticação cognitiva necessário para
+uma criatura sentir amor?
+Existem inúmeros exemplos na literatura de humanos que amam autômatos ou humanoides: Pigmalião
+se apaixona pela estátua que esculpiu; no conto de Hoffmann, Nathanael se apaixona pela autômata
+Olímpia; Geppetto e Pinóquio etc.
+Muita gente já procura a companhia de robôs. No Japão, androides
+são criados para fazer companhia
+aos idosos solitários, crianças brincam com robôs e bonecas sexuais
+custam milhares de dólares.
+Se as pessoas carentes se contentam com menos, enquanto robôs ficam cada vez mais "humanos", não
+é difícil antever futuras uniões entre
+humanos e máquinas. Mas quando,
+então, deixaremos de chamá-los de
+"máquinas"?
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "608477654c548d325a03317b610167906c0b534e54164ddcd471a5369bea3de8",
+    "mention_text": "Marcelo Gleiser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51af417dd04332867f200107e0a246efa1d0626892673bc39bf73f9536cd7b3e",
+    "mention_text": "Philip\nDick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2183887ac1b08ba48f17ca2967d408bf0701699662ccdc7502a8640d4912283",
+    "mention_text": "Ridley\nScott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d54640241e90db55b6b9f19957dd356208e7dc668f573c81ebe90d675427d1e",
+    "mention_text": "Harrison Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1be02cb412f4356e41f5ad7871a247415ebf7996b2fe389868b92b4e7485bc32",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c366de20cac6f02089f70b1307cc186d12a768f832f7792fced09f83c884826",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d97041177b560a232b04ac2214d8c569f261d184dc091b057e4ecfe3de9f8fc3",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8c5c687461e0192a21a01823840c9eb7380497c25a5c5fd826d2a36fbe267b4f",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74e202b4dea6e583c0a469846f3527f6628caca0c410a468f33b741242767401",
+    "mention_text": "Tyrell\nCorp.",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b390707938afcec4a446d87b2370a228b2002ac8ce27e11e6ec741ee4274cdfb",
+    "mention_text": "Eldon Tyrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0e00e0390ea6085eba0cf81bce9d7ac55c3d1f84b86a76d6dd6d22abd1c7a6e",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8faabb00ef309c584a3479acaea7894b7f84fc59e4e9405f55ef33c1af961af2",
+    "mention_text": "sistema solar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27293e3eced3bff1c91475ef5c3b0347b6a7a341a97f67d0b11ad226f6555796",
+    "mention_text": "Dr. Tyrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0d79c7e09c184bd3c9ba544196c294b4f2a78320d5542866c53e1a378e42583",
+    "mention_text": "Dr. Tyrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35304b07f2e630b8c507c12b48bd56015649c068c5e3a520005c17fdbb56e15d",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "794a21af8494f7909e50d5a2cdd1da62ec04022871d6cc7649261235dfd407e8",
+    "mention_text": "Tyrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49a0e3e8f9b2950c215fb938ec32ed51538de8d543256d419afac674e2257d91",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be3a069aeb0aca978195b4207fe576f80eb18670fb843b2fef5ecb22de9b0525",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f764ba118aeca62199224c8d595de9fece224df48e74dd0debccebb998aab32c",
+    "mention_text": "Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2e89ffd3d673790b82bbd3bcfc4f48fd16377742f4317c77b32af8d017621fe",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "067beeaabaceafbb533e31074d37a4f55e4950bb2939b23512b678377f47daf8",
+    "mention_text": "Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9c9103e79059abe4c6d9d338931879e931cd7cfa344e9bb38d66d1fa0a20f69",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f32fabcdf1f07944f0ba2a9e4cdbe81842c7ed3f6fc61fc5bae2ed2e0377ab59",
+    "mention_text": "Pigmalião",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0259a8c8fa9fb864ddfe76933f2f4be16d25bbf354b7a6784548f69c871f42e9",
+    "mention_text": "Hoffmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d054fb2106b8dfb00e6b643c00f489c724cfd6fea1d47654593f05d98d46be8d",
+    "mention_text": "Nathanael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f186ca1078203b7af8784320c0a485c860c8e3865303b29f5463dbe2a1f644e1",
+    "mention_text": "Olímpia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74e59fdfb8c23566b3a39cdea82f0e44cff8a4ac790381e578acf78838ac710d",
+    "mention_text": "Geppetto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5cc7d4444b01b36fe1bf7ad9d0d019319e22ae6fbd80c0424d7c6ffa071189b4",
+    "mention_text": "Pinóquio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db755137067d1427ab3fa19d0d97671f4dbc9ce17f6712f5b96a617c1c033111",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  }
+]

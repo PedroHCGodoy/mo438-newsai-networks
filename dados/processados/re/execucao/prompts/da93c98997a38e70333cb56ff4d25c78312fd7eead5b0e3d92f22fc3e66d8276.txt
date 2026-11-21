@@ -1,0 +1,706 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 982999dbbdc4b64d4380c668c92c1f67882fb92b0127174e950ca613283fcd18
+
+TEXTO:
+Abertura da exposição 'Björk Digital' e show de Alice Caymmi são destaques de terça
+
+Nesta terça (18), acontece a estreia de exposição "Björk Digital" no MIS. Os elementos imersivos são inspirados no penúltimo álbum da cantora “Vulnicura” (2015), com músicas como “Stonemilker”, “Black Lake”, “Mouth Mantra”, “Quicksand”, “Family” e “Notget”.
+O CCSP recebe show de Alice Caymmi, que canta seu novo “Electra”, acompanhada apenas pelo pianista Itamar Assiere.
+Para celebrar o Dia Nacional da Imigração Japonesa o restaurante Nobu promove a cerimônia Kaitai, ritual de abertura do bluefin, um atum raro, proveniente do Mediterrâneo, que chega a pesar mais de 200 quilos.
+Confira essas e outras atrações para aproveitar o dia na cidade.
+Alice Caymmi A cantora carioca lança seu quarto álbum, “Electra”, gravado em dois dias. Acompanhada apenas pelo pianista Itamar Assiere, a artista se volta a composições que vão de Tom Zé, em “Mãe (Mãe Solteira)” a Letuce, com “Areia Fina”. CCSP - sala Adoniran Barbosa - R. Vergueiro, 1.000, Liberdade, região central, tel. 3397-4002. 300 lugares. Ter. (18) e qua. (19): 21h. 90 min. Livre. Ingr.: R$ 25. Ingr. p/ ingressorapido.com.br.
+Mais
+Entrega para Jezebel O espetáculo do piauiense Roberto Muniz Dias conta a história de Jezebel, uma travesti que tem como sonho ser mãe e se alterna entre cuidar do filho de uma amiga e tentar ganhar dinheiro pelas ruas. Ela vê sua vida desmoronar, no entanto, quando a mãe da criança retorna para reaver sua guarda. Oficina Cultural Oswald de Andrade - R. Três Rios, 363, Bom Retiro, região central, tel. 3222-2662. 30 lugares. Seg. a qua.: 20h. Até 26/6. Retirar ingr. 30 min antes. GRÁTIS
+Bug Chaser A montagem discute a relação entre o risco e o prazer contidos nas práticas de “barebacking” (sexo sem preservativo) e de “bugchasing” (quando alguém procura ter relações sexuais com HIVs positivos para ser infectado). O ator Ricardo Corrêa interpreta um homem em quarentena que é analisado por um programa de inteligência artificial. Teatro Sérgio Cardoso - sala Paschoal Carlos Magno - R. Rui Barbosa, 153, Bela Vista, região central, tel. 3288-0136. 144 lugares. Ter.: 19h. Até ter. (18). Ingr.: R$ 20.
+Babel, Glöm O mito bíblico da Torre de Babel é resgatado neste trabalho da companhia sueca Kaaos Kaamos. Mas, executando técnicas acrobáticas que dependem do coletivo, sua tese é justamente de que as diferenças podem fortalecer as comunidades. Sesc Guarulhos - R. Guilherme Lino dos Santos, 1.200, Jardim Flor do Campo, Guarulhos. Ter. (18): 15h. GRÁTIS
+Vincles Uma estrutura de cales de bambu de sete metros de altura serve de base para a apresentação do Circ Bover. Sesc Bom Retiro - Al. Nothmann, 185, Campos Elíseos. Ter. (18): 15h. GRÁTIS
+Comodato Landmann - Têxteis Pré-Colombianos Apresentando peças da coleção de Edith e Oscar Landmann, um dos mais importantes acervos de arte pré-colombiana da América Latina, a mostra reúne mais de cem tecidos produzidos há cerca de 2.000 anos onde hoje se localizam a Colômbia e o Peru. Na sala de vídeo, o museu ainda exibe o curta “A Liberdade”, sobre a tradição de tecelagem andina. Masp - Av. Paulista, 1.578, Bela Vista, região central, tel. 3149-5959. Ter.: 10h às 20h. Qua. a dom.: 10h às 17h30. Abertura sex. (14). Até 28/7. Livre. Ingr.: R$ 40. Ter. e menores de 11 anos: grátis.
+Devassos no Paraíso: o Brasil Mostra Sua Cara Baseada no livro homônimo publicado por João Silvério Trevisan em 1986, a exposição constrói uma espécie de linha do tempo das sexualidades e expressões de gênero no Brasil, do período colonial às eleições de parlamentares que se identificam com a causa. Um chatbot baseado na personalidade do escritor guia a exposição. Museu da Diversidade Sexual - R. do Arouche, 24, República, Ter. a dom.: 10h às 18h. Até 22/9. Livre. GRÁTIS
+Ainda Há Noite Parte da programação paralela do 5º Fórum Latino-Americano de Fotografia de São Paulo, a exposição reúne 300 imagens noturnas de fotógrafos de oito países da região, além de profissionais da Espanha e do Reino Unido. As fotos dialogam com tópicos como tecnologia, violência e memória. Itaú Cultural - Av. Paulista, 149, Bela Vista, região central, tel. 2168-1777. Ter. a sex.: 9h às 20h. Sáb. e dom.: 11h às 20h. Até 11/8. Livre. GRÁTIS
+Mais
+Entre o Azul e o que Não Me Deixo/Deixam Esquecer Desmembramento de uma pesquisa iniciada em 2016, a exposição de Juliana Santos se inspira na flor Clitória Ternátea para investigar as qualidades metafísicas, terapêuticas e plásticas da cor azul. Paço das Artes - Av. Europa, 158, Jardim Europa, tel. 2117-4777. Ter. a sáb.: 11h às 20h. Dom.: 11h às 19h. Abertura ter. (18), às 19h. Até 18/8. Livre. GRÁTIS
+Alinhavai A linha também guia a individual que Júlio Villani abre na Raquel Arnaud no mesmo dia. Nas obras que o artista exibe, traços e fios formam esquemas ora abstratos, ora identificáveis. Também no sábado, ele apresenta “Por um Fio”, na Galeria Estação (pág. 67) —uma van gratuita faz o transporte entre as duas mostras. Galeria Raquel Arnaud - R. Fidalga, 125, Pinheiros, tel. 3083-6322. Seg. a sex.: 10h às 19h. Sáb.: 11h às 15h. Abertura sáb. (15), às 11h. Até 24/8. Livre. GRÁTIS
+E para que Poetas em Tempo de Pobreza? Celebrando 30 anos da exibição do primeiro filme do cineasta paulistano Carlos Adriano, a mostra compila uma série de reapropriações poéticas de documentos de arquivo que ele produziu, método conhecido como found footage. Instituto Tomie Ohtake - R. dos Coropés, 88, Pinheiros, região oeste, tel. 2245-1900. Ter. a dom.: 11h às 20h. Abertura ter. (18). Até 28/7. Livre. GRÁTIS
+Olhares Artesanais A mostra do grupo Cidade Invertida propõe uma representação do Porto de Santos, no litoral de São Paulo, por meio de cliques realizados com a técnica de pinhole, câmeras artesanais construídas com latas, caixas ou qualquer aparelho vedado para entrada de luz. CCSP - R. Vergueiro, 1.000, Liberdade, região central, tel. 3397-4002. Ter. a sex.: 10h às 20h. Sáb. e dom.: 10h às 18h. Abertura ter. (15), às 15h. Até 11/8. Livre. GRÁTIS
+Predição Instantânea do Tempo O movimento dos ventos inspira esta instalação do argentino Eduardo Navarro, comissionada pelo Pivô. Nela, 27 trajes —ativados por bailarinos ao longo da individual—, mimetizam o funcionamento de birutas, instrumentos usados para indicar a direção do vento. O resultado é uma espécie de balé eólico, no qual a força do ar é o coreógrafo. Av. Ipiranga 200, 200, lj. 54, República, região central, tel. 3255-8703. Ter. a sáb.: 13h às 19h. Abertura sáb. (15), às 15h. Até 27/7. Livre. GRÁTIS ​
+Tensão Relações Cordiais A coletiva exibe um recorte da coleção de Regina Pinho de Almeida elaborado por Tadeu Chiarelli. Com obras de 42 artistas, ela enfoca os atritos e conexões inesperados que trabalhos a princípio sem relação entre si produzem uns nos outros. Neste sábado (15), às 11h, o curador convida o público para um bate-papo. A Casa do Parque - Av. Prof. Fonseca Rodrigues, 1.300, Alto de Pinheiros, região oeste, tel. 3811-9264. Ter. a sex.: 11h às 19h. Sáb. e dom.: 10h às 18h. Até 30/6. Livre. GRÁTIS
+O Estranho e o Raro A mostra explora uma faceta menos conhecida da produção do fotógrafo Mário Cravo Neto a partir de 52 esculturas, instalações, registros e desenhos. Anexo Millan - R. Fradique Coutinho, 1.416, Pinheiros, região oeste, tel. 3031-6007. Ter. a sex.: 10h às 19h. Sáb.: 11h às 18h. Até 13/7. Livre. GRÁTIS
+Psychosomatic Series Anaísa Franco dá vida a esculturas e instalações sensoriais nesta individual, composta por obras como “Expanded ID” (2018), que transforma a impressão digital do visitante em uma animação generativa, ou “On Shame” (2014), em que uma representação do rosto do espectador muda de cor e emite sons. Galeria Lume - R. Gumercindo Saraiva, 54, Jardim Europa, região oeste, tel. 4883-0351. Seg. a sex.: 10h às 19h. Sáb.: 11h às 15h. Abertura ter. (18), às 19h. Até 3/8. Livre. GRÁTIS
+Museu Histórico da Imigração Japonesa Criado em 1978, o museu ocupa três andares de um edifício na Liberdade. No primeiro deles, os destaques são duas miniaturas de navios —reproduções das embarcações que trouxeram os japoneses ao país no início do século 20. Animais empalhados que viviam próximos aos imigrantes nestas cabanas, como anta, ema e onça-pintada, estão expostos. O segundo andar do acervo evidencia a vida urbana dos japoneses no Brasil, e o último abrange as décadas seguintes à Segunda Guerra Mundial. R. São Joaquim, 381, Liberdade, tel. 3209-5465. Ter. a dom.: 13h30 às 17h. Livre. Ingr.: R$ 12. Menores de 6 a 11 e maiores de 60 anos: R$ 6. Menores de 5 anos: grátis. Não aceita cartões.
+Glitter Festival O evento homenageia a cultura LGBT e tem atrações como o cantor Yohan, a performer Islana Detox e a drag queen Vera Ronzella, que interpreta Hebe Carmargo e Dercy Gonçalves. Neste sábado (15), às 16h, acontece um bate-papo com os psicanalistas Joana Waldorf, Francisco Rocha e Leandro Silva que discutem a história dos movimentos LGBTs. Cabaret da Cecília - R. Fortunato, 35, Vila Buarque, tel. 3392-1239. Sáb. (15): 16h, ter. (18): 20h, qua. (19): 21h e qui. (20): 20h30.Até 22/6 Consumação mínima: R$ 15.
+Björk Digital Símbolo cult da música alternativa, a cantora islandesa Björk é a protagonista de “Björk Digital”, exposição que entra em cartaz no MIS nesta terça (18), após passar por cidades como Sydney, Tóquio, Los Angeles, Londres e, por último, Cidade do México. Os elementos imersivos são inspirados no penúltimo álbum da cantora “Vulnicura” (2015), com músicas como “Stonemilker”, “Black Lake”, “Mouth Mantra”, “Quicksand”, “Family” e “Notget”. Além dos espaços que usam e abusam da intersecção entre música e imagem, a mostra conta com o projeto educativo Biophilia e uma sala de cinema, na qual o público confere diversos clipes da carreira da artista produzidos por nomes como Michel Gondry e Spike Jonze. MIS - Av. Europa, 158, Jardim Europa, tel. 2117-4777. 25 vagas p/ período. Ter. a sáb.: 10h às 20h. Dom.: 10h às 19h. Até 18/8. 14 anos. Ingr.: R$ 30. Abertura 18/6. Ingr. p/ ingressorapido.com.br.
+Mais
+Nobu Em comemoração do Dia Nacional da Imigração Japonesa (terça, 18), a casa promove pela primeira vez a cerimônia Kaitai. O ritual consiste na abertura do bluefin, um atum raro, proveniente do Mediterrâneo, que chega a pesar mais de 200 quilos. A chef Letícia Shiotsuka serve um omakase (menu-degustação), com peças produzidas a partir do peixe. Com harmonização de saquês, a refeição sai por R$ 800; sem, por R$ 650. R. Haddock Lobo, 1.573, Cerqueira César, região oeste, tel. 3846-7373. 130 lugares. Ter., qua. e dom.: 18h às 24h. Qui. a sáb.: 18h à 1h.
+Mais
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ffa344e7771cf95d9482e600f475c7905bc02ed1eab6d5a0833482cf8229ca83",
+    "mention_text": "Alice Caymmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4a212dedd230ad3d0da04fd1509188b1e3c5bcae4056fbabf09a72c09926658",
+    "mention_text": "MIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06a7159d97858ee7dc23c957f55cb8b4f216221e93e55e9dbef5f988babd6a17",
+    "mention_text": "CCSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ef7295235a4612aa0c2d988f64f388bf656a5ea289230a2e81f0076d120a030",
+    "mention_text": "Alice Caymmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8193b3a64e4758d861cc1aa5798e861ec41ae85d69639ffbd7e5b2954fa92a86",
+    "mention_text": "Nobu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1e39d3e0c2736689008377d0a1d82429a295a0afdb5133354b8a56a5b20a858",
+    "mention_text": "Mediterrâneo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5d119712d9138885628e27d34766e7406fe46c15b40c914d12b2419201ef199",
+    "mention_text": "Alice Caymmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74998c537398ac62f593eb11ba9bd2ecb5aa19afdfa6b5488e868d0fff05c574",
+    "mention_text": "Itamar Assiere",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e94da68d5f9fd956288fc87cf0199a8b511da35cc04a87b23f42b3d57617446b",
+    "mention_text": "Tom Zé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a66ebb144c619a1003894874134cdd076f89fbf697da5fb7ba3a152bd55b12d1",
+    "mention_text": "Letuce",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bff1d191e5b0f3b84369bae7b3576c684a10be6d9fec246d19cb5841cc853b06",
+    "mention_text": "CCSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09c4f7c5574a37f099ed0024ea365a9ddb70eef66876d0d7ec2f3de4b1472ca3",
+    "mention_text": "Adoniran Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "322156ddb6f60fdff65a5dfe0507dcd05e26e97f235278f734a65d308a0c4828",
+    "mention_text": "R. Vergueiro, 1.000, Liberdade, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a0ad18559991ddae9733ca5eaf0f2f9ddd18e0011a8f2dbc0441005deb50e9e",
+    "mention_text": "ingressorapido.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2be22fba4cb1d475da80f26325c69d73fa11d96d8b22f4fdaa461f896ccfe6e8",
+    "mention_text": "Roberto Muniz Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa3275c348497c6fcd234da2f7523dc07011a3bfeeb6d0e8d51518f870133282",
+    "mention_text": "Jezebel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ef72e0f478d5babe97f98b4c86a6197f12ab91a18a0d5e72d9587c3591c9d70",
+    "mention_text": "Oficina Cultural Oswald de Andrade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eeff5d53f35b76f26ca80431beb3bf0c2d01be620a62c5e22a185eaefa0d21e3",
+    "mention_text": "Oswald de Andrade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74800f38cb3d6eb950098a7b7113e8c34cbf9bf6f998a66c918b572e4ad730a7",
+    "mention_text": "R. Três Rios, 363, Bom Retiro, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2085d01b2d0930c8ddd92ad22a19bb7c03553047f9cb643adf8f050f8d6cd2c",
+    "mention_text": "Ricardo Corrêa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28dddf2b3bee73a643239cfe451ea2db670a27976ec9c9cb7e92e2f6a9be4067",
+    "mention_text": "Teatro Sérgio Cardoso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b4480ca6201045cfbd046666fd36edb6b7c2ec2caede018bee0d18d72b7b5e1",
+    "mention_text": "Sérgio Cardoso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30260f11546734738f31f1c0a1e1b537ca52c4b6f4f5ba688f8dc23fdb391c86",
+    "mention_text": "Paschoal Carlos Magno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71658de31d1e9000f79e6b0f6e83c20d6d9f661213ee6b6d4912922fcfe8cdcc",
+    "mention_text": "R. Rui Barbosa, 153, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "585184b5e026be2fc98d0939d25b10182c3e51d591456d62cb1808c8411788e0",
+    "mention_text": "R. Guilherme Lino dos Santos, 1.200, Jardim Flor do Campo, Guarulhos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac58aa7cc53cb51b93642dab5b0d17a5cb921c2d47706c13d496ce8c7c8c1a5c",
+    "mention_text": "Oscar Landmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9229acf1cb6fac6f9136e69114e8e0e4e8779f02e5f95b12b80332b71c4ff4f7",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0795ff650731c14c0d995ae10d8f6127f25321a00a5a12273e641b68ce8f827a",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "19e1dc4af99d1ec945124920ec819ef384d88a439fdbd7d6d4f7841d91473fb1",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17302d5bf9d4699f496326d524abada7773c853c6acf8bb4b2fe289fc5164747",
+    "mention_text": "Masp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e147391bd1a296b508a7144650c939047e1e4273e8ef8f0b7bb004f5f11edaa",
+    "mention_text": "Av. Paulista, 1.578, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36fa1abb3df75e9229011f583cb9d516a2a95903c7d9103843481329427a44c6",
+    "mention_text": "João Silvério Trevisan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a5c1d9a18cc16803ee2a860cf86570eb195c13a38c7e8eec694cd31c99dd528",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1616994665af60e562a6666419629bcb67b1ead093a9f934fb28f630ef6e2656",
+    "mention_text": "Museu da Diversidade Sexual",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3bff39f4596cafb70c6083f8933821a79b405435e50511b5bddca2c9d725020",
+    "mention_text": "R. do Arouche, 24, República",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "215c9d700b7d435d6ff9955dbcf54fadbdb22b1c55846c861fadbc4bb3baa441",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7cb4644b9f53b48f625cdb24c00c7c44c1afe4acc3cf2a3859c89c44c246c29b",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7044243f5312384e5d1461793fb7ee7915ebf99a4e6d08af7680b5a12e9c2074",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e7652dd347db64ca89c9f9d3275d57a5f3a4472221bad4fe739c0c37f370367",
+    "mention_text": "Itaú Cultural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26323acf93f776e478eae833769510b8df2b648eb576d82d8d2fb32832f1dbb4",
+    "mention_text": "Av. Paulista, 149, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "64a21b3ec1a9324789182a6be84b0243aa96caafe80899244beebcd0e7faa1a8",
+    "mention_text": "Juliana Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc8fc7d391e686abe89c5431c22398ef40dbddd4f9305e7bb1a8a4bb1122dac1",
+    "mention_text": "Paço das Artes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ecc9b2b4f040a782cb40b6a6ed31ce1b38a375a880d378501c7ee853fe52ff8",
+    "mention_text": "Av. Europa, 158, Jardim Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70532b2ed697578f24dffc93650367448cdbb0bc386c0eded061acafbff3f484",
+    "mention_text": "Júlio Villani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "304cb8b180cd548cf0e4817313de033e7d3cba09beb9328a7bc7aae13f72d6a3",
+    "mention_text": "Raquel Arnaud",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2ea5efd66c97d1bd6ce748b5b72f65679e3de60925ace9838bc3263872a462f",
+    "mention_text": "Galeria Estação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e796cdb72953930242096ca7bffa273fb9bfda67b163e52f170194f315a713b7",
+    "mention_text": "Galeria Raquel Arnaud",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a472486b83f24b8b1e92f332ebe1b93efa8ed15632bae40e91dc070a29c3d76",
+    "mention_text": "R. Fidalga, 125, Pinheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c07edbfaf2d28bf5c2f1b2b038824cc75caa07f13db906da9e74ca6b6b3df29f",
+    "mention_text": "Carlos Adriano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "154f973e3bac82ad636354157c999cf4fe088c6424aa1743c9849fe01c87cab6",
+    "mention_text": "Instituto Tomie Ohtake",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "afd6bc5ea8b3ea8ecd6b068d634b76fabdd8ad197dad9191f3913216c50f70ab",
+    "mention_text": "Tomie Ohtake",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bca574de7464bffb287746adff003760aa82e300d7622765361f938112257fb",
+    "mention_text": "R. dos Coropés, 88, Pinheiros, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acb72667bc71a47ffb3d993b441218ae9d2c3eb98d996778489f1261565615a4",
+    "mention_text": "Cidade Invertida",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8aa5e6d5e90b446954f0835a6e1baa24a9010602d3601d900af91c6be709beb7",
+    "mention_text": "Porto de Santos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fdea5d420391533524bc4d6e6300abf5542afe1a7fe7e6ff86cf94b0aa409edd",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "82726dd7bf20159a86c24613024e2938f48531b8b5c93ccee6ab878ce53a03f3",
+    "mention_text": "CCSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "920dc1b6ed05a0183a9c4cc4aeff9a9d9ddf4bc74b7741aa18cb6e591e41a56b",
+    "mention_text": "R. Vergueiro, 1.000, Liberdade, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a27f4e10ca5fe2d5f116894024fa2345d8334eae87b8ff1845518c599dd5e9f",
+    "mention_text": "Eduardo Navarro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f88befaca9de05bd5aefeceabfad97487fea3af63c520fee87c9ca8ce49354e",
+    "mention_text": "Pivô",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c273368e09476fde5db646efbb46cb100e43d29eb6a6ddeaa51bc2ab7744ac7",
+    "mention_text": "Av. Ipiranga 200, 200, lj. 54, República, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43bd2479606dd020514cb7af41e39bc2ade7b5780eca2439b18179a1fa0ba482",
+    "mention_text": "Tadeu Chiarelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0881e73ccbea7560ab0393aa1911ff3616c1fd553f1df76e33546b86ddd3ef0",
+    "mention_text": "A Casa do Parque",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "000a93159a887a36a092da1da21d7219a5071743b9eb6d7fbcf2535e36ce9e76",
+    "mention_text": "Av. Prof. Fonseca Rodrigues, 1.300, Alto de Pinheiros, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b9e42b0e2b4894b7aff6cbfbbd4b674a015cdf80805e278bdcd6338fc8503be",
+    "mention_text": "Mário Cravo Neto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63c2b2422dbcbb49099bdbdc263db52f3f56a8bc15ef93805de9e0f985e694e3",
+    "mention_text": "Anexo Millan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a11e1c7c9682ca9a6896c590e72a6aeb1f29b8fc80516831dc3d39d0066ec02",
+    "mention_text": "R. Fradique Coutinho, 1.416, Pinheiros, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3a894defba46681c372dd4d6f161d4ae6e00b00a20eb217f201c2c34b5de2e6",
+    "mention_text": "Anaísa Franco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cda3468a7d6dd1c4b3d8131ef11bee85bf0aac93e7fb4916a7de824c2b468246",
+    "mention_text": "Galeria Lume",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dedd52bd48ae5c3aa2e50daffb53c87c1828c98f32caeb05fa53c5b45db0ecb4",
+    "mention_text": "R. Gumercindo Saraiva, 54, Jardim Europa, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0571daf67bab974530feed52d11bf9943e935f2f7bf41ce4abd3416295276fa0",
+    "mention_text": "Museu Histórico da Imigração Japonesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "520ea31ced4568e220e8a40e9db0aeda30760a94171ce3fb615e18f21fa0ca43",
+    "mention_text": "Liberdade",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c3e411fb3299c378fed8f324bb9b0dea4b985d16bcb184b64435dea0115cff77",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93166f0300841ec06788c07179d284daa33776a56ff966dabf619a982616c11c",
+    "mention_text": "R. São Joaquim, 381, Liberdade",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc21d9c658118e18c0864599f2a297babc77a9ee1be471dc9263b39f0e1ad75d",
+    "mention_text": "Yohan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f9493d493158d356e303517d62f3c9eb622cfb498bba84c939cc82b1541dd7e",
+    "mention_text": "Islana Detox",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "863799e942d5ea6aded2dc268ff32139aa8143b70b7416164d5ef7eb53e4f9ab",
+    "mention_text": "Vera Ronzella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46ebcb8aa72ebc15ec856c7cca8101e543f2f03a2a77216cfb5ed26c496b331b",
+    "mention_text": "Hebe Carmargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b40aa222be38ff3e1af436bdfb273eed4f543d5294d7d6ebb234984142a8182d",
+    "mention_text": "Dercy Gonçalves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "991993cc68fe16d459f364f66c9ee840ebdbfd6db58972c35b61a6b6197c1756",
+    "mention_text": "Joana Waldorf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ce441edf54cdcdad8ce18234bd649a6aabf3e7e978d87c7f86818a454fbb43c",
+    "mention_text": "Francisco Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f928217100232460598311b27a698e9c1140f3af534f63aa6c110bc0b5ce8ca",
+    "mention_text": "Leandro Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3cf4007242adb96196a1200fc965170516014e5f7974da60f3c769643379576",
+    "mention_text": "Cabaret da Cecília",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d6bbe27a0c2588603cc8506f7c262bbd890d12567d35f29c1170425f2291da6",
+    "mention_text": "R. Fortunato, 35, Vila Buarque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0aadc328e4049eb6957f4b6501763c8a6aa4ba14f0e2b09c5f9559f1e6260dc6",
+    "mention_text": "Björk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d272742f98592028bda4f52b4d11fa719a3c058244f5f3742a1834712fef15f2",
+    "mention_text": "MIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3db3883974e1124033499d5eb1b074066ef27d37b53d46e1baba35253f054893",
+    "mention_text": "Sydney",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b110dcdbee3ff2551666a1ebd64a6be1a093a6a985c60086828dcdd0021074ed",
+    "mention_text": "Tóquio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eed1076c07bf24e21b852357504c1b3b986adbe6aa2c19467f19fe5e9281e126",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0dc34052210b10c6a563f160ae0ed94946b6ff31bce472c3ba6f5989dffafd16",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a527446b4a95de60a9dd1751331ca001fc7fc1e38ab7e7c82546eab5cf7963a5",
+    "mention_text": "Cidade do México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d1b9d76bdefa75d60aa528cd8d6460d2aadd46f60744e8c2ca3277df6f836ab0",
+    "mention_text": "Michel Gondry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ceb36030d0e6b39f8cb1a10e2b7227361325c0677c2146f1256122d562fe8650",
+    "mention_text": "Spike Jonze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ae188fa88f26931c1ba46b77753d259ebef2d4b656ed9303ffe87d57c8ce2d8",
+    "mention_text": "MIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1e43390a952cd2b60008c9e06442ea47c60c09dbfce8ccd8d29a8de3ad289b9",
+    "mention_text": "Av. Europa, 158, Jardim Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f3d93ba9c38cc8ba8c2ed9bb5d12b6639a3a9215128ad2ff1d26d8da5eb4c43e",
+    "mention_text": "ingressorapido.com.br",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bb6350b2a44e42b1ca6f09ad3ba2f7d9fe46c6d51fb70ee2135107de422be30",
+    "mention_text": "Nobu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54a0b638c5caa37e440000a401ab6f611bb5b1bc6f5018ce2c1cd5691ce8c7de",
+    "mention_text": "Mediterrâneo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "586ba3bef815885b42fe07819c22ec7d50d28627e4f4443d3e3c746ff21cba78",
+    "mention_text": "Letícia Shiotsuka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c213145b70a597e7ba3549ff5298e8d67e0c71f737b4226ed71ae98fb291d2a5",
+    "mention_text": "R. Haddock Lobo, 1.573, Cerqueira César, região oeste",
+    "categoria": "LOCAL"
+  }
+]

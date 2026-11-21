@@ -1,0 +1,412 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6ca55064d95cc01c7612d32d0563127a6929ab5747f5bd3c421861c54eac04a6
+
+TEXTO:
+Literatura é extensa e de boa qualidade
+
+EDSON DACAL
+ESPECIAL PARA A FOLHA
+Todo o mercado de informática respira multimídia. Os fabricantes de hardware acumulam e preparam lançamentos de computadores que trazem som, imagem e animação. Os fornecedores de software adaptam produtos, criam outros adequados para esse mundo e investem fortemente na criação de aplicativos para educação, marketing e entretenimento. Eventos e feiras dão amplo destaque ao assunto e a mídia confere alta prioridade a tudo relacionado ao tema. Curiosamente, porém, a literatura em português sobre multimídia é escassa. Nosso mercado editorial de informática é forte e vasto, mas conta com apenas seis títulos sobre o tema. É agradável, no entanto, constatar que todos os textos são de ótima qualidade.
+O primeiro livro lançado no Brasil sobre o assunto continua sendo o único de autor nacional. É o livro "Multimídia - Conceituação, Aplicação e Tecnologia", de Eduardo Chaves, professor da Unicamp. Chaves é filósofo e educador e conhece bastante informática. Seu texto educa, informa e reforça a convicção de que a multimídia veio para ficar. É o melhor livro conceitual sobre o assunto, muito bem fundamentado (as notas de rodapé são um "banho de cultura"), mas não aborda desenvolvimento de aplicações e está desatualizado do ponto de vista de hardware e software (foi lançado em 1991).
+Best seller
+Outra obra muito facilitadora para o leigo no assunto é "Multimídia for Windows 3.1" de Kris Jamsa, da Makron Books. Jamsa é renomado autor de livros de informática e esse livro figurou como best seller no Brasil e nos EUA por várias semanas.
+Três disquetes acompanham o livro e moldam uma obra bastante original em sua concepção. O leitor é estimulado a instalar os discos logo no início do texto. Os dez capítulos iniciais mesclam ensinamentos sobre o uso dos discos com conceitos básicos sobre multimídia, o que facilita a inserção do leitor leigo no tema. A segunda metade do livro reforça os conceitos, aponta usos da tecnologia e dá vários exemplos. O livro é fácil de entender, muito motivador e tem produção gráfica primorosa.
+Outra obra muito facilitadora para o leigo no assunto é "Multimídia para novos usuários", de Lina Tway, da Berkeley. Dividido em duas partes, o texto na primeira informa tudo o que é básico no assunto, especialmente sobre hardware e software. Na segunda parte, a autora ensina a construir uma aplicação, algo que o leitor faz apoiado pelo "Multimedia Toolbook", software de autoria que é fornecido em um CD-ROM que acompanha o livro.
+A rigor, é permitido ao leitor sair do zero até a construção de uma aplicação. O livro tem várias páginas coloridas e apêndices muito ricos com glossários, listas de publicações e programas relacionados à multimídia.
+Iniciantes
+O livro "Multimídia" de Tom Wodaski, da Ciência Moderna, também é dirigido a iniciantes. A primeira parte do texto dá "o pontapé inicial na multimídia", abordando dispositivos de som, imagem, a combinação de ambos e as ferramentas multimídia do "Windows". A segunda parte aprofunda o assunto, tratando mais detalhadamente de hardware, software e programação multimídia. A terceira parte, "Explosão multimídia", explica mais cuidadosamente a animação, a MIDI (interface entre computadores e instrumentos musicais) e o uso do vídeo. Finalmente, a quarta parte é um superguia de compras, com cerca de 150 páginas, para produtos de hardware e software. Embora apresente alguns pequenos erros de revisão, o texto é fácil de ler e é também acompanhado por um disco com programas e exemplos.
+Com um enfoque mais particularizado, encontra-se disponível nas livrarias, através da LTC Editora, de Steve Floyd, o "Manual de Multimídia IBM". O texto é algo ultrapassado (1991), quase só aborda os produtos IBM, mas didático e excelente para quem vai gerenciar equipes envolvidas em visão geral do assunto, dos produtos da IBM, das tecnologias de mídia, de áreas de aplicação e futuro. O texto se concentra no ciclo de desenvolvimento, apresentando fluxogramas, "check lists", "storyboards" de produção, fichas de verificação, planilhas de orçamento e instrumentos para planejamento de gerência de projetos multimídia.
+Completando a série, há o único livro avançado no grupo, "Windows 3.1 Multimídia – Ferramentas Poderosas", da Berkeley, de Roger Senings. A obra é bastante extensa com quase 700 páginas e trata cada assunto de forma muito detalhada. O texto é focado no "Windows 3.1" e sua capacidade multimídia. A partir daí, o autor vai tratando de som, síntese musical e MIDI, técnicas de áudio digital, placas, imagens, animação, vídeo digital, como criar produções multimídia e a multimídia no futuro.
+É muito bem ilustrado, e contém muitos gráficos, tabelas e dicas. Um livro para ajudar usuários avançados.
+Para complementar nossa informação sobre livros multimídia, há perspectiva de breve lançamento pela Makron Books de dois livros traduzidos.
+O primeiro é "Creating Multimedia on Your PC", de Tom Gadgett & Corey Sandller. Esse texto tem muito pouco de teoria e principalmente ensina a usar cerca de 30 software multimídia, entre eles "ToolBook", "Action", "PhotoFinish" e "StoryBoard Live!".
+O outro é "Multimedia-Making it Work", de Tay Vaughan. O texto se apóia no software "Tempra" e vai do ponto mais básico do assunto até a criação de aplicações multimídia.
+Literatura correlata
+Existem no mercado alguns livros que embora não sejam especialmente dirigidos à multimídia, abordam assuntos cuja tangência com essa última é muito grande.
+O primeiro que citamos é "Programando Sons para DOS & Windows", de Nathan e Ori Gurewich. O grande tema é programação de sons, usando linguagem C, por exemplo. Os autores fornecem exemplos de programas e um disco com os fontes dos mesmos.
+Migrando dos sons para as imagens, há o "Aventuras em 3D", de Douglas E. Wolfgram, pela Berkeley Editora. O texto começa por explicar como funciona a visão e evolui por imagens tridimensionais, técnicas de visualização, uso do computador para visualização em 3D, aplicações do computador para atividades profissionais e de lazer.
+O tema mais frequente, porém, na literatura paralela à multimídia, é o da realidade e dos mundos virtuais. "Mundos Virtuais e Multimídia" é um desses livros. Reúne uma coletânea de artigos bastante profundos, basedos em um evento ocorrido em Genebra, em outubro/92 –o "Multimedia and Virtual Worlds". Nadia e Daniel Thalmann compilaram quase duas dezenas de artigos que passam por computação geométrica, interação em 3D, sincronismo nos mundos virtuais etc.
+Outras publicações
+As outras publicações são todas da Berkeley Editora e focam o assunto realidade virtual.
+"Realidade Virtual - Kit do explorador", de Ele Thro, é uma delas. O texto define o que é realidade virtual e traz um disquete que permite ao leitor conhecer como funcionam as simulações da realidade no computador.
+"Aventuras em realidade virtual", de Clayton Walnum, introduz o conceito de vida artificial, discute a inteligência artificial, os vírus de computador, os robôs, o cérebro de silício e os programas comerciais disponíveis que mostram a realidade virtual. Há um disquete de demonstração e é um livro interessante de ler para quem quer entender melhor o que toda essa terminologia quer dizer.
+Uma obra mais extensa é "Realidade Virtual e a exploração do espaço cibernético", de Francis Hamit.
+O texto inicia uma discussão sobre a interação homem-computador, passa pelo histórico do assunto, elenca os atuais trabalhos, analisa a realidade virtual como negócio e apresenta aplicações nas forças armadas, medicina, educação e treinamento. É bem ilustrado, denso, porém acessível. Começando pelo título, "Extravagâncias em Realidade Virtual", de Ron Wodaski, é uma obra diferente. Começa por afirmar e demonstrar que a realidade virtual já está aqui, explica o que ela é e como funciona, deriva para a diversão virtual, explica os fractais, o que é ciberespaço e discute o futuro nesse assunto. Tudo isso acompanhado de um CD-ROM e com texto claro, farta e ricamente ilustrado. Para compreender o tema, nada mais indicado.
+Edson Antonio Dacal Seguin, 40, é diretor de marketing da Computerland Brasil.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b7e1092406acf6690541053d818a4ba2ab2356e4fe6da3755352a6abc6b2b1cf",
+    "mention_text": "EDSON DACAL",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7955927935ba74224f1d6ee78d197263277f79ecc73ebe3ee198a97648204ad0",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "981b1dacd9b674a4e593421ee4a045836710ed66bc4fe3b13230566d4694e0e7",
+    "mention_text": "português",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "db49a7c1a01802612bf544ff44fb739463dfec6300e58099bbc3b7b3569eef88",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca89489d693e09164d6d624546cc02f2bff4293b4fe2988a57ed534165640ed7",
+    "mention_text": "Eduardo Chaves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3975e9b8f034b13f568bc38ea69fdc609cb24c4953e93a68d1057cd18fc6152f",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7d9e1f09781f64ebb427b78b4f026df186f34e880f3c644dad1398b7268df3c",
+    "mention_text": "Chaves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d591f6f2edd7dab691f717f6345ff326501edb06ae5888ec6aeacd734b0a4e54",
+    "mention_text": "Kris Jamsa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eff6656271469f955cfd0a3cde91999d967479cede00ba0cc62adaecd052283f",
+    "mention_text": "Makron Books",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc392a5031fd6d526a732c44c962506d9a8293f95e94cf754095d51cd88f0d10",
+    "mention_text": "Jamsa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b4ce3226defd2632fed079823ebbf4d8bc69bcf42cc1dc7b9ea49965758585c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f3f245dc49adb5053a18314b6cb0d80a4aedd782914c22e79b470067acb91c6",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2d7b080119ad02c2be18fe2a4d4e6fc165f56dff3c385f1c88652f2374cd7f89",
+    "mention_text": "Lina Tway",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "139aa5918f6d8a6f0242f66fc1458c8f5fcf2ab8cd66c099efbc8d65a2cedf57",
+    "mention_text": "Berkeley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbf7e080e091acfa149a9f981b67fa957a3124626f1c3c48be73e480cec77b6f",
+    "mention_text": "Tom Wodaski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1beaa610914b499785ebb9948c9736611dda9cecc6873e179132da7e12592c90",
+    "mention_text": "Ciência Moderna",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0dcd92128a775414260a83d0519a025689ffc2f0bf18c0a3865687b8a8f5f656",
+    "mention_text": "LTC Editora",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97b2b777d665598e26b7a5b6d76e1c958b805831381be067adeff10e66a96668",
+    "mention_text": "Steve Floyd",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30d13171f05dde120a8e49ea7d6732d7ded38c882dc2155fa3c632244e1b59c1",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80b8fa31ab73bb3f23a496c8e17e39074e6a3ef3a54ac18844863e51f8009fb7",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cde3ee6a31849f48de4d5ccdc9c4480a8e7461d7e4a772bd461b96bf83cdd7bd",
+    "mention_text": "Berkeley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24c81878c25bbb1c0559a98465fba46d4f1a07055cb4d50514d2b770f15c2872",
+    "mention_text": "Roger Senings",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "683541488cbf6e1add50187347b9526bcbec7f99a7033afd2afe6a9ce5a1f095",
+    "mention_text": "Makron Books",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8695ae290297281f013e9cc955c8de57f86e1fd7e155884dd62f6b9e68ba0e9b",
+    "mention_text": "Tom Gadgett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed636d884d45a14ff26cea9e9b726976c6db53990aa431c875bdda386d8d3fe4",
+    "mention_text": "Corey Sandller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5df917ecab814bb662e34577c1541b3c79317c21fd988c97be12d2147bd5add6",
+    "mention_text": "Tay Vaughan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44e8a3869075a0d932fa57457844d736f622ab86e88d6b489457100739417bcb",
+    "mention_text": "Nathan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dce1b0f86969ac4af7ab714f003c7c057a0e96f534bf5f9780f82b51f12cd49c",
+    "mention_text": "Ori Gurewich",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97d9b561c20bb72f6fcc558c83a612cf34a4e1893f05f3bef6d10c88b79db254",
+    "mention_text": "Douglas E. Wolfgram",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5dd4a18fda402b1d87d0d19f8509e7b5480529ea777e1cfc5c69e429eec9f00f",
+    "mention_text": "Berkeley Editora",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f17e61f4fded67fe964934ecd6afb762045ae361e72cc4793a362d9c6f62c007",
+    "mention_text": "Genebra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f86e8d1433017e195adedad7cbf7bf3916836b955273566be69bda2967aa24b",
+    "mention_text": "Nadia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9a122fca63c80a94a63f5677594b4a4ba06edde28397b0bce882c354b798a16",
+    "mention_text": "Daniel Thalmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d86c3cae622fdb58c97d78bdd3abe708c906edb35175c1cb68ed7b06faeaa0da",
+    "mention_text": "Berkeley Editora",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6baea42fdf53ca07a153ef6b29a4b8ce818d71a0502af297c476548e83077cfe",
+    "mention_text": "Ele Thro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99ce1cdabc5bdd39b11bd4fd6503edad0b3128193a1547225c1d7ec148945248",
+    "mention_text": "Clayton Walnum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29551745b0d7f6b7e2ffb4a06f11ce52f55f82828c6a464c745f71d1295991f8",
+    "mention_text": "Francis Hamit",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3926772ef29db86879a3a15f28aec2e6512ce4b95fda1450c145c3357ebe415d",
+    "mention_text": "Ron Wodaski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5df3b8233a5cf4031ec8f428edd8d21d86e005c7e9ef8f3a6dbc4342c6ff8863",
+    "mention_text": "Edson Antonio Dacal Seguin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c1747ace3674b2b988969e3e7d57c3484d222773c8ff73663afb22c068871bb",
+    "mention_text": "Computerland Brasil",
+    "categoria": "ORGANIZACAO"
+  }
+]

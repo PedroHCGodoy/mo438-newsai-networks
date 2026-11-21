@@ -1,0 +1,1079 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b353c93dbc0a2d703241d9327d2fe99c9e4ab60b2e44feecb1bd92d7a0228531
+
+TEXTO:
+Cursos online serão o fim da universidade tradicional?
+
+Publicidade
+CAROLE CADWALLADR DO "OBSERVER"
+Livros, música, compras, jornalismo - tudo isso revolucionado pela internet. A seguir na fila? A educação. Agora, acadêmicos dos Estados Unidos estão oferecendo educação de primeira linha - gratuitamente - a qualquer pessoa dotada de conexão com a Internet, em todo o mundo. Será o fim da vida no campus?
+Dois anos atrás, eu estava sentada no assento traseiro de um Toyota Prius no topo de um edifício garagem na Califórnia, agarrada ao braço da porta enquanto o carro disparava da sua vaga em direção ao abismo, desviando no último segundo em uma curva fechada, sem redução de velocidade. No assento do motorista, ninguém.
+Era o protótipo do carro sem motorista do Google, e a sensação tinha algo de Buck Rogers - alguém catapultado ao futuro. Depois, ouvi Sebastian Thrun, professor de inteligência artificial na Universidade Stanford, explicar de que forma construíra o carro, e contar que o veículo já havia rodado 320 mil quilômetros na Califórnia, e sobre sua crença em que o projeto significaria uma vida sem acidentes automobilísticos no futuro.
+Passados alguns meses, um artigo no "New York Times" revelou que Thrun era o responsável pelo Google X, o sigiloso laboratório experimental do Google, e que além do automóvel sem motorista estava desenvolvendo também o Google Glasses, um óculos de realidade aumentada. Mais alguns meses se passaram antes que eu voltasse a encontrar Thrun.
+O carro sem motorista, os Google Glasses, o Google X, seu prestigioso posto acadêmico - tudo isso ficara no passado. Thrun havia renunciado ao seu posto de professor titular em Stanford e estava trabalhando apenas um dia por semana no Google. E tinha um novo projeto. Ainda que não o definisse como projeto. "Na verdade, é minha missão, agora", disse ele. "Este é o futuro. Estou convicto disso".
+O futuro em que Thrun acredita, que o entusiasma mais que carros sem motorista ou invenções dignas da ficção científica, está na educação. Mais especificamente, na educação online de massa, gratuita e disponível para todos. Os setores de música, livros, transporte e varejo passaram, todos, pela grande mudança causada pela tecnologia. Agora, diz Thrun, é a vez da educação.
+"Tudo vai mudar. Não há dúvida a respeito". Thrun acredita especificamente que o ensino superior vai mudar. Ele lançou a Udacity, uma universidade online, e quer oferecer ensino superior em massa e de alta qualidade a todo o mundo. Para os estudantes de países em desenvolvimento que não têm outro recurso ou para os estudantes dos países de Primeiro Mundo que talvez tenham a oportunidade mas preferem optar por não aproveitá-la ao modo convencional. Pagar milhares de libras ao ano por uma educação? Ou obtê-la gratuitamente via internet?
+Uma universidade envolve muito mais que ensino, é claro. Há o aspecto social, ou, como costumamos chamar o processo aqui no Reino Unido, a bebedeira constante. Há o viver longe de casa e aprender a pelo menos ferver água. E há aspectos importantes como sexo e apanhar doenças venéreas. Mas é dessa maneira que as inovações costumam funcionar: primeiro elas causam perturbações e mais tarde resolvem os problemas causados, em algum momento do futuro.
+A grande revelação de Thrun surgiu para ele um ano atrás, na mesma conferência TED onde apresentara ao mundo o carro sem motorista. "Ouvi uma palestra de Salman Khan sobre a Khan Academy e fiquei estupefato", conta. "E continuo". Salman Khan, 36, um discreto ex-analista de investimentos, é o fundador daquilo que já foi definido como uma revolução nas salas de aula e vem sendo celebrado por todo mundo, a começar de Bill Gates (que o definiu como "o professor favorito de todo o planeta").
+A Khan Academy, que Khan criou quase por acaso, enquanto ajudava a sobrinha e sobrinho nos estudos, agora conta com 3,4 mil vídeos curtos ou tutoriais, a maioria dos quais produzidos por Khan pessoalmente, e com 10 milhões de estudantes. "Fiquei pasmo com a realização", conta Thrun. "E na realidade embaraçado por estar lecionando para 200 alunos enquanto ele atingia milhões".
+Thrun decidiu abrir seu curso de inteligência artificial em Stanford, conhecido como CS221, a todos os interessados. Ele anunciou que todos seriam aceitos. Os alunos externos teriam de fazer os mesmos trabalhos que os matriculados em Stanford, e no final do período passariam pelo mesmo exame.
+O curso CS221 é uma matéria complicada e que exige esforço. No campus, ele atraiu 200 alunos, e Thrun imaginava que conseguisse conquistar alguns milhares de outros pela web. Mas quando as aulas começaram, o número de inscritos era de 160 mil. "Fiquei completamente estarrecido", diz o professor. Havia estudantes de todos os países do mundo - exceto a Coreia do Norte. E 23 mil dos participantes conseguiram aprovação. Além disso, as 400 melhores notas couberam a estudantes que participaram do curso online.
+Thrun conta que foi um momento "país das maravilhas". Tendo lecionado para 160 mil alunos, ele não tinha como voltar a uma classe de 200. "Eu senti que tinha de escolher entre a pílula vermelha e a pílula azul", disse o professor em palestra meses mais tarde. "Escolhi a pílula vermelha. Eu havia visitado o país das maravilhas. E é realmente possível mudar o mundo pela educação".
+Quando eu me matriculei no curso de ciência da computação para principiantes na Udacity, cujo tema é como criar um programa de buscas, 200 mil alunos já haviam sido aprovados nele. Ainda que por "aprovados" eu queira dizer que receberam um certificado de aprovação via e-mail. Há algo de irreal em todo o processo, ainda que alguns empregadores pareçam estar aceitando os certificados como válidos: diversas companhias, entre as quais o Google, estão patrocinando cursos da Udacity e regularmente selecionam os melhores dos alunos para contratação.
+No entanto, no meu caso o telefonema com uma oferta de emprego pode demorar um pouco. Fiquei espantada com a facilidade que senti para acompanhar os vídeos da Udacity (e receber dicas sobre como criar um programa de buscas de Sergey Brin, co-fundador do Google, certamente ajuda no processo). Os vídeos, como os da Khan Academy, evitam mostrar a figura do professor por inteiro, e se concentram em suas mãos ao escrever.
+De acordo com Brin, qualquer pessoa que tenha competência básica em programação - o que todos os alunos terão se completarmos o curso - e alguma criatividade "pode desenvolver uma ideia capaz de mudar o mundo". Mas é exatamente esse tipo de coisa que o Vale do Silício costuma dizer.
+O mais intrigante é como traduzir esse processo para o contexto britânico. Porque, é claro, no que tange a revolucionar o acesso à educação, o Reino Unido liderou o mundo. Temos o luxo de um ensino superior aberto a todos há tanto tempo - já há mais de 40 anos - que nem ligamos muito para isso. Quando a Open University foi criada, em 1969, era uma ideia tanto radical quanto democrática, surgida devido a avanços na tecnologia. Possibilitada pela televisão, a universidade está na vanguarda da inovação educativa desde que surgiu. E oferece conteúdo gratuito, nos programas OpenLearn e iTunesU. Mas deixou de ser radicalmente democrática, em seu cerne. A partir deste ano, suas anuidades serão de cinco mil libras anuais.
+Nos Estados Unidos, Thrun não foi o único a escolher a pílula vermelha. Um ano depois da experiência de Stanford, o mundo do ensino superior e o futuro das universidades parecem ter mudado completamente. O curso de Thrun não foi o único a abrir as portas aos interessados online, no começo do ano letivo passado. Dois de seus colegas na área de ciência da computação - Andrew Ng e Daphne Koller - também participaram, com resultados igualmente espantosos. Os dois também criaram um site, o Coursera. E enquanto a Udacity está desenvolvendo seu próprio currículo, a Coursera optou por formar parcerias com universidades e oferecer aos seus alunos acessos a cursos existentes. Quando conversei com Koller em julho, pouco depois que o site foi lançado, quatro universidades já haviam aderido - Stanford, Princeton, Michigan e Pensilvânia.
+Passados mais quatro meses, o programa já conta com 33 universidades, 1,8 milhões de estudantes, e dinheiro das companhias de capital para empreendimentos - US$16 milhões só na primeira rodada de financiamento. É notável que a Udacity e a Coursera tenham sido criadas pela mesma universidade, e pelo mesmo departamento. (Thrun e Koller continuam a orientar juntos um aluno de doutorado.) Os dois projetos têm aquela qualidade empresarial dinâmica, e a capacidade de mudar o mundo, que caracteriza as maiores e mais bem-sucedidas empresas iniciantes do Vale do Silício.
+"Conseguimos nosso primeiro milhão de usuários mais rápido que o Facebook, mais rápido que o Instagram", diz Koller. "É uma mudança completa no ecossistema educacional".
+Mas eles não estão sozinhos. No MIT (Instituto de Tecnologia de Massachusetts), Anant Argarwal, outro professor de ciência da computação que também menciona Khan como inspiração (e foi aluno dele), criou o edX, oferecendo conteúdo do MIT, Harvard, Berkeley e da Universidade do Texas.
+Argarwal não economiza otimismo. Ele afirma que estamos vivendo a revolução. "A educação será reinventada. As universidades se transformarão. A educação será democratizada em escala mundial. É a maior inovação a surgir na educação em 200 anos". A última grande novidade, diz ele, "provavelmente foi a invenção do lápis". Dentro de uma década, a expectativa dele é que seu programa esteja beneficiando um bilhão de estudantes em todo o mundo. "Conquistamos 400 mil estudantes em quatro meses sem qualquer marketing, e por isso não considero que a meta seja irrealista".
+Mais de 155 mil alunos participaram do primeiro curso que ele lecionou, entre os quais uma sala de aula de crianças da Mongólia. "Isso foi maravilhoso", conta Argarwal. "E descobrimos um prodígio. Um dos meus alunos, Batthushig, tirou a nota máxima. Ele é aluno de segundo grau. Não há como explicar o quanto o curso era difícil. Nem eu conseguiria nota máxima. Agora, queremos que ele se matricule no MIT". Argarwal afirma que estamos vivendo o ano em que tudo mudou. "Não haverá recuo. Vivemos o ano da revolução".
+Um mês atrás, me matriculei em um dos cursos da Coursera: introdução à genética e evolução, com aulas de Mohamed Noor, professor da Universidade Duke. Ao contrário das aulas da Udacity, os cursos da Coursera têm data de início e seguem cronogramas. Um curso da Universidade da Pensilvânia sobre poesia moderna me interessou bastante, mas já tinha começado. O curso em que me matriculei tinha dez semanas de duração, e consistiria de "múltiplas miniunidades com vídeos de 10 e 15 minutos de duração", cada qual com questões a responder; haveria três provas ao longo do curso, e um exame final.
+Noor e eu temos 36 mil colegas de classe, de todas as origens - Cazaquistão, Manilha, Donetsk, Iraque. Até Middlesbrough. Mas embora eu assista aos vídeos e aprecie o sorridente entusiasmo de Noor, o curso não me arrebata.
+Trata-se apenas de vídeos de aulas. Há trabalhos a entregar, mas sou jornalista. Não me incomodo com prazos de entrega até que o suor frio da catástrofe iminente tome conta de mim. Por isso, ignoro os prazos. E passo uma semana antes de voltar ao site para verificar o fórum de discussões entre os alunos.
+E é então que surge meu momento de estupefação: o tráfego é espantoso. Há milhares de pessoas perguntando -e respondendo - questões sobre mutações dominantes e recombinação. E grupos de estudo surgiram espontaneamente - um formado por colombianos, um por brasileiros, um por russos. Há um grupo que conversa por Skype, e até grupos que estudam juntos na vida real. E todo mundo é tão diligente! Se você é um professor um tanto desiludido, ou tem algum amigo que seja, recomendo a Coursera: as pessoas lá realmente querem aprender.
+Passadas quatro semanas, Noor anuncia que vai organizar um hangout no Google, no qual número limitado de pessoas poderá conversar via webcam. Mas está marcado para a uma da manhã de domingo, no horário londrino. Caio no sono. Mas assisto ao vídeo da conversa no YouTube, no dia seguinte, e fico fascinada. Apesar do horário, Richard Herring, condutor de trens de Sheffield, é um dos participantes - entusiástico, atento e disposto a dizer a Noor o quanto gosta do curso.
+"Richard!", Noor responde. "Prazer em conhecê-lo. Seus posts são excelentes. Muitas vezes descubro que antes que eu possa responder a uma pergunta alguém já o fez, e em muitos casos a resposta veio de Richard. Obrigado".
+"Amo ciência", Richard diz. "Não era bom aluno na escola, mas fui aprendendo ao longo do caminho. O curso é brilhante. Poder participar dele sem pagar é maravilhoso. Estou amando".
+E o mesmo vale para Sara Groborz, designer gráfica nascida na Polônia e radicada no Reino Unido. Há também Naresh Ramesh, de Chennai, que está participando porque estuda biotecnologia; e Maria, que vive nos Estados Unidos e está usando o conteúdo do curso nas aulas que dá aos seus estudantes em um reformatório para adolescentes. Aline, estudante de segundo grau em El Salvador, entra no papo. Ela conta que decidiu fazer o curso porque estuda em uma escola católica onde o currículo não inclui a teoria da evolução. "E você é o melhor professor que eu já tive!", ela diz a Noor.
+Deve ser muito gratificante para o professor lecionar em um curso como esse. Quando contato Noor por e-mail no dia seguinte, ele responde que "absolutamente ADORO o trabalho". Pelo telefone, ele me diz que essa é uma das coisas mais inspiradoras que já fez.
+O mais importante é que isso significa que no próximo semestre será possível "inverter a classe", um conceito defendido por Khan e de sucesso comprovado: os alunos fazem o trabalho básico em casa ao assistir os vídeos, e os deveres de casa são realizados na sala de aula, onde podem discutir as questões com o professor.
+Continuam a existir muitos problemas não resolvidos na educação online. Especialmente o fato de que não se pode obter um diploma com ela, ainda que uma universidade norte-americana tenha anunciado que reconheceria os créditos obtidos com esse tipo de curso. No momento, as pessoas estão fazendo esses cursos simplesmente para aprender coisas novas. "E o certificado é essencialmente um pdf que diz que a pessoa em questão pode ou não ser quem diz ser", afirma Noor.
+E embora computadores sejam excelentes para corrigir questões de matemática, não são tão bons para dar notas a ensaios sobre literatura inglesa. Há uma preponderância de temas técnicos ou científicos, mas o número de cursos de Humanas está crescendo, com o uso de um método que Koller descreve como "sucesso surpreendente" - técnicas de avaliação por alunos. "Não é algo que possa substituir uma avaliação por um especialista no setor, mas com a orientação correta, a avaliação pelos colegas e o crowdsourcing realmente funcionam", ela afirma.
+E em termos de conteúdo, o curso que estou fazendo é praticamente o mesmo que os alunos de Noor na Duke fazem. Na universidade, a interação é maior e existe acesso a um laboratório, mas esses privilégios custam US$ 40 mil anuais.
+É muito dinheiro. E é isso que torna os cursos da Udacity, Coursera e edX tão potencialmente revolucionários. No momento, são todos gratuitos. E embora nenhum possa concorrer com um diploma tradicional, quase todos os setores sabem o que acontece quando os adolescentes podem escolher entre pagar muito dinheiro por alguma cosia ou obtê-la de graça.
+É claro que a educação não é exatamente uma indústria, mas é um negócio, ou, como diz Matt Grist, analista de educação no instituto de pesquisa Demos, "um mercado", ainda que ele se desculpe imediatamente ao afirmá-lo. "Eu sei, é horrível", afirma. "Mas é assim que se fala no assunto hoje em dia. Não gosto da prática, mas a uso. E é mesmo um mercado. Universidades são empresas poderosas com um giro imenso de clientes. Algumas das melhores instituições britânicas de educação disputam a liderança mundial do setor no momento".
+Grist está estudando o modelo de financiamento das universidades britânicas, e vê problemas à frente. A alta salgada nas mensalidades que aconteceu este ano será apenas o começo. "Já estamos nessa estrada, e se criarmos concorrência e um mercado para as universidades, creio que será preciso ir além". Ele antecipa que as melhores universidades se tornarão ainda mais caras, e que as mais baratas, que atendem apenas a necessidades profissionalizantes, "se sustentarão". São as universidades médias, criadas nos anos 60, que ele vê como mais expostas a problemas.
+Quando pergunto a Koller por que a educação se tornou o novo bebê milagroso da tecnologia, ela a descreve como "a tempestade perfeita. É como o furacão Sandy, uma confluência de múltiplas coisas ao mesmo tempo. Há enorme necessidade mundial de educação de alta qualidade. Mas isso está se tornando cada vez mais inacessível em termos de custos. Ao mesmo tempo, dispomos de avanços tecnológicos que tornam possível oferecer esse tipo de serviço a um custo marginal muito baixo".
+E no Reino Unido, a tempestade talvez seja ainda mais perfeita. Isso tudo está acontecendo em um momento no qual os alunos estão tendo de enfrentar anuidades de até nove mil libras, e de aceitar nível sem precedentes de endividamento educacional.
+Os alunos, quer gostem, quer não, se tornaram consumidores. A educação no Reino Unido vinha sendo uma abstração muito pura, até agora - um conceito que não havia sido maculado por ideias de mercado ou valor. Mas isso mudará inevitavelmente, agora. O número de matrículas universitárias de estudantes britânicos caiu em quase 8% este ano. "E o número de alunos que iniciaram os cursos foi ainda menor", me diz Peter Lampl, fundador do Sutton Trust. "A queda nesse caso foi de 15%".
+A organização de Lampl defende a mobilidade social, e nada a acelera mais do que a universidade. "Por isso estamos tão interessados nisso", diz Lampl. "Estamos monitorando a situação. Não sabemos qual será o verdadeiro impacto das novas anuidades. Ou que impacto sair da universidade com uma dívida de 50 mil libras terá sobre a vida dos formandos. Será que vai forçá-los a postergar a compra de uma casa? Ou o casamento? As pessoas comparam a situação a dos Estados Unidos, mas um terço dos formandos norte-americanos concluem seus cursos sem dívidas, e os demais dois terços têm dívida média de US$ 25 mil. A escala do que teremos aqui é muito diferente".
+E é em meio a essa incerteza e pressão de mercado que os cursos online abertos às massas podem ter papel a desempenhar. Uma educação universitária oferece muitos benefícios intangíveis. "Aprendi tanto com meus colegas quanto com as aulas", diz Lampl. "Mas essas são as coisas que se aprende gratuitamente na universidade - como fazer amigos, como aderir a uma sociedade, como operar uma máquina de lavar. O caro é a parte da educação. E a Udacity e os demais programas mostram que isso não precisa ser necessariamente assim".
+A primeira universidade britânica a entrar na jogada foi a de Edimburgo. Fechou acordo com a Coursera e, a partir de janeiro, oferecerá seis cursos, para os quais já há 100 mil alunos matriculados. Ou, para colocar as coisas no contexto, quatro vezes mais inscritos do que a universidade tem em alunos de graduação.
+É uma experiência, diz o vice-reitor Jeff Hayward, uma maneira de testar novos métodos de ensino. "Ficarei contente se não perdermos dinheiro com isso". No momento, a Coursera não cobra pelos certificados de conclusão de curso que fornece aos alunos, mas é provável que comece a fazê-lo um dia. Quando isso acontecer, a universidade escocesa terá seu quinhão.
+E Edimburgo já conta com um programa online. Mais de dois mil dos alunos de mestrado da universidade estão fazendo seus cursos online. "Em poucos anos, o total subirá a 10 mil", diz Hayward.
+Para os alunos de graduação, por outro lado, o estudo não é realmente o motivo de frequentar a universidade, ou ao menos não todo o motivo. Conheço uma aluna da Universidade de Edimburgo chamada Hannah. "Você tem aulas amanhã?", pergunto a ela por SMS. "Só filosofia às 9h", ela responde. "Obviamente não vou".
+Hannah é um perfeito exemplo de alguém que ficaria feliz por pagar meia mensalidade e fazer alguns cursos online. "Meu Deus, seria ótimo. Há aulas tão ruins. Tivemos um tutorial outro dia e o professor ficou lá sentado lendo o jornal, e nos disse que estudássemos com o livro".
+Max Crema, vice-presidente da união de alunos da universidade, me conta que já usou aulas online do MIT para suplementar o que aprende em seus cursos. "Mas isso talvez aconteça porque sou nerd", admite. "O problema com as aulas é que estão, sei lá, 300 anos desatualizadas. Remontam a era em que as universidades dependiam apenas de livros. É por isso que alguns cargos letivos na universidade são ocupados por pessoas com o título de 'readers' [leitores]".
+Decidi assistir a uma aula real, em uma sala de aulas real, o velho anfiteatro de anatomia, um auditório íngreme que está em uso desde o século 19 - na época, uma mesa de dissecação ocupava o centro da sala, onde hoje se posiciona Mayank Dutia, professor de neurofisiologia de sistemas que está palestrando sobre o ouvido interno.
+Ele é um dos professores selecionados para participar dos cursos que a universidade promoverá em parceria com a Coursera em janeiro, mas diz que continua a acreditar na necessidade de aulas reais. "Universidades são lugares muito especiais. Não se pode fazer o que fazemos online. Há algo de especial em aprender com um líder mundial de dada disciplina. Ou conversar com alguém que se dedicou a um tema por toda a vida. Nada poderá substituir essa experiência".
+É fato. Mas o que os novos sites fazem é propor questões sobre o que uma universidade é e a que ela serve. E como pagar por isso. "O ensino superior está mudando", diz Hayward. "Como financiar a educação mundial em massa? O mundo inteiro enfrenta essa questão com agonia".
+É fato. E sem dúvida estamos vivendo um ponto de inflexão. Mas isso pode ter impacto mais próximo. Argarwal vê um futuro no qual as universidades podem oferecer modelos combinados, com aulas online e reais.
+A Coursera já fechou seu primeiro acordo de licenciamento. O Antioch College, uma faculdade de Humanas em Ohio, assinou acordo para utilizar conteúdo da Universidade da Pensilvânia e da Duke. E uma nova empresa chamada Minerva Project está tentando criar uma universidade online de elite, e vai encorajar os estudantes a viverem nas imediações uns aos outros, em "núcleos de alojamento", para que se beneficiem dos aspectos sociais da vida de universidade. Tendo visto como os alunos da Coursera e Udacity se organizam, não é impossível antever que estudantes optem por viver em estreito contato no futuro, fazendo seus cursos online. E de graça.
+Há muito em jogo. A começar pela economia de dezenas de pequenas cidades britânicas que abrigam as "universidades médias" que Grist considera que elas possam enfrentar problemas no admirável mundo novo do mercado educativo livre.
+Em Edimburgo, as anuidades estão tendo efeito - as matrículas caíram - mas "a maioria dos alunos as vê como dinheiro com que terão de se preocupar apenas no futuro", diz Hayward. "Por enquanto é algo hipotético".
+Mas este é o primeiro ano da anuidade de nove mil libras. Um aluno inglês de Edimburgo (a universidade é gratuita para escoceses), em um curso de quatro anos, terá dívidas de 36 mil libras apenas com a anuidade. A isso é preciso acrescentar pelo menos mais 30 mil libras de despesas pessoais.
+Os sites educativos têm apenas alguns meses de vida. Ainda estão descobrindo seus princípios básicos. As universidades não desaparecerão, por enquanto. Mas ninguém sabe em que situação estaremos dentro de dez anos. Uma década atrás, eu achava que jornais sempre existiriam. Que nada poderia substituir um livro. E que o carro de David Hasselhoff no seriado "Super Máquina" era só uma obra de fantasia.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "41724950ac0cb2b1c4f19e5525c355eaa4218a9e0116917432e9690c618c8be3",
+    "mention_text": "CAROLE CADWALLADR",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "363d29c7ed8add30c1dc00a07f9d18134982e50b46f5f82f1cd6a890b70d59cf",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d7a6280415c439162524b7e68673108242e43ca0f76211aee8e7494903a1e88",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8aad26da3cc197f940ce5730d39c8d54612a2c6b278dad4cc6a44345d2c84dd",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bc4276ee2e1f418a57575dbcbe87d8ae0db1f496ef2d33a16813ec83c0f4b36",
+    "mention_text": "Buck Rogers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b1461e02542d91458830874f63abc55de380f3c145403b8e363e5314a96bf94",
+    "mention_text": "Sebastian Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "422d8574032876a0f6565b6a3ee8f4ee4c5153fab00d65fcbf5cd4a832c6bca1",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f3590a9a587079093a2b31c2833a52db5336adb2e4e3db27f03df6874a6b1bb",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9a7b7fa1dbd4ccf86b069e0d8efa13f1935425ed6143714c60a508e9da940205",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eba061fcc009b370ce0346a98a6eaa113ce742993534dc96f3d8953882575493",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a29a2646d9809e9794eb36f85a036de85f9e8963ec4954661e2e2f56df1bb8f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f5cac5e2cc8708a69ead286dc075989cad22dcc55707d26b3f1aec51b2628cd",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c1949f3a96d2f0ff9913a1e580ee0dd2c0236a97acdfea1221815851cde60c56",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1560d43871ce33d45089d57a1fa65980d2a095963f0036d7f27200358ddf937",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "196b0034be5af5d867874cead75eadcb4a44217e238f2291635c6d559dfa2293",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6048d579df3a3430ca8099eb42d57e83f247c39c1763d911ea52fa074b2b38e6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "045047d99590aaef82e9696ae10af2defbdb90270c77effc126de725e2af6561",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e69fb334cb8cfd445a71c9fef40f9ab0bb43843fc1df176d8a4487b75990306",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9128132df8c4289fa31bdb80451b5c0db09301e699077da7caeb41c407cae62d",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf5ebac1349dbdae2cbcbde07852332e779f69ca7bc966751eab95cf61e9aec2",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b6eaa2c6eccc2f1ebca0f756ff6d1b177c37eb0eb4db1ef45dee635948ea02a",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "969ecdcf9038fbce5af23def87234950470a718a35e2e9ef269ee80b95d93c7c",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77d219257946f92932cc799af362010b02afb4510cb47560c3fac76627a5702d",
+    "mention_text": "TED",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74892451a547b3011136a6a9fff4753cab1964b96dc9ce2293d26d53a95f6fdf",
+    "mention_text": "Salman Khan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc9e558dc13f9a3c095393ead17106ae3958c868356c2781d4dfde9c94a393f5",
+    "mention_text": "Khan Academy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f566462ecc843e886ac564382b4a7da384b02369d41fae04336d92a29c6a2484",
+    "mention_text": "Salman Khan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2adf50b072550b43edf2245f0c7506531f8ef1e2f6dae2e6cf3e4fd1dda84941",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4be107664c7f29b9ad7b01e00885c177a147deac778e22d77d831e68906ac0e7",
+    "mention_text": "Khan Academy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4f23938963c5141ebf38cdf3cde4b16963e027bc14a047a0b3be5d5d23331c8",
+    "mention_text": "Khan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0df4e84ec4458850c7bb12e59ecefc434470d3c5ff2ba295d0d790685e14d26",
+    "mention_text": "Khan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34baf8b9ea651774c782801af425a454c282f31358e20101a24643402894d876",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4548d7c996b3bdbd8ff0ed44c04c8c00fff4670afa8cef244700c87a2f1a1d13",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d94c3990ee6aeaba7f7bf59e41d11a85db2e184e82d8135b1aefb48971490a7b",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86b31662e85cc4092f3c7c85789f10e38afb8ae1d1039c87f3938dcf9b805adc",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21a41603e8fee80f255126c1ed11dcc4422832d915f9adb474b8206875ea5ac4",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d094a5ffe0071de65c822f8ea6e0e18ed6fa8da8fd9352e34ed5c7ffb2a8eef5",
+    "mention_text": "Coreia do Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5aa90695ece46b03d99be770f43418f446c17ef4a744128b89cfea20a98c3442",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77781b6202f3e69a2c2ffbd9abe14ebd9138e45f1690659e36c8bcf8cc06f901",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbcd41568361bd93c103c7d8e037131dddaba942398960cdb94d20d57a9cd69a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4fe9b910887bd75547a6547679345005f98cfb6135d05276963be7809f48253",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "473ade590bd9ceda6657df7609bff697e6929a40de4c6c0b093d2ca1715c217c",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73e604871475273ff14368257a37df8271e1bd6d5b2f153b599f3568f0a61d01",
+    "mention_text": "Sergey Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c72998f8d125f6f15904270c8481ac3107979137b343d0f61e25fbb423964bf2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9277766a562d081998c20f9427df296f9380573cbf5b9bdee72407e88e4588ba",
+    "mention_text": "Khan Academy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aadfa20b8554a6596ab948391ec8b2df8fe2a5b2f26e0411e4ade99a7d50dcce",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1dbfac9ca4624f35a3dcdbafd8a616fc83673f1e774706a85160bad7d2dca9f5",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac2b6932284abee3283eecc37dd639851519fe1294a28aedba5025f41fe6d510",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c22ce54e8bd3b7301b85bd06abc8fa99135179fa65145a7079857501168227cd",
+    "mention_text": "Open University",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2845a74b245a76cee2c8a47f4c6a9114b92bf4d803e54abccc8bf247c9dced26",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "23c1695df2601c44cb6bd48c751753133f8c6019448bf97a2b3adfb33667bc02",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2b24a6a63a3412c1698c28bfe04d2f1d1d790a846d5b1f1aa95c9fb928fb4c3",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "739521623901e626dd1237c77a78a4548a0f380d1c55ef3760f10ce689bf8166",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3cd6b49fa3e341d93097513bf7160b19ac9515f1480bfa8b49e8d333d4d4df0",
+    "mention_text": "Andrew Ng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e00c54c69ec97fff21a11fb4ee38452fbc28089f9d661add0f3961dc2d6ad14b",
+    "mention_text": "Daphne Koller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97d252a24b0fb276962eb392b09afb3e25cc71efa46eebb190ff77e9d76c183b",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45d8b80e43dbbb0d132ca750f97c7adc139a060931f049be9ffa33215a7c77f2",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b97f61f10df43e67724ed9f74a98b8d619b0522e69c19532bce65dfda16841a4",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b509027daccb5f6adf843ca47323171c4ba55f8e464b571a34049e69d837ed4",
+    "mention_text": "Koller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49ab01bdf7b71595ba4e71a3bd55ab50e49bdc8b05adfa812fd1ce27a8404bd1",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "afe619936f83e4b84fdd60c0339f3cfb4bb55cc5211d43abfebdb86d01531ac7",
+    "mention_text": "Princeton",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95cafe051b97374e23b9cf56cf64c6fc025ef97d88b6ee4b3f038c36c503aa0b",
+    "mention_text": "Michigan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5be902a81ecc9a61f7227d3aad0b4225ab0e4e8fcded9e1a859bf3670fbf17c1",
+    "mention_text": "Pensilvânia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ecd732f7a196b62a4510adf23926dd9aaaf76fe672a09b59349cc3322d79ee63",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efbf76cc82f574d9e0aecb94ea9e0914cd5005c34381b17838d2c27b4b1ba8b7",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bcffed176bb942b0af5bf7d0b7929d9f108e784480e2fca94a04fab62bcb50c5",
+    "mention_text": "Koller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bc5bd1706a45d5928a1fe9a1bf4c94f1adb208e8b223fcca2d0e59caea7a82d",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e17839906cfec20740d5f7e8321e1cefc21d62943f4c9a2bd8181bd4b59a899e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbf6f554e4a81b8239a7fcc32b8374ab65455f66cc208df2c792c26f6afb14a3",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1b74f420f2cf20c0d2108aa133edfab8399f3a139b0a78108918c6244d4a8ed",
+    "mention_text": "Koller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c93fb0ac9ae3de56324f0052fc8a51e64a6162169103373b65d02eab2217de60",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fac7d03f07b7f3583a38514e6965468edef681b7d0ebf4eb62b9ad7f7a3c11ea",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c72fdc9aafa20a38fd860b7385a1cea284ab48795a73d895e3fbf1b8757e34c2",
+    "mention_text": "Anant Argarwal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e4c6341b11a53fcfc5ce46be14aead07237bc6d8a9c97de45297c1a8d6a50d1",
+    "mention_text": "Khan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29dd19709007590bc23595df2eac69f31f240ca83f63d81928f283e473df7924",
+    "mention_text": "edX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7478b294113899b68d9febb42b367ec4e39b45da203207ce883b20bf12f9dab4",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94bf54ad9060c7bbb2ec27d0c1f3990c91cffa9a90f735562fd6018088b38374",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7efe62299fbc0d6b8bd27f1f46dbf7ea36375d0f002519c74a19c97c471f474d",
+    "mention_text": "Berkeley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83b7f226e0143bb7756e013185b7a5c1b424901a7aa695440953d67cc0da394f",
+    "mention_text": "Universidade do Texas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fcef92432fbe5e92a537bcb6e60f01288f9b7d09bccfd50f1b9aad8b03dfd30",
+    "mention_text": "Argarwal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1199d77582be6459b0d0c181a89658ef8bcbeef5a1a88c8a655e5e97c49a93e2",
+    "mention_text": "Mongólia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e80d4e61b1b68211f1b4be3ffbbb01568833c79381ccc44f87b481692fa9b9d",
+    "mention_text": "Argarwal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b6eb2b369189e5dc506c90f833ea7ed6b12466618130b239c48f93e65e6a67d",
+    "mention_text": "Batthushig",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df8d708f52d96d6c3ee547bfa16fbc585285b39997f5105e6aff3dd122ce376a",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a12670002bf334cfaab272d98c57e9ce7b1231d68dc6de5937027a135160063",
+    "mention_text": "Argarwal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2a623fa24f8dd56b798314dc6f53efab2824617b12524ce3ded857a5c531172",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "366af8df6d27ab0fd68bd8bbd307b2d095f3b929ee7f1ccaa21779cef543f84a",
+    "mention_text": "Mohamed Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b9a366f07f224c32773c5c6aca1b604bbdd96451728ed27d18dfcc682d70a52",
+    "mention_text": "Universidade Duke",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "431f662e9e6f4ca6de46576fedf8c0a3a725c498681b9add3a7ae82fe2bb7ae8",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cda64917f2c03b96e9dc64a38c44b2f0dfeb84afcc105db6ae2812cb569c0e3",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38b2b9ffd3a19298ff7ee170eb2c5ac18a1eaee288cb718cc2de490de110d29c",
+    "mention_text": "Universidade da Pensilvânia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3154dc6e13fd906e787cc1da11aee3d697df8a6ba360014a347e16ab3238a53",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d81d70d4650c11f175e4795604e633fd1fa3796567f2fda4e560f1954026a734",
+    "mention_text": "Cazaquistão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "efb9d418b62b07a054fdbafb6c21df3f80efda32185c864ad66b3fcae364a337",
+    "mention_text": "Manilha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cfdbb75c2236daa85856880fc2424f436b64a87a89e8780db5594f29658a946a",
+    "mention_text": "Donetsk",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9645dc7b6deac445f695bec8badda88b57b619b9829dc47ea82aecd23f3559a0",
+    "mention_text": "Iraque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c34b2cf38f790c8bf4577f509763d0a248197096edbcca3c988ad7e62e909f79",
+    "mention_text": "Middlesbrough",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eab935966b3c606985278a179e0a30a6d5fcb91020b154d64942c72d7ce393af",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f8e35c4d7e572e6e34438b2766ac2098e25946293bdb90df243b2075a187087",
+    "mention_text": "Skype",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b138d4ee3bc77f1b349c23aee760a287350c5f6fec11537a881be1adc928b030",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3eb8e0774329f7b6ce28594f3017a85060c87179b6d95780fe3bdcfb785103b3",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19c95715b17fac08e41465c3cb0b1c11abd9b20a4637d106d0e9c5e5fdf40c25",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0273da62297c3b0935544f2446647534466361c43eab63926dcc57a4890d331",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6a453037fac3d1b5f9d0312ea7ebb4f3a9b3c79983967a2ac8f641449f11570",
+    "mention_text": "Richard Herring",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "817c59381fa6bd78ca2e85bfbfeb7d4d410988e9a9a1c63e228f790e33c27152",
+    "mention_text": "Sheffield",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f626b99fd9649aeaf28cae10ab6a3c188d3342486192cabf5a97ea76cfaa62a1",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68ea84000a17848dbf12ca31e1a91c766eca97d90899c8a311a6e56d61c0bd63",
+    "mention_text": "Richard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be55fd953bc6d41c32a25bafec549f474079d4d7ae167b9a7683504ac766a066",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd0fd8272c516037643ad1e9992b21a52a1f92a5c297b24a9248f46f8d690543",
+    "mention_text": "Richard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c2898a266fdb8a2f5f285dc6c1f1b96177b4bc8163164c3554c241da42a8dff",
+    "mention_text": "Sara Groborz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab783a9916b015921e316ee6d960b7a4b71ad12fccccb5d32acfff09def5d7d4",
+    "mention_text": "Polônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "45aa305213d42b7ce6f8d25ab3f567c103878c3ea01fad12400b5e7824736074",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98cf6aaf33e1404e2b9ea3f133ca8560efdf9c8215b4af39ee91f48a5e924c46",
+    "mention_text": "Naresh Ramesh",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ddcf395f32cf11f0a0ddd57576a92346cc771a9f828295e252754c592909cf95",
+    "mention_text": "Chennai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c8fdb643d474aaef2924aa19b79555ab5c26dab44f95700354143bec73acdaf3",
+    "mention_text": "Maria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10c1c52a53ea89d6388554a5e12e55636637fc415d19a216c6a3e651a0ea3c40",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "251718dc99799a2f37502f2d66a21f3a02b24f409b41bd3e1dd2610dd4dfd3f6",
+    "mention_text": "Aline",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66b479a3a764f04e7a41d035ed6b6f63100a73279e19b0962bf03f90a40e769b",
+    "mention_text": "El Salvador",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c297ea4ada5835ac930abab70d68f900b713fe4549916d53244c307552e37f98",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61cb2f6b491e0121a070461a4ff8cfee8fd14840e01ec4448c811ed17d112e48",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76d119a4925b41342468b557cef0e8878576bd8fd54345e08531d57945182bd0",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58a70a87a0ec6a89e07fa1af34831cb1434cef07648c9f0a03878c9cb2fe7b6f",
+    "mention_text": "Koller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e82766ee8b9fe18f666632552a4edf54b54b8232bde17b359dcaa4c83ce3ec91",
+    "mention_text": "Noor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86a9e3a8ed070f4e7655b13a6d3facda8331a83ed62c49ec18f05cc2539a37ab",
+    "mention_text": "Duke",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9782e949fae58ad2a2050523fa277eb6164a50f70a8d00a39300a31bd7bce849",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4cf3ffaacc51221951e4761a17df8d04ac8abf530d145954d8e938f865a86e3",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "60b9351def8d5db95ee473cefe1f071e40e5027af0f826beb70c2e1768f3d642",
+    "mention_text": "edX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "305f3f623f28832f05da10967bb68e0278dd88188fcaefb165c71eb5b0fb79a3",
+    "mention_text": "Matt Grist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2fbcc517d85b0b7901230a798fbc0030771bbd8484d400cc8eefba932a99cb4",
+    "mention_text": "Demos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb36e1ef776decab461bd613f81661fd529eb9d84e4bee4713aea8497b09aad0",
+    "mention_text": "Grist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad51b4aa63b4b07aa63b5c9ee532ba131769a901e051a0636f5652f6cc81b22f",
+    "mention_text": "Koller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6aa8ad24ede757ff7240942357576a67de958d974664b22edb148dacfd819d14",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "df82bc7335d45eab77183ed815d52fc4e7d33593afb2b8e619c237198c32698d",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11ed66268febe64e44b8be688ae29883c7fe8a627ce6e8d5a67feeaac0f6a5c1",
+    "mention_text": "Peter Lampl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1990657b36da9c1ef578cfc2635874e1ea015c3566c99555e712258b856fdbd9",
+    "mention_text": "Sutton Trust",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87ef1b9994987dbabb5ae7835c954467613dfd340cd9e93e619f83c433279fff",
+    "mention_text": "Lampl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95e73227f290dc03357bdc0ccd3a417642adef41b679bb8a3179f6f05288e9c5",
+    "mention_text": "Lampl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d20ae1605792feea890e22cdddb214e20675bd5b29d794265e8ddaab7da6c65",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54ba78c5dbab3f88bf4c783716d6b6358bc74521e80bb9807666e6d44578ce06",
+    "mention_text": "Lampl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "989d3ffe4f73d4630a4de8cd4bee9458f59a1bf9d40cc412f36c5b50b32b26b6",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6d2f2ebe9ef9d853fa81866df4576f86af49d2771935f1a2ccd020a7038d124",
+    "mention_text": "Edimburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b0f7dbdb6ab64ce8b6e152dfd5b71f790d6568b2fbfee1224ae42a90ba15795",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4938b9b485f40a08401cd9ecd77861bd6ce8bca5c1abbb1613f1f96b87c8fd4c",
+    "mention_text": "Jeff Hayward",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33a6672636e43e3c2488ac4e68cd9050897d4c83bb06d2290e2ac0d8e92554b1",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "294bbbec2fca132ea3e29fcfe6b8921b7f8578bbfd4e40747a3488ffca73c375",
+    "mention_text": "Edimburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb15cbce50886957381636200e721156bdb93048f92ac845a8f6f3f8f551b10a",
+    "mention_text": "Hayward",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cdfc381832f784ebba8acc6adc245ad0a1b59d2ba980a3476cceb70739d945b3",
+    "mention_text": "Universidade de Edimburgo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0646ad960a7cca223aeace8acecca694a58ef44ff3b7d1ff52e042e29ff3ac6",
+    "mention_text": "Hannah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "255be834bf164d92956c366539167773a39ef817bc26f8a3597ca9ff22f74356",
+    "mention_text": "Hannah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "115a3f51b90955c9d44f40e97f648b417b64e70e14e4f64b4f1c3c77449625aa",
+    "mention_text": "Max Crema",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a9d4056d320959bbd4b7166b2bc8c941e3dbbda0de30eff2c3038e253fdecfa",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e3e0ab2755abe830db88f93d82f3396f143810213b283fd36be068ad11a4826",
+    "mention_text": "Mayank Dutia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf454ff04c8873afd01d09cee150ea9fa3c8c39c457b370691dbd78288cd121e",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "426247c4fa41ac6e6d7b49fd944e2c54472932861af4d1f5c4ac3fdbddf0d27e",
+    "mention_text": "Hayward",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c155b241e7c2f6eb44457556d997238aed1620edcaa5ccdbbd4e7e5639429fed",
+    "mention_text": "Argarwal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3b0dfd941d8111ff527f768934a0b76ca90a500c0066fe69d0a8968755efe1f",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "765ffe0ddafcff117f2132ed15274e48cb9ff5c1b17759985bfb75358f70adfe",
+    "mention_text": "Antioch College",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a30f11236d1ecff50a817acb2a92b87b83288d153b6e96bb74bbdb447bfd1ce",
+    "mention_text": "Ohio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b31ecebf2f33de658efa0d3f67203706b4030b5ea6b06adb76acb0cb8fca6ac0",
+    "mention_text": "Universidade da Pensilvânia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98afb93538fad2b314737f73244d23c76203b3f1ffe9699f7bbfe4bcf3000b39",
+    "mention_text": "Duke",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a20f8f96a5c9c877e0b96a3ca263102f0946e38cd3c353f69b8717d8a6248858",
+    "mention_text": "Minerva Project",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50c760735d6e2b04dd84a6257c24ae45f4202bfe43ea7d5fbb38245304e09ccb",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b86dc8a748dae8a3271d44b59958e3417e825722d962ad525548d2633e522a34",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9314ccc969aa4bc084b9f01bfb755f060336e674d4dcfd47e02b5be9250c132",
+    "mention_text": "Grist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48ff31ffd6fe0e6df937a540d84f8723b0c6cc49f122a0376162ab7e419eec56",
+    "mention_text": "Edimburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96733b998d01c55f040eb6cb2cf7be7364ea9e37f87e206bacbdebe903bb0a3d",
+    "mention_text": "Hayward",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e441db7b7a3d923fb29ad4e712c72a5c4ba148dd94aeafc837ac0334469b90d",
+    "mention_text": "Edimburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "882dbd8291ce6d84855e063e93152fcdce9796ff69e2a2b86c56c372252ab274",
+    "mention_text": "David Hasselhoff",
+    "categoria": "PESSOA"
+  }
+]

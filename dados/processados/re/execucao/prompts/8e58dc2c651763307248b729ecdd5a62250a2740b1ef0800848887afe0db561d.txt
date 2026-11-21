@@ -1,0 +1,408 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2a827e306c47582bfbb93fc7a9e228becf03ee0ae3bcb08950bc34e586c12835
+
+TEXTO:
+Aonde tudo isso vai parar?
+
+Pela Liga dos Campeões, Neymar fez um gol -seriam dois, se Cavani o deixasse bater o pênalti-, e Messi e Cristiano Ronaldo fizeram dois cada um. Provavelmente, a cada semana, não será mais uma disputa de dois, para saber quem brilhou mais. Agora, são três. Neymar entrou no páreo.
+É também provável que, ainda nesta temporada, o PSG atinja o nível dos maiores do mundo e que Neymar se torne, a partir da eleição do próximo ano, candidato habitual a melhor do planeta. O time francês tem boas possibilidades de suplantar os grandes ingleses, a Juventus, o Atlético de Madri e até o Bayern de Munique, por não terem um Neymar.
+No meio de semana, o único dos grandes que ganhou de outro grande foi o Barcelona, contra a Juventus, embora o time italiano estivesse bem desfalcado. Na Europa, os principais times costumam golear os pequenos, mesmo fora de casa, o que pouco ocorre na América do Sul. Na Europa, todos os gramados são ótimos e existe um clima de mais cordialidade. Na América do Sul, o pau come, além de muitos gramados serem ruins e de os times viajarem por distâncias muito maiores.
+PSG, Real Madrid e Barcelona atuam, na maioria das vezes, com o mesmo sistema tático, com quatro defensores, três no meio e três na frente.
+O Barcelona, contra a Juventus, mudou um pouco a maneira de jogar. O jovem estreante Dembélé, nervoso e errando demais, atuou pela direita e voltava para marcar ao lado dos três do meio-campo. Quando Jordi Alba atacava, o lateral-direito Semedo ficava atrás, formando um trio com Piqué e Umtiti. Antes, o terceiro atacante jogava pela esquerda (Neymar). Agora, atua pela direita, Dembélé.
+É um privilégio ver, toda semana, três monstros (Messi, Cristiano Ronaldo e Neymar). Os grandes talentos, no futebol e em qualquer atividade, possuem técnica, conhecimento e informações, mas o mais marcante de suas extraordinárias qualidades é a improvisação, fazer algo magistral e surpreendente.
+É impossível comparar os grandes craques atuais com os maiores do passado, já que eles não terminaram suas carreiras e o futebol mudou muito. É difícil até comparar os atuais grandes craques, pois dependem da equipe. Cristiano Ronaldo vai ganhar, pela segunda vez seguida, o título de maior do mundo, por seu talento e porque o Real é o melhor time.
+Comparar dá audiência e é irresistível. As enquetes, exageradas, ocupam grande parte dos programas esportivos. Em uma análise puramente técnica, fria, sem valorizar tanto os títulos individuais e coletivos, pois dependem das equipes, Messi seria o segundo melhor jogador da história? Neymar já seria o segundo maior da história do futebol brasileiro? Cristiano Ronaldo seria o maior finalizador de todos os tempos, superior até a Pelé, embora o Rei seja muito superior? Não tenho nenhuma das respostas.
+As transformações do mundo são rápidas e assustadoras. Não dá para acompanhar. Sobrevivo. Já existe a inteligência artificial, superior à dos humanos, e celulares que falam, choram e riem. Será que, brevemente, surgirá um superatleta, mais completo fisicamente que Cristiano Ronaldo e com mais habilidade e improvisação que Messi e Neymar? Será que, no futuro, muitos vão questionar se Pelé é o melhor de todos os tempos?
+Como disse a velhinha de um comercial na televisão, aonde tudo isso vai parar?
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "14d1dd9f2c3bf7af4fb8019aa53698089b12aa953dbe5b959b18dc25676c598a",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4add34c9e347bb076fe89c391c40425f58c8ea87fcb49dc0a97c1e3c6cc77334",
+    "mention_text": "Cavani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60dad15329aefc69f05ad5d9fe104e5e1fb238bc3b05d8570645324cec6c77e0",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "41b5b6163c2ed5eb58c482ff2c2ac996b804defa16e291572554b7efe25f1753",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ef90599b1effdc9ef41041d039905908413ccdeb5fda7d081141b05ffd6c61a",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e90dd6dd4349b521421e2bfd10c2b2feb9b32ef84c6311a6993431e35851f15",
+    "mention_text": "PSG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8504cbc0dbe47eba218b2986fc0d4bad9f6032e5a5af53bdddf198ed94acac90",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f70b7baba2a2cdf124fbd5c0f5fbbc8f81832813e3ddee5a95c78983ec47a976",
+    "mention_text": "Juventus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7f8169804acf11ea2b29d728da78f1da40323440c0e568608f0465273fed9b6",
+    "mention_text": "Atlético de Madri",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b9c85e66a557e7e6170ce75b7ab635e6bec5273cb8ac3813083e36b55a0ba6e",
+    "mention_text": "Bayern de Munique",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "734e2ac538458c6e7a034547d0bfce2d0685204e61d130ef52774f4cc22daf47",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c37c703460fb07e9ca1a4bb6245522cf56abf5ea60205199d15914330d5a3637",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b1e54083f45ab4e97abd0b671ab29e6d70261cfcf3871adbea11a889e265e95",
+    "mention_text": "Juventus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26a6d8bafc3d6c9325079bf1a3fa446451ebef042861404f3300f8705ff98330",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "981ffce11e49e2ebfd28f3004ff5e2de9c859aa7fcab418b082eb606ac23e5ad",
+    "mention_text": "América do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bf0de0fb05728bb338624fd2bdb4fafa9098084c0b2fe8d567a2c0dcdd29e38",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "df48b007f3b1195bba10c7288a34fccefa76809beb115310873e1d12260dce6f",
+    "mention_text": "América do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "410df7960911b015d3d4a07c39c2b460ccf8c254c2ff24baeed80183f6270b45",
+    "mention_text": "PSG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eab588d9406ec31ffc0d3f7a11ba750ed564defa3f82187d7bde5da6775644e4",
+    "mention_text": "Real Madrid",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0119a6bb1c8efea771f6018ae7732139a211673266a768508657222448b55f41",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4d73de46137854823ed6bb142b0c943bad5a16d43d4019423c64ff6919ba6f8",
+    "mention_text": "Barcelona",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd2b253c6ebf144b80adc9764f539ca9b37ba7a1f44bc6fdb237ee3475d3a2a1",
+    "mention_text": "Juventus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e383124a9dd16d92e8fb247acfa2292721fc5752ce5d0e3e2e67d148d260d4b",
+    "mention_text": "Dembélé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfeccbbae7e726f785d7d08ae5c7cfb20add9eb1cc7c25b43bf4f5d4ffa1d69f",
+    "mention_text": "Jordi Alba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f6b3e9c867e8ee8589e138ad643913266fabae890eedead1eb9811ed5284513",
+    "mention_text": "Semedo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05b6c9e7c6a511f1ac43674dd0367655bd0e59bd75eb928324c905d1b06531fe",
+    "mention_text": "Piqué",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0888e0af6fa4490593973ae3f7b0baaa5af00a226ed721724ecfeaf0dc2ab670",
+    "mention_text": "Umtiti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69f5471ac18293571dd3a26059d5a3c1a84ea9d7ab69114351ba0c9cd68a21d7",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c42952a2da16e558c8ade1dbdcbdbfa28476536ab5beb83ceae500bff8d07ca",
+    "mention_text": "Dembélé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aeac1445e23c58bed501492eac645252d373993aab4ab710e2bf86f4e531a714",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a46f1e24aa31686470df3130ea1d67ef308400d331a11b88b6baa7b0f51abfe9",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4377717c0d8c6dd28647863c6c93c8395228debbd06730f58a87beea28659ca",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62ea14c3693d590ac36d969bedd3c12bd90421686a90b00edad16654ca6c9372",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aaa4cf32e0e1225e00cae7f66b65d3cdadd3a2d95eb162b6a2a612eb12f322c9",
+    "mention_text": "Real",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38eb7cc0ce5e72447adf3e68fad27456d9c00d430bdd67b35cc04d2e2508bf3d",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4d8777f4450177c3b74b689893ba7f372d004afe5528f8c026652814064f1a7",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa4b5115b231f68ef347d447e5b2eb1169782ae0dc490ade7319db852b1e7928",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1154ea604cd6a7fab7d485d0b13ba7a4288118f5eb31770ba654f308ec18df3",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bebb3fe6a67fa4df5da55aa4f26d7979728e165c99017f8d3fe919899fb71722",
+    "mention_text": "Rei",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a0b6a5df00d246bbce4ef5269273c652264a984e31afa7a545e91279332005c",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "70746d7751deac428e4966578c97172304810d8b5201cda9c6e8542d2e3bb442",
+    "mention_text": "Messi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1da58539065844f6870d7e5c4dee87c11464cf649285323651ad3cc997219731",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9ae487470334db54cb87c10636d54796867fbbb604a7e35adb565378cb40d86",
+    "mention_text": "Pelé",
+    "categoria": "PESSOA"
+  }
+]

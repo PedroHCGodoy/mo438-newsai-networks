@@ -1,0 +1,376 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: faf24f66a006f7df0dff9c38b03c81d55dbcb4caa8621e8af23d7491962e72f5
+
+TEXTO:
+CRÍTICA: Livro de campeão de xadrez avalia inteligência artificial
+
+Nos anos vindouros, cada vez mais pessoas vão perder noites de sono, preocupadas quanto ao que vai acontecer quando as máquinas tornarem suas especialidades obsoletas. Qual será a consequência disso para o seu trabalho, sua autoestima e seu senso de humanidade?
+Poucas pessoas experimentaram o processo de maneira tão pública e dolorosa quanto Garry Kasparov, um dos melhores jogadores de xadrez da História, que carregou a "bandeira da humanidade" em confrontos clássicos contra as máquinas de xadrez. Em 1997, o Deep Blue, um programa de computador criado pela IBM, impôs a Kasparov uma derrota por margem mínima, mas ainda assim psicologicamente devastadora, diante dos olhos do planeta. Foi a primeira vez que um computador venceu um torneio de xadrez contra o campeão mundial reinante do jogo que por séculos foi visto como referencial da inteligência humana.
+A emoção bruta daquela disputa em Nova York irrompe das páginas da absorvente história de Kasparov, que ele conta na íntegra pela primeira em "Deep Thinking", seu novo livro. É quase como se Kasparov estivesse descrevendo sua morte, ao escrever sobre a derrota. Durante a série, Kasparov parece ter passado por pelo menos quatro das fases do ciclo Kübler-Ross do luto, avançando rapidamente da negação para a raiva, a negociação e a depressão. O livro, escrito quase 20 anos depois do confronto, reflete o entendimento final de Kasparov quanto ao quinto estágio do luto: a aceitação. O que o texto tem de mais notável, e reconfortante, é que, longe de expressar raiva contra as máquinas, Kasparov admira a capacidade dos computadores e se empolga com as possibilidades de futura colaboração.
+Quem quer que tenha enfrentado Kasparov no tabuleiro sabe o quanto ele era brutal e dominante como enxadrista, em seu apogeu. Isso é algo que posso atestar pessoalmente, por tê-lo enfrentado, em companhia de cerca de 20 outros jogadores, em uma simultânea realizada em Moscou. Não foi surpresa que eu tenha terminado em segundo. Mas o que mais recordo é o senso de poder e ameaça que Kasparov irradiava ao caminhar pela sala, despachando oponentes. Ele parecia um jardineiro mecânico em estado maníaco, podando impiedosamente uma roseira.
+Das mais de 2,4 mil partidas sérias que disputou depois dos 12 anos de idade, Kasparov perdeu apenas 170. Em seu reinado de 15 anos como campeão mundial, entre 1985 e 2000, ele dominou o xadrez como raros outros jogadores conseguiram. É claro que o Deep Blue não se sentia minimamente intimidado pela personalidade beligerante ou pelo histórico espantoso de Kasparov. De fato, quanto mais vitórias o enxadrista registrava, mais dados estava fornecendo para que o computador o derrotasse. Tendo sofrido uma derrota prévia para Kasparov, a equipe da IBM estava determinada a provar a superioridade de sua tecnologia e buscou todas as vantagens possíveis sobre o oponente.
+Kasparov já tinha escrito alguns bons livros sobre xadrez, analisando as melhores partidas de campeões mundiais anteriores na série "My Great Predecessors" (2003-2006), e também discutiu estratégia real, em "How Life Imitates Chess" (2007). Mas há trechos de seu mais recente livro, coescrito em companhia de Mig Greengard, que parecem acima de tudo um thriller psicológico.
+Kasparov começou bem a série contra o Deep Blue, vencendo a primeira partida com facilidade. Mas no segundo jogo, um lance surpreendente do Deep Blue pegou Kasparov de surpresa e ele cometeu "o pior erro de sua carreira" ao abandonar, quando poderia ter forçado um empate. Incapaz de processar a derrota, Kasparov acusou a equipe da IBM de trapacear, afirmação pela qual pede desculpas no livro.
+Em seguida vieram três desgastantes empates, nos quais Kasparov se afastou de seu estilo habitual de jogo e recorreu a uma estratégia desenvolvida especialmente para combater o computador. No xadrez, o vencedor muitas vezes é aquele que comete o penúltimo erro. O Deep Blue provou ser um adversário irritantemente preciso e impiedoso, anulando o gênio ofensivo de Kasparov e solapando sua força mental. Na partida final, o Deep Blue recorreu a um sacrifício devastador de um cavalo, e Kasparov abandonou em uma hora.
+Ainda que Kasparov elogie as realizações da equipe do computador, acusa a IBM de usar algumas táticas sorrateiras. A recusa da equipe de fornecer os históricos dos jogos anteriores do Deep Blue, a reprogramação da máquina depois de ela ter travado no meio de um jogo, e a contratação de um segurança que falava russo, supostamente para escutar clandestinamente as conversas do enxadrista - tudo isso irritou o volátil campeão russo.
+Na entrevista coletiva ao final da série, Kasparov, arrasado, prometeu que destroçaria o Deep Blue em uma revanche. Mas a IBM, depois de desfrutar de um ótimo resultado em termos de relações públicas e de uma alta de US$ 11,4 bilhões em sua capitalização de mercado, decidiu encerrar a experiência e desmontar o Deep Blue. "Foi como ir à Lua e voltar para casa sem olhar ao redor", escreveu um comentarista de xadrez.
+Os adeptos do xadrez certamente se deixarão absorver pela história de Kasparov, mas o livro merece quadro muito maior de leitores. Os capítulos finais contêm uma das mais melhores explicações sobre os benefícios que a humanidade pode obter ao trabalhar com suas criações computadorizadas. A despeito de sua inferioridade diante das máquinas, os seres humanos continuam a jogar xadrez por prazer. Além disso, os programas eletrônicos de xadrez ajudaram a acelerar o desenvolvimento de muitos enxadristas jovens e oferecem novas percepções sobre o jogo.
+Kasparov descreve sua sensação de que uma inteligência desumana emanava do Deep Blue, mas estabelece uma distinção útil entre diferentes formas de inteligência. "O Deep Blue era inteligente da mesma forma que um despertador programável é inteligente", ele escreve. "Não que perder para um despertador de US$ 10 milhões faça com que eu me sinta melhor".
+Desde que se aposentou do xadrez, Kasparov dedicou muito tempo a dialogar com cientistas da computação e especialistas em inteligência artificial. Ele acredita firmemente no chamado paradoxo de Moravec, segundo o qual os computadores fazem bem o que os humanos fazem mal, e vice-versa, o que sugere uma complementaridade útil.
+Kasparov argumenta que os seres humanos são muitas vezes falíveis, e descobrem padrões em acontecimentos aleatórios e correlações onde elas não existem. Os computadores podem nos ajudar para que sejamos mais objetivos e ampliemos nossa inteligência. O progresso tecnológico jamais poderá ser detido, mesmo que devesse ser administrado melhor, ele afirma. Lamentar a perda de empregos causada pelo avanço da tecnologia é pouco melhor que reclamar dos antibióticos por reduzirem o número de empregos para os coveiros.
+Da mesma forma que no treinamento para o xadrez, autodisciplina na educação e franqueza brutal sobre nossas fraquezas podem nos ajudar em nossa preparação para o mundo que virá. Mas o ingrediente indispensável para o sucesso será a criação dos processos que usaremos para administrar os computadores, e só seres humanos são capazes disso. Para explicar o processo, o enxadrista criou uma fórmula chamada "Lei de Kasparov": Ser humano fraco + máquina + processo melhor é uma fórmula superior a ser humano forte + máquina + processo inferior.
+"Continuo otimista, mesmo que só por não ver grande vantagem nas alternativas", ele escreve.
+Tradução de PAULO MIGLIACCI
+Deep Thinking AUTOR Garry Kasparov EDITORA John Murray Quanto R$ 49,60 (livro digital; 305 págs.)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "46c180e4b5edfa2178174f47b646032d37f40c1b9cfd9237110a0ec692745551",
+    "mention_text": "Garry Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52f399d32faa7103de3fc9914d845687959936dfcf86a96c448a52592eaf2b1b",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cab86084b3d566e824186f4dcc87e8fac8782b55721f341ebdd88aba1a85e1c",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4130c96acc0926c3686e2ceaf1cf4d575a47787aab70d58a9422106b24a4f536",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2793644e41a81cdabb825587db84c8ab5576ab704b9eb532e35271b8565de99",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "080940735e5136c85b96623a000620c650ffbe082b0b1cc072ca3b4a9af5cbe8",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1502b61dd0d79ac61604a1afb100c86035e0df09cf53f31646d530f6967ed1ab",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b6cc8bab9236b0fe4b7f4a89e3d320a7579fb239c0d90356ebf37168164a65e",
+    "mention_text": "Kübler-Ross",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17f76f795b3ae55c3d8341022685a49e55f955034ce07aa861f5b835113eeb13",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d63cc6fec0a1d7717de127b09c78a6b9499ed5c8393ec5d2dc796a615071d613",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c144260d6f49cd05435f17e2637abb18e9d22de9b966a371d24d5ef4d8ed24a1",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca4f5ce3edaf0925e75c43471d84aeadff0b911b89477b1639b0ce85389b1b47",
+    "mention_text": "Moscou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f0729ad63e76df5ad5d26a86e62aec76c75d9481b5d638c39c4194deda86e0a",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e1d7b0faa86f20bc6842df62719599b7ead2eccbc06f62229dc33e21ae32915",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49ab49046114f2d54d9281442dbf1651ca9c34887fe503b5b8510867f2544579",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "477f8bbb773cd76a4b04b29ab9be370e9665926c902fd9d4e68c5668a9ff9fec",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "248bc980729596be15efb4e973e279f98bb5b31b7243e22dfbb9340bad9f589b",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "518a861dae0180e4a1dfa38b2bd3da00dc619fe1c3d91d90b69b5d31cd9c2f6e",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50c9099c9fc9470ffa7802c6fad114c49b8b1facc8edb439d83e272acbff29fc",
+    "mention_text": "Mig Greengard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d89f85ba497e97e5a02b4b8d1dcb91be0a6027e87126d46af114aaeb0b8b46e9",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8589959be4ef487133d5b07f49a622974a72dff00636f86182c8d6c5ca2f73a",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "626fa9e02c1936a02146fc30394442ffff5951b1c869faa41fc46c1ba9cc2a31",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "53c93d8a959d02488b8cdbb91b0f5bd85d7bee2711fe41e296a4c826dfc54bc9",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca375075bb1b454d733f5a82c1f73bbffb21aa95f9e1f7680b545e4dcd465a56",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab97c2b45161b53798f8351083415f9840727c8c2dcd5ef169ad4db5835a1181",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "946aeed1ee0ddacdcbea328816493344525a9d750cc22cca8cae47ab8ce9f993",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a290c8cf0528b276fedd9aaf59ec1f1de2afd2091dcb0ddc60d0a87195e5fad6",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e8fcf92c9f27f4596a95eee4ed1e750ee78333422cffe62d606cef733206638",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0061f28b736f0c98843f7b0522d5ddc6770c7347bb8b9c558d2b0ee80c620c60",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d33e95a060d0a0ac0ea797d189a43c5ca9e970963444f10bedc6cb4c6f2c408f",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6fc408eecd36d05008416c92dc4a01c8c2adc623222891991e592dd21b3c3e74",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0226971866d70fdc00016ce741c34e1f089e3eb2b4ba451f016ba95eaa5c242c",
+    "mention_text": "Moravec",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bdbc916fe9cf41ad45268e0495e10094de352d1f8793d94d3e343f4bde99874",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "822259fec18d495a1656a924ae4e59ad40fd4e64758b4286320c4bb33f2a5b1a",
+    "mention_text": "Garry Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "277203e01b22f134223f6ef8153cc50c792db0094cda552c9af8e0ce3a7f95c7",
+    "mention_text": "John Murray",
+    "categoria": "ORGANIZACAO"
+  }
+]

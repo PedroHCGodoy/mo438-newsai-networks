@@ -1,0 +1,321 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b7b88f4fca374f2666eb069557d4a53dc39adfba11812b379d33eb857bd87fe5
+
+TEXTO:
+Ensinar máquinas a pensar é uma das profissões mais promissoras
+
+Fernanda Reis São Paulo
+Enquanto aulas de programação começam a figurar na grade do ensino fundamental, graduados em ciência da computação vão além: dão ferramentas às máquinas para que comecem a aprender sozinhas, sem necessidade de que sejam programadas.
+A especialização em machine learning -ou aprendizado de máquina- é uma das mais promissoras para profissionais da área. "Hoje todas as empresas, não só de tecnologia, estão buscando esse profissional", diz Eduardo Endo, coordenador do MBA em machine learning da Fiap.
+Esse especialista em inteligência artificial faz, por exemplo, com que um serviço de vídeo sob demanda saiba o que recomendar a um espectador com base naquilo que ele já viu e ensina computadores a reconhecer vozes e rostos.
+Qualquer empresa que possua um banco de dados pode tirar vantagem do machine.
+learning para seu negócio, diz Ana Romeo, gerente de produto de inteligência artificial e data science da escola virtual de tecnologia Udacity.
+Fernando Favoretti Vital, 24, formou-se em sistemas de informação na USP e trabalhava como administrador de banco de dados. Por recomendação de seu chefe, foi atrás de um curso livre em machine learning. "Ele me falou que era uma área que estava começando e tinha meu perfil."
+Depois de terminar o curso, foi selecionado para participar de um programa de jovens cientistas da Nasa e do Blue Marble Space Institute of Science, nos Estados Unidos.
+Com um grupo de estudantes internacionais, trabalhou na construção de uma câmara de cultivo para alimentos que será instalada em estações espaciais. "Eu criei a inteligência da máquina. Ela sabe o que plantar, como plantar, o que será melhor para o astronauta. Ela consegue simular diversas variáveis", conta.
+O machine learning é um passo adiante em relação ao big data, outra especialização de tecnologia em alta.
+Um cientista de dados ou especialista em big data tira correlações e insights de grandes massas de informação.
+Já o profissional de aprendizado de máquina cria, a partir desses dados, programas que conseguem prever um comportamento.
+Além de programar, é preciso ter conhecimento em matemática para criar os modelos. A Brasoftware busca gente formada em ciência da computação com pós-graduação na área de exatas, como matemática aplicada, diz Abílio Pettenazzi, gerente de estratégias da empresa de tecnologia.
+Como é importante conhecer a indústria na qual irá atuar, Renato Souza, professor de matemática aplicada da FGV, diz que é possível fazer uma graduação em humanas e depois desenvolver a parte técnica, embora seja um caminho menos comum.
+Há cinco anos, diz Fabrício Barth, líder na área na IBM, a aplicação de aprendizado de máquina só acontecia em laboratórios. Hoje, com o crescimento do setor em empresas, não é fácil encontrar profissionais qualificados.
+"Toda semana - e não é figura de linguagem- tenho um ex-aluno ou colega me pedindo indicação de alguém com perfil para machine learning", afirma Souza.
+-
+ESPECIALISTA EM MACHINE LEARNING
+O que faz Dá aos computadores a habilidade de aprender sem serem programados
+Salário inicial R$ 6.000
+Onde estudar FGV, Fia e Fiap dão especializações. Há cursos online como Udacity e Coursera
+Perfil desejado pelas empresas Profissional que trabalhe em equipe, que aprenda rapidamente e goste de resolver problemas
+Onde há vagas Empresas de tecnologia, finanças, entretenimento, startups
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e9286f9348bc9b29e94fbe112ac26dbbb1f28af52926da1fe53fe672d27d46b9",
+    "mention_text": "Fernanda Reis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4b976a7b0c325002b39ab72efb42db52debd68d9d61b8c88bd99fc8a9636f04",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b17639b654bf5164d7a7125ab5e11346a52c327d2054c0bfcd1e887f82c557a",
+    "mention_text": "Eduardo Endo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "188ad059586e4e2eb91093980b5b3402a27c474010b32126b688d48545c996c2",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cffb4bd2ca60bbb910870e9bf53abbdbe866716ae6d249422d4d33179d3dc216",
+    "mention_text": "Ana Romeo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7038e12298fa56455609f9a454e07d8247bb6a4f9b519f156b2315fb976af22c",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5596af410e1e6918a0093903a0fa302862143ab3f3770b307184f050f066d56",
+    "mention_text": "Fernando Favoretti Vital",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acdb16e6e9a4e24e908e7481d35e7b3c42864e5a33a0274cdc6a190975be2c74",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d03288fda59dce55f5105060af4f7b37cbed05491737bfd419f93061ba32617c",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "111c125d40ab79f8e23b8bc9a36de8d1d735de51572a8c499eeefad2a6dd8b80",
+    "mention_text": "Blue Marble Space Institute of Science",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "599560959d85cbe07e4950b3d74085902d5edc582abbbc3e366f0ecacd52bcbd",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02e465b97bc7758142c2b29c2876c83073c97782fafbf5192ecd014f1b685d85",
+    "mention_text": "Brasoftware",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71f790ed09b571b1da041e3936f420bde89b6ceac0f0ca42c53705e59f644090",
+    "mention_text": "Abílio Pettenazzi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "559cf3f89a830f7a71c02e48cfc971c24685ae3e0328aa1402cf5da33b6675f5",
+    "mention_text": "Renato Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6517a2eccca4faf561af9dd16ae7595997fe43cb053581b34ac13c7a0ada6469",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4bf1ebf1c7263de44571d8b59a19880c50f1c34e155e5a06f82a8188004a876e",
+    "mention_text": "Fabrício Barth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dcab374b0ad9806f75f6b79b76ef75852bb0cca9144270b35044e8fa752528cc",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7aeafb9389da93efac3fdb680fbe469d4c5c51d8559e3a2db8df957e8fcb043a",
+    "mention_text": "Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b415cf217027ba77d5641686a71d497420e84a79081789cd8406f0fe9c786d42",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3ae05aec51e285d88c99b75843bd463540eb4276ee73f25ed41f2eb38b274cf",
+    "mention_text": "Fia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79e72911084900f7736cc8b695c0197d7d9456956cb597d7324f4a0fe6a0b352",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8899642a12d436a00f7fae3e1d3d38158000bf4710f44ec150ffae14a56684d8",
+    "mention_text": "Udacity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8a2ce922a768fb08789eab7ae874bbd751036f723e0ae6a295629ecc13bd33a",
+    "mention_text": "Coursera",
+    "categoria": "ORGANIZACAO"
+  }
+]

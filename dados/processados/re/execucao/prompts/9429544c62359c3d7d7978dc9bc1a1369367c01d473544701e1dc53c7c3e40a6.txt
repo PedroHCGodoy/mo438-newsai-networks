@@ -1,0 +1,372 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9b434a670c4281396cbf78056c05633fac3d79c0c87a9ee9fe0d7adb78754abb
+
+TEXTO:
+Os impasses do projeto utópico
+
+ELVIS CESAR BONASSA
+DA REPORTAGEM LOCAL
+Se o conceito de utopia, em séculos passados, já definiu o projeto de sociedades perfeitas, hoje precisa se contentar com conteúdos bem mais modestos: um projeto político para resolver questões atuais ou o afastamento do mundo, em direção à literatura e à filosofia.
+Foram estas as possibilidades encontradas no debate entre o antropólogo, escritor e senador Darcy Ribeiro (PDT-RJ) e o psicanalista e escritor Rubem Alves, no último dia 29. O debate fez parte do ciclo "Diálogos Impertinentes", promovido pela Folha e pela Pontifícia Universidade Católica de São Paulo (PUC-SP).
+Darcy Ribeiro analisou a utopia como algo bastante concreto e atual: comida, emprego e educação para todos. Para isso, propôs lutar contra a "colonização" à qual o Brasil está submetido.
+"Vem uma nova civilização aí. Se não estivermos ativos, claros, lúcidos e utópicos, nos colonizarão", afirmou o senador, incluindo o nacionalismo em sua definição de utopia.
+Rubem Alves, ao contrário de Darcy Ribeiro, recusou qualquer idéia de utopia coletiva. O psicanalista insistiu na liberdade individual de pensamento como cerne de seu projeto utópico.
+"Eu sonho com uma utopia em que as pessoas de idéias diferentes não sejam acusadas de burras, estúpidas e reacionárias... Eu quero defender o meu individualismo, o meu direito de pensar."
+O contraste entre as formulações conduziu a discussão para o seu ponto de maior divergência: o papel dos intelectuais.
+Rubem Alves defendeu a solidão e o afastamento em relação ao mundo da política. Para ele, a influência por meio da palavra escrita é a única função possível. Literatura que muda "as visões, as imagens, as maneiras de pensar".
+O psicanalista disse temer o conteúdo totalitário das utopias. "As grandes ditaduras não foram feitas por pessoas cruéis, mas por pessoas que falavam em nome do povo e diziam haver descoberto qual era o desejo do povo."
+Dessa constatação, retirou uma crítica radical à política e aos políticos: os partidos reprimem divergências e encurralam a liberdade.
+Darcy Ribeiro, ele mesmo um político, reagiu com a mesma veemência. "Isso é conversa. (...) A canalhada quer manter a ordem social que é vantajosa para ela, que é lucrativa para ela, e ela tem que ser vencida politicamente."
+Para Darcy, os intelectuais têm se recusado a assumir o papel de formuladores de um projeto próprio para o país. Estão "desinteressados" dos destinos do povo.
+Fundador da Universidade de Brasília, o senador deu um exemplo do que considera uma ação a favor da utopia: está criando agora, no Rio de Janeiro, o que chama de "Universidade do Terceiro Milênio", destinada ao desenvolvimento de ciência e tecnologia.
+Recusando a política, Rubem Alves pôde fazer o elogio da "beleza", além dos limites da ideologia: "As coisas belas não têm cor ideológica. Para dizer a verdade, a direita está produzindo umas coisas fantásticas, música, arte. A direita é uma fazenda que não me pertence, eu não quero estar lá, mas tem muita coisa bonita que nasce lá dentro."
+Darcy Ribeiro completou o quadro da fazenda direitista desenhada por Rubem Alves, para recusá-la: "Tem também menina prostituída, criança com fome, raiva. Deixa disso, Rubem".
+O debate teve a mediação de Caio Túlio Costa, diretor de Revistas da Folha, e Mário Sérgio Cortella, professor do departamento de teologia da PUC-SP. Foi transmitido, ao vivo, pela TV PUC, por meio do canal 33 da rede de TV a cabo NET.
+No próximo debate, no dia 26 deste mês, o filósofo José Arthur Giannotti discute com o escritor Frei Betto o tema "Religiões". Em 31 de outubro, o tema "Inteligência Artificial" reúne o professor Claudio Lucchesi e o educador Paulo Freire e, em 28 de novembro, o geógrafo Milton Santos e o ex-governador do Amazonas Gilberto Mestrinho discutem "Fronteiras".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4ae3eb0480938c1f26c8622d441bcd1cdb12a84f495c43e110715200c8b3a752",
+    "mention_text": "ELVIS CESAR BONASSA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "133edc31fd1d8f4c2e20fa76a7306c25f65090e4b4fd81d9b13f98d0119c7091",
+    "mention_text": "Darcy Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f752ff301f9bd30903251f3c8fc7062a24750db024a6ce3cb2fcba1f12a4852",
+    "mention_text": "PDT-RJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "313e3647a7d6166bd44a319bd003bc6b227b462b1639a588bb2d352ec6606fe3",
+    "mention_text": "Rubem Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "351dfe3ac09c1a08ea5b891d7c9feb1fcd9e4cbc922377cb55c46e81f97185c4",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f18f017644f84557120499e276593ce6c92b21951db6c03e349ca68ebfc0eefa",
+    "mention_text": "Pontifícia Universidade Católica de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "449a0d5b0aaeeeb13431221b4d40fdd176a9b05db8a44af8aee6a8bb3d9ce475",
+    "mention_text": "PUC-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37917cb833744d59a4238ffc2e84dcde7e4679305346fed97c8ea685eeb4cc1b",
+    "mention_text": "Darcy Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c39d1b4a39294be00e7a8a04ebcb3a1f0351953873f63e14fccfbee789e46f7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9818cb7104bf4189e00381b2d63e29246c048f67e4d88c3f6381c51c503be543",
+    "mention_text": "Rubem Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "717fb432fe5f5d3c8245b6649df3a343f361f87075d864f2e46040fec96359f8",
+    "mention_text": "Darcy Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21c08973e643f5991e3d8841f8e1889d3822461855c3ed4965d2254abf238fd2",
+    "mention_text": "Rubem Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e4d0f4ef9893f512e7afa620b2a7c81011a036333ccbf4e4815d7f9fc56c91b",
+    "mention_text": "Darcy Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d45baf927ee851e20198b1f332b61534378393bf43ba24d486c5fd5ea1a7de26",
+    "mention_text": "Darcy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "631e3b04d911d70a3f8576c5e3676f54f84a84eac9056739a1642406721358cb",
+    "mention_text": "Universidade de Brasília",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "768adb9fddefa4089cac72f9e909bf24a9a1434cc14c6e987dc126a7bd8b083c",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "37ef1c47c21e32065d765aebb5c091f8699f1245113073dd764fd6b2d9595bfb",
+    "mention_text": "Universidade do Terceiro Milênio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1bc725fe5a5f242e3f80897538a230caf67d9f93c9a153e4f016e6cb0dbbd66d",
+    "mention_text": "Rubem Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b47d7245c8a6c5994917e15ce4f5577fec0627068103fb0a90d6290d7eb4af9",
+    "mention_text": "Darcy Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55936c4685ad3f930837d042d747b2f9738f071c7ef481a62ed583829ce721f0",
+    "mention_text": "Rubem Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc1396067de6afaefecfac9d6e6efc77dd0414134bfca76fcdee3c379210ece2",
+    "mention_text": "Rubem",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6534938e7e1be87c8eebe02d8777088f8118f655a56dcf63e0381cf76ded9aa",
+    "mention_text": "Caio Túlio Costa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65124f45da195bfaa103bdce0a3b5b2f966aedaab185cf273eea68c3246d8807",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23b3850b6cef6b1ada3101f44cab5b6902255d803f84c331f115cf8498ed1102",
+    "mention_text": "Mário Sérgio Cortella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26fe2b54f9bc0ac4d1b2d88a598900cad3d8b8fcd31ab4dc4e8f0703d23f6927",
+    "mention_text": "PUC-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b79c6231fd84d1a699b78cacfd3967e39e5aac4d4a7413b70b7e578b90722ea0",
+    "mention_text": "TV PUC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a39c9a310ffafb0f52cebdb107e8b4b878471f843584f935211122b026e764f",
+    "mention_text": "NET",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97fdfb116e1ac63f8cad754181200b6b73342949fb538de3e45a509cb086afcb",
+    "mention_text": "José Arthur Giannotti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c109594270c0017f036d8c210c9bff44b3ba0d7701eb2d56b9cfb07c8440aba",
+    "mention_text": "Frei Betto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9751850bbbffa6aa18b77deabab45253bede4eb541e80589e99cb7d9f6639c6a",
+    "mention_text": "Claudio Lucchesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23c7cb123bc310ce1180eb0e2c835ebacdbe0fdd37fd7b3b45e58500cd521790",
+    "mention_text": "Paulo Freire",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64accc59dd5c042d9ce8f110708c563eb3bdc7f8efa3f52d53877df97fe55a24",
+    "mention_text": "Milton Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "696026381410fb891f135efa99e3f5b5d762cb7e99e04f238d0953b1cbe270a2",
+    "mention_text": "Amazonas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f533683e51c90fa1f0cc4d860d0dcc5f75708f17d09de9704563c3b4b7affa09",
+    "mention_text": "Gilberto Mestrinho",
+    "categoria": "PESSOA"
+  }
+]

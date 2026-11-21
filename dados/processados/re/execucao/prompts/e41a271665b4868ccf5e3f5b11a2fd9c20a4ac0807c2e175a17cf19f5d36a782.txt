@@ -1,0 +1,357 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 20a4b686bbec19052efdefb36510a25f5e82f16a555169364dc6d20f876e5ba3
+
+TEXTO:
+Assistente virtual do Facebook recebe 'mãozinha' de humanos e conta piadas
+
+O Facebook está recebendo ajuda de seres humanos para alimentar seus produtos de inteligência artificial e usar seu 1,5 bilhão de usuários mensais para ensinar máquinas a cumprir quase qualquer tarefa.
+A maior rede social do mundo aumentou o investimento em inteligência artificial (IA) e contratou acadêmicos que são especialistas no assunto para repensar a cartilha seguida por rivais como o Google e a Apple, já que todos eles desenvolvem assistentes ativados por voz para responder perguntas ou antecipar necessidades.
+Alexandre LeBrun, diretor da plataforma de inteligência artificial Wit.Ai, do Facebook, diz que a empresa possuía uma "situação única" por causa da grande quantidade de dados sociais recolhidos dos usuários.
+Em vez de criar instruções para uma máquina, como a Apple, a Microsoft e o Google fazem, a companhia formou uma equipe de "treinadores de IA". São seres humanos que trabalham com as máquinas que alimentam M, um assistente virtual a serviço do Messenger, do Facebook, para ajudar os usuários a fazer tudo, desde cancelar uma assinatura de TV a cabo até encomendar flores.
+"Tudo é uma questão de dados. Ninguém tem o conjunto de dados do universo de conversas sobre a compra de flores –a única maneira de obter isso é criá-lo", diz ele.
+O Facebook aumentou seus gastos em pesquisa e desenvolvimento no ano passado para cerca de 30% da receita, ou quase US$ 1,3 bilhão só no último trimestre. A empresa não informa exatamente como divide seu orçamento de pesquisa e desenvolvimento, mas ele é utilizado para financiar suas apostas de longo prazo, incluindo o desenvolvimento de realidade virtual e inteligência artificial.
+Mark Zuckerberg, criador do Facebook e seu diretor-executivo, montou duas equipes de especialistas em AI: uma está focada em produtos, tais como M; a outra se encarrega de realizar pesquisas acadêmicas dentro do Facebook e é liderada por Yann LeCun, cientista da computação que fundou o Center for Data Science (centro de ciência de dados) da Universidade de Nova York.
+"Nós realmente achamos que isso vai mudar a maneira como interagimos com softwares e dispositivos, e que terá um papel muito importante na sua vida no futuro", diz LeBrun.
+O Facebook adquiriu a start-up de LeBrun, a Wit.Ai, uma plataforma que faz reconhecimento de voz para uma variedade de dispositivos conectados, como tecnologias dentro de carros e de roupas, no início do ano. Ela ainda trabalha com outros dispositivos e combina o que aprende com os seres humanos, na interação com eles, e seu conhecimento sobre como as pessoas usam o M.
+LeBrun diz que Zuckerberg está altamente envolvido nessa empreitada. "Fiquei surpreso. Pensei que fosse ver Mark uma vez por ano", diz ele. "Na verdade, não. Ele está muito, muito envolvido no produto em geral e pensa sobre a IA em particular."
+M está sendo testado por 10.000 pessoas na área da Baía de San Francisco, mas acabará acumulando uma grande base de dados de pedidos e soluções desenvolvidas por seres humanos a partir de quem a máquina pode aprender.
+LeBrun diz que outros sistemas de inteligência artificial, como o Siri, da Apple, e o Cortana, da Microsoft, são mais difíceis de serem melhorados porque os dados que têm para trabalhar são menos ricos. Isso acontece porque os usuários se acostumaram com o que um serviço pode e não pode fazer, e terminam por utilizá-lo apenas para um punhado de tarefas.
+Por exemplo, algumas pessoas só usam assistentes ativados por voz para saber sobre o clima, o que não dá aos pesquisadores muitas oportunidades de aprender.
+O Facebook, pelo contrário, não programou M para ser capaz de fazer tarefas –nem mesmo as mais básicas, como dar informações sobre o clima.
+Depois de estar em uso interno desde março, ele aprendeu a contar piadas. "Aprendeu a buscar piadas a partir de um banco de dados de piadas. No início, não podia fazer isso, então os treinadores iam até o site", diz LeBrun. "Agora ele sabe que, quando recebe esse pedido, vai a determinado website."
+No entanto, M é um projeto de longo prazo que enfrenta enormes desafios, já que o que se tenta é ensinar uma máquina a trabalhar em diferentes culturas e línguas.
+LeBrun, que passou 15 anos trabalhando com inteligência artificial, diz que encontrou choques culturais entre a forma como empresas americanas e europeias pensam que a IA deveria funcionar, quando estava desenvolvendo um robô de atendimento ao consumidor que interagia em chats on-line ao vivo.
+"A cultura da Europa é que eles querem que a IA tenha muita personalidade, que conte piadas e que, se você convidá-la [a máquina] para um encontro, ela siga o jogo e finja estar disposta a ir", diz ele.
+"Nos EUA, os departamentos jurídicos ficavam preocupados e diziam que, se você visse alguém convidando a máquina para um encontro ou perguntando se é casada, deveria encerrar o chat."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0532137750625e7b44026bd6a620a575c0886dbead2df2dbf827e2e8998f2c91",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddfcce679b7e9c070331591e3f41e03025121ed54687cafa281e802a9e378300",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2975c564a10b07dae3f7b769fba324d457944d8eb8d104549f91cb4b8cca2128",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f998bc7a89e69dc29f61890a0df7b4dc429874496c6a6c60af82cedcbb39c41c",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1fcb086ca4d03739eb87486da7019aa3741f797d829b57729f0c20256f3ae006",
+    "mention_text": "Alexandre LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "335edb52575523de4a3996916d8d1362feea5663989bb1847aedd5cc1c4726d3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62ef026ba9297f798deccc446aa3a50750fccc697215c62ccfa67abb3622f8b9",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b27e3d86c81648195d471d9485eefc3cb2adc81870c368083d07b73afd63b0ff",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "adcab0a8b43f86690495b62c8438c38ff067dd764c1af1fc7f67406888e6cf0d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "227db4c83613c14d7f113e4b2137a3ef15e2d9cf6d020e392bcd381591f3464d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3df0b0d549d125436ca27878796c39a92d44b592e91599b89b39cc95ad35349",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b08bb0e742fdd0d839eea73725930b9fffbce07a368c075797cfdedbf0ff45b",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a0dc67e1bed4d481a55995e3c76e4f32388af1adce393949e0d385508553a8f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3bd687f7024299dbb8ac981f937187f6f6096771b9d39ec6bb0a971977f0f16b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d96e6ec76b29dab564a08213549a1e3f1e1206e909c2f8f1bb589a36ed3eb4d",
+    "mention_text": "Yann LeCun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "679144524b604cdaf7c6261a9d27e457d6fd30eeb3a439baa0eac8e1ec389dcc",
+    "mention_text": "Center for Data Science",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbe8aed9c77ef38faedc6fca12c9cbe3f9c88c0be0f71c68744c334ab1faa649",
+    "mention_text": "Universidade de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "570f58748879e3532ea318a7d45c810bebebf92298ad10ed829d39afc4cab8a1",
+    "mention_text": "LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "048e75810b21ac44b5b35a971c3f4757ec9611d44a4522c35d505eb733456d9d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20ad3ec208a9ee59575bb20cf1390b8f7130c411d86279b42426bd0d7d2f1a8b",
+    "mention_text": "LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3a52cc9e2fb49b6a0f838e12b124879b4f8ab18eac768bbfc4ba59a7f6eb9c2",
+    "mention_text": "LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "89ec87f99df22a88750025b08c8fa05e4bb5dd9da489302812870b9211a3aebf",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f920be68a35ea8dc2cbaa2c9c1c23d0809f5c0db2ab1d512338d8623c4df6574",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a87df2f1837e004c4e6f0d6df37207a3c413a19c93f0298db142b11c652d9d9",
+    "mention_text": "Baía de San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4be6f17f000c375355f706e3dbb0db24c243edb032636769cb506356fd60cec3",
+    "mention_text": "LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f5bb0aad77549d129021749d698c06db844fc394b00686237d87918fab6762f",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ecfcd01f21aa6383be11e96bd4daae84ccb12c6cd6440f495a36a96cf4d7ce9b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "638fd19c4528618db1ffb16cc1c44d2a4bc859fd2a5d332a45e6ad161c9b0d5b",
+    "mention_text": "LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb44b0d8531c5ad605210760851cfae24da6dd8719f254f76a2bcc072be87e2d",
+    "mention_text": "LeBrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a9e0d1c49eb6fe9ea2a56a8f3bedd9b188d7971ad66ebddc8dd43dd7b428aa5b",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5fe6b4ae0f0904f2af31567aa64b2d530734dbb014f890e11baa2eac1423d126",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  }
+]

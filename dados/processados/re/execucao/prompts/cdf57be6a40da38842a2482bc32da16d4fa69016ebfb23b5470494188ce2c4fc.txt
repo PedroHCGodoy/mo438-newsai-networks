@@ -1,0 +1,455 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: bbb1f23553659402dd700836ef98e853084b3986fbd98c8dbd2b9bad96c87f97
+
+TEXTO:
+Jovem africano vencedor de torneio do Google não tem acesso à internet
+
+O primeiro vencedor africano do disputado concurso anual de programação do Google está vivendo a 370 km da sua cidade, na casa de primos em Iaundê, a capital de Camarões, porque o governo cortou a internet onde ele mora.
+Nji Collins Gbah, 17, relata os vários trabalhos técnicos complexos que realizou para o Google entre novembro do ano passado e meados de janeiro de 2017.
+Ele entrou no concurso do Google com o conhecimento de programação que adquiriu por conta própria durante dois anos, principalmente da internet ou de livros sobre o assunto.
+A competição Google Code-in é aberta a estudantes de todo o mundo, com idades entre 13 e 17 anos. Mais de 1.300 jovens de 62 países participaram.
+Quando as inscrições foram encerradas, Nji já tinha completado 20 trabalhos, em todas as cinco categorias criadas pelo Google.
+Ele levou uma semana inteira para completar apenas um deles.
+E, apenas um dia após ter entregado seus trabalhos, a internet deixou de funcionar.
+DISCRIMINAÇÃO
+Nji vive na cidade de Bamenda, no noroeste do país e a sete horas de carro da capital de Camarões.
+O noroeste e o sudoeste de Camarões são áreas de língua inglesa, regiões que há muito tempo se sentem discriminadas pelo que veem como falta de empenho do governo em respeitar o status de inglês como língua oficial do país ao lado do francês.
+Camarões, que fica na África Ocidental, foi colonizado pela Alemanha no século 19 e, depois da Primeira Guerra Mundial, acabou dividido entre a França e a Grã-Bretanha.
+Em 1960, a parte de Camarões administrada pelos franceses tornou-se independente como República de Camarões. A parte sul, chamada de Camarões Britânicos, fundiu-se à francesa em 1961 formando a República Federal dos Camarões.
+Em 1972, o país passou a se chamar República Unida de Camarões e, em 1984, República de Camarões. Francês e inglês são as línguas oficiais.
+De acordo com as Nações Unidas, muitos dos anglófonos dizem estar sofrendo discriminação ao serem excluídos de cargos nos serviços públicos, além de ter acesso limitado ao sistema judiciário, pois a maioria das leis está em francês.
+Nos últimos meses, a insatisfação se transformou em protestos e greve de advogados e professores.
+As autoridades responderam com uma onda de prisões e a ameaça de pesadas penas para quem "espalhar notícias falsas" e fizer "uso malicioso das mídias sociais".
+De acordo com relatos, os camaroneses no noroeste e sudoeste do país estão sem acesso à internet desde o último dia de 17 de janeiro.
+Para um adolescente como Nji, apaixonado por tecnologia, desligado da política e cuja escola está fechada por causa dos protestos, viver sem internet era impensável.
+UM MONTE DE CÓDIGOS
+Quando estava ficando claro que o corte da internet era mais do que temporário, Nji recebeu a notícia: estava entre os 34 ganhadores do Grande Prêmio do Google Code-In.
+Cada um dos jovens passará quatro dias na sede do Google, no Vale do Silício, no Estado americano da Califórnia.
+"Fiquei muito, muito surpreso", diz. "Isso queria dizer que todo o trabalho que tive, escrevendo um monte de códigos, realmente valeu a pena".
+Mas um campeão de programação sem internet não vai muito longe. Surgiu então a ideia da viagem para a capital, Iaundê.
+"Eu queria ter uma conexão para poder continuar estudando e fazer contato com o Google", conta Nji.
+Ele espera poder concluir os estudos em Bamenda para depois cursar Ciência da Computação em uma boa universidade.
+Nji vai para a sede do Google na Califórnia em junho, onde conhecerá e conversará com engenheiros da companhia.
+SONHANDO ALTO
+"Se tudo der certo, quero um dia trabalhar lá", confessa.
+Por enquanto, Nji conta que está se dedicando a saber mais sobre inteligência artificial, redes neurais e deep learning –aprendizagem profunda.
+"Estou tentando desenvolver meu próprio modelo de compressão de dados, utilizando aprendizagem profunda e aprendizado de máquina", diz Nji. Seu objetivo é dar um "salto" na melhoria das capacidades de transferência e armazenamento de dados.
+A aprendizagem profunda é um ramo do aprendizado de máquina, que explora o estudo e construção de algoritmos que podem aprender de seus erros e fazer previsões sobre dados.
+Daqui a alguns dias Nji, completará 18 anos.
+Ele revela que conferiu a lista de ganhadores da competição do Google dos anos anteriores para verificar se era mesmo o primeiro vencedor da África.
+Nji diz que recebeu cumprimentos de "muitos amigos, parentes e de algumas pessoas" que sequer conhece.
+Alguém do governo entrou em contato?
+"Não, ninguém", responde.
+Enquanto isso, em Bamenda, cidade de 500 mil habitantes e berço de uma das mais brilhantes mentes jovens do continente, ainda não se sabe quando o governo vai reconectar a internet.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8a3c06f18e8e8302b59cab93ad656bf978c9dedcbf2e2f1de140a90f6d77100d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9fc9998f88ec3323cbcf6ce2ed7dcdff7ac732aa92a409daa65fc55e90f1b34",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42e82bea589f54c1542cd668cc7bcfcc02a1d1fa563136af07714910ee797add",
+    "mention_text": "Iaundê",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "689e892af066acd88fc27359db3c98952517e8407a51fb60c2babec358c2da4d",
+    "mention_text": "Camarões",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5af9a15d25f110c1187d92a4470020cd53e523f934d8bf59145173c7d3868530",
+    "mention_text": "Nji Collins Gbah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "396a2b2622954bf67aa3389d05dbb7a7dacfdb38ee2923289830f0055c39b328",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7fc1049abb8850788790dcdfa80c27fe3ef608d1d5366abfdc40b9b0f7c6059",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04b366793761822ae606f3d61298f6832e0d2ae439b9e2e904cf0fb692295675",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "daddd66fff1e048360ca4791e8115ced1b2da9eb6c115ec0171c2b7f238bdc01",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1d304d02157dd1be63010d5cc5491d8f3df16de78cea37fc5f1deceb034f57a",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72f93f80bc9c0d1b4a6e84a978d050875880b759ab987c51305d863b0ad338de",
+    "mention_text": "Bamenda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "237544f7a2852366eceb087974cdbeacea0ad0183133e1be06642b03bec0a9d4",
+    "mention_text": "Camarões",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "503d6cd4c03add99aadb8ef7fc726e598d8429b886f49237a18070f9904016de",
+    "mention_text": "Camarões",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f051de22c2c063cce4508c6a84a0e982911daf187158e0ff139d9bd9f1e76f5c",
+    "mention_text": "Camarões",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6e79ca3b312a3ba1df8b344086b27853ec69f139cb6be401b8a1e7f9ac182df8",
+    "mention_text": "África Ocidental",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "45ac58f302c0c062ef603a79a4e8c699f373a862f9ee6537655efee614b0293b",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d19af0c080175bf5406597b5a1297fe7c884e3f1996e5baec9dd913be6c7ac3",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "edbed6e5d71d40771e72e17344890fbbe9091cb7e5bafc321ecfc327f767f9c5",
+    "mention_text": "Grã-Bretanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1573ac4e385b870b9f3b00a08d328cd71bda9f15b6a4eec560676eab0b9671fd",
+    "mention_text": "Camarões",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1977a1e4b63390fbe957c90c6fb8302eb1690de80be8fcab4d7d204113224cd4",
+    "mention_text": "franceses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63bd2b555210ff3e80fd1435403764642c0188320d12ea77e7e04600b0582905",
+    "mention_text": "República de Camarões",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d11d5f48851712581ada3a222b8ddeb46fc99050b41a8d5b514e8d5df1976ff",
+    "mention_text": "Camarões Britânicos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cda9f4aa659b27e70c9ba64d222c219471ae29b5e96e5c00320a9e7020e0ef00",
+    "mention_text": "República Federal dos Camarões",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7db6761cd6e047ded32b6c774fc534510db4edd81e098f02586f59db59f2e6d",
+    "mention_text": "República Unida de Camarões",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b098dcc6596619dfd11ddd047173cf87ea4c7a7f0b71adeaab86bd9c2f8d1142",
+    "mention_text": "República de Camarões",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32ba146457093f781704d9431ada27bba4eb4614699e86aa7ec102dc207d62dd",
+    "mention_text": "Nações Unidas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "951e6fd62c523c5912e7c4a0641fba88aed0ca3b46f0049d28ab9870c8ef4841",
+    "mention_text": "anglófonos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "841ddd71e96150d0b9f005ebec848aea1e6ce88a3737444a64508bb0b6f09b43",
+    "mention_text": "camaroneses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62ac04532ab62c743a9ab96e730ebaa67fbf73ccba7fe8ee07ca1f4e5bf23b4b",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f35d7385f8748c07bd294fa75449f6d4de1562ff93bd7dfd4d0b9050fcda1431",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9d15f6391cb74fe8bb5000aeba554fcdcd90f03156fdbecb55d343cfe8ed03c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "147582bc99b209a133af0f0f842f460e6fda6c7de8b5417ed156f1e604b4711f",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01b4b756bc9249496503577e01cdbb00a1b0b73a4ef555eb3da395b0706ded02",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70e21c2682e99ff1f3d4ec9f1bac6e4ace7799966317beccac3a288a5bed2f0a",
+    "mention_text": "Iaundê",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6c40937f6da71b4a71f2cace591d500d86f20f7cacc482ade7df35583a11b753",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29e7a2e050c7375e943ba95038a474b26c20ccb7731704695946d28bf96dd742",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "077e6a7298a08131790479db1909a608e45aefc3c3ab225b1a31856a105db72f",
+    "mention_text": "Bamenda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "289e9f0ace3a0dba2df11bc8ad97a9e6b52ffd01c2e39ec8c887aa95c2e34e40",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5915e861932d6e7c8cf634bc9e6627630dd1ca384b8632c249646bc686479155",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "faebb6743030de007f984fb89e7b2a11af8551c4af2664ad36f61ddd703b3ffc",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f85f19fc27ac9eef08a02f2a9faf7e8f67514b27623f8fdb0abac2c1b4a63d1",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83584e0a50ffa05b13f961de4c3963b89b15a3415bede13d64daf4b6ddb7212a",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fbeee59bf42287d7f4724f10f04fceb96903d177a709ac5709418e3c93759e5",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "279c3c4f39119b08a721b7bfc7d1d770344f014be21df73de71eb18bb2bf2d6e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c96546a03216a55b9868c01b7920332a4b9c2b66f39dc78a19a8b89a7bc5f5d",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b191d7fb53cc8da6a82c0d54de16a8ba41af2997f4a5bb7472b5e0c21f232e6d",
+    "mention_text": "Nji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3ef1c37d64f6f0869ef59884b86d10e80468fb6b435fedeac42801ed942addb",
+    "mention_text": "Bamenda",
+    "categoria": "LOCAL"
+  }
+]

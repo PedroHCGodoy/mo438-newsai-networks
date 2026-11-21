@@ -1,0 +1,448 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0490f044c3f7ba14d125b1077a4203afc42b95b1bf0299b2fc5317c6d46a984e
+
+TEXTO:
+Google põe nas ruas carro autônomo sem motorista para emergências
+
+Os primeiros carros verdadeiramente autoguiados —veículos que circulam pelas ruas sem que ninguém esteja presente para assumir o controle do veículo em caso de emergência— finalmente chegaram.
+A Waymo, que começou como um projeto de veículos autoguiados do Google, anunciou nesta terça-feira (7) que tinha carros autoguiados circulando em certas áreas da cidade de Phoenix, Arizona, sem a presença de operadores no banco da frente.
+As pessoas que tomarão parte do teste da Waymo em Phoenix, localizada em uma região desértica do sudoeste dos EUA, poderão chamar os carros por meio de um app "já nos próximos meses", anunciou a companhia.
+Tema de muita especulação nos últimos anos, os carros guiados têm o potencial de se tornar uma das novas tecnologias mais desordenadoras e ocupam posição central em uma corrida entre grandes montadoras de automóveis e grupos de tecnologia nos Estados Unidos, China e Europa.
+Mas, embora diversos grupos já estejam testando protótipos nas ruas com motoristas por trás do volante para assumir o controle em caso de emergência, a maioria dos observadores acredita que veículos plenamente autoguiados só estarão no mercado dentro de dois anos.
+John Krafcik, o presidente-executivo da Waymo, anunciou o avanço em uma conferência de tecnologia em Lisboa, nesta terça-feira.
+Funcionários da empresa estão testando o sistema; eles se acomodam nos assentos traseiros dos carros, escolhem uma de três rotas e depois permitem que o veículo cuide de todo o resto.
+O teste, embora limitado a uma área não especificada da cidade, "não é uma demonstração ou evento extraordinário", mas o início de "uma nova fase para a Waymo e para a história dessa tecnologia", disse Krafcik.
+A empresa planeja expandir o teste para toda a área de Phoenix, com 1.500 quilômetros quadrados, mas não mencionou um cronograma específico.
+VANTAGEM TECNOLÓGICA
+O Google causou choque ao setor automobilístico ao revelar a primeira versão de sua tecnologia então rudimentar para veículos autoguiados, sete anos atrás, e subsequentemente investiu mais de US$ 1 bilhão em suas pesquisas sobre veículos.
+Os rivais reconhecem que o grupo continua a ter vantagem tecnológica, embora os céticos questionem se a inteligência artificial dos carros é boa o suficiente para responder aos muitos eventos imprevistos que podem acontecer nas ruas, ou para interagir com seres humanos.
+O medo de que o controle do Google sobre a tecnologia dos veículos autoguiados venha a conferir à empresa um poder semelhante ao que a Microsoft exercia sobre os computadores no passado também causou dificuldade para que o grupo de internet encontre aliados no setor automobilístico.
+Apesar de uma longa campanha diplomática, o único sucesso do grupo até agora foi junto à Fiat Chrysler, e um dos modelos de minivans da montadora foi adaptado para o teste em Phoenix. Isso forçaria o Google a financiar e a cuidar da manutenção de uma frota de carros autoguiados grande o bastante para sustentar um serviço de transporte de passageiros, uma proposição potencialmente dispendiosa se a empresa tentar expandir a ideia e criar um serviço comercial pleno em diversas cidades.
+No entanto, Krafcik disse que manter os carros em operação resulta em ganhos de eficiência.
+"Uma pequena frota de carros plenamente autoguiados poderia atender a toda uma comunidade", disse.
+A Waymo acredita que seja a primeira empresa a atingir aquilo que o mundo dos carros autoguiados define como Nível 4, o que significa que seus carros podem operar de maneira plenamente autônoma em áreas que tenham sido cuidadosamente mapeadas e testadas.
+"É uma decisão que revela muita confiança", disse Michael Harley, editor do "Keley Blue Book" e da "Auto Trader", duas publicações sobre comércio de automóveis.
+"A vantagem da Waymo é que eles têm literalmente milhões de quilômetros rodados", disse, por estarem testando carros autoguiados há anos e já terem recolhido dados "sobre 99% das coisas que podem acontecer nas ruas".
+Ele acrescentou que isso havia levado a Waymo a "deixar para trás" marcas como a Audi, que está a ponto de colocar no mercado uma tecnologia menos avançada de assistência a motoristas conhecida como Nível 3.
+Uber, General Motors, Delphi, BMW e outros vêm conduzindo testes para chegar ao Nível 4, mas todos ainda mantêm um motorista nos seus carros de teste.
+CRÍTICAS
+Os críticos argumentam que não se sabe muito sobre a tecnologia da Waymo.
+"Realmente não sabemos o que está acontecendo, pelo menos não com base em dados significativos", disse John Simpson, do grupo de defesa do consumidor norte-americano Consumer Watchdog.
+"Preocupa-me que eles estejam seguindo o caminho costumeiro do Vale do Silício, de lançar alguma coisa em versão beta e corrigir os defeitos ao longo do caminho."
+O Arizona é um dos diversos Estados norte-americanos que concordaram em permitir testes de carros autoguiados em suas ruas e estradas, desde que eles respeitem os padrões federais de segurança. O Google satisfez esse requisito recentemente, ao concluiu um processo de autocertificação.
+Krafcik disse que "objetivo final" de sua empresa era levar a tecnologia a "mais cidades nos Estados Unidos e em todo o mundo".
+Uma das primeiras áreas onde isso deve acontecer é Mountain View, na Califórnia, onde fica a sede da Alphabet, a controladora da Waymo.
+A empresa vem mapeando exaustivamente as ruas em torno de sua sede, e testando carros na área, desde os primeiros dias do projeto do Google, e as autoridades regulatórias indicaram que pretendem relaxar as regras que restringem a circulação de veículos autoguiados no Estado no começo do ano que vem.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0ac58f4434aceb5814b318adfffdd6b27700943c854344c2b2f47f438b120b2f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc9fa20eae2e13bee1f656366164ec6eefd08e2021dae72b21d77ef7bdf9562f",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "173b73c489cb37f5084374d06bf5cbe126ffd986c7742410be7ea41f7b290f8f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c50778f566abc75795d95a8d71b44188a95d21ea7ef0ec4f85f8bb305ed79bdc",
+    "mention_text": "Phoenix",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b957728724da6b715149f673d2f1251b743144b53c53d0c5d4a7ae45b69f5d3",
+    "mention_text": "Arizona",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1dd52bf63373aa6994f56ef197c435de24c07254ae3adbddaf312e00c6d20bae",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63df71319354a94e8a3bf27c68d7b1e02b63146bf228cb175f106c0af08d463e",
+    "mention_text": "Phoenix",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5c1dcd03c90f824ae331a893316ccc1b9acf739d699f59b97a25d3adc20f47ac",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63eadcceffd8fa8c10ae06cf94a4eade0fc43f0b0915f40c312afa3e1ecddb7a",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "91e3b0fca71569cac51a198d5e930a316ace3508a1e45bc2fbb2f7107b6c82ae",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "394fd1a3d0714b407a437d97dc166880aa168c41577aceb49bf4d5dad1dc8b49",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d0afdc1d7bd0d356e237b66d85c387e0743decf0ad60fd193ca5b2d141f5b63",
+    "mention_text": "John Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19c0fdc79414dbbc363c3cfe42e94006c6823ea1d760bdbcdf3ea9975a65e8c8",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4c1ae1f8958b8621e162cf0e864a0c018f273a4512c0d6d76f08f68161c48b4",
+    "mention_text": "Lisboa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2d7684733eaeed24285b6234103b1381817845f4cc7027eb390fb556c069d9b5",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "550f43cbebd473bc27994d04189bfb028afd77029a2ab2a2f66779b012c77f5c",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd80f9251d275e97f5dc3a627cf2b50eb184572a8f280f461021ca4c656920db",
+    "mention_text": "Phoenix",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a807bd83b6991a9591789887764b199aeb80cd012e3a064e3d395c1af3e6e7e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1de42080a6f80cc2869defd2ac6adc916dc462e487b5745d24a222a16357a61",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14248d1e4847773e10c1acffdf10dcc9f5226746ac5af2126c94eaf63abf0f36",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10f8ef13b60b2779b8f424a013c3071b2b24de0ee6f71a2a80e6297beb802bed",
+    "mention_text": "Fiat Chrysler",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbfd5ac242b93731e7acd212372e667643b001b414e083a1f79badfa1b646b0e",
+    "mention_text": "Phoenix",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d6b5900e727d881d3af775e353876e3710642d68fd14b17012c224ee958782c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c843adaaa3a004f7545d0cb86a292dddb5e2ff5413e6b0d7671ac07d3d40a8d",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ad83c4f9c889fd0e8d79744143ec1b563c379384fe8336f9598fd3a1e9cc798",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7490b1171856ef6fc77bb77723ca87e9c60ef2f83be8165d7509d2d19e3d62f1",
+    "mention_text": "Michael Harley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d26aa3f0bf2bccb0fe94e2d82a3e1ba0d6f76b515d38d590766dd9d42b410cad",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b205ed57dd16c4c5c7dd99ba51a6c45d1a5d8038aee271086f32427f512a173e",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2d275369a3bbf6e1985e61698146135bf91d631f4b0a838db27daac03d4d7f1",
+    "mention_text": "Audi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a15ec7a7b62f1a2c01e88824693524656c7f18c36a054cf9453d5e025757cdcc",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3789a26e29916c1e35eb63615ee41d8f0777456ad52341f5cde98e87821175bf",
+    "mention_text": "General Motors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59a9e97702a24ced8db3e278b8fb658ce3092ea85cfe52171d8f621c015d52cc",
+    "mention_text": "Delphi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df4b80e811c4529faf99ae372772b6a71dbc548e1f78e41dd097d2d164db23a8",
+    "mention_text": "BMW",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7297795b8ec77b9cf0a72a6ef5b8119ba70a1c15cf17dbe4725a9d50a4a148db",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c315c9c4231143df69d2180b69c3dfa0bbd074bcd53b45abcacb8091aeda2a30",
+    "mention_text": "John Simpson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5cfeccf4650917d8818eaa16dba1edf693d516275d28aca4aeb1da1a86ee74d",
+    "mention_text": "Consumer Watchdog",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b0bf239661b99fcb6a227ecddf1a12630f9bc71eaa8ad5034b0b1174a225be9",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b09d39340152c9fab7faac9ef1c1c3cea787b852ac6adebaceaf22d1fbfefd61",
+    "mention_text": "Arizona",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc63cd4f586654e14310b67f905f3b42ac72bfdb4776561a04b0c28027701fac",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41cce92e1a22313f9ca64a23dde3a8ca0ae9f77c833de9c7aaf921f64090792a",
+    "mention_text": "Krafcik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e9bb657de4f9d10cc8cd610a7922151389dfb3e964d8d56e618a7ab4a85394b",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "777afc9405eab923e160be01f2115f5048726e68b08786ee6ca13d6034bc3e8b",
+    "mention_text": "Mountain View",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "73a924c2f186f7675636ba17f80ae6193603e14a272c387e368febe0c9328b62",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d38b5e06957809e50e9ef06f7985800fdd89024322ebcea38c1d95b00c25064e",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d3245be4f497b36e6becc0199c672557f9a11003c2cc21d7f9efb8125d62739",
+    "mention_text": "Waymo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e5a8c3b71c8674cbd9b4a10e7b37b34991e2171427aa13d4d4d8f2f5e799559",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09a2bd006f7dc738248564462c9470c2d50c3eff7dcafaf90225a9ba07d10ff8",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

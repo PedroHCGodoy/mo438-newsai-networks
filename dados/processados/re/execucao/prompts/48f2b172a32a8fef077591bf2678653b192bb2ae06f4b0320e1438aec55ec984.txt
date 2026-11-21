@@ -1,0 +1,373 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f2c5cf1ccd4dc66356a36776dfbfbc43ef1a0608a61ede43672fa2d534571309
+
+TEXTO:
+Para Fórum Econômico, Brasil está longe da fronteira da competitividade
+
+O Brasil caiu três posições no Ranking Global de Competitividade do Fórum Econômico Mundial, foi para o 72º lugar entre 140 países (ou seja, na parte de baixo da tabela) e, pior, fica longe do que o Fórum chama de ”fronteira da competitividade".
+É um conceito que mede, basicamente, a preparação de um país para o futuro, ”em um mundo que está sendo crescentemente transformado pelas novas tecnologias digitais". Mede também a maneira como cada país lida com seu capital social e com suas preocupações com a dívida, entre outros indicadores e outros avanços tecnológicos.
+Klaus Schwab, fundador e presidente executivo do Fórum, antevê uma nova divisão global, que seria ”entre países que entendem as transformações inovadoras e aqueles que não o fazem". Acrescenta: ”apenas aquelas economias que reconheçam a importância da 4ª Revolução Industrial serão capazes de expandir as oportunidades para seus povos".
+A 4ª Revolução Industrial é o mantra que o Fórum usa para caracterizar a economia que incorpora os avanços tecnológicos, como, a robotização e a inteligência artificial.
+A colocação do Brasil no índice de competitividade demonstra claramente que o país não está sendo capaz de incorporar a 4ª Revolução Industrial (tema, de resto, que nem remotamente apareceu na campanha eleitoral).
+A posição brasileira é ruim qualquer que seja o recorte que se faça do ranking.
+Entre os Brics, por exemplo, é o de pior colocação, com o seu 72º posto. A China é a melhor dos cinco integrantes, mas, mesmo assim, é apenas a 28.a colocada, bem longe dos Estados Unidos, o primeiro do ranking.
+Índice 4.0 de competitividade global - TOP 10 e BRICS
+DISTÂNCIA DA FRONTEIRA DE COMPETITIVIDADE
+Fonte: Fórum Econômico Mundial
+Depois, vem a Rússia (43º), a Índia (58º) e a África do Sul (67º).
+Na América Latina, região em que é a maior economia, o Brasil perde para Chile (33º), México (46º), Uruguai (53º), Colômbia (60º), Peru (63º) e Panamá (64º).
+Para complicar ainda mais, os sócios do Brasil no Mercosul, com exceção do Uruguai, ficam em posição ainda pior: a Argentina (81º) e Paraguai (95º). Significa que o bloco em que o Brasil é o país mais importante tem sérios problemas de competitividade, o que naturalmente afeta o interesse dos investidores estrangeiros.
+O ranking mapeia o panorama de competitividade de 140 países por meio de 98 indicadores, divididos em 12 pilares. Os Estados Unidos obtêm o melhor resultado (85,6), à frente de Cingapura e Alemanha.
+O placar médio para o mundo é 60, ligeiramente acima dos 59,5 obtidos pelo Brasil.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f1499a5cb99c9001ec8a2d2bd1b39e5512dbb70189ef074699197a8b4c948f66",
+    "mention_text": "Fórum Econômico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e318314636f41714645443d4465141066cbaec494f7b4cb73dbd25c80272033",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3cacbec9d41573ef2aa9a8b7b008e7bb3211b99de3d04135fb278175592e677",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bfcd8207f7fe0fb62197011ec69f89cdf701ed9bb128e8cac5b254bf62e625d2",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efa8a2d9373500f1cb2d3bef500ca1338fa99a56822ccae6e38f437ae776ed42",
+    "mention_text": "Fórum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ff25a0cd28879559e664486d1f01fbe675acaeb3811e59fbfeec65c41da19d0",
+    "mention_text": "Klaus Schwab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "211c875551cf532099d69b3515991d2a97d926f6152f560bfad7bbf72a771076",
+    "mention_text": "Fórum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "341c3d177239f1ce1872a9e762519f961eedd7f2c3246a0d00fb910e51f207dc",
+    "mention_text": "Fórum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fbc328b706f4e02b74f974894d18e4b51fdc7ef677448d937211f07ae1d6a0d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b5974027cc3ca05d981208051442eec2ddb98925b0ac85a4507fea9c53fbee5",
+    "mention_text": "Brics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e91e70e77b57e39a929e222b46f1ce6bf85fc8c1d638ac94daadc77b987fd8b7",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b48774d62d33830219d75dde6ffce3a2f35af0506f3e50f775b1806313a81748",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bbc587b88dd09749fd4481684420e2a93dad9f98bb78ad91aa0b4dcebf1fcd3f",
+    "mention_text": "BRICS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34573da352d2a81c662cc1952fe15a8442706a3a2dc123586a822a62e365486f",
+    "mention_text": "Fórum Econômico Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2efb331cdad6eec0e534302624577f00c7a89a0dd7ecb0e824abfff03bc4d05c",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "513399f77e305b85cf6785d11bd02699d89de905ef813d3bfbddd02943289ea0",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc6b6d33e46cbe82cd6da23296b067b8fdcf8c0a350e64e3854649453badcf9f",
+    "mention_text": "África do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ac1d372c4d827c4b1f5c906583d4c912aaab155381e799c7c23f0bb8af580d6",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a95bc3a67af71942b535a8e9dafdc1cfb9fc12782935d5e2f96bb5ccfe5c5ba",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d072aa991473a8ed0d164ae765d54ea50b03050c6ab22ced96d0ff4bbed20b1a",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27a95a7b8554bda41597258184e3d7cb0457c49f9f237916c7bec57c21824a71",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "15edd6e11938e640d095f5e9fae302489144d8c2af59b1ab7cce8d32f8b23743",
+    "mention_text": "Uruguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ebf68312b7fd8108557ec92f874de3c55fb99b002a46a074a43bebe61d8e9f25",
+    "mention_text": "Colômbia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93e7a25fd5a569bff0bf96cf7bee9fd0d98ec0172242b7b1350ab4ee4ece2b86",
+    "mention_text": "Peru",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0cfca904260acd0eea9020d2a134a6f24bb76e42247c19fd82881717c2cf325f",
+    "mention_text": "Panamá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3245cd6fa472d9d428fbba2f51600fbb955af17c6c246d3773c3696dfe4b7833",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76116d66310aab4e476803b3fde4ae634fb697bb5f60bcd035efe4b96b148d02",
+    "mention_text": "Mercosul",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b19192b6992dc5f4a099a8e8f2ca332f9f1fccbca775082f24b34cbc06ddbd0c",
+    "mention_text": "Uruguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f56d5174d648bd37a3d272f1b6009eb7315b09f508f87b8288dcc177ce1c84a",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dbdee9cecdc8b5ed403ca8778d77966d3f2ca6c5fc495b12505dfbf96ce8bb2d",
+    "mention_text": "Paraguai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3c89deade364377a9251aaa09806ab01dc85d83b9ab4e02d7fb4ff7bd5d6d56",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ab894d435d3a03ace36f4f05bc7d513970426616bb6c5e1b7b3f586defcceaeb",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e8838df3a09feeaae37087b843fc23855390ade850db923d8414103c5e6a6c62",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2e9b0c840487490e90723a2e5487799b5199bb7f67f38ff69f746431e2ab215",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f97f1f03d639562923be34d521518e774e5e8637d5998c380dd532817a32db28",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

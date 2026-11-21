@@ -1,0 +1,376 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: efab1df4e48a6fac85fa8a82eed0e3ece6dc349cd63c61a1b08fb5c4081c5cc8
+
+TEXTO:
+Automatização sofisticada cerceia empregos nos EUA
+
+Uma máquina que administra sedativos recentemente começou a tratar pacientes em um hospital de Seattle. Em um hotel do Vale do Silício, um mensageiro robotizado entrega coisas nos quartos dos hóspedes. No segundo trimestre, um algoritmo de software escreveu uma notícia urgente sobre um terremoto, e o "Los Angeles Times" publicou o texto.
+Ainda que o medo de que a tecnologia elimine empregos exista pelo menos desde os luditas, no século 19, existem sinais de que desta vez as coisas podem ser diferentes. Os avanços tecnológicos dos últimos anos - que permitem a máquinas imitar a mente humana - possibilitam a realização de trabalhos de conhecimento e do setor de serviços por máquinas, além dos trabalhos industriais e burocráticos que elas já vinham realizando.
+E durante o mesmo período de 15 anos no qual a tecnologia digital se inseriu em praticamente todos os aspectos da vida, o mercado de trabalho vem sofrendo de uma longa enfermidade. Mesmo com a melhora recente na economia norte-americana, a proporção dos adultos em idade de trabalho que estão empregados é substancialmente menor do que uma década atrás –e inferior à de qualquer momento da década de 90.
+Os economistas por muito tempo argumentaram que, da mesma forma que os fabricantes de charretes deram lugar a fábricas de carros, a tecnologia criaria número de empregos tão alto quanto o de empregos que viesse a destruir. Agora, muita gente já não está tão certa disso.
+Lawrence Summers, antigo secretário do Tesouro dos Estados Unidos, declarou recentemente que já não acreditava que a automação sempre criará novos empregos. "Não estamos falando de alguma possibilidade hipotética futura", ele afirmou, "mas de algo que está emergindo diante de nossos olhos agora".
+Erik Brynjolfsson, economista no Instituto de Tecnologia de Massachusetts (MIT), disse que "esse é o maior desafio para a nossa sociedade na próxima década".
+Brynjolfsson e outros especialistas acreditam que a sociedade tem a chance de superar esse desafio de maneiras que permitirão que a tecnologia seja em geral uma força positiva. Além de tornarem alguns empregos obsoletos, novas tecnologias também há muito servem para complementar a capacidade das pessoas e lhes conferir mais produtividade –como a internet e os processadores de texto, para o pessoal que trabalha em escritórios, ou a cirurgia robotizada, na medicina.
+Trabalhadores mais produtivos, de sua parte, ganham mais dinheiro e produzem bens e serviços que melhoram vidas.
+"É literalmente a história do desenvolvimento econômico do planeta nos últimos 200 anos", disse Marc Andreessen, executivo de capital para empreendimentos e inventor do Mosaic, um dos primeiros navegadores de Web. "Da mesma forma que a maioria das pessoas hoje têm empregos que nem mesmo haviam sido inventados 100 anos atrás, dentro de 100 anos veremos a mesma situação".
+Mas existe profunda incerteza sobre como esse padrão vai se desenvolver, agora, já que existem duas tendências interagindo. A inteligência artificial ganhou muito mais sofisticação, com máquinas que se tornaram capazes de aprender, e não apenas seguir instruções programadas, e de responder a instruções verbais e movimentos humanos.
+Ao mesmo tempo,a força de trabalho dos Estados Unidos vem ganhando capacitação em ritmo mais lento do que no passado –e em ritmo muito mais lento do que a de diversos outros países. Os norte-americanos com idade dos 55 aos 64 anos estão entre os trabalhadores mais capacitados do mundo, de acordo com um relatório recente da Organização para a Cooperação e Desenvolvimento Econômico (OCDE). Já os norte-americanos mais jovens estão mais perto da média para os residentes de países ricos, e de acordo com alguns indicadores abaixo dela.
+É evidente que muitos trabalhadores se sentem ameaçados pela tecnologia. Em uma recente pesquisa do "New York Times", CBS e Kaiser Family Foundation entre norte-americanos desempregados com idades entre os 25 e os 54 anos, 37% disseram desejar trabalhar, e que a tecnologia era o motivo para que não encontrassem emprego. Proporção ainda maior dos entrevistados –46%– mencionou "falta da educação ou da capacitação necessária para os empregos disponíveis".
+Os veículos sem motorista são um exemplo dessas tendências cruzadas. Podem tirar caminhoneiros e taxistas do mercado de trabalho –ou podem permitir que os motoristas se tornem mais produtivos durante o período que passam dirigindo, o que pode lhes valer renda maior. Mas para que o resultado mais feliz aconteça, os motoristas teriam de adquirir a capacitação necessária a realizar novos tipos de trabalho.
+O desafio é igualmente evidente nos empregos de colarinho branco. Agentes de vendas de publicidade e pilotos são dois dos empregos para os quais o Serviço de Estatísticas do Trabalho norte-americano prevê queda no número de vagas nos próximos 10 anos. Pilotar um avião já é em larga medida um procedimento automatizado, hoje, e a automação só crescerá. E no Google, o maior vendedor de anúncios on-line, o software responde por boa parte das vendas e colocação de anúncios vinculados a busca, o que reduz a necessidade de vendedores humanos.
+Existem certas capacitações humanas que as máquinas provavelmente nunca reproduzirão, como o bom senso, a adaptabilidade e a criatividade, disse David Autor, economista do MIT. Mesmo empregos que se tornem automatizados em muitos casos continuarão requerendo envolvimento humano, como no caso dos médicos que ficarão de plantão para auxiliar o sistema automático de anestesia agora em uso em Seattle, chamado Sedasys.
+Mas em outras áreas, há máquinas que estão substituindo determinados empregos. Os profissionais de telemarketing estão entre os grupos que enfrentam maior risco, de acordo com um estudo recente conduzido por professores da Universidade de Oxford. Eles identificam os terapeutas ocupacionais como a profissão menos ameaçada –mas até mesmo essa avaliação pode se provar prematura. O Microsoft Kinect já é capaz de reconhecer os movimentos de pessoa que esteja fazendo exercícios ou fisioterapia e corrigi-los.
+Outros campos podem seguir o mesmo caminho. Os inventores de um software de reconhecimento facial em um laboratório da Universidade da Califórnia em San Diego dizem que o sistema consegue estimar a dor que uma criança sente com base em sua expressão, e apontar traços de depressão nos rostos das pessoas. Há máquinas que estão até aprendendo a sentir sabores. O governo da Tailândia em setembro apresentou um robô que determina se a comida tailandesa tem sabor suficientemente autêntico ou se precisa de mais um borrifo de molho de peixe.
+O Watson, um sistema de computação construído pela IBM que derrotou adversários humanos no game show televisivo "Jeopardy", em 2011, depois disso aprendeu a realizar outras tarefas humanas. Este ano, começou a aconselhar veteranos das forças armadas dos Estados Unidos quanto a decisões pessoais complexas, por exemplo em que cidade viver ou que apólice de seguro adquirir. O Watson vasculha documentos para cientistas e advogados, e cria novas receitas para chefes de cozinha. Agora a IBM quer ensiná-lo a ter inteligência emocional.
+Talvez o mais preocupante dos desdobramentos seja o péssimo funcionamento que o mercado de trabalho vem exibindo para muitos aspirantes a emprego. Mais de 16% dos homens norte-americanos com idades dos 25 aos 54 anos não estão trabalhando, ante 5% nos anos 60; 30% das mulheres dessa faixa etária nos Estados Unidos não estão trabalhando, ante 25% nos anos 90. E para as pessoas que estão trabalhando, o crescimento de salários vem sendo fraco, enquanto os lucros das empresas dispararam.
+"Vamos entrar em um mundo no qual haverá mais riqueza e menos necessidade de trabalhar", disse Brynjolfsson. "Isso deveria ser boa notícia. Mas se ficarmos no piloto automático, não há garantia de que isso venha a funcionar".
+Há quem diga que a natureza do trabalho precisa mudar. Larry Page, cofundador do Google, recentemente sugeriu uma jornada semanal de trabalho de quatro dias, para permitir que mais pessoas encontrem empregos, diante dos deslocamentos causado pela tecnologia. Outros acreditam que o papel do setor público precise se expandir, a fim de ajudar as pessoas que enfrentam dificuldades para encontrar emprego. Muita gente aponta para a educação, em novas tecnologias e em capacitações que continuam a ser unicamente humanas, tais como criatividade e julgamento.
+"A resposta certamente não é tentar deter a mudança técnica", disse Summers, "mas a resposta tampouco é supor que todo ficará bem porque a magia do mercado assim garantirá".
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "698e5c780c1e9377656bb9d663934ab653fe0544150c396849566bbedc78264d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2643b4605f8d73687c039837caef5effb240cf4e17812402931aec78d2c70df",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2f1180a3f5edd2c0203aef28d5b69840ca8e46a078111be3278c0677f49976c",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "60481359d29bfe9fb71d2b0a483bc3b7e16c6d655a40033ff211e099fa8f167b",
+    "mention_text": "Los Angeles Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b4b6af805a47305b1762e4b363bd1b2d907356bde7e72acc7a46fda4b4f70e5c",
+    "mention_text": "luditas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e472dae39ac3427741fdf070f9c0898fe99cd4ab336ab81238d96bdfc0101a9",
+    "mention_text": "Lawrence Summers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2038953365e68e00a2c753bebfe23f90d91a0046a519779b7efab502b2de72e",
+    "mention_text": "Tesouro dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aeca16d0d35a287c545a4f603ea686d5cb4154bc66705620777fd9aa6ecc060c",
+    "mention_text": "Erik Brynjolfsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebd7c1b4b80813b81dcad1fdc982a855cfe46543443fea625f6c56ca3f52676d",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "141ce961dc74321fcd5e8a6266a5db505ce22d8a5ccc95bceed6433bad068e9f",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6698467caca886b2eab0aefa427ce9bc54f782814fc72a6fcb736b07e1a5bb9",
+    "mention_text": "Brynjolfsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "687d60366ad5e2fe9b04908bcd57e79e2754fdbf7596b83b3623690fd18e4a7d",
+    "mention_text": "Marc Andreessen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3da6480729b6797f161a752c11ab13d78d21e2075c75254f23a7399ae390bd46",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27c2a11636aa4661548291763bad37600bba9ffd16a2c20166cc112d00b6f98b",
+    "mention_text": "Organização para a Cooperação e Desenvolvimento Econômico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cc83c14c6d20f157719b309db19afcf50e8b8fe3cb6e87cb382dc75a6329417",
+    "mention_text": "OCDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fccace52232903af668c1fdea460ce60135c29c74d42ee80c5850a7cd8eaa55c",
+    "mention_text": "New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b432a7e64a7e30c6e3f9bede7e229456c666a214b807a4e8cfac122b30352ca",
+    "mention_text": "CBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee9f4368ec78c44a549ec608e77d349d76adf8baad76e054b235bcc10a2d7228",
+    "mention_text": "Kaiser Family Foundation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ccc63c71ba84919f855bf5db39946ecbfcb69c65f58bd3d562bdb1c25034cce",
+    "mention_text": "Serviço de Estatísticas do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9507c3bb666c8a27f10352a5cd9bf68c5af2d182c856abcb86a7d23882231884",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef7e23192bcddacc9d3030c164b3717d8f22c915f5bd7cfb3c9b455550e8ad24",
+    "mention_text": "David Autor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d428670e327c52253fce067226726b64bdb678717b7c1f30be925137a530b476",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "300dd67c0daad5be5bd9153809abcf81f1508208cbdc2694acbb83f9cd1276bc",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "45578a31a325273bb4a1e99693c92b910c10c405355ca22fd54ce7039cac37fc",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e1912344ee117b6704af033a2eff67c1a26745e4c4e1d2f4315b482916f8376",
+    "mention_text": "Universidade da Califórnia em San Diego",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f73d85e31cdf54db4da3433ae67e008a25104e52f8d20cad951b75881ffc526",
+    "mention_text": "Tailândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63ea70c01cbbd5805988d5dbb5988ab49a124f97ae17352206eec464bb799d8e",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb319b0664dce9c88f4e18514cead373988dca655b49cdc290d5148bc429dab3",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d731e8d55f0fc781a7dd53af37c15796b7bd1d57d5cc65b82592ebdf7549645f",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2995156c326c9273213e5be734059e4e987af58a6568c786a3127a2ab96a7e8b",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3faebae2b60bd6cc5a281f520f009cd484642a575d00dd877b8ffa6d62732d62",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8aefe8f4dd09e2786795f578fe4dac274c5dafb6ea627f5eacd3811d840fde97",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd7738e459df1de6f628c81f9d7c105517437df81aa58e26bd2052477bc04692",
+    "mention_text": "Summers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c26dd0ed175ca7507b4f9b45b534a3281884bcca57fb6e39bf0a0fdefe091ad7",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

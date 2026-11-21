@@ -1,0 +1,422 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: eecbe3ec6c57af5ecccffa151ceefa91860ae2003d916c26bc2f0399cd5525ec
+
+TEXTO:
+Aos 50, '2001 - Uma Odisseia no Espaço' ganha biografia e se mantém surpreendente
+
+Se você pertence ao extenso grupo de pessoas que não se fascinou ou entendeu “2001: Uma Odisseia no Espaço” à primeira vista, sinta-se em boa companhia: o escritor Arthur C. Clarke (1917-2008), parceiro de Stanley Kubrick (1928-99) no roteiro do filme, passou por uma experiência parecida.
+“Ele ficou realmente chocado quando viu a primeira versão”, relata Michael Benson, autor de “2001: Uma Odisseia no Espaço - Stanley Kubrick, Arthur C. Clarke e a Criação de uma Obra-Prima”. O lançamento da editora Todavia no país coincide com o 50º aniversário de estreia do longa.
+Na introdução, o pesquisador vê “2001” como uma versão moderna de “Odisseia”, de Homero. Clarke e Kubrick usaram a “ciência como uma espécie de prisma” em uma narrativa que abarca 4 milhões de anos de evolução humana, desde os homens-macacos até as viagens espaciais com uso de inteligência artificial.
+O filme salta para “esse futuro feliz com um corte temporal que merecidamente ganhou a reputação de ser a transição mais extraordinária da história do cinema”, diz Benson. O osso usado de modo pioneiro por um ancestral como arma se torna estação espacial.
+O filme teve sua première em 2 de abril, em Washington, estreou no dia seguinte em circuito americano e chegou ao Brasil no dia 29 daquele mês.
+“Clarke era um cara verbal, e ‘2001’ era uma experiência não verbal”, explica Benson. Quase dez anos depois, o escritor admitiria à BBC que o sucesso do filme foi “uma grande surpresa” para ele.
+A versão de “2001” a que Clarke assistiu inicialmente não corresponde à definitiva. Preocupado com as reações negativas nas pré-estreias.
+Kubrick remontou às pressas o material, com o filme já em cartaz, e o reduziu em cerca de 19 minutos, para 149 ao todo.
+Foram cortadas cenas com sábios comentando as questões do filme e um balé espacial. Mas sobreviveram 88 minutos sem diálogos, como as sequências de abertura, de 25 minutos, e a final, de 23.
+Essa e inúmeras outras histórias sobre os bastidores —algumas tensas, outras divertidas, mas todas saborosas— são reconstituídas por Benson a partir de entrevistas e de pesquisa que incluiu documentos de produção e diversos livros e artigos sobre a participação de seus autores em “2001”.
+Mais
+Benson não sabe dizer quantas vezes assistiu a “2001” —a primeira foi aos seis anos, levado pela mãe, “uma legítima admiradora de Clarke”, em 1968— e que, apesar disso e das leituras que havia feito anteriormente, encontrou na pesquisa para o livro “um monte de coisas que não conhecia”.
+Uma delas diz respeito à “fonte da angústia financeira” de Clarke durante a realização de “2001”, e que desencadeou uma onda de tensão com Kubrick em torno da publicação do romance baseado no roteiro. O autor precisava do dinheiro, mas o diretor não quis que o livro viesse antes do filme.
+“Descobri que Michael Wilson, namorado de Arthur e também diretor de cinema, era quem drenava os seus recursos financeiros.” Benson gosta da imagem de Arthur voando de Londres (onde “2001” foi rodado) para Colombo (no Sri Lanka, onde ele e Wilson viviam), e em ambos os lugares havia “uma crise de filmagem”.
+O pesquisador também só descobriu na apuração recente que o dublê Bill Weston quase morreu asfixiado, pendurado no alto do estúdio, porque Kubrick, o perfeccionista, não permitiu que houvesse buracos na parte traseira do seu capacete espacial.
+O principal eixo do livro é a “grande equipe” de talentos complementares formada pela dupla Kubrick e Clarke.
+“Arthur era otimista e tinha um modo utópico de olhar para o avanço da tecnologia. Kubrick era muito mais cético. Então, se você tira Clarke desse time, o que sai é ‘Laranja Mecânica’” —referência ao distópico longa que o diretor fez após “2001”, e do qual Benson não gosta “nem um pouco”.
+Leilão O modelo da nave Aries 1B Trans-Kunar, que leva os astronautas à base lunar, foi leiloado em 2015 por US$ 334 mil. Quem comprou? A Academia de Artes e Ciências Cinematográficas, a que distribui Oscars
+Não é para entender Certa vez Arthur C. Clarke disse: “Se você entende ‘2001’ completamente, nós falhamos. Queríamos levantar mais perguntas do que respondê-las”
+Sucesso A ficção é o maior sucesso comercial de Kubrick. O filme faturou US$ 398 mi em valores atuais (mais que o dobro de ‘O Iluminado’)
+Pé na Lua Esse foi o último filme de ficção no qual o homem pisou na Lua antes de… o homem pisar realmente lá, em 1969
+Homenagem O longa será exibido no festival de Cannes deste ano, com apresentação do diretor de ‘Interestelar’, Christopher Nolan, grande fã de ‘2001’
+Nem tudo azul A valsa ‘O Danúbio Azul’, de Johann Strauss, não era a primeira opção de Kubrick para uma das sequências na estação espacial. O diretor preferia ‘Sonhos de uma Noite de Verão’, de Felix Mendelssohn
+Poderia ser maior De acordo com Douglas Trumbull, supervisor de efeitos visuais, o montante do material filmado dava para fazer algo 200 vezes maior que a versão final (que tem 149 minutos)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1c7e2dd5abff1b081edcfb0d4beb7dc3c05cd4ef6cfac046f902d858b780976c",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c04930c1a97b83033b0a2f26335c0bb32b515ae3af4fd1c15c96248271b13803",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36dfd5ba6ea03fec7f684cd2f1160f41483f4d2caed75abe8ba65b56604799dd",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c79965f9c7a72591871d3339926cc072d23539f767d80760beca6c396f9a522",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2b1536cdee32188eb2bbcf85441cf3aaa2a0bb02c380b0b23c8b52461008694",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45bd50a9ab54ce89242347fd01eb27ddb866b907b4a209fb70b0d0540357e176",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c1abe49d404094283a152cbe818eaa96da45dd515e261cbf8434c94bbc3da6f1",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a2aa6c11f62d4cd5ef18d5c1371610e167430334977f1d31692c583960c5928",
+    "mention_text": "Todavia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c2baaf3bc52744b501407b27d6ff8e113997a640df51e17239bd77f7d097740",
+    "mention_text": "Homero",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e077eee619094ef0220d9531c41b59fc1083288d8362902341a2d69920f4a55",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9773ffbca13733e2eda4da435b1892c48c74664b905948fca2f60b894459e5b",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "deebfe1aa1d3a4015fbf7f9d0d7d85607344ac3802d5f441bc9ccba66470497b",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4be8767b73eb4d47a95cf9d72bf34995aaa9d9666cc8d6175bfb2cf3a923c304",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "692c3ca5e536cafd9405a530b02acfd13005222e13dd4ad8e7b3a2c37dc5e1f6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7fed55dd0cb6d6b97f8c76050ab50a5cb0feb97de0ca6c041f9da02c562983c5",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6cdf0de8edabde4022cc4bd1ea7849c51f036bfb2e7164c49cd95a6956ad30e7",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d06462645b46629c34aad970bc15cd71b5de0c3107a5df681999aa1721a0d7fe",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "240dbee99d10157d4736fd62e6f341cfd73cb69d10fa5eddcb36bf769f269b77",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6729f4bad1bba8dea5b002d29b79aa71836b79305d05cd58d765daaef2fcb743",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7b1afb265674af1be8539c0c34460fb0b8a202203caad4c644cf38dca5cf378",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc34d8630a801d059aabe4fc64b42644576ec2d34181a32c470edff059c0a9a6",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3090767ca30190d1f008950d2e9edb524d0304bcafa5ea38a24fd0e95aa322de",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2e8f230fcea5abe61551b766d72542510749c87e94c0c225f6a050762acb078",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f7675bb74e48b2e4dca8dcd3f1041e827e9cc3b96ae89849f4770c65889e3a8",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "642d7ea71b59b960f23ba63e6ae7bc51a41b7d1af140e6ff0ed4a669121b93f0",
+    "mention_text": "Michael Wilson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3cf444a6186573cc0f2f7b311f67deba9b9783d030775087ba65b5ef3eb204f",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "655e94820ac95db4078d9972dc6f1e6bf096f2560844a7af7bb755eb59e26ba2",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38e6c4cc88051d94906232ae8926888ad421c78c87837cfee04846c6b4af17df",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b25935de466b6b74ebd9d286cf20ffe0d91461487dc110b7e516b93aea2a51cc",
+    "mention_text": "Colombo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d497d59c92ad28ed7d85cf658445ccba7e6a11188e8549141ede55aa9c11ae8b",
+    "mention_text": "Sri Lanka",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "552a2100e1d8d4c5f768f1e687337b0b594645a0d33d449fe8d01de056d94dff",
+    "mention_text": "Wilson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28effb6927ac5f0c26012dde2e0631298e5bea0ea3023a294308b5c0442134af",
+    "mention_text": "Bill Weston",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ce64bd23208e0471592a93bb2512b6fae0ad75d61ac46858759d96d86305ce4",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b087e51946defbc40b2deb3e207bd82ec2f3b81fca6fdf593646edd3757ca3d4",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c834c3bffbddaf24e0a165c5d4ca11f00cf180e34020c0bc5333b10be391b140",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64f4f42c4e69730d1d151582babe2f04cc05f94a0a9d2f61b97aefb6d96f710b",
+    "mention_text": "Academia de Artes e Ciências Cinematográficas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2049e286cfb993578f19abe0b014e8729dad1a02de66fee692690386622607a",
+    "mention_text": "Arthur C. Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1d4edbc022ce673346410b187e63bb1657695e828a12d982ad1cfcb30133ddc",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27eb966306d1fb915c02cf270f8f4dd65974be6723b8dfb143133316a461527b",
+    "mention_text": "Cannes",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d802174b6766be7aec26ed7376b02f1383c1e0fadcf6c99ff6fe1a22eeacec2",
+    "mention_text": "Christopher Nolan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7a0747a9c134ce9b0e4f2266c1aaaef4d2005c4db8358544f68e5d7d7e544ac",
+    "mention_text": "Johann Strauss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c84e506456be1c29d40e13c05d7f084a8cd28afb4b4e4ea3ac163b792a58b03",
+    "mention_text": "Felix Mendelssohn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02647596c43001d2443fb19a65308f56fa0f25a41096fcbe8cafa3fb5d655c4b",
+    "mention_text": "Douglas Trumbull",
+    "categoria": "PESSOA"
+  }
+]

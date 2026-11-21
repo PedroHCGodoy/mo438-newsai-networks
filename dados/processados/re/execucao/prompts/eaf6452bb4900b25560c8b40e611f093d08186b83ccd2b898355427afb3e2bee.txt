@@ -1,0 +1,354 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b932720518747cf1466a6a3b21bb2ebf6c4c2d4a08a234ff6b7dd46d70873cde
+
+TEXTO:
+Livro discute limites da inteligência artificial
+
+DA REDAÇÃO
+Dois renomados pensadores franceses, o neurobiólogo Jean-Pierre Changeux e o matemático Alain Connes, professores do Collège de France, em Paris, reuniram-se para discutir a natureza do pensamento matemático. O livro "Matéria e Pensamento", que a Editora da Unesp lança em abril, é o resultado desse diálogo.
+O "Mais!" publica abaixo um trecho em que se discute a possibilidade de uma máquina se comportar como o cérebro humano.
+*
+Alain Connes - Examinemos em primeiro lugar o caso das máquinas que jogam xadrez. A intencionalidade é bem simples nesse caso: ganhar a partida. É uma coisa extremamente simples de definir. Definir uma função de avaliação que considera a que ponto se está próximo da intenção perseguida durante o jogo é relativamente fácil. Pode-se construir, portanto, uma máquina que utilize uma função de avaliação determinada por essa intencionalidade bem definida. No caso do cérebro, pelo contrário, a intencionalidade muda conforme os problemas que se apresentam. O cérebro deve, desse modo, criar ele mesmo a função de avaliação adequada a uma dada intencionalidade. De modo mais preciso, ele deve poder apreciar se essa função de avaliação se adapta à intencionalidade dada. Ele deve, por conseguinte, ignoro como, possuir uma função de avaliação de funções de avaliação! (...)
+Uma função de avaliação pode ser identificada com um objetivo. Atribuir uma intencionalidade consiste, mais ou menos, em atribuir uma função de avaliação. Nem todas as funções de avaliação, é claro, são boas, pois algumas corresponderiam a intencionalidades contraditórias, ao passo que outras não seriam adaptadas a nenhuma intencionalidade. Mas podemos definir aproximadamente uma intencionalidade como uma função de avaliação coerente. Em uma dada situação, o cérebro deve poder elaborar ele mesmo esse tipo de função de avaliação. Deve ser capaz de criar ou, pelo menos, de escolher entre aquelas que já existem. E, para tanto, deve possuir ele próprio uma função de avaliação estabelecida de uma vez por todas, que lhe possibilite saber se a função de avaliação que ele cria é adaptada ao objetivo que ele persegue.
+Jean-Pierre Changeux - Esse mecanismo supõe a memória.
+Connes - Com efeito, a memória, as experiências adquiridas. O cérebro deve se apoiar em analogias para comparar a situação presente com as que ele conhecia antes.
+Changeux - Existe, de um lado, uma memória genética. O organismo humano, tal como se apresenta hoje, resulta de múltiplas gerações de organismos que, antes, já viveram esse tipo de experiência. (...) De outro lado, o cérebro se abre para a realidade exterior e, principalmente, pode servir-se da memória (...) que se depositou durante a experiência pós-natal.
+Connes - É no segundo nível que se coloca o problema fundamental. Qual pode ser o mecanismo que permite ao cérebro escolher uma função de avaliação apropriada a seu objetivo? Que critérios possibilitam a escolha? Enquanto não tivermos compreendido esse fenômeno, estaremos bem longe do segundo nível, como é o caso das máquinas que existem atualmente.
+Changeux - Isso significa que elas não se encontram mesmo no terceiro nível.
+Connes - Elas estão apenas no primeiro nível. Permitem unicamente efetuar adições ou multiplicações, mesmo que extremamente complicadas, ou jogar bem o xadrez. Mas a função de avaliação, assim como a intencionalidade, é sempre dada de antemão. Nenhuma máquina é hoje capaz de construir ela mesma a função de avaliação adaptada à intencionalidade que lhe é proposta.
+Changeux - Os computadores atuais não são mesmo capazes de ter intenções.
+Connes - Não, já que não se encontram em interação evolutiva com o mundo físico. Apesar de sua memória, não têm outro passado além daquele que nós lhes impomos. São não-evolutivos. É certo que a afetividade intervém nesse fenômeno. Quando nos atribuímos um objetivo, é para termos prazer, a menos que sejamos masoquistas!
+Changeux - Essa capacidade de ter prazer é ela mesma determinada por nosso passado evolutivo. Se nós nos autodestruíssemos com prazer, é certo que não estaríamos aqui!
+Connes - Sem dúvida. Mas penso que o mecanismo que permite considerar se a função de avaliação é apropriada ao objetivo supõe a afetividade. Esta, com efeito, é necessária para que possamos apreciar o que se passou. A adaptação da função de avaliação ao objetivo proposto só pode se medir pelo prazer ou desprazer por ela provocado. Imaginemos, por exemplo, um jogador de xadrez que, ainda que seja capaz de calcular como um computador, escolha uma má função de avaliação. É evidente que ele ficará extremamente frustrado quando constatar que perde todas as partidas que disputa. A escolha de uma má função de avaliação só lhe terá trazido desprazer. Este, porém, só surgirá no final das partidas, e não antes. (...)
+Changeux - Não esqueçamos que esse sistema de avaliação interna (prazer/desprazer) é por sua vez predeterminado pelo passado evolutivo da espécie. Esses afetos já são determinados em sua reatividade aos sinais do mundo exterior e do mundo interior.
+Connes - Em nossos dias, as máquinas supõem todas uma intencionalidade predeterminada. Em virtude disso, elas permanecem no primeiro nível.
+Changeux - Mas, então, como construir máquinas que alcancem o segundo nível?
+Connes - Posso apenas formular de maneira precisa o problema. Uma máquina desse tipo deveria estar em interação evolutiva com o mundo exterior. Deveria poder criar automaticamente uma função de avaliação correspondente a um objetivo dado do exterior. Deveria, portanto, ela mesma avaliar a estratégia por ela utilizada, e chegar a uma função de avaliação apta, caso dispusesse de uma memória e uma potência de cálculo suficientes para, por exemplo, jogar bem o xadrez.
+Changeux - Mas isso pode ser implementado? Essa idéia já foi formulada. Por que essas máquinas não existem? O obstáculo é teórico ou prático?
+Connes - Ignoro. Para mim, o único mecanismo que, no homem, permite aceder a esse segundo nível é justamente a afetividade.
+Changeux - Podemos imaginar uma máquina cujo prazer é medido por uma grandeza que varia, com um teto, um nível médio, de modo que a máquina otimize...
+Connes - Retomemos o caso do xadrez. Suponhamos que a máquina não disponha da função de avaliação que permite jogar bem xadrez. Ela dispõe de todos os movimentos possíveis, regras do jogo, e uma grande força de cálculo, mas não tem a vontade de ganhar. Como lhe inculcar isso? A cada lance, um bom computador avalia sua posição, assinala-a em uma escala e seleciona entre os lances possíveis aquele que exprime o maior valor da função de avaliação. A máquina que tentamos conceber não dispõe dessa função de avaliação. (...) Seria preciso fazer que, no fim do jogo, quando ela perde ou se encontra em má posição, ela sinta uma dor...
+Changeux - Se ela sente uma dor, você já resolveu o problema.
+Connes - Não ainda. Ela reage somente ao resultado final do jogo.
+Changeux - Mas se você já inseriu na máquina o fato de que ela sofre quando perde, você tem a resposta.
+Connes - Não, porque ela sofre apenas no fim da partida.
+Changeux - Você já possui um elemento da resposta.
+Connes - Um pequeno elemento. A avaliação ocorre somente no final. É tudo.
+Tradução de Luiz Paulo Rouanet.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7bd95e43df1a32a7eaa2ffb77a136fdb15905cb0db75a863346fded8493fd30e",
+    "mention_text": "DA REDAÇÃO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36fee2a0d3c8a1d305ea25dd8ab5599a9219b3e044e6c256a0501d7c4c818ebd",
+    "mention_text": "Jean-Pierre Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e28a3585011eb66aa24ba89b78e74320034ecf2d6c8dc53106acffbf6611d196",
+    "mention_text": "Alain Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c3dadc55c5ec9e0056c9ba36a44fac783378fb4bd0ef08d60962f8bb2b10c24",
+    "mention_text": "Collège de France",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdced8b695ede9d1f1063593a2cae637755beaf575b1e23370ee6118368f162d",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "780b34238b990996e25fb6f80927f646b3b6cb056b982f27d065ee9b1acc50ca",
+    "mention_text": "Editora da Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d83208c67effb9c84c3f418e2aaa072e8010a066868d35c2ae77226e1d83aac",
+    "mention_text": "Alain Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6afb8168a007ebf2a886a67c47594f91d90701d0b450fa417792ca9b8e14432d",
+    "mention_text": "Jean-Pierre Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "682544fd77d23c731fdf03a2d232ce6bad565b02b34b427d29c143f3a43690e7",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca9132c331d7f24ff8a86f47ed74b7f11d1d49c75aadc36aae165545116d64a0",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5f043e93bac701ad1a69e95ba14b38f06fd7c72c55d2561bff377722e71f08a",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e09e59527592e8e7a84c6f1e71efe109b1c1f0e6d0461f7aad32ee162d75be9",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "edc170b387db0ea61b40a2064c6debf440deb650b40d06c534c4a3939d5d1cbf",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a9f8885f315add6b264af6fd8a4152a4008ff23909e47da814e29773f18b5187",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "453463c64d239e3519a4083029dae77bf9616d9386a566863c9f961be2fb31d8",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b38ea3415c1e0fbd31f0cc1f17649d44f0dc08da33e8a5f76ea69c1873fca3fb",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49cc0507726f9524308b215b5273deaacb58f4d630238e5e1a356ff364ff65fa",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a704a568bc44d1beea84fa597e7cd7cf16550dcd24e4d287901e8686d9cca18",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52fa6bb59de42d3a880c58bfe09018d035b5a407c361b11f3f6c8ef3a0034652",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aba0e2c4339590d8091f4c86dd232f59e7c943892c12cbf09a157e68791291a6",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77afb3908295cefdafe075925cab882ee65a3dd4a66e7fbbfb396939dc2828d2",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20ee2d8714ba10df129d6b1af7aaa87b22a31ff8e552e0ea518df6098708fc2d",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75a8f305255eb632bf37b7ae13b7fe57faa8a3f82f0cd285a285229c34254f70",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2adf4fd54caf96be55937faab65b33a278e594889ac443f09378b600df31681",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "020edf89b7e98a0623a9c985027ebc07d31a79846aedc3134cd3797f274d1295",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "697d5f7f7315f59839e01331fcae230a7265fdfc621862a0ea3952c77de07ecc",
+    "mention_text": "Changeux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa49aee0d96348571223f015cce45ac1442fe4828fa21c4be2436255537e190d",
+    "mention_text": "Connes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65762a2f03d870be7b12999790159219d135797d4190366055eb5fc0c4076ab2",
+    "mention_text": "Luiz Paulo Rouanet",
+    "categoria": "PESSOA"
+  }
+]

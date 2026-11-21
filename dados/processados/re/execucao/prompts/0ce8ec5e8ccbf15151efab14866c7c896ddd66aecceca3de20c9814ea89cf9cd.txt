@@ -1,0 +1,509 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 698b0f6bcdb915f66d98029c90bec8a48c14cbc54003793e163ecd69961fcf5d
+
+TEXTO:
+Paralisação de caminhoneiros levou a aumento de frete grátis
+
+Mais empresas de ecommerce passaram a oferecer frete grátis a seus clientes durante a paralisação dos caminhoneiros.
+Antes da crise, cerca de 37% das empresas diziam isentar o cliente das entregas. Em 25 de maio, quando estradas tinham pontos de bloqueio, esse índice saltou para 46%, segundo a Ebit, que coleta dados sobre ecommerce.
+“Foi para incentivar os consumidores a comprar, mesmo com prazos mais longos. A espera média de 12 dias em abril saltou a 32 dias no início de junho”, diz o diretor Pedro Guasti.
+“As vendas caíram 3,6% nos dez dias da greve, em relação aos dez anteriores”, afirma Gastão Mattos, da Câmara Brasileira de Comércio Eletrônico.
+“Parece pouco, mas no varejo online é significativo. Sobretudo as empresas maiores, que conseguem negociar com fornecedores, fazia sentido abrir mão de lucro e tentar retomar os pedidos.”
+No Magazine Luiza, que deu frete grátis, a situação já se normalizou, diz Eduardo Galanternick, diretor-executivo de ecommerce da marca.
+“Houve um impacto em nossas margens, mas pelo menos seguimos com as vendas.”
+A Via Varejo, dona das marcas Casas Bahia e Ponto Frio, escolheu incentivar a retirada de compras nas lojas físicas durante a paralisação e diz já ter voltado ao padrão anterior de entrega gratuita.
+Cerca de cinco dias após o fim da greve, as empresas retomaram a cobrança usual.
+Procuradas, a Saraiva e a B2W, das marcas Lojas Americanas, Submarino e Shoptime, não quiseram se manifestar.
+O que estou lendo Ciro Gomes (PDT), pré-candidato à presidência
+Atualmente em campanha, Ciro Gomes conta que está lendo a biografia de Winston Churchill, “Uma Vida”, escrita por Martin Gilbert.
+“Churchill foi o maior estadista do século 20. Quase sozinho denunciava o nascimento perigoso da Alemanha de Hitler. Demoraram para entender que tinha razão e o convocaram para enfrentar o que seria a maior ameaça ao mundo.”
+Para o ex-governador e ministro dos governos Lula e Itamar, o líder britânico “conseguiu segurar os alemães e construiu as alianças necessárias para derrotá-lo.”
+Por que essa leitura? “Em tempos de crescimento do fascismo, é sempre importante ler sobre a vida de quem contribuiu tão fortemente para a derrota do nazismo”, afirma.
+Ciro, que oscila entre 10% e 11% na pesquisa do Datafolha, está tecnicamente empatado com o ex-governador Geraldo Alckmin (PSDB), com 7%.
+Os dois pré-candidatos estão atrás do deputado federal Jair Bolsonaro (PSL), que tem 19% das intenções de voto, e da ex-senadora Marina Silva (Rede), com 15%, nos cenários que não consideram o ex-presidente Lula (PT).
+Medicina popular brasileira
+As redes de clínicas populares, que oferecem atendimento médico e odontológico de baixo custo, concentrarão seus investimentos em treinamento e tecnologia em 2018.
+As franquias OdontoCompany e PartMed receberão R$ 23 milhões neste ano em recursos próprios. Parte se destinará a uma plataforma de agendamento online e a melhorias nos sistemas de gestão.
+O restante será aplicado em treinamentos práticos. “Tivemos uma melhora significativa no faturamento depois que adotamos os treinamentos presenciais”, afirma Paulo Zahr, fundador das duas empresas.
+A Orthodontic planeja investir R$ 6 milhões em tecnologia da informação e outros R$ 7 milhões só em inteligência artificial.
+“Estimamos que 70% dos pacientes precisam de implantes. Queremos poder identificá-los por meio de análises automatizadas de radiografias”, diz Fernando Massi, fundador.
+A GlobalMed, de atendimento médico especializado, investirá R$ 10 milhões também em tecnologia e treinamento de suas equipes. Mais R$ 4 milhões irão para a abertura de seis unidades próprias.
+Bolão executivo Paulo Caffarelli, presidente do Banco do Brasil
+O torcedor do Coritiba Paulo Caffarelli, que também é presidente do Banco do Brasil, diz considerar que o país ainda é traumatizado pelo 7 a 1, mas que a Copa de 2018 é uma oportunidade para deixar isso para trás.
+“O Tite assumiu e deu segurança. Hoje somos um dos favoritos, e espero que já a partir do primeiro jogo isso seja ratificado. Aposto em 3 a 0 contra a Suíça”, diz o executivo.
+Se o Brasil não for o campeão do torneio na Rússia, as  apostas dele são em Alemanha, Espanha ou Portugal.
+Brasil
+PIB: R$ 1,7 tri Inflação: 2,95% Desemprego: 11,8% Balança Comercial: R$ 67 bi Principais Exportações: Soja, Petróleo, Minérios Principais Importações: Manufaturas, Combustíveis, Medicamentos
+Fonte: IBGE e Mdic. Dados de 2017.
+Decolagem chinesa de luxo
+O mercado de luxo deverá crescer de 6% a 8% globalmente neste ano após um primeiro trimestre de evolução acelerada, segundo a consultoria Bain & Company.
+Houve uma alta de 6% no faturamento das empresas do setor de janeiro a março, impulsionada principalmente pela China e pelos segmentos de jóias, sapatos e couro.
+A previsão é que o mercado chinês tenha um incremento de 20% a 22% em 2018, de acordo com a consultoria, devido a um movimento de redução de preços e ao aumento da base de consumidores da categoria luxo.
+com Felipe Gutierrez, Igor Utsumi, Ivan Martínez-Vargas e Diana Lott
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "af5523330d57333c133748a78430716b06b75ba2c837f28f0e7c8361b8a26f10",
+    "mention_text": "Ebit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f705a80c7ee9c13b7f06ccff652942a011b2f7c26b8fcdfecc161a0e22446cb",
+    "mention_text": "Pedro Guasti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e2cfafa53d139e666ea5af544bdcee00c431eea007ca85afb6fa444909333e2",
+    "mention_text": "Gastão Mattos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30e94eacbaaa5d4cf3abf587cf7e627122587b334dd6a0f98f5edb4cfdd76229",
+    "mention_text": "Câmara Brasileira de Comércio Eletrônico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "291a654c5b840737e7511cafcca051e8769ccff0732de20cda7d99a587f0e3e9",
+    "mention_text": "Magazine Luiza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b4b27e6df02b81084d2607f035569d5b519fe1d1838a9d50dc248b91b094600",
+    "mention_text": "Eduardo Galanternick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46c875a2117685d62ca1f9b2253f2e75021c28d769a446d72996d61852638c90",
+    "mention_text": "Via Varejo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "497dc976b73e475d12067058baa22b824984befaecf64e2cd77d69da3615a55b",
+    "mention_text": "Casas Bahia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9351d7ca199b8f37aa94dbfc895db006f45eca83d936b3c2856f9eefb41dc32d",
+    "mention_text": "Ponto Frio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3199ba1bf1d031f34ebba76e09dd826f750da7e3dbca674403e5692bbc66e072",
+    "mention_text": "Saraiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73b55e479cec6831b534ee13175504fd190254584c96d752b82554a349c083d4",
+    "mention_text": "B2W",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7449decf59fc8ac2811043a04fa6b17e36cd0fb1f22aa5efac700fcb877df35",
+    "mention_text": "Lojas Americanas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f30143b07a3adaf3e0c3c11038f868e3a04e6724abb8ad418dd59ab5a01d0ba",
+    "mention_text": "Submarino",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7a27cade6a73f11b1a3bb29a00169dbe8d9d9dc2b6b34fe15492be0cf7a963c",
+    "mention_text": "Shoptime",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d014ac6b1407c5bbb24b8c475f3cce13714fd486719021f03d479e2092bacc34",
+    "mention_text": "Ciro Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a93d0947f62d05079e5f23fe4dad0d1e21e4d97da13dcd6907ff373a15a7dc3",
+    "mention_text": "PDT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20e0c9b42cbd0ca041f57b203d47c1ff7b8ed1c4cb77c2f6e78a675620f380af",
+    "mention_text": "Ciro Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c116ae9d43bc9a3420d9a2d80c98c96aa3b6c40c306ab0c2fcb04da6b546887e",
+    "mention_text": "Winston Churchill",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7f152d396e37e221b8b109f26de9475b79ff75d31cecb70909fd21677440154",
+    "mention_text": "Martin Gilbert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b56c26a14f234a7a62a25f3428a86a3c05b8b5a18276352422a260a3fc8062d",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e68cda3beafee9a42b3c84e10a50273771d02e82f651340ab01f40614558331",
+    "mention_text": "Hitler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4309213652e48af1fcc45177f7f9114b78e5ab4ac9fe7e8880e1199d8a6dcdd",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc9c227f8bd608749d9526e1198b0b9f753209e11e01845301b78b6a0f83078d",
+    "mention_text": "Itamar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68165ff86236fa4897804708c5465dbf92e6927f29a952a0baaf3ff04912f2ef",
+    "mention_text": "Ciro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3ded1a6558cb59921cf767b2fc5385c1065007906c2e8188c61a9096e54966b",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "423f6180ea4955ad6cc16009750ca7c71a7b8118bea236c8014eb96a02c4abce",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a37c5323824167d4a05c04b9abbd0aa35d2e9974b64e601bffc5d00c4f2efc74",
+    "mention_text": "PSL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ef50329930c67ceb0a490a42a32b43092a762d4ceebec9ff02c2b56124eb58d",
+    "mention_text": "Marina Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47fd3440836a8c6ee41f94f292f63b4ce3e9442683cf0a9b10d8025c610765a7",
+    "mention_text": "Rede",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0b2dd78b83f2b4d4f9357997725001869be1d0ab5efa4feaf01326e47822d18",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2120b30f31d81f4aa06c6253a3edecb58a932f1277dc8a91cd32c3c9fa51c1e3",
+    "mention_text": "PT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "55fb2ef7c7364d0699e33358f4edf2f9183971700a18f785143692f710a3f91c",
+    "mention_text": "OdontoCompany",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f487e6decb5ea90a4c433f00fd1955fce7405cbe09c64ddc7932085a3a45cba",
+    "mention_text": "PartMed",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8f2d25e9a4a187e4ebe44400a3b94d75fc9a7796b63147a493fe38fd9905079",
+    "mention_text": "Paulo Zahr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7dc07848243ef038f8893067c48b8c982fd5006a81d5e73c06d25363e879aefe",
+    "mention_text": "Orthodontic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00a1941ea9d75fba103e80d4c9a87ecfc8d73da5d6970dc3e38d9a646a9aa9c3",
+    "mention_text": "Fernando Massi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "308f3ac8bf2686700790317530442b5e053f85e3320f9fa828fd044e05c1f3e2",
+    "mention_text": "GlobalMed",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af49798e5212a33a86f08dd6fe772f92f22ada1af1a9dd15bb977c53f1f24dda",
+    "mention_text": "Paulo Caffarelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "747285b0d23aca30a85990fc6e4258408095c8f8d8c312dafceb20993fe3d58b",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "512b7bac52cbf58ed08727e4974a23d59775db24248bde1390648f4c4ea0a8ba",
+    "mention_text": "Coritiba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a913a679b8e1f768a1d00c0eafb2b82d7bee3b7618af9200f23bbff28862b68",
+    "mention_text": "Paulo Caffarelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "107476e9015b6559dca8bf1700da8a61cd6cbc74a53cbe3a895b1fbb32114f38",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68e3a87ede0e3f4c224b6b11cb45c7c78aacb9a450d0117a653d8ec51c7f49aa",
+    "mention_text": "Tite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58a29450f2fe1d2536a060d38c2cb846db62126c0cebd5245a44bde3eb516635",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff6716beb72160d151f8112222e2f7d45b51ac4c6e432812d74cce90982aa577",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0dee65a2ebc73a97ebdd474deba8c825107a943a862045d610c107db737a867",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e988cd539550c5e2ada3b577189476e467871a3ec4a0c26b122c2d192c3140e",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee61bb1657d1093210668b3e73d495389f69ad88bc1dd55f7261f0506f24df31",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b71525026880f1ad083d72519c1b788fe038e0e1d771f40bf0abfd147539cd3",
+    "mention_text": "Portugal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a91a644b126e762059ec09fdadafb3e2b62523c9adeeb84dd57b83625364e36",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c5798cf71aa9d2e252a0f6151f2962e23be501858520ae0a566dc66e942b5c01",
+    "mention_text": "IBGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8988ce6590db8727894463509d497e52718a232837b0626a16a6cf40643c28ae",
+    "mention_text": "Mdic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f225da8fb319396318506f8e1aceb7f5fc96f009e56afa449470a323f1c5de1f",
+    "mention_text": "Bain & Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1083eed33d7d98c6627f9c2e5d792ffeecb74d7bffead8f3720fbd3f0a3602b4",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5b8fc527e1fdb18450c9ccf88e899e290c033aced5e12d3cd0a8c25956735f9",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2f49eb6dd0664bbc4743cd7e630192366ed1e6acb486e24ee95e4dc79ebdbe8",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88f43a1ad6c9d976c9f6223f261f49c480e37f021e244eeb79e862dcffb0575d",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83048aa03eb1f090947e076472f643d6a5292ebb8bc5e979a30e2f5b8429a46c",
+    "mention_text": "Diana Lott",
+    "categoria": "PESSOA"
+  }
+]

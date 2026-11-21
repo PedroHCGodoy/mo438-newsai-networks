@@ -1,0 +1,311 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: be03a849497970f24712db5528a63e475209b97151ac7c946da51bb030e9789d
+
+TEXTO:
+Como pilotar sua fazenda pela tela do computador
+
+MARIJÔ ZILVETI
+FREE-LANCE PARA A FOLHA
+Os produtores rurais contam hoje com importantes ferramentas para ganhar agilidade e aumentar a qualidade dos seus produtos. O computador e equipamentos automatizados são essenciais na agricultura.
+Para quem está pensando em adquirir programas de computador para produtividade de gado leiteiro ou controle de rebanho bovino, empresas como a SRB, Agrosoft, DIS e Microbyte oferecem sistemas que vão desde US$ 41 a US$ 1.990 (veja quadro).
+A DSI vende o programa de computador "SRural-GC" (para rebanhos de corte). Permite armazenar dados sobre o rebanho. Traz telas auto-explicativas com procedimentos passo a passo.
+Com o "SRural-GL" é possível fazer análise de sêmens de touros para produção leiteira de descendentes. Traz telas de inventário mensal do rebanho e dá previsão da produção leiteira.
+Equipamentos como estações meteorológicas ou monitor de plantadeira podem ser encontrados respectivamente na Agrosystem e na Midrodesign Informártica.
+A Asperflex tem o CM-300, uma estação para irrigação no campo. Esse sistema vem com sensores, estações de rede e programas de computador.
+Para medir a umidade de grãos por amostragem há o GAC 2.000, da Agrosystem. Mede e compensa a temperatura do grão automaticamente. Custa US$ 7.000.
+Outra opção para o fazendeiro é o Multi-Grain (US$ 490), da Agrosystem. É um medidor portátil, que faz leitura instantânea de até 12 tipos diferentes de grãos.
+Desde 89, o grupo Cambuhy, em Matão (SP), optou pela informatização de suas atividades. Um computador de médio porte e o programa de banco de dados da Oracle são os responsáveis pela administração das empresas.
+As horas gastas com tratores, trabalhadores e quantidade de insumos podem ser controladas pelos agrônomos. O sistema controla ainda toda a produção de seringueira e de laranja.
+Os módulos do programa são desenvolvidos pela Oracle, segundo a necessidade do cliente. A Cambuhy Citrus opera com cinco módulos, entre eles o "Controle de Maturação da Fruta no Pomar".
+Com o sistema usado para controle e operação de máquina, a Cambuhy Citrus faz controle de talhões de laranja. Também consegue saber qual a melhor época para colheita.
+O grupo utiliza ainda cinco módulos para todas as unidades. São sistemas administrativos para contabilidade, compras ou financeiro.
+Em parceria com a ABC Bull, a Usina São Carlos desenvolveu um programa de linguagem de inteligência artificial. Com o "Charme", o usuário descreve o problema e o sistema emite respostas de planejamento de corte de cana-de-açúcar.
+Entre as características, destaca-se a medição do índice de sacarose e definição de condições de simulação. O programa "Charme" traz telas auto-explicativas. Na tela "Programação de Corte Mensal", o usuário encontra um quadro de estratégia com cálculos de data de safra.
+A meta da Usina São Carlos é aumentar a produtividade entre 5% e 10% durante a safra de maio próximo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "3d2d2d7be4e22e2390aabf8ef58847620606bbdc840edd8484ac45daa399ec37",
+    "mention_text": "MARIJÔ ZILVETI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bddeb89d1996705c5d5f6b5e4c5ccde188fb0e6aba7d679ccaf29a0d5d1e143a",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c29b7bce70c91a1b2a3b9f4283cc807d801a5b65e395dc54dd117e426434078",
+    "mention_text": "SRB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "60f5236a022f8dc69660b739dcdb2a9a7fdb471b7473cf0093a80de5bb69e2ad",
+    "mention_text": "Agrosoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d087cc0dd2c527363d2bd8c8943cba2eff997c8cb6f6bbbb3f9ea2171729674",
+    "mention_text": "DIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cca126f0f5e17e59cd864a13eda20528e4f9098d9e7b198f5ce909acaf4a4d6",
+    "mention_text": "Microbyte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3b61c88b83211346e1fa604769c19fc192b431167bb28952f9b0ad7153a709a",
+    "mention_text": "DSI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a388773eade96f8dddcac20c0b41c38028425fd15c561fc6a42767893f381e15",
+    "mention_text": "Agrosystem",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a794ec4cc6ce77c15e13ffeb6cf42d877a3435744e9966086858677bf29abf8",
+    "mention_text": "Midrodesign Informártica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95f3dd71112278c95175b5781da63e04c6392aba50522a0de6d60580a739ea3b",
+    "mention_text": "Asperflex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab1bbb591ad496cd4ebf45173240c8b30f60b396f6c0ac0b4a6f9625230a49bf",
+    "mention_text": "Agrosystem",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32f296ce39e3b0158b3eb9622acb351a20c0b358ffd7aadc643ab17d7f71e895",
+    "mention_text": "Agrosystem",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe4b59b0d390e28b9500998cfa4621bab313b4ba58c9290b46e0ba01dcba9614",
+    "mention_text": "Cambuhy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71224a7913e75503dacee7f6a39a398c4869f4677b0b282268fd1f6e9d44b9e3",
+    "mention_text": "Matão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e9eb6633126a4a0581d517870cbeda401871b7ed18114e450bc2909f9fe79e2",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdaf80d02691bb257a19a4d15740e87eedf2affa99fc104ebc2eec2da7ef9137",
+    "mention_text": "Oracle",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "262c1d449c26f10f314c2d10f42c40441bbf8e7863f5b038419a3b97abdbca96",
+    "mention_text": "Oracle",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "489f4d5f3672112e866deadb4f8f8152ddea67fed25d666f8163cf5aae78079c",
+    "mention_text": "Cambuhy Citrus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd59e6cc02d3b122427876a59016a17f89a3334fd3422b5bae7ea2f0f2a67cc8",
+    "mention_text": "Cambuhy Citrus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d05d0f71914a0b463a4436d7e248de43f061e1e9ebe6bce747186906fb6747c",
+    "mention_text": "ABC Bull",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "742da92f112694e72e4e23915832a5ae528ad57676dd18e36b59ffb8f58339da",
+    "mention_text": "Usina São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b80989cedbfc5bd8ab15efddbbda5d1c3aa98941e5002ed9d6977be123ceac3",
+    "mention_text": "Usina São Carlos",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,404 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2d4a55025ca6ad66e7d750ceb2376bda2c0cfd94a314ead2505437e97650a86b
+
+TEXTO:
+Brasileiro cria empresa com US$ 2 mi após deixar a Microsoft e o Facebook
+
+Engenheiro e cientista da computação pelo MIT (Instituto Tecnológico de Massachusetts), onde fez também mestrado em inteligência artificial, o paulista Giuliano Giacaglia, 23, abriu mão de trabalhar na Microsoft e no Facebook para se tornar sócio do americano Paul English, que investe em start-ups.
+Eles farão uma empresa de pagamentos concorrente da Square, de Jack Dorsey, um dos fundadores do Twitter.
+Hoje com US$ 2 milhões disponíveis para investir, Giacaglia mora de favor na casa de um amigo e chegou a pular uma refeição por dia para economizar.
+Leia o depoimento de Giacaglia:
+Por enquanto eu moro na casa de um amigo aqui em Boston, dormindo num colchão, de favor. A partir de abril vou ter um salário, por causa do investimento que a minha empresa recebeu, e vou conseguir alugar um apartamentinho.
+Minha ideia inicial era fazer um aplicativo para restaurantes: você senta, come, sai sem falar nada e já está pago, sem precisar de confirmação. Mas o mercado aqui nos EUA é muito competitivo nessa área de software, principalmente para restaurantes.
+O MIT [Instituto Tecnológico de Massachusetts], onde eu fiz graduação e mestrado, tem um programa que ajuda alunos empreendedores. Os veteranos que me ajudaram investem, eles entendem mais do lado do investidor que do empreendedor.
+No ano passado, um amigo meu, Pete Kruskall, começou uma empresa de "machine learning" para bancos de investimento. Tipo um Siri, da Apple, para bancos de investimento. Ele já tinha experiência, porque trabalhou na Kayak [site de planejamento de viagens vendido em 2012 por US$ 1,8 bilhão] e no Google, mas descobriu que aquilo não era o que queria.
+Eu estava me aconselhando com esse amigo, porque sei que é muito difícil começar uma companhia. Comecei minha empresa com outro amigo, mas a gente terminou –é como qualquer relacionamento, não é fácil...
+Foi o Pete que me apresentou ao [fundador da Kayak] Paul English. Ele vai ser meu sócio, e a gente está procurando alguém de negócios, porque o Paul conhece o pessoal dessa área. Eu sei da parte técnica, posso fazer tudo.
+Estamos trabalhando em um app para pagamentos, não só em celulares, mas também com software para computadores. A ideia é, eventualmente, ser competidor da Square, [empresa de pagamentos criada por Jack Dorsey, cofundador do Twitter]. Não sei se é possível porque eles estão fortes, e precisa de muito investimento.
+O Paul English vai injetar entre US$ 500 mil e US$ 2 milhões. A minha ideia é gastar o mínimo para pôr o negócio rodando. A partir daí, conseguir mais investimento. Ele também é consultor para [os fundos] General Catalyst e Sequoia Capital. O nome dele é muito forte, ele tem uma voz.
+VIDA DE ESTUDANTE
+Quando vim para cá, não falava inglês direito. No primeiro ano, minha avó me ajudou com as despesas, porque eu tinha que pagar comida e estadia. Das universidades de fora, só me inscrevi para o MIT, tive sorte de passar. No final, eu tive muita sorte.
+No segundo ano, eu tinha que conseguir dinheiro para pagar a faculdade. Fiz entrevistas, mas não tinha nenhuma experiência e meu inglês era bem ruim. Acabei fazendo pesquisa, na própria universidade. Nessa pesquisa, provei uns negócios e publiquei um artigo no "Electronic Journal of Combinatorics".
+Teve um tempo meio tenso em que estava difícil conseguir até comida –tive um pequeno "racionamento" [risos]. No final do ano eu não almoçava, só jantava na fraternidade. E meus pais não sabiam disso; na verdade, eles não sabem. Eu que decidi vir para cá, certo? Então tenho que cobrir os gastos.
+Nessa época, quando fui visitar meus pais –eles pagaram a viagem–, estava magrelo. Meu pai perguntou se eu precisava de alguma coisa, falei: "Ah, se puder ajudar é melhor, né?" [risos].
+VIDA DE TRABALHADOR
+Logo depois, consegui emprego na Microsoft, em Seattle (Washington), que deu dinheiro pra caramba. Fizeram uma proposta para eu ficar, mas achei melhor esperar. Daí eu trabalhei no Facebook, em Menlo Park (Califórnia), e não foi exatamente o que eu queria fazer da minha vida.
+As experiências são totalmente diferentes, porque as cidades têm perfis diferentes. Não me adaptei ao Vale do Silício, tem muita gente fazendo start-ups. É uma bolha, não no sentido financeiro, mas de falta de diversidade.
+A Microsoft tem gente mais velha –é mais tranquilo. Talvez eu volte a trabalhar para uma empresa grande, se as coisas não derem certo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c9e66796bdb40127b59dc016300021dbc4ba831d92aa38caffff8726562fb8c5",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "314d4bce95ecfae26e658b2e98290ca7e630eb17f0f3663b8b4fcb6bb4554bac",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0d734fa9277fd6756b0355de2847360471acbf219b0bfe7e478941b79a49473",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72c9d6bc82327de9726591549d0a9e245e2ee0a757e33db000f91ea3cbb082ad",
+    "mention_text": "Instituto Tecnológico de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d499e3066bd5822547d856c9e744b8797adce7c93282ab1f5c1a5a574c00bca",
+    "mention_text": "Giuliano Giacaglia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4a1a67c9053a205737b21aa27e44ac3a97776edc1a076d01d451b7dab112d61",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c92ff56cd843ed3f9d5df39ed9a34115e0bbdda4f4592e363821e8d9234862f6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7e9e7817cff8b7bfac9c5290188096edfda94b884c1f3b30c97cc3509f74cc8",
+    "mention_text": "Paul English",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b441ce4bfbcaa1c8d86470e4c91e1826021f4fa23039779f01a4636557c8768",
+    "mention_text": "Square",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46a6bf041782ca3ac5bab442548a148063689af71550ef34269861f82856d736",
+    "mention_text": "Jack Dorsey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa7b7d6250d70ae993fb1ebbd9c4d5e4241ae1b675c5a923d55700b34d8f1883",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96527874c5fbe3f0005617778fff6fcebd7783aeed6dc47f9ec880702135da2b",
+    "mention_text": "Giacaglia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c995795e0fef9d9fd351daa61e98e33d7f3953c246ac92c83c23ec98050291fc",
+    "mention_text": "Giacaglia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "810e229ac9c3e989d380d13a8c868bd122de1178463c61db391ff72c1eca2f58",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87af9a2c11c6a17cb762d4183e46dc85c228725a43383a8d7198a9387930570b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9107361bf322a7f3d08900a974a8b2725aee315aa5f46ddb262d3fec50d9f20",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c76f08571ee23e2169617a20f835a9129959bd1c90952f3453efb2d482521729",
+    "mention_text": "Instituto Tecnológico de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3b2a96e0b3b6afeed7c98f2f092b0e764184f97238c9a056eee325a170e5ef6",
+    "mention_text": "Pete Kruskall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c811491d5885437f8586a0cedd277bba584bcd58418e06486c96ff1e65bf095c",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aff19865b9ad4fb4c6727bd281a7b2dc7d82ab15dd3c681038d3e79b3c57bc09",
+    "mention_text": "Kayak",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e2a75761802e67e34635095ddd4520da0e65632b56d2284ae0c5e602a23b592",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "662ad97290f8ea6651b4d70f8852cd2913902bbfb07dda4bf5f13d1016fb3083",
+    "mention_text": "Pete",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a720e12f13501de01a9683831ae920ebc16b6a79b40f8189801fec7a9f0efd5d",
+    "mention_text": "Kayak",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cff430d1c9ce07c2a1ec1b9f04f9e188987f94ca348022dd276c5d9d1a63424f",
+    "mention_text": "Paul English",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fdfc4e2d4f58969f59f495a3fa0aa46ceb0b51b83dbd5d9caefe5412c2909423",
+    "mention_text": "Paul",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d5beac02ef0fe1266bba083ebcc5c44425ac7e07c8a29ededd7c7b5f86fa110",
+    "mention_text": "Square",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ceb14e092a47952b8ca3c9e634eba77b6b62834671b4a4aad522a356cf7f4bf2",
+    "mention_text": "Jack Dorsey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0fe9b2dac91c0804034995a97ceef578430d8cf17c717fa3214778b80098a87",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00ac1616b38f79fcbbb55530eeb0367cef2417dc0304c2045f54357e09a79b76",
+    "mention_text": "Paul English",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4f1c1511907b206a9cbbd7c45ea33b1580ea539b7bcc77cf5d038e424ef7bf9",
+    "mention_text": "General Catalyst",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "230af0f0ccbd6732d3f3ed4e8833b7b16c5fece2c41c6091c419d9468ac21838",
+    "mention_text": "Sequoia Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39cd72e0209cebd683bb9a3c91917ad715fad1425343f96aa1855be371b763c1",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56c68a7ff032a0634046c9071c7364edd8b1db8d6dc39ff870465ae63689e822",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19afb2f810f771e8c18b786cbf43e90e3a419c44c2233c16b8c50b6d3a5bb0b6",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "117bfc2b375d79d5ea6b1c89cc7869e40842d832e0843ffe4e80379118990a38",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cea685b582094b23370a63475e48a8ffba6060762c9ebb801e517085595427f9",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "daf728843eb20efa5b34d6e8631c0fe336b89b887ef936d1bde2115ce6197c11",
+    "mention_text": "Menlo Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c4cb081a21a58a746f4f7c44d52b52f103bc5fb51e83b8a0486efa75ec1457d6",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b45eaeace55db0b76908559c1b808afea7966a4509670ae8aeb68217dd5bd9a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6302a136b9d1161c3668b2f3e155d3c9c4f12d7008b20d6549b60f3da8c87c72",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  }
+]

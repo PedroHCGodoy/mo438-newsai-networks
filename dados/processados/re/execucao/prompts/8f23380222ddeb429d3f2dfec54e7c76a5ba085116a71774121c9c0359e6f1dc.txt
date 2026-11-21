@@ -1,0 +1,451 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1996d1903508cd8d9c047d6e043e588c45f6949f7d5c44b7c95ab6ab522d9b50
+
+TEXTO:
+Start-up usa inteligência artificial para combater desperdício de água
+
+Tecnologia, informação em tempo real, estatística e inteligência artificial (capacidade de tomar decisões de acordo com regras e padrões) podem ser fundamentais no combate ao desperdício e a falta de água em São Paulo.
+A afirmação é do empresário israelense Amir Peleg, 49, que criou em 2008 a start-up (empresa iniciante de tecnologia) TaKaDu.
+A companhia, que recebeu investimentos da multinacional 3M em 2013, oferece software que armazena e analisa informações da rede hídrica. O objetivo é, a partir delas, diminuir as perdas de água devido a vazamentos e rompimentos da tubulação e ajudar gestores da rede a priorizar problemas e tomar decisões estratégicas.
+Com atuação em nove países, a TaKaDu presta serviços no Brasil a duas concessionárias do grupo Aegea, nos Estados de Mato Grosso do Sul e Rio de Janeiro.
+Marco Aurélio Silva, responsável por projetos especiais e tecnologia da Aegea, conta que a concessionária Águas Guariroba, de Campo Grande (MS), reduziu as perdas de 24% em dezembro de 2013 —quando foi assinado contrato com a empresa israelense— para 21%.
+Com isso, a companhia deixou de perder cerca de 2 milhões de metros cúbicos por ano, diz.
+Segundo ele, a implantação do sistema é gradual e deve ter seus resultados ampliados, levando em conta que a empresa segue investindo na instalação de mais sensores e medidores.
+"É uma ferramenta complementar que ajuda a interpretar as informações que estão em nossos softwares", diz.
+Amir Peleg estará em São Paulo nesta terça-feira (27) para participar do seminário Brazil Summit 2015, promovido pela revista britânica "The Economist", que reunirá políticos, acadêmicos e lideranças empresariais. Ele participa de painel em que o presidente da Sabesp, Jerson Kelman, falará sobre os desafios da gestão hídrica.
+Folha - Como é possível usar tecnologia para combater a perda de água?
+Amir Peleg - O que fazemos é aplicar uma análise de dados robusta em diferentes informações que as concessionárias possuem graças aos medidores que usam em suas redes.
+Analisamos dados sobre fluxo, pressão, qualidade da água, nível dos reservatórios e informações sobre a localização dos encanamentos, Combinando esses dados com matemática, estatística e algoritmos, é possível detectar eventos e anomalias na rede.
+Em geral, as concessionárias já tem medidores que lhes permitam obter essas informações?
+Isso varia. Em grupos como Aegea, com o qual trabalhamos no Brasil, existem bons medidores. E mesmo com a Sabesp, com quem tive reuniões de apresentação, há uma boa base de dados.
+Mas, em muitos lugares no Brasil, não há sensores. Acredito que essa mudança tecnológica será uma revolução, pois, se você quer enfrentar a seca e a perda de água, precisa ampliar o nível de visibilidade e conhecimento sobre o que está acontecendo na rede.
+E, depois de medir, precisa analisar bem essas informações. SE você tem muita informação e não sabe o que fazer com isso, está perdendo dinheiro.
+Como a informação ajuda a encontrar um problema?
+Um exemplo simples: em sua rua, a análise das informações de um medidor de fluxo pode identificar o padrão de consumo, com isso você pode saber o padrão de gasto esperado. Na noite, há pouco fluxo, pois as pessoas estão dormindo. Ele aumenta às 6h da manhã e depois diminui.
+Então, se você percebe que o fluxo está além do previsto, pode notar de imediato que há um vazamento em sua rua.
+Além de dizer que problemas você têm, também mostramos quão grande eles são e quais deles você deve priorizar, de acordo com tamanho e localização deles.
+O fato de sempre termos pensado que temos água em abundância no Brasil, apesar dos períodos de crise recentes, e de ela ser barata para consumidor, pode diminuir o interesse por tecnologias que visam eficiência?
+A água não pode ser tão barata, pois assim as pessoas desperdiçam muito. Com o passar do tempo, a tendência é o preço dela aumentar no Brasil, Mesmo que não para todos.
+O que normalmente você vê em outros países é que algumas pessoas recebem água gratuitamente, enquanto outras com mais dinheiro devem pagar por ela. Se você tem uma piscina, a água para enchê-la não deve ser muito barata.
+Em muitos países, estão se criando diferentes faixas de preço.
+Na primeira faixa, de pouco consumo, o preço é baixo. Acima disso, você paga cada vez mais caro.
+Em São Paulo, as perdas de água da Sabesp costumam ficar em torno de 30%. Acredita que tecnologia poderia ajudar a reduzir esse percentual?
+Poderíamos diminuir esse número pela metade. Cairia. E também é possível reduzir os rompimentos da tubulação. Se você detecta vazamentos no início, pode evitar que eles se tornem maiores.
+Os argumentos mais fortes para que se invista em soluções como a sua estão mais ligados a sustentabilidade ou a resultados financeiros?
+Acho que são os dois, eles andam juntos. A concessionária pode economizar muito dinheiro reduzindo perdas.
+Primeiro, ela pode reduzir o gasto com produtos químicos que compram para tratamento. Se reduzirmos as perdas pela metade, isso significa muito dinheiro.
+E reduz-se o gasto com energia. A água é o primeiro consumidor de energia em muitos países, em que seu bombeamento exige muito gasto
+E, se você sabe quais são os seus problemas, pode decidir o que é mais importante e urgente, assim economiza dinheiro com suas equipes técnicas.
+Considera que a gestão da água deve ser pública ou privada?
+Voto no setor privado. Acredito que, desde que você ofereça uma boa regulação, o setor privado pode administrar este setor com eficiência.
+Tiro essa conclusão quando vejo companhias privadas em países como Espanha, Reino Unido e no Brasil, e a comparação com empresas públicas.
+Há caso de companhias públicas muito boas, como na Austrália. Mas o segredo lá é que a regulação é muito dura, o setor público exige que suas empresas sejam eficientes.
+Por que, depois de ter sucesso em empresas digitais, decidiu iniciar uma empresa no setor de água?
+Como em Israel temos muitos problemas relacionados à água, pensei em fazer algo nesse setor depois que vendi minha empresa anterior para a Microsoft, em 2008.
+Naquele momento, Israel estava em uma seca. Não podíamos desperdiçar água, a conta estava muito cara, e alguém me disse que, em geral, as concessionárias perdem 30% dela.
+Comecei então a pesquisar sobre o setor, a entender o que se fazia para tratar os vazamentos. E vi que as práticas ainda eram muito pobres. As concessionárias esperavam até que alguém os ligasse e dissesse que viu água na rua, para então verificarem se havia um vazamento.
+Israel tem um ambiente propício para start-ups. O que faz de Israel um espaço privilegiado para o empreendedorismo?
+Não acho que exista um segredo, mas sim uma combinação de muitos fatores.
+Um deles é que, na mentalidade israelense, sempre se quer mudar alguma coisa, em vez de aceitá-las como elas são.
+E acredito que nos últimos 30 anos, o desenvolvimento de tecnologia para uso militar, de telecomunicações e agora para a internet, criou uma nova profissão. As pessoas agora querem ser empreendedoras.
+-
+Idade 49
+Atuação Fundador da empresa TaKaDu, é empreendedor desde 1991. Em 2008, vendeu para a Microsoft a companhia YaData, de tecnologia para a segmentação de clientes É chairman do fórum de redes de abastecimento hídrico inteligentes (SWAN) desde 2012
+Formação Graduado em física pela Universidade Hebraica de Jerusalém, possui MBA da escola de negócios Enseade
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "3f73b7a212589d6c76db27a7cf6497aba25c46885e10f17e49434a0f925a51cc",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86166da14865a28f7032019c850a583f75720cdac10309cb874bee6d49601cdf",
+    "mention_text": "Amir Peleg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88e27b7576993b892a694bc254f354d47de0be0c9a75c5c29d040ae5d5aff124",
+    "mention_text": "TaKaDu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "716eaa8bfb54de5b96e4b1072d09f873720c39bfae4c7e9f32dffb88a58670aa",
+    "mention_text": "3M",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b615eadf5cf7045332925e17e2eb3212d27d70fdf67fce688d58dbe74a03e982",
+    "mention_text": "TaKaDu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fdbf492d6bad29bc06ffd74ca48eec6b53b27bc47ca51fd9f3c39d6a0ad8779",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31b3df7bf57043299214e37a47f43dcf48f02d079dc50e4d44d572f2c81113d5",
+    "mention_text": "Aegea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fc967802fc19add65ca57adbcaa18b1c5b7e979145b5d354641546d6fb64796",
+    "mention_text": "Mato Grosso do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "99175fffc6f46b47fb0e33882cef4174a5d6a5a3030160618d60e6bc0b59a5f2",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "685135000e2c559d1e2da2719d9ebd973d23a279cd72fe73626bdd091c21c9e0",
+    "mention_text": "Marco Aurélio Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43a34d3346ad800dff7904ec90daeb5db5fc574c951c020754a8bebe9694ebcb",
+    "mention_text": "Aegea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7bea43e696f1c4ec54981e00f27209bba13f297c286124b6bea2caac86e1760",
+    "mention_text": "Águas Guariroba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22293f722639785bff488f37d62a80b5b196b39fdafca4becfc12fa30dd6d182",
+    "mention_text": "Campo Grande",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a446465519624c9c90d965fbb09e782d160af583f1c9c87e69aead7263f1d2e4",
+    "mention_text": "MS",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0458feb4e0d8fe20b7c720c92d394fe498db891694a9523f6e393eb14724c335",
+    "mention_text": "Amir Peleg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4cfa2f7078c826562122b61f7898996e63e38302e43b122014ebd33622004595",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e887f0fa6ae0bf76f3001668824f905d02d40bbda3d390ab44e605cb39a9f2ff",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a0f9291ccce8826c7eba05a604f63d7dbeee94028c6607d807263c6f0380aaa",
+    "mention_text": "Sabesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a215ee552ae5c6b5bfad622209dba4b166807def6683412db84f1a27ee869fa0",
+    "mention_text": "Jerson Kelman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4882890db729e6388137e1e9c51a796874431f681be6bfb972abbca90ec5fb7e",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14e760fed38d61f40433101598bb11cd0e02e1ab7eb44e79590b31fe58f13406",
+    "mention_text": "Amir Peleg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f72e2c54421a7b368ad01f330d50a0c3508bfb6696ed831ac0a40894c9015e8",
+    "mention_text": "Aegea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e53da8510fb7bcada74566a5173e5d6b0679633a1448b811a87e5a48a8c0df9f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "493f7d6f48cffc64cb8e01c3b0deb446eefcfba430171dff4f662da4bc40463b",
+    "mention_text": "Sabesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "592c9c6fa024f825c16081db2f65d66523a955ca7e081b587c063712e4074e53",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "164231f650ad2f5d0c287bc78b0a8babd87e656d6db0cad5f8491ad8313a802d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "339756b6a50b99ee00eba8e86195ffbdf2dbec66f803294afdfb07d4c5252abb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eea2e4a5fac71a2248f61cb02e5f69a8f1fba860db37f60740629b163ff5c37c",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "437107857edbd81b775dec1b7ec83c35a39c4ca2a361eb2a88c9a106a6112b27",
+    "mention_text": "Sabesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b25316dab4592d2d70399a9ec639f0018fad7b2309db0495b225d33fd16ffad4",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b4efe195fd051863ccd1f0bd21f7a6f0dc5213c0020104be485f4b7645e7494f",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74dcc73e00395e5cab652da5b1919e718856f474f8169cb58e5de6dee9c76724",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "696fa4cff94a1c039cb254a545675b4647c34db73d27602daaead2bfde0d1491",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "330880f1d2f12d4b1a9f3db004f6f288a2cd1461f860449c7808cbfe22b52dbb",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e22ab91940c89653c689287a5a7eae3b591138cfc426aae48d2b5c8808a20e16",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9968e5806943eaaf6da3a59457e141f9c05b1ce7736b8fafda9cbe94f69b3208",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed7d6344c6ec1c32046a9bc6f173891819af132a7adaa384781a23edc6fd5bb4",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2de00ce6237486b14f855e83f5e3ab5fef8f63dcc1e2764aaad9678917644fa4",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03c1e5567b3d95637eca1d86e843005bccf1126833ec27946e69ef34c20a0b7a",
+    "mention_text": "TaKaDu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "036f9074f259c0b5925393a744757414e50ba2ae597988584c48fe4b563134ba",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06335ee62a395f4e6a081903ec7a1128a03794a4c50849ca0b49529532d1df2b",
+    "mention_text": "YaData",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0397c933d02e1fd2b650ea5396102fa2505becdd462dbcc3ff3103dc91c1dbe",
+    "mention_text": "SWAN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f780ca1b42665bad4e754a07e723676dc9be7220ea3878b72bbf0416b1efb80",
+    "mention_text": "Universidade Hebraica de Jerusalém",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebebf0db6aee1885c44f71ccdc894df8a44763739ae0e94b9195ed0258850e04",
+    "mention_text": "Enseade",
+    "categoria": "ORGANIZACAO"
+  }
+]

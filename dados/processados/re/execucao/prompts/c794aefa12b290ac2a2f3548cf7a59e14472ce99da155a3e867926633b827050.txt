@@ -1,0 +1,402 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 5de546b1071a226849b2a3794244fca7ca299b0e84389cabb07491eba1e7c2e7
+
+TEXTO:
+Doria usa cinco softwares de inteligência artificial para aumentar seu alcance nas redes
+
+Enquanto a disputa interna no PSDB para concorrer à Presidência em 2018 se acirra , o prefeito de São Paulo, João Doria, usa as redes sociais para pavimentar seu caminho.
+O crescimento vertiginoso de sua influência digital em menos de um ano de mandato é resultado de uma estratégia que começou a ser testada ainda nas prévias do partido, se profissionalizou e hoje combina cinco softwares de inteligência e uma equipe de análise que monitora de perto o impacto nas redes sociais de tudo o que ele, que nega ser pré-candidato, fala.
+"Nossa função é alinhar o discurso do João para ele ser bem entendido. Ele não vai mudar o que pensa, as propostas, mas vai falar da melhor forma", diz Daniel Braga, que acompanha Doria desde agosto de 2015.
+Em janeiro deste ano, quando o núcleo de redes sociais de sua Promove Comunicação ganhou corpo, Braga criou com outros dois sócios a Social QI, empresa independente que, apesar da pouca idade, já chegou a cuidar do marketing digital do governo Temer —parceria encerrada em julho.
+A assessoria de imprensa da Prefeitura de São Paulo confirma que Doria é cliente da empresa, mas esclarece que seu vínculo é como pessoa física, e não como prefeito.
+A Social QI trabalha com uma integradora que reúne "entre quatro e cinco" softwares de inteligência artificial, como NetBase e War Room. Este último é um serviço em português, criado pela startup Stilingue, que há quatro anos desenvolve a ferramenta por meio do que a ciência da computação chama de "processamento de linguagem natural".
+VARRER AS REDES
+O time de 35 desenvolvedores da Stilingue, baseado em Ouro Preto (MG), alimenta o computador com textos em português para ensiná-lo a entender e interpretar a língua, identificando padrões comuns.
+A tecnologia permite o escrutínio das redes sociais —Facebook, Twitter, Instagram—, de influenciadores e de tudo o que é publicado na imprensa. Um volume exponencial de informações que dificilmente seria administrável sem a ajuda dos robôs, conta o presidente da empresa, Rodrigo Helcer.
+Para a política, as aplicações incluem, por exemplo, a gestão de imagem —além de capturar tudo o que é escrito sobre qualquer assunto, o software também faz reconhecimento facial para identificar memes— e a psicometria.
+Termo que ficou mais conhecido depois da campanha de Donald Trump à Casa Branca, a piscometria faz uma espécie de análise de personalidade dos eleitores, útil na identificação de perfis que vão muito além de direita e esquerda e, por consequência, na formulação do discurso político.
+A estratégia de comunicação do republicano se baseou na chamada "análise de sentimento" das redes sociais, que deu aos marqueteiros informações que até então não haviam sido usadas em disputas eleitorais, como os medos e anseios dos americanos.
+DE OLHO
+"Tudo o que o João fala é monitorado", diz Braga. A ideia é avaliar como o discurso do prefeito é recebido para "reduzir os impactos negativos e potencializar os positivos".
+"Se ele fala sobre desestatização, nós checamos o que as pessoas falam sobre isso para vermos qual a melhor forma de elas absorverem (o discurso no futuro)". Esse é um trabalho que envolve sensibilidade política, capacidade de interpretação e planejamento estratégico, afirma ele, que conversou com a reportagem na noite desta segunda, por volta de 21h, após acompanhar agenda do prefeito paulistano em Belo Horizonte.
+Depois de uma temporada em Brasília, Braga voltou a cuidar pessoalmente da conta de Doria recentemente, a pedido dele. O publicitário nega que a mudança tenha relação com a disputa eleitoral de 2018 e com o fato de que o prefeito é cotado como pré-candidato à Presidência.
+"Tem a ver com a ferocidade da oposição nas redes sociais", explica. "A gente tem que entregar o 'João Trabalhador' que prometeu", acrescenta, referindo-se ao slogan da campanha de Doria.
+Segundo ele, entre os 114 milhões de usuários únicos do Facebook no Brasil, 23,5% já interagiram com a página do prefeito, o maior percentual de uma lista de sete possíveis presidenciáveis. O segundo lugar é de Jair Bolsonaro (PSC-RJ), com 7,1%.
+Ainda sobre as eleições do próximo ano, Braga ressalta que não presta serviços exclusivamente para o PSDB - ele já trabalhou para PT e PMDB -, afirma que a empresa tem sido "assediada por muita gente" e que está avaliando o mercado para 2018.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "366acb9fdd157cfed8834a1c8133f5ed1b5c6a606ef0d68816170c8e39a50876",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a3d4fc51853955e2f65a231556c925ee9627c217cd70d513ae123150e61bdbb",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8980dc5bbc5a63a82f58324593b0c42494a64b70bf69bb6efc6e6a7b033aa9d1",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9820efc61f772e177a9508e00e68105a641399aa5a00532bbc9ecd92d071dd34",
+    "mention_text": "João Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b6593503cfcffecce294d323b45390c045ed722859ac7caf3180988c69bb31c",
+    "mention_text": "João",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21dbffd14676ea82167468c80a7d5f190100c3eb2d038cc82460d6449684a48a",
+    "mention_text": "Daniel Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3066381c5e5e433a7c4e5d6e172ab696e4e0db13f31872b5adc9341554fbbb2",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36593d12a6d75d61c5be72be432425fcb51475723ca1cce8e235a85cbdc00abb",
+    "mention_text": "Promove Comunicação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee9b601ab04539776e3ca42e88287e0cbc5140d786b1753324296249c4eea42a",
+    "mention_text": "Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31d8ffc0441a0481fc3cf46fdc57e701544e65d9281f8844a4bbbc93979158cf",
+    "mention_text": "Social QI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6935a3b22135e6bdf3d77b3590ac2644de8ffdd16831571900181b0583ae603d",
+    "mention_text": "governo Temer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "476abe1c26890aec175bc6b7bcd4fc1897a310b42082168008f7a7edb52ac3ec",
+    "mention_text": "Prefeitura de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "83975a96f97378f3774a59a3c401b874df10e944bf70a4793970c0cc77901777",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20f634cc768c1055f8d4bc70efa04fe1bd27e471283d7f81fb5fc4a4c6aac999",
+    "mention_text": "Social QI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1eb661d87c97778c14417fac415dc817fe9845518461ce65cce5923d09162470",
+    "mention_text": "NetBase",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1fcd1267bce2dbc6286e8a1c8a93e5489fb1cb52e22958b3d6a1097d23ab4911",
+    "mention_text": "Stilingue",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "093ea37d2b0b161abf64b0b685531210156b7416bf32afbfb25714a58f03677d",
+    "mention_text": "Stilingue",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "147f4b142a70b0df7cdfc0a37f172ecd0602e3bc59d5dcb5a9d7ebd17c8b2d77",
+    "mention_text": "Ouro Preto (MG)",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54e759b7d52e8562e67cb1138387dd23b939bba1ee118fecf2f390cae4735bd7",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ff098f0a4d61cea16c9d8c659973dc1855ebc014a09e366a08ec4c7b1a2f432",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98855e5700b7429d2b096ff32cde00c837b91c1208b6d1751a31ba10abf30c8f",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d7f1447bdb6a18e161ab84e4c341b105dc98f879d85e77a8deaf1a0548f5c3a",
+    "mention_text": "Rodrigo Helcer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6434eda6bec2522d093dcd3d9602ab85f59b60770617e8caba12d314e3f382d3",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bbd1dfe663ef8fa92a1c86bb8e048e3ce283789f63f717e47313abcbfc79eb0",
+    "mention_text": "Casa Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0f9d4943333abb7789668d3eb7a096956ac95850682219b157983dc51b6bcc7",
+    "mention_text": "americanos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16924b700aa40d0aab2c7aba8b1b7c1d4e133711123696baa5a20eb600a2898f",
+    "mention_text": "João",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ce236b381a0e90835c2cd012412635853303cee7460e43b386459718c2b3c13",
+    "mention_text": "Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c47eaeae00d912347953865a91f4a8ad8d7495c931c70f5d7c0612b1e0881b9",
+    "mention_text": "Belo Horizonte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fade26215abb15820fe2f4c8c76799b436601b6b2f19c0445fc778b08d3e199f",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63d7258464f03d1e721c649a50b7ed9aecc4d583ab471fc33452dbaef842a10a",
+    "mention_text": "Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c68a5b95def34b6b2ab136426deea4f5ee874e6c88fe6ff5e8557f9144e90b36",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8fe67e7941c3ed49775f6839fb19aaf7de078cabcc10cacd1b6aba2a6b04eb0f",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b712368fef42995d342ced701dd5e4139856fd5dbe17b60293c4ae65323f90c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ed6dfbce7206dd82f866f632495657f6e26f5a62dea4605b2ef131b2fbe7959",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a590c6b208ece07642a4c4e11bac1226db9faf41d663590e9bdb76eb69d63d2",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f06c5180b9ccf5c19960918fc798637d7e7d8d2ef430594af9a07bc4e0e551e0",
+    "mention_text": "PSC-RJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89970f3970074a12d39af219b78008906550a2851a1a1cb42ca14557675e4b50",
+    "mention_text": "Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d263b205ea95b5eecab921055064fb4743405cb4c7f843379ad090b8a0a771e5",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "03dddab3b5fe524445c290522ed63ad0763524e09ef51df04d6e78f16dabc728",
+    "mention_text": "PT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e199ffdac0128a9dd7905be42ae9175efc2d27a6db42689ff2a3b1960aa4e614",
+    "mention_text": "PMDB",
+    "categoria": "ORGANIZACAO"
+  }
+]

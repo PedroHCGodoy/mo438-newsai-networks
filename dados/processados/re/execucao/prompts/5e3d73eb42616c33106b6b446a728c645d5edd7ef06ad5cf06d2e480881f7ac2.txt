@@ -1,0 +1,355 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e309be0a30759f7a672e9d42440d989f1cdbe78273cd8b939247f1ce3e6b295b
+
+TEXTO:
+Na busca por inovação, empresas criam programas para acolher startups
+
+As grandes empresas estão à caça de startups. Com dificuldades para inovarem internamente, as companhias têm criado programas para conseguir atrair os empreendedores e suas ideias.
+Em geral, as iniciativas têm um modelo aberto. As grandes oferecem monitoria, disponibilizam a estrutura e também a rede de contatos, além de emprestar sua influência para a pequena. Algumas oferecem aporte financeiro, mas são exceção.
+Nos últimos 12 meses empresas como Google, Santander, Basf e Monsanto criaram programas semelhantes no Brasil. A Folha apurou que a Ford planeja lançar o seu em breve no país.
+"Essa área vem ganhando força, a estimativa é que o número de programas triplique em 36 meses" diz Dante Lopes, da consultoria Empreendi na Rede.
+As inscrições costumam começar no início de cada semestre. O processo de seleção é similar a um vestibular, com um número de empresas sendo cortado em cada fase —que incluem análise de currículo dos profissionais e uma banca de seleção.
+"Sabemos que há muitos empreendedores por aí com os quais teríamos interesse de trabalhar, mas que não conseguem nem sequer acesso na portaria da nossa sede", afirma o vice-presidente executivo de finanças do Santander, Angel Santodomingo.
+O banco abriu no fim do ano passado seu programa, o Radar, que atualmente está na última fase de seleção. As cinco startups selecionadas receberão monitoria durante seis meses. Uma nova edição deve ocorrer no segundo semestre.
+Para Ricardo Guerra, diretor-executivo de tecnologia do Itaú Unibanco, esses programas são uma evolução natural. "Antes nós mandávamos três executivos para o Vale do Silício, nos EUA. Eles aprendiam muita coisa, mas a mudança no banco era pequena", diz ele. "Com nosso programa, tentamos fazer um Vale aqui em São Paulo, que seja capaz de mudar a cultura da empresa toda."
+O banco criou em 2015 o Cubo, um espaço na capital paulista que atualmente conta com 54 startups. As empresas não têm ligação com o Itaú e podem ser de qualquer setor. "O que queremos principalmente é observar o que está sendo feito", diz Guerra.
+Uma das empresas residentes é a Fhinck, que usa inteligência artificial para tentar melhorar a produtividade de seus parceiros.
+"A presença nos ajudou muito a atrair clientes. Tem empresas grandes que nunca olhariam para nós se não tivéssemos um selo de aprovação do Cubo", afirma o sócio, Cláudio Ferreira, 42.
+Nem tudo, porém, é perfeito. Para Igor Piquet, da Endeavor, o empreendedor precisa estar atento às condições propostas no programa, principalmente em como a empresa se encaixa nele.
+"Se a startup estiver em um estágio mais desenvolvido do que o que o programa busca, vai ser um desperdício de tempo", afirma ele.
+DIVERSIDADE O Google inaugurou no segundo semestre do ano passado o seu campus em São Paulo, um centro voltado para startups e empreendedores. A primeira turma de empresas residentes terminou em fevereiro e contou com iniciativas de diferentes setores.
+Segundo André Barrence, diretor do campus, essa diversidade é benéfica. "Mesmo atuando em setores diferentes, as empresas enfrentam problemas semelhantes e muitas vezes conseguem trabalhar em conjunto para resolvê-los", afirma ele.
+Uma dessas empresas foi a Aluga Logo, plataforma on-line que permite o aluguel de equipamento e material de construção.
+"Durante nossa presença lá, tivemos contato com pessoas de diferentes áreas. Isso nos fez enxergar carências e necessidades que não imaginávamos", afirma o sócio Caio Almeida, 29.
+PASSE NA SELEÇÃO Como entrar nos principais programas -as inscrições costumam começar no início de cada semestre
+Currículo conta Vida acadêmica e a experiência no mercado de trabalho são um dos pontos que as empresas mais levam em conta na hora de escolher uma startup
+Mostre conhecimento Uma startup foca em um assunto pequeno, então é importante o empreendedor demonstrar que conhece tudo sobre aquela área
+Esteja pronto Não adianta ter apenas uma ideia. Os programas privilegiam empresas que já testaram o produto ou o serviço e que já tem alguma receita ou perspectiva de tê-la
+Sem dinheiro A maior parte dos produtos não investe diretamente na empresa. Se o empreendedor precisa de investimento, é melhor procurar outra opção, como fundos.
+GLOSSÁRIO Corporate venture O conceito define o investimento de grandes companhias em pequenas empresas, como as startups
+Inovação aberta Uma organização mostra seus problemas para empresas de fora, que trabalham para criar soluções
+Mentoria Especialistas, em geral empreendedores que já passaram pelo problema, dão conselhos e dicas para as startups iniciantes
+R$ 500 milhões estimativa de quanto o corporate venture movimenta no Brasil
+US$ 5 bilhões movimento do setor nos Estados Unidos
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d9e8f77e2248e8431592c560d5130448d48b0418b6f9ee890d82edfe87669f68",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19a5a8efcac866cf41c901bcae78b60fcf06537ee3d99c07e48bc2b9edb20694",
+    "mention_text": "Santander",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe7045ddec82b0e8fa1fda089133531f23b9f944cf0e61fcbce37860710a6417",
+    "mention_text": "Basf",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52b808ef30e27dd455b6cea8ab90fa4e2bf336cccace5ac06ca9ae08a27f4c5d",
+    "mention_text": "Monsanto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "240e7aeb5370a1f82b96f0ddeac9cb1f3bae5fa7609f74e53d64faf28b5f7e64",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c0b723760b4cb8af9527a4c1a4a7d3ea857c5739068b422fb1fb0b8bcf675c1",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "018fd5af4ccb52eba79d1b65fb80e040b9348ff6925a0bf726e757a839152e87",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c919af5385379cf8a11771f4d4301b725aac909d37fffb934bdc2ceb18a5e55e",
+    "mention_text": "Dante Lopes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c3d7cb97b87818a89ebe78a1f7305dd4a5eee8cc7cc318188899f9c103691e0",
+    "mention_text": "Empreendi na Rede",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce75ff19dd51d7ee959e5176c09c79ade9195fb0711ceef26db5ef9d2e2d4b29",
+    "mention_text": "Santander",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c589cccca4d1d0b0ecadf9c97485c97f460b43b45921daaefe271b4be12ecc2",
+    "mention_text": "Angel Santodomingo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "03901fd05bd7dd724218d8a28b32197d8c614096316e79791c78443f61cb7981",
+    "mention_text": "Ricardo Guerra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69c47e5aef9770ba66dee7063177be46f231a320e08bd16de7fc2de5456fe170",
+    "mention_text": "Itaú Unibanco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8724db35562bc1ba765fb75ca1264259658013bdf30fd2d5fcd3a7c32fa408b8",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d99cb740f4a49b595a06055150295847872704c1b471f6d20f7f0736b21edd5",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb48e69bbf45d5e8e980a14638e1b9d7498b9390d1415ba5d0ee6a9be50c6ba5",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a69520137b06853af832c0b16059bfe6c5c2b990096526a5625661a4b7561f59",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3680cd555fa05b3a92d3073698d57b10da36c95f83c0b5f28562f8100401cd6",
+    "mention_text": "Guerra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b28744648934c2ae415d2f776f39ce4364d3d1e13e613a83b839757029c574d",
+    "mention_text": "Fhinck",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ef128912bf89a1bf948e01a69d02fff30aa2eaa94a74442468b14c1612147ea",
+    "mention_text": "Cláudio Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0cbe495c6aecf6a6b53db8a6507c358f1ed85a46b96a34ccfbac61109ca5bee6",
+    "mention_text": "Igor Piquet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb7e31911b85d7b9bb7c4cd33708be9ceb8c9b5916f1e9aa6c97e082151f9ea6",
+    "mention_text": "Endeavor",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c688bc256b6290f114e7d3a7f10da1483c023776a12bf0afaecd803b33407d64",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "297d32eb58a0d0f6b54ee8db972649b274a8bd74d97be97fb32e395140ab4c93",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b9e00994dc0eb8245143d1c169682b4367d63f9d414b0d898fb408500cfcca9",
+    "mention_text": "André Barrence",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea29b55ded2f3133593a7d4102352c1bdf3138b98fec940ecab32d2ef7f41536",
+    "mention_text": "Aluga Logo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3aae079e6f99e16ec325552b5ea26c44b34ad8f2b992aa8319b3309de166996",
+    "mention_text": "Caio Almeida",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e75ab2c9310df2fad71d008b5a0816e36ef627588b4db458f77f8696f0c72b6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "67434af12f87ea70aea01813f840fa64ac3b47d4644e465ccbe7f425ef7657f6",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  }
+]

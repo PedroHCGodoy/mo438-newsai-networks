@@ -1,0 +1,344 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0b8cb5432854b534f69f16a5cc2d8d1c46f17a65f446c64751f3282c20f5a23d
+
+TEXTO:
+Radicalização pelas redes é desafio para gigantes tec
+
+O combate ao terrorismo nunca dependeu tanto da vigilância atenta das redes sociais e das “fake news” que circulam por elas, mas táticas usadas até agora têm o impacto de um elefante numa loja de cristais –chamam demais a atenção e causam mais problemas do que resolvem.
+Em Austin, a capital do Texas que foi alvo de ataques com bombas nas últimas semanas, um especialista em tecnologia que já trabalhou para o governo americano em ações antiterrorismo fez essa comparação numa conversa sobre como o “big tech” deve dialogar mais com a polícia e com serviços de inteligência.
+Mike Hermus, falando no South by Southwest, o megafestival de cinema, música e tecnologia que agita essa cidade a cada mês de março, reclamou que o diálogo até agora tem sido uma espécie de telefone sem fio e que a situação só melhorou depois do escândalo da interferência russa na política do país.
+O episódio, na opinião dele, fez o governo fechar o cerco contra o Vale do Silício, cobrando atitudes mais firmes para evitar a proliferação de mentiras e o perigo maior ainda de que terroristas entrem nessas plataformas para radicalizar novos extremistas.
+“Nossas fronteiras são mais seguras do que pensam, então o problema não é que terroristas venham para cá”, afirmou Hermus. “Tem a ver com aqueles que se radicalizam porque consomem a propaganda de facções terroristas em território americano. O desafio é ficar sempre atento a essa autorradicalização.” Os últimos atentados em Nova York, por exemplo, têm esse dado em comum. Tanto Sayfullo Saipov, que atropelou e matou oito pessoas numa ciclovia de Manhattan, quanto Akayed Ullah, que detonou uma bomba no metrô, aderiram ao terrorismo já vivendo nos Estados Unidos.
+É um processo de conversão facilitado e acelerado pelas redes sociais, usadas para circular a propaganda de grupos como Estado Islâmico e outras redes extremistas.
+Brian Fishman, o chefe da área antiterrorismo do Facebook, reconheceu que a rede social agora no centro do escândalo do vazamento de dados de seus usuários virou um canal para a radicalização no país e disse que por isso o monitoramento antes feito só com algoritmos agora envolve a análise de pessoas que vigiam contas suspeitas.
+“Nenhum terrorista pode usar nossa plataforma. Mesmo que ele esteja no Facebook postando fotos de gatinhos e cachorros, ele não pode estar lá”, disse Fishman. “Temos mais de 180 pessoas na empresa hoje trabalhando para ver quem está usando a rede para fins terroristas e então apagamos as contas.” Mas o problema, ele diz, é que cada vez que uma conta é removida outra surge no lugar, sobrecarregando o time.
+Essa vigilância exacerbada ainda gera outro problema num país com tamanha proteção à liberdade de expressão.
+Os analistas do Facebook, por exemplo, precisam determinar cada vez mais se o discurso é mesmo propaganda terrorista ou se é opinião sobre o noticiário.
+Megan Reiss, especialista do think tank R Street Institute, em Washington, também lembrou esse ponto, dizendo que outros países que já lidaram com tentativas de eliminar discursos extremistas das redes sociais foram mais radicais e censuraram sites inteiros, algo que não acontece nos Estados Unidos. “Podemos aprender com países que já passaram por essa situação, mas a diferença é que nunca vamos impor as mesmas restrições à internet”, disse Reiss. “Ainda não há um equilíbrio entre o que as empresas querem entregar e o que o governo quer ver.”
+Enquanto empresas como  Facebook, Google e Twitter engrossam seus times de análise de conteúdo suspeito, a indústria também se esforça para desenvolver áreas de inteligência artificial em suas plataformas para combater discursos de ódio e “fake news” de modo  mais eficaz.
+Num momento em que o “big tech” está sendo cada vez mais cobrado por agir como empresas de comunicação, assumindo responsabilidade pelo que publicam em suas plataformas, o primeiro passo dessas estratégias de inteligência artificial é tentar erradicar as notícias falsas.
+“Tentamos criar algoritmos para identificar as ‘fake news’, mas o problema é que existe sarcasmo, ironia e opinião”, diz Armineh Nourbaksh, uma pesquisadora da Thomson Reuters. “Então é cada vez mais difícil para uma máquina entender o que é verdade e o que é mentira.”
+Nourbaksh contou como desenvolveu uma ferramenta capaz de checar dados de mensagens no Twitter em tempo real para determinar se algo que está sendo alvo de muitos comentários na rede é mesmo uma notícia, mas diz que o mecanismo ainda esbarra na inabilidade de máquinas interpretarem textos. Outro desafio é enquadrar essa análise do discurso na lei americana. O problema para Amie Stepanovich, do grupo de cibersegurança Access Now, é que mentir não é considerado um crime.
+“Não existe uma lei capaz de definir o que é ‘fake news’, isso sempre vai esbarrar na liberdade de expressão”, ela diz. “Quando nos perguntamos se a inteligência artificial pode identificar ‘fake news’, a resposta é não. A questão que enfrentamos agora é se mentir é contra a lei ou não.”
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "096b61303f42006f4773698fe93de7501362e2832c81334cc7dde441ad4381d0",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5378624218491f224fa69b8b0a5e302a2d13d44c7a9b5bf08704edf3f61958e0",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f55fd8936fec70235b8e4b3eb512413a8a59bcf6ecc5f5bc7ecf52808891e5d2",
+    "mention_text": "governo americano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b3d53ae374d262f26d24c541c454fb118b8f9d7e4276b5a3a0c321088f99268",
+    "mention_text": "Mike Hermus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd0bfc7ffe1e66eaa759cb5137354d787b7ea2ac8273e6a3b2162aaadcef9be7",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "59b9d18f5791f19c0cfc73113a8a1d3f9e47a4e51e02005fcf3245f06560a8ea",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12cdbc22caf8b2aee7cd23fe48c9cb0cc763499e0f5c07319512857f7e653fef",
+    "mention_text": "Sayfullo Saipov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bdc5a2b4b47e3f9c5d78a28230e9cd6b81475bcbcf317974ae5417f397aba15",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "122444a4a9d2cb00e044aa15c5214fc74fc91c9e18eeeb7267917a99cf56efc0",
+    "mention_text": "Akayed Ullah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0853ecb8c1d10688df9d006d19381da67dbf725e3da5fdd0998cba91e892732",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c131f09ad90cd67704e23fb19c800dfcae7a2e55e903009949a7d347ea4bb0c",
+    "mention_text": "Estado Islâmico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f8c7526df072b7f040235e5ad53da47914cf0b4df54660f8c586f422150134c",
+    "mention_text": "Brian Fishman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a7cf5577705a44a78693354ca75632d10e9bf495631944828fdb2b91ba4040f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b568e508e84d420b60a9c0bb9c23f925b6a8afcdf1fedf7d6a80eb6682339b8",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "419c1063afe8a188b06ba628dfad28ec2568637e7d1ce5737ecea015c486a348",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1094054073906e0bd4f8cef0346918a437b622c7698a30199d1693bfb69f7dc3",
+    "mention_text": "Megan Reiss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79f333640f771317329e6462ed2893a1079efedaf855bacea122145db895ed47",
+    "mention_text": "R Street Institute",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f47902e47f441c21cb6f24e8d5c2ff3f14a0bc00cb6f9b10a5cb84ff9caf4425",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3c99e39df104e59e42804d50b3afaf13816087c1e801d5672caf81136eea421b",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "953c69b6712e359bfdaa77dbc4a3c34d9c569d6f19dd4b1e634b6966f3c5b9b3",
+    "mention_text": "Reiss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5bff47462aba110d0cc3802e0382519affb2654f7f788581b1212708e2a08da4",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c42fab18609b1db9098d46d3b393a2608daea22e82fb09d4c5df90401b14eb3",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "336f15cdc5ddca9b4aecee865b300326bf9e9b46bec443b08066a6a1de30bb23",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d243b2fe19d94ee0c7e379e7815b1afbe30178da824f56cd62a485f15f05116",
+    "mention_text": "Armineh Nourbaksh",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4cab8936b62b5412642e83b777db057a7392ae82a7cd9eb9bf8c2bf7da6313a",
+    "mention_text": "Thomson Reuters",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e9ea684d98b9b88988971bfe1004b89e59481c0771e503f9bf1fe585a87c737f",
+    "mention_text": "Nourbaksh",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5939cd7cc9f5f148a117ec344d03b2f4f70cc4f782cde83358be3dabb392a337",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98a8d70a2bd230a9c3d21f63a1b44bade9a990da78755a4b7dc4fb1b71f230e5",
+    "mention_text": "Amie Stepanovich",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a605016aa7307ce7c206aecf2e060cfba8f9540d6059b09f7a445b4347f5def",
+    "mention_text": "Access Now",
+    "categoria": "ORGANIZACAO"
+  }
+]

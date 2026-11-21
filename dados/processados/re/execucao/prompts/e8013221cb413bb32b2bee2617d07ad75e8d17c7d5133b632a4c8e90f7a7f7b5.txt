@@ -1,0 +1,585 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8a2d2e9ccc36acec096f807e1b7aea4f921b9c3778d3af8fb8f1a0e055b1286d
+
+TEXTO:
++ sociedade: A subcultura da ciência
+
++ sociedade
+Professor no Laboratório de Mídia do Instituto de Tecnologia de Massachusetts, Chris Csikszentmihályi, que fala em SP nesta semana, defende o ativismo político e critica a influência dos militares em pesquisas nos EUA
+A SUBCULTURA DA CIÊNCIA
+NELSON DE SÁ
+COLUNISTA DA FOLHA
+Professor-assistente no Instituto de Tecnologia de Massachusetts (MIT), Chris Csikszentmihályi, 36, é também artista e já fez até turnê por clubes com 
+"DJ I, Robô", uma das suas criações 
+no Media Lab -o laboratório de 
+mídia da instituição. São muitos os 
+aparelhos que desenvolveu, sempre 
+alternativos aos da pesquisa corrente, voltados ao mercado ou aos armamentos.
+O ativismo político está em quase 
+tudo o que faz, do mini-helicóptero 
+para desativar câmeras de vigilância 
+("Throwing Light") a um robô jornalista para campos de guerra ("Afghan Reporter"). Csikszentmihályi, 
+que estará nesta semana em São 
+Paulo para um evento de mídia, falou por telefone à
+Folha
+na quinta-feira passada. Leia 
+trechos a seguir.
+Folha - O sr. é professor de arte e 
+ciência no MIT e trabalha na intersecção arte/ciência há uma década. Qual 
+é a sua visão da oposição que se costuma fazer entre as duas áreas?
+Chris Csikszentmihályi -
+Eu não diria que tenho trabalhado entre arte e 
+ciência, mas entre arte e tecnologia. 
+Tem uma diferença essencial aí. Em 
+toda parte, mas sobretudo nos EUA, 
+houve grandes mudanças há uns dez 
+anos, sobre quem financia a ciência e 
+como ela funciona.
+Nos últimos quatro anos, desde 
+2001, houve outra grande mudança. 
+Eu prefiro dizer que não estou envolvido com ciência, porque quase 
+ninguém sabe mais o que é [ri]. Temos muitas idéias sobre o que é, do 
+início do século 20, mas a ciência 
+mudou tanto...
+Então, trabalho com tecnologia e 
+arte. E o que tenho a dizer sobre isso 
+é que a tecnologia é uma maneira de 
+pegar o conhecimento humano, as 
+agendas sociais, políticas, o poder e 
+incorporá-los ao mundo real.
+Nos últimos cem anos ou coisa assim, a tecnologia foi se tornando cada vez mais um domínio de engenheiros, de empresas, de pesquisa 
+estatal, e eu estou tentando expressar o que artistas fariam se tivessem 
+acesso ao processo -de pegar valores e agendas para incorporá-los a 
+um poder material.
+Folha - O sr. trabalha no Media Lab, 
+que é financiado também pelo Departamento de Defesa dos EUA. Como lida com isso?
+Csikszentmihályi -
+É complicado 
+em vários níveis. Em primeiro lugar, 
+parte do nosso financiamento vem 
+do Departamento de Defesa, mas é 
+um aporte muito pequeno, se comparado a outras instituições. Na verdade, mais de 80% vêm do mundo 
+corporativo. Comparado a escolas 
+regulares de engenharia, como a 
+Carnegie Mellon ou a Universidade 
+da Califórnia, recebemos pouco. Dito isso, ainda há dinheiro do Departamento de Defesa. E o MIT, do qual 
+o Media Lab é parte, recebe muito 
+dinheiro do Pentágono e de outras 
+organizações que são extensões do 
+poder norte-americano hoje.
+A pergunta é: como eu mantenho 
+a minha visão de pesquisa, em confronto direto com o Departamento 
+de Defesa dos EUA? E a resposta é: 
+eu não durmo muito [ri]. É uma situação muito tênue. Tenho um 
+apoio incrível dos meus colegas e de 
+muita gente no campus. Mas é sempre uma questão de quanto tempo 
+eu ainda poderei fazer esse trabalho.
+Folha - Alguns dos seus aparelhos 
+confrontam diretamente a guerra e 
+outras ações políticas de seu governo. 
+Você poderia contar um pouco sobre 
+produtos como o "ISEE" e o projetor 
+"Throwing Light"?
+Csikszentmihályi -
+São intervenções na pesquisa regular de tecnologia que se faz nos EUA. É muito comum para um engenheiro ser treinado com seus professores dizendo 
+que política e ciência não se misturam. É irônico, porque na verdade o 
+MIT ou uma escola normal de engenharia recebem a maior parte de seu 
+dinheiro das agências, inclusive do 
+Departamento de Defesa.
+Toda a pesquisa feita no campus é 
+inerentemente política. E há essa cegueira que os tecnólogos americanos e de todo o mundo trazem para 
+o seu trabalho. Eles pensam que estão fazendo um trabalho neutro, social ou politicamente, mas que no 
+fundo é dirigido pelas agendas do 
+poder estatal.
+Então, o que estamos tentando fazer, no nosso grupo de pesquisa, é 
+um exercício muito simples de 
+olhar, por exemplo, para a inteligência artificial. Poucos sabem que 90% 
+do financiamento da pesquisa de IA, 
+desde sempre, vem dos militares.
+No fundo, é ciência militar, tanto 
+quanto a balística ou coisas assim. É 
+um problema. E se a inteligência artificial não é inteligência militar? E se 
+ela tem a ver com poesia ou o amor? 
+Você nunca irá descobrir isso na 
+pesquisa americana, porque todos 
+os pesquisadores de IA são financiados pelos militares.
+Folha - E como é a sua intervenção?
+Csikszentmihályi -
+O que nós fazemos é simplesmente observar a pesquisa e inverter o modelo. Dizemos: 
+"Ok, como desenvolver um projeto 
+de robótica em que a pesquisa experimental inverta a relação de poder, 
+para quem não é financiado?".
+Um caso típico é o dos jornalistas, 
+espécie de cães de guarda contra 
+guerras ruins ou, como no Vietnã, 
+soldados agindo de uma forma que 
+os americanos não queriam. E ninguém investe em robótica para jornalistas [ri]. Então eu construí um 
+robô para a guerra no Afeganistão, 
+para verificar o que estava acontecendo lá.
+Folha - O sr. criou um aparelho, "DJ 
+I, Robô", que teve impacto no movimento de música eletrônica, na cultura comercial. Como você vê esse lado 
+do seu trabalho?
+Csikszentmihályi -
+Bem, eu diria 
+que foi bem pequeno o impacto na 
+cultura comercial [ri]. O projeto era 
+uma crítica à cultura comercial na 
+indústria eletrônica. Naquele momento, ficou claro que o DJ era como o guitarrista nos anos 70: estava 
+se tornando muito mais popular do 
+que outros músicos ou instrumentistas. E muitas, muitas empresas decidiram entrar no mercado, pensando: "Por que não criamos hardware 
+de música para DJs?".
+Mas elas queriam produtos digitais, em vez da velha plataforma analógica. Começaram a dizer que no 
+século 21 você não precisaria mais de 
+disco, que poderia fazer o mesmo 
+com arquivos MP3.
+Isso soou muito estúpido para 
+mim, porque é o mesmo que dizer os 
+concertos de violino são ótimos e a 
+única coisa errada é o violino. Então 
+eu decidi cometer um erro ainda 
+pior do que o das empresas e disse "o 
+problema não é o vinil, são os DJs, 
+porque eles dormem tarde, são viciados em cocaína [ri], espalham 
+doenças sexualmente transmissíveis". Se você tivesse um DJ robô, tudo seria mais limpo e eficiente [ri].
+É claro, era uma espécie de piada, 
+eu queria essencialmente reproduzir 
+o tipo de afirmação que fizeram os 
+pesquisadores do Deep Blue, o sistema de xadrez. E testar se os DJs seriam afetados por um sistema de robótica que poderia realizar um 
+"scratch" muito mais rapidamente 
+do que eles, em shows que poderiam 
+durar seis meses ininterruptamente.
+O impacto não foi tanto assim no 
+mercado, mas eu realmente consegui que muitos DJs refletissem sobre 
+a sua arte.
+Folha - O sr. estará no Brasil ao mesmo tempo que George W. Bush...
+Csikszentmihályi -
+Ele está sempre 
+tentando roubar o meu show [ri].
+Folha - Há muitos protestos programados contra a visita de Bush. Que 
+aparelho o sr. usaria durante uma manifestação aqui?
+Csikszentmihályi -
+Bem, o problema é que desenvolvemos algumas 
+tecnologias para protestos, mas 
+aqueles em que o governo é hostil à 
+causa. E me parece que [o presidente] Lula e o governo brasileiro não 
+são tão contrários aos manifestantes. Não penso que sejam eles que 
+precisem de ajuda. O que eu realmente acho é que a tecnologia fundamental no caso é simplesmente a 
+lei internacional. Tem jeito de vocês 
+prenderem Bush?
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8a7721b25e3ae6fae36b0ab13875af118611379333b8fef0e588acdc880b955c",
+    "mention_text": "Laboratório de Mídia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3bb7367c47e680cc8262dfcdde6bf6fdccfb411635f0e1d676306dd0341aabf1",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8392c1d3f8b8e89b720fb5868143293a4f4cd8b97d7c3af06c6b9d20d1cbf54",
+    "mention_text": "Chris Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd32e1149858c2d4d0d06d4ec9c39fe2b2bde5c57c3ce865dfcc9dc7cabf13a0",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0602320d7f96dd0e929a7856f6f256ed31e8d3364a016b2637155d3c9fa7e9a0",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "977d9130d2e8568fffd72afaefe3e5d52fd2d9a6122ba8c23874d9de0cf81ca7",
+    "mention_text": "NELSON DE SÁ",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2da3af959475a95797f3c5caff17eee853a0a371539980a99d7e72f63b6bbe34",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d7bd941356ddaf37ddb06f9b47227922ba2614e5498b37bc611869e38aa22e4",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e78309db6bf0f5f4df8d074a4a19bc635731471fe88733e6a0aeb2a33f8762ab",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "381858dfa5e8ee11c5f17feaf4b6ea52770b6bfa9d875a429f7a2834c9224c2e",
+    "mention_text": "Chris Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8e1b1b446b31b88facae29d5646d51e7c1de99add10a2d64480a16123f49cb0",
+    "mention_text": "Media Lab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54d43022dfb03fc1bef3acdd04db9134510df69394e74f30c6cd022a70af0996",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8465b97688b82c389406fe4ffb30fa25a9973faac9ecbddfc821c852173c4079",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8663249d099a74ba7c428255bd0f3e22955d7193e189070c485cf1109fac5c0c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1531673475d3c4ecea6d7857560abdbd6dff543adf60299b3d8523a97cb534e",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c326f5b55784c3dc3d0f343185e538061e5a026dfc867c870f4fbd42c7f6f984",
+    "mention_text": "Chris Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6ff0438c78117f6c0e2f33fa9ddeebaa271734cee0b269e2728c9699424d669",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "586868235e56a0ee9df4ef61f32f4f3b49b536c5826816e6d670686a607f6edc",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "094ef640b99f2a953f6abf9ab58654cce0fd31126923c3c51e8abd93426abc1a",
+    "mention_text": "Media Lab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ba4db3593d9696858240b58c70396005ae8829dbe9760135280e0d98d75c644",
+    "mention_text": "Departamento de Defesa dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1acd708bc3514a98270ca97cdadbf4b99e304f316bdfd8d14f64c32dc970328c",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2b7fe0bf18dc6fe7bd38dd7d16c0fa0a44d96f70ba533edefa96146af759589",
+    "mention_text": "Departamento de Defesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b188f8fa2bb495dccfbaaff7f4f56f062002ec8ecd92e7ead8bbb7a53b9b7af",
+    "mention_text": "Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6cc45d83dbb0882c4098551f161937c3de22846d8abba79808501a47fa437f28",
+    "mention_text": "Departamento de Defesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ce743541b995c0b75845bdb6ff2e7b9dcff428be18235101166bd911f9aa3c6",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4113e29a8c0971f24a3d16dd1b901ce8005bc9e58be4d6ea2e9150a8890cf435",
+    "mention_text": "Media Lab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff30e3d4e52a2812a5082ae35787efe47eb078651282981480e7e072b8f8c26b",
+    "mention_text": "Pentágono",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "afdc681fbfac600dc159effcdcfee1a9dd42a5436425398f7785db6d640b2a1b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b04e034984de57287ed1213e43c35407a66d633fdcad8ca2bd02ce744c39d2f7",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92ffaba450e1fdd073a56a4d8b8aa09c2a11877692961b99df32f915fc09495d",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ec3af9c3e8062d75326a4f02e6e2caa6aeeadd63997333267c76a174717df1d",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "556c06c955cd6f15dd22705d4be78cc8be61cdda3bc5420a709d98e01bfb9c62",
+    "mention_text": "Departamento de Defesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a1f7ed4498ea7db96411d7254eabc7b33ecdbb52f589c73760244c163f0a544",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36fb90409d89a349aac35483d2f4b40098585502e0921318ef7dda5b9bf30e10",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66e46843265357cfa76ba7a9b1590e6574d9e8908dca6a6c095d557ff547b044",
+    "mention_text": "Vietnã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bbc954f0131345e440ca21c3571c395423401dcc1234c042ec6821e8610eb598",
+    "mention_text": "Afeganistão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e0394c4b1f094fe24a87c7417682db4ac1584357a4e1d4f620daf52cdf61f683",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9526b4686a8a753626176eff47996c6712395e6c1cfe8169b56ab5753a33d86a",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc35facdf842ddcac3a6a9d3b80ed67be0c65ad14471305987fe5f06729dd8cd",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2505745755045e0fdae5de85c93fcddf9496aa8b6b36dfc78daebeb609c7db4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c13001c58ea1bfea90783b890c95212dd632aa9cd41dcf1276b4f90e7d0c9d7b",
+    "mention_text": "George W. Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "793bcc7a6b530d807139014e14afdd67af706f2ec448d1da887345ad3c4bca22",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c3a796585ee4723d5299c25b7a4c3fb992d72dd5ace1b137e1d349f8f2b912b",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7bb59d09e616a7e5f5bfdb4f7f0f5948351d7840aa8c70685fb5fc628285b62a",
+    "mention_text": "Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "365d405c38fd921f66f926aa0de40759c6edb4a1e168e74d18b65a005cddda38",
+    "mention_text": "Csikszentmihályi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea8fecfd2ac9f6696397656808a500ba06fc66f3834e2f85764b0829b6c6cd5b",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f5b794f02ceabbf524a37221dbe64a1d7f2dca603ef87f42a554d8685c19ed1",
+    "mention_text": "governo brasileiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f376cd3fa51c82d7de18aeedd0a7d62b18487be1981462312a308c4ffaaedc6a",
+    "mention_text": "Bush",
+    "categoria": "PESSOA"
+  }
+]

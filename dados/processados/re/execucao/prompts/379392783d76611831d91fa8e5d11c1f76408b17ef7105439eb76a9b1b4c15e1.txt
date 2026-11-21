@@ -1,0 +1,446 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 95d91fea96da2422eca818fa38a83f76e5ead2b17576243ac7b05a2819876df3
+
+TEXTO:
+Alan Turing: a vida curta e brilhante e a morte trágica de um enigma
+
+Publicidade
+MAEV KENNEDY DO "GUARDIAN"
+Uma máquina de codificação alemã Enigma emprestada por Mick Jagger e um computador de 1950 que tem menos poder de cálculo do que um smartphone, mas que um dia foi o mais rápido do mundo, estão entre os principais artefatos da exposição que o Museu de Ciência de Londres dedica à vida curta brilhante do cientista Alan Turing e à sua morte trágica.
+"Estamos no paraíso dos 'geeks'", disse sir John Turing, sobrinho do matemático, em meio às peças de história da computação, que são como relíquias sagradas para os admiradores de Turing, entre os quais uma tartaruga mecânica controlada por computador que encantou o cientista no Festival da Grã-Bretanha, em 1951. "A exposição é um grande tributo a um homem notável", diz John Turing.
+"Meu pai o encarava com imensa admiração, e na família era comum usar a palavra 'gênio' quando falávamos dele", diz. "Mas meu pai também falava de sua excentricidade, de como ele ia de bicicleta ao trabalho em Bletchey Park usando uma máscara contra gás, para controlar suas alergias; os pedestre com quem ele cruzava se assustavam, achando que um ataque com gás era iminente".
+A exposição, que celebra o centenário de nascimento de Turing, trata tanto de sua traumática vida pessoal quanto das brilhantes realizações científicas de um homem que foi um dos membros-chave da equipe que decifrava códigos de Bletchley Park, e criou o Teste de Turing, que continua a ser usado para avaliar a inteligência artificial.
+Turing era gay, e em 1952, quando trabalhava na Universidade de Manchester, onde tinha um relacionamento com um técnico chamado Arnold Murray, foi detido e acusado de obscenidade grave. Só escapou à prisão porque aceitou passar por um processo de castração química, envolvendo um ano de aplicação de estrógeno, algo que o curador David Rooney afirma ter causado efeitos devastadores sobre ele, física e mentalmente.
+Em 1954, Turing foi encontrado morto em sua cama, e na mesa de cabeceira ao seu lado havia uma maçã meio comida; reza a lenda que ele se suicidou injetando cianeto na fruta.
+A mãe do matemático insistiu em que ele havia morrido por acidente, como resultado de falhas em uma experiência que conduziu para criar uma colher folheada em prata. Turing anteriormente havia criado outro talher folheado a ouro, extraindo ouro de um relógio de bolso. Os produtos químicos usados na experiência foram encontrados em uma panela no fogão.
+Mas o relatório do legista, que também está na exposição, é claro: Turing havia consumido o equivalente a um cálice de vinho de veneno, e o formulário de autópsia registra sombriamente que "seu cérebro cheirava a amêndoas amargas".
+Há muitas teorias de conspiração sobre sua morte, mas a explicação de Rooney para a maçã é pragmática: não se tratava de uma obsessão com a maçã envenenada da versão de Walt Disney para "Branca de Neve", como há quem alegue, mas da solução de um homem muito inteligente para rebater o sabor horrível do cianeto.
+O sobrinho de Turing disse que o processo contra ele e sua morte foram devastadores para a família, mas que eles haviam ficado muito satisfeitos com o pedido público de desculpas apresentado em 2009 pelo então primeiro-ministro Gordon Brown.
+A campanha por um perdão póstumo é mais problemática, diz ele, falando em sua condição de sócio do escritório de advocacia Clifford Chance.
+"Muita gente foi condenada de maneira correta sob os termos da lei então vigente, por delitos que hoje encaramos de modo muito diferente. Não seria correto que Turing recebesse um perdão só porque é um homem famoso; isso seria ir longe demais. Mas a sugestão de que pode haver alguma reparação pelo uso de sua imagem em uma cédula de libra --isso seria uma boa reparação", afirma.
+GÊNIO
+A exposição inclui as únicas peças sobreviventes de uma das 200 "bombes", as máquinas que operavam dia e noite para decodificar mensagens alemãs em diversos locais do Reino Unido; cada uma delas pesava uma tonelada e todas foram vendidas como sucata depois da guerra.
+Os componentes foram emprestadas pelo centro de inteligência do governo no GHCQ (Government Communications Headquarters), o serviço de comunicações e códigos do governo britânico, o que exigiu complicadas negociações.
+Ainda que os visitantes possam não perceber, uma curta entrevista filmada nas instalações do GCHQ é ainda mais excepcional: são as únicas imagens filmadas no complexo de Cheltenham que já foram liberadas para exposição pública.
+Em 1950, quando o computador Pilot Ace, para cujo desenvolvimento Turing foi um colaborador fundamental, estava enfim operando no Laboratório Nacional de Física britânico, ele já se havia transferido a Manchester, impaciente diante da lentidão do trabalho do setor público no pós-guerra.
+A máquina está exposta ao lado de uma chapa metálica amassada, parte da fuselagem de um Comet, o primeiro jato civil de passageiros, que explodiu sobre o Mediterrâneo matando todos os passageiros e tripulantes. O computador executou os milhões de cálculos necessários a descobrir o motivo do acidente.
+Rooney diz que a exposição também pretende destruir a impressão de que Turing era um cientista solitário; inclui imagens de muitas das pessoas com quem trabalhou, todas as quais o encaravam com admiração e afeto.
+Quando ele foi ao laboratório ver as tartarugas robotizadas, em 1951 --elas respondiam a comandos de luz e corriam de volta para suas tocas quanto uma lâmpada se acendia em seu interior--, Turing conseguiu decifrar os códigos de um computador de jogo criado por um aluno cujo trabalho ele reconheceu. O matemático decifrou o algoritmo da máquina na hora, e o usou para levar o computador a enviar mensagens simultâneas de "você ganhou" e "você perdeu", e depois fazê-lo travar aborrecido.
+Em entrevista gravada para a mostra, seu último pesquisador, o professor Bernard Richards, da Universidade de Manchester, com quem Turing tinha uma reunião marcada no dia em que morreu, diz: "Turing para mim era um gênio, um homem que operava em um plano mais elevado".
+"Codebreaker: Alan Turing's Life and Legacy", fica no Museu de Ciência de Londres até junho de 2013. A entrada é grátis.
+Tradução de PAULO MIGLIACCI .
++ Canais
+Livraria
+Livraria da Folha
+Madonna - Rebel Heart Tour (DVD)
+Madonna
+De:
+Por:
+Racismos - Das Cruzadas ao Século XX
+Francisco Bethencourt
+De:
+Por:
+Comentar esta reportagem
+Termos e condições
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "98cae61b02c4e20a11e5f9556216995c3beaf3bb5dba70ef64b9077e0b933322",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1311dc41d079eb53dcb07ef906794fc979cfbd16620e1ed716f06b7ace7e554",
+    "mention_text": "MAEV KENNEDY",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9e5b4fbd08962e72e1cc99b8e2d7cc3d050bc974cccb03ccc0681c029d128f4",
+    "mention_text": "GUARDIAN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e83056fc0f6c272f324654fe437f433f036fd1a99c35bc7ab15970fde3ed00b",
+    "mention_text": "Mick Jagger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4075c89e30ef1055275ccb4488ad79ed43c9f3b9c8243b9deedb23ea2b39be2",
+    "mention_text": "Museu de Ciência de Londres",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "772ffd4e969486edf0ea087d436a20d8d70da4f9aeb215665590a5f3684a9898",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5fc42e76f22febf5c95e3adea2c17b146c525b706e3d9aa5b0592798faf64cce",
+    "mention_text": "John Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa0279ff1b91388457573656a0f15cd4a023899b8cfd13db2e03b9fc0cff6a2b",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a2d40dbe1254aaf390bbd7ecbb8322f9b79793fd43e28d0bb944a7ba7471e59",
+    "mention_text": "John Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "634ae14cb76b82d694c0c6823246aff4231c741d6daf39cd3dd5134573ca8e71",
+    "mention_text": "Bletchey Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c85f48a3fe6467efb913c2bd2beccf26798e2b6464c9868d278136045e121fa",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4d86a075b210b90e4ee3c46acad896f5702b27a1e9af3ba13dc43ade6788e5c",
+    "mention_text": "Bletchley Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4b3d1cbdc0c6226e2927a8ada758bd505fb6278920486cca52382dd7e08740e8",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f957daea4189811f3d66785ec90c3422f9dcb347930e4987931212fd7625a0a",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf5fde9e2a3bfd808e648734f61157cc5d7f0b5c1dfc391d8e474bf74fe0bfca",
+    "mention_text": "Universidade de Manchester",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b862fae3ac8045b96f00febf83582b141f1170cd03a567b979ff9feb515a35e",
+    "mention_text": "Arnold Murray",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd4c65ae23d440f89cc6fd067943a2eb387a797b4228aa52d9f8f80bd332bab3",
+    "mention_text": "David Rooney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "909d1bf796ba6f3707af1926e80dbac5dc0003cf0aceb8d800f32985a7d15999",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2270feeef6970ebe45adb212845c6620842da92bb4dc368c63cec361eff27dde",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a98054e4ecc2b05394009897aadd63824dad2edbdaa7e8a7bb170b5186857c68",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17934fc88a87e2b487f057911f71e33def616911e22c62ba1b6dfd26156e1d52",
+    "mention_text": "Rooney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6936a34fb8f2e5d1a761e265e34fe9eeee0aa7cfc76f4f6a810632b97204bb12",
+    "mention_text": "Walt Disney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43a181b6f8549beba6a8855258c840258fbf5be97da51a6ae7c3f99eb3f2a371",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f55a2b9296338020da52f5514c59ef4206b145298af2ee06c38aff22f692ebb",
+    "mention_text": "Gordon Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28f5c9c9f4e6287b285c16f7e734809d58635a2c60b50c5014b1a7566c56e337",
+    "mention_text": "Clifford Chance",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "199506f9251bb51dc7345ebecdad7ae10268bccd38f67b0da254f505d0222b19",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48c165aea6ba5fb89ffa637be7c7d7ea0379767f9a49a4e603dc83e02f324668",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef778ccd5c600f1541cd5c2f1f15b6808656fb45267fa472e6992e41fd543f31",
+    "mention_text": "GHCQ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8140a907f9fc8d0f1b2f80f2751ef6632596ccc110d2ae86175e286e40dfec27",
+    "mention_text": "Government Communications Headquarters",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4118c29af11fce588061aa92b15229dec3199dc344d0af9ec2b8a754ec87ee7f",
+    "mention_text": "governo britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f28c2da075bde585dfda495f7443d9d33295179ee545645051e309d6a3e552e0",
+    "mention_text": "GCHQ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "828e937e8f4895eb3734881b86e687c215c548eb383fae166ac177d3fc4ed837",
+    "mention_text": "Cheltenham",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1847455b6b82afc958c2a57aada7f710a25eb19d135b413b58c455b42b32ed15",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ed7b7abcada222ad94795b0c036448f9d94d2473d1183c02213a0638768d07f",
+    "mention_text": "Laboratório Nacional de Física britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e392f2091e835cbf53673f86a30e5acefd72f286c5d9e7311df2389cb4ddb70a",
+    "mention_text": "Manchester",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5384e4b6328765618fc2f90fb021888fdb6f5efd8ff163b868f072da919ec3d",
+    "mention_text": "Mediterrâneo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f920e50b9f8bfa7aaa80c239a91baae6beec79893230a6951dac31f47df9752b",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a96e681a7f3406c5814f6bf30a79510d97933edf80d870248cbc1b8d966b4ff4",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c763db328fa32a31a618529afe7b1e6e364995676a1b630bee1757d3de90965",
+    "mention_text": "Bernard Richards",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1dd180dd5e479a9aa0172157e3e1030a4529ea9046e9e6ae86ed1e170d0d0ff6",
+    "mention_text": "Universidade de Manchester",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a771b13ac6e0ebe0c1a0adae9d7da5cd73637907a0aad5162ab78fbd2ffba04b",
+    "mention_text": "Museu de Ciência de Londres",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43c96a8443916466863151f495bca82d5a009dc2f7b8d7d9de4347e899515498",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2eec8a15bdcde5181db8f69941f69ed7a22cff2ccb98cb90da0bff04c7a2b9b7",
+    "mention_text": "Livraria da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aba35975479e981a12de496ae59c844f8f9f2630edefc060a2096bfc016eef7c",
+    "mention_text": "Madonna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3bf4589e2991417171e5474ba523320da5fac92f0d9378b1e83bb4c06c2c7ef",
+    "mention_text": "Francisco Bethencourt",
+    "categoria": "PESSOA"
+  }
+]

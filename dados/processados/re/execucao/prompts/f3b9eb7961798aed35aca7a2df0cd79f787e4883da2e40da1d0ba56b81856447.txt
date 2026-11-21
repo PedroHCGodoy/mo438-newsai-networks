@@ -1,0 +1,551 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 78c1c9cc15e1e3267c8a0b881536927ede9571cc56e8e040f52404b958d918da
+
+TEXTO:
+Inteligência artificial pode trazer desemprego e fim da privacidade
+
+RESUMO Os benefícios da inteligência artificial se fazem ver em várias áreas. O mesmo vale, contudo, para as ameaças sopradas pelo turbilhão tecnológico. Entre elas, segundo o autor, estão a autodeterminação das máquinas, o desemprego e o fim da privacidade. A falta de uma agência reguladora global acentua o temor.
+"Por muito agarrados que estejamos à vida, até uma serpente hesitaria diante da eternidade", diz o personagem de José Saramago no início da "História do Cerco de Lisboa". Mas a morte, como componente incontornável da vida, pode estar com os dias contados.
+Ray Kurzweil, cientista da computação, inventor e futurologista, autor de best-sellers sobre inteligência artificial e saúde, prevê que a vida eterna vá se tornar tecnicamente possível a partir de 2029. Ou seja, em 12 anos.
+O prognóstico poderia soar como desvario se Kurzweil não trabalhasse na área de inovação de um dos chefes de fila da pesquisa sobre inteligência artificial, o Google.
+Além disso, ele está envolvido em façanhas como o reconhecimento ótico de caracteres e a transmissão direta da linguagem falada para impressoras.
+Daí à eternidade não há muito mais que um passo –ao menos é nisso que acreditam os adeptos do transumanismo. O movimento tem se desenvolvido nos últimos 20 anos e procura melhorar o funcionamento do organismo humano por meio da engenharia genética, das tecnologias da informação, da nanotecnologia molecular e da inteligência artificial.
+A humanidade, segundo os transumanistas, não é o ápice da evolução. A ciência e a tecnologia podem nos fazer pós-humanos, ampliando nossas capacidades muito além daquilo que um humano atual pode imaginar.
+Transcendência ou morte. Eis o lema fundamental do transumanismo. De fato, nossa inteligência pode superar a maioria das atuais limitações biológicas. Nos próximos 20 anos, ciência e tecnologia provocarão em nós e em nossa organização social muito mais mudanças do que as registradas nos últimos 300 anos.
+MÁQUINA INTELIGENTE
+Na base de todas essas transformações está uma diferença crucial entre o progresso técnico contemporâneo e tudo que o precedeu.
+Se a Revolução Industrial promoveu a substituição da força animal e, posteriormente, do próprio trabalho humano por máquinas, agora é nossa inteligência que vai sendo trocada por dispositivos eletrônicos cada vez mais potentes.
+O poder computacional desses aparatos dobra, em média, a cada dois anos. Vejamos: o sequenciamento genético custava US$ 100 milhões em 2001 (R$ 240,7 milhões, em valores de junho daquele ano) e US$ 10 milhões em 2008 (R$ 16,3 milhões, idem). Hoje, essas informações podem ser obtidas por US$ 1.000 (R$ 3.100).
+Os seis pequenos retângulos de silício que, em 1958, permitiram ao Vanguard I (o quarto satélite lançado ao espaço e o primeiro alimentado por energia solar) mandar informações à Terra custavam muitos milhares de dólares por watt. Na década de 1970, o preço tinha caído para US$ 100. Agora, a US$ 0,50, a energia solar já compete com o carvão. A Agência Internacional de Energia Renovável estima que ela baixe a US$ 0,05 ou 0,06 em oito anos.
+Os dispositivos eletrônicos, além disso, não se confinam a um setor ou a uma dimensão da vida social; eles se combinam. Todos os objetos com que nos relacionamos se tornam meios de intensificar nossa conexão a redes cada vez mais amplas.
+A natureza exponencial (dada pela velocidade do aumento da capacidade computacional) e combinatória das tecnologias atuais faz com que as mudanças sejam incontornáveis e irreversíveis.
+Os ganhos reais e potenciais dizem respeito às mais diversas áreas, da geração de energia à produção de bens materiais, da agricultura de precisão aos automóveis autônomos , da prevenção de doenças à criação cultural, da organização urbana às finanças e à circulação de informação.
+Ao mesmo tempo, porém, ampliam-se a apreensão e os alertas relativos aos riscos da evolução tecnológica, e eles partem de atores importantes. Alguns não hesitam em comparar esses riscos aos representados pelos artefatos nucleares e pelas mudanças climáticas.
+A diferença é que a corrida nuclear e as mudanças climáticas estão enquadradas por algum tipo de acordo e de governança global, mesmo que o resultado dessas iniciativas seja contestável.
+AMEAÇAS
+Quanto ao avanço da inteligência artificial, não há nenhuma coordenação nem sequer para sinalizar as ameaças –dentre as quais destacam-se quatro. A primeira refere-se não tanto ao poder desse conjunto de tecnologias, mas, sobretudo, a sua autonomia.
+Nick Bostrom, professor de filosofia em Oxford (Inglaterra) e um dos expoentes do transumanismo, publicou em 2014 o livro "Superintelligence. Paths, Dangers, Strategies" (Oxford University Press; superinteligência - caminhos, perigos e estratégias), que se tornou best-seller nos Estados Unidos. Na obra, afirma que a superinteligência "é, possivelmente, o mais importante e intimidador desafio que a humanidade jamais enfrentou".
+Bostrom compara nosso uso da inteligência artificial ao que faz uma criança brincando com uma bomba. O que está em jogo, de acordo com ele, muito mais que uma explosão, é nossa capacidade de manter a própria condição humana.
+Essa preocupação já estava presente entre os pioneiros da inteligência artificial, nos anos 1950. Eles haviam percebido que as máquinas poderiam fazer muito mais do que simplesmente pensar numericamente. Eram (e, de fato, tornaram-se cada vez mais) capazes de deduzir e de inventar provas lógicas.
+Atualmente, elas vão bem além. Podem aprender, e não só a partir daquilo que nós lhes ensinamos. Esse aprendizado também se baseia no rastreamento das informações que circulam nos meios digitais, uma imensidão de dados interpretada por meio de algoritmos cada vez mais complexos e opacos.
+É por causa desse rastreamento que você, após escrever a um amigo dizendo que pretende ir a Santiago, passa a receber mensagens publicitárias sobre passagens de avião e hospedagem no Chile.
+O avanço exponencial e combinatório do poder computacional difundido nos mais variados tipos de objeto não amplia só a magnitude das informações coletadas. Amplia também, e sobretudo, a capacidade dos algoritmos de analisar e interpretar esses dados.
+Sua geladeira saberá que você está sem leite. Sua máquina de lavar dirá qual o momento de menor consumo de energia no sistema ao qual você está ligado. A temperatura dos ambientes poderá ser regulada em função da presença ou da ausência de pessoas em seu interior e à distância.
+Já existem técnicas que permitem circunscrever a aplicação de fertilizantes e agrotóxicos a necessidades específicas de cada lote da unidade produtiva, por meio da interpretação de informações captadas por drones e decodificadas por poderosos algoritmos. Baterias de celulares serão recarregadas por sinais de rádio, via wi-fi.
+INTERNET DA ENERGIA
+Está emergindo uma internet da energia, que monitora o que os domicílios, as fábricas, os escritórios e as fazendas produzem a partir do Sol, dos ventos e da biomassa, distribuindo essa energia conforme as necessidades do conjunto dos usuários.
+Quem produzir mais energia do que consome tem crédito; quem produzir menos paga. São as chamadas "redes inteligentes", que compatibilizam noções que o século 20 sempre considerou antagônicas: descentralização e eficiência.
+As virtudes da internet das coisas, o fato de que cada um dos bilhões de objetos de nosso cotidiano vai sendo dotado de um protocolo de internet que o identifica e faz dele uma fonte de informação, a cognificação generalizada do mundo material, isso também se estende às pessoas. É o que especialistas batizaram de computação afetiva.
+A Apple, no início de 2016, comprou a Emotient , empresa líder em reconhecimento facial e que tem a ambição de detectar nossos estados emocionais. É a internet das emoções. Você está triste? O que posso fazer para que você melhore seu estado de ânimo?
+Alguns dos estudiosos do tema sustentam que nós somos a última geração mais inteligente que as máquinas.
+Essa espécie de triunfo da inteligência humana sobre ela mesma se apoia naquilo que o historiador Yuval Noah Harari, em seu recém-publicado "Homo Deus: Uma Breve História do Amanhã" (Companhia das Letras), chama de o grande desacoplamento: "A inteligência está se desacoplando da consciência".
+Até há pouco, apenas seres conscientes "podiam realizar tarefas que exigissem alto grau de inteligência, como jogar xadrez, dirigir automóveis, diagnosticar doenças ou identificar terroristas".
+COGNIÇÃO SEM CORPO
+Já temos, porém, e teremos cada vez mais, uma inteligência não apenas sem corpo como também desprovida de emoções e sentido social e, no entanto, capaz de realizar tarefas complexas com mais eficiência que os humanos.
+Gerd Leonhard, empreendedor e pesquisador, vai além no livro "Technology vs. Humanity: The Coming Clash Between Man and Machine" (Fast Future; tecnologia x humanidade: o embate vindouro entre homem e máquina), publicado há alguns meses. Ele sustenta que a inteligência artificial representa uma dissociação entre nossa capacidade de interferir no mundo e as bases éticas dessa intervenção.
+A maior ameaça ligada à inteligência artificial deriva do fato de que as máquinas conseguem mimetizar nossos padrões de comportamento ético, mas, por definição, não podem e jamais poderão se dotar de consciência ética. A tecnologia é um meio para atingir fins que só podem estar fora dela.
+Se máquinas dotadas de inteligência artificial ampliam seu poder de gestão e de intervenção na sociedade e nos indivíduos, há o risco de que elas próprias definam as finalidades de suas ações.
+Assim, nossa condição humana passaria a depender cada vez mais de dispositivos com aptidão para despertar em nós sentimentos que nos definem, como nossa felicidade, nosso sentido de pertencimento e até nossa libido.
+Leonhard propõe uma espécie de agência para proteger os seres humanos, um Conselho Global de Ética Digital. Não se trata de esforço (vão) para deter a expansão das tecnologias digitais, mas sim para garantir que elas não comprometam aquilo que nos faz humanos.
+Um exemplo? Nossa capacidade de desenvolver atividades úteis para os outros, de fortalecer nossa interação e, portanto, a própria coesão social. Em outras palavras, nosso trabalho.
+DESEMPREGO
+É justamente aí que entra a segunda grande ameaça representada pela inteligência artificial.
+Os mercados de trabalho estão sofrendo mudanças que respondem, em grande parte, pela espantosa reconcentração da riqueza nos países desenvolvidos, em particular nos Estados Unidos.
+Até pouco tempo atrás, considerava-se que apenas trabalhos rotineiros e de baixa qualificação seriam deslocados pelo avanço da computação. A inteligência artificial, porém, derrubou essa barreira protetora.
+Num escritório de advocacia, por exemplo, as máquinas são muito mais eficientes na pesquisa de julgamentos passados e de artigos de lei que podem ajudar na argumentação de um caso específico. Na medicina, a mesma ideia se aplica à interpretação de chapas radiológicas. A preciosa sabedoria dos taxistas não chega aos pés do que um dispositivo inteligente é capaz de saber.
+Claro que a revolução digital também cria empregos, sobretudo na interação entre homens e máquinas. Mas ela o faz em volume menor que a Revolução Industrial, que, há dois séculos, começou a substituir as ocupações agrícolas.
+Não é que o trabalho vá subitamente desaparecer, como atesta a situação de quase pleno emprego nos Estados Unidos . O mercado de trabalho, contudo, vai consolidando um padrão polarizado. A minoria dos detentores de conhecimentos apropriados à era digital consegue ganhos de renda, enquanto a grande massa dos assalariados aproxima-se da pobreza e, sobretudo, da irrelevância.
+A capacidade de aprendizagem das máquinas e a multiplicação dos robôs torna cada vez mais fácil substituir o trabalho humano.
+Atualmente, já se pode robotizar quase inteiramente o trabalho nas cadeias de fast-food, com as vantagens de maior padronização do produto, melhor higiene e amortização do investimento em menos de dois anos.
+Se alguém imagina que isso se limita aos países desenvolvidos, vale lembrar que a China já é o maior mercado consumidor de robôs do mundo –e vai se tornando também o principal produtor.
+DESIGUALDADE
+Carl Frey e Michael Osborne dirigem o Programa de Tecnologia e Emprego da prestigiosa Oxford Martin School, no Reino Unido. Seus trabalhos mostram que o ritmo dessas metamorfoses se acelera, que a lista de setores por elas atingidos se amplia e que, diferentemente das inovações típicas da era industrial, os benefícios das mudanças tecnológicas não são, nem de longe, amplamente distribuídos.
+Levou 119 anos para que o fuso industrial, uma vez inventado, se tornasse padrão na tecelagem. A internet difundiu-se em menos de uma década, e os objetos conectados em rede, que já eram 13 bilhões em 2013, totalizarão nada menos que 500 bilhões em 2030.
+As consequências sobre os empregos serão devastadoras, mostram Frey e Osborne. Estão em risco 47% dos postos de trabalho nos EUA, 57% na média dos países, desenvolvidos, da OCDE (Organização para a Cooperação e Desenvolvimento Econômico), 69% na Índia, 77% na China e 85% na Etiópia. A destruição tende a ser maior onde a estrutura ocupacional é mais distante da economia do conhecimento.
+Tais preocupações não se confinam ao universo dos que desconfiam da tecnologia. Elas são hoje expressas por alguns dos mais destacados protagonistas contemporâneos da cultura digital.
+Em 2015, o físico Stephen Hawkin e os empresários Elon Musk (criador da Tesla e um dos mais reconhecidos inovadores do mundo) e Bill Gates publicaram documento com forte alerta sobre as ameaças trazidas pelo avanço da inteligência artificial. A principal delas está na perspectiva de drástica redução de postos de trabalho.
+Em fevereiro deste ano, Gates sugeriu que os proprietários de robôs deveriam pagar um imposto que serviria ao treinamento e à reinserção dos trabalhadores deslocados pela inteligência artificial.
+COMPARTILHAMENTO
+A terceira grande ameaça representada pelo avanço da inteligência artificial refere-se à economia do compartilhamento .
+Em 2010, Rachel Botsman e Roo Rogers publicaram um livro sobre a ascensão do consumo colaborativo. Contavam, encantados, a história dos jovens que tiveram a ideia de hospedar em casa pessoas que não encontravam lugar em hotéis durante um congresso de design, em San Francisco, em 2007.
+A partir desse episódio, eles criaram um dispositivo digital que resultou no Airbnb . A novidade não era, claro, o colchão de ar e o "bed and breakfast" [cama e café da manhã], abreviados no nome daquela que se tornou a principal central de reservas de hospedagem no mundo atual.
+O fascinante na iniciativa era a possibilidade, aberta pela conectividade generalizada, de que as pessoas colocassem à disposição umas das outras bens e serviços dos quais não necessitavam e que poderiam ser compartilhados.
+Os resultados seriam a ampliação da renda de quem oferecia bens para compartilhamento, os preços mais baratos do que os cobrados pelos mercados convencionais e o potencial de economizar recursos materiais, com benefícios crescentes para o meio ambiente.
+O segredo estava em conseguir que indivíduos que não se conheciam confiassem uns nos outros devido às referências digitalizadas. Daí o título do livro de Botsman e Rogers: "O que É Meu É Seu" (Bookman). Como a revolução digital permite a universalização da prática, o resultado seria o aumento generalizado da prosperidade.
+A marca distintiva da economia moderna, a propriedade, seria então substituída pelo acesso. Por que possuir um carro se posso pegar carona? Por que comprar um jornal se as notícias estão disponíveis de forma aberta e gratuita na internet?
+A era digital parecia prestes a realizar os mais nobres ideais de cooperação social e compartilhamento que os movimentos operários perseguem desde o século 19, sem o risco da centralização e da burocracia que marcaram o socialismo real.
+O consultor e futurologista Jeremy Rifkin chega a prever "o eclipse do capitalismo" no livro "Sociedade com Custo Marginal Zero: A Internet das Coisas, os Bens Comuns Colaborativos e o Eclipse do Capitalismo" (M. Books).
+Para Rifkin, o capitalismo será superado não por um tipo de tomada do Palácio de Inverno, ação pela qual os bolcheviques, em 1917, iniciaram a formação da União Soviética, mas pelo triunfo da cooperação social descentralizada, cujo caminho terá sido aberto pela economia digital.
+Já Yochai Benkler publicou em 2011 o livro "The Penguin and the Leviathan", com o subtítulo "How Cooperation Triumphs over Self-Interest" (Crown Business; o pinguim e o leviatã: como a cooperação supera o autointeresse).
+A euforia emancipatória, contudo, teve vida curta. Em pouco tempo, aquilo que aparecia como expressão virtuosa de cooperação direta e descentralizada entre indivíduos autônomos revelou-se um dos mais importantes epicentros da acumulação financeira.
+Pior: a ambição de compartilhamento na hospedagem acabou por contribuir para a degradação de cidades como Amsterdã, Barcelona, Berlim, Paris e Nova York.
+CONCENTRAÇÃO
+Em vez de dividirem com os outros os espaços não usados, proprietários venderam seus imóveis a companhias interessadas em explorar a locação. Os locais figuravam como bens pessoais, mas pertenciam a empresas.
+Por causa disso, várias cidades adotaram legislações para impedir a desfiguração de suas áreas turísticas, como registra o norte-americano Tom Slee em "What's Yours Is Mine: Against the Sharing Economy" (OR Books; o que é seu é meu: contra a economia do compartilhamento).
+Não importa se alojamento, transporte, serviços de limpeza ou refeições rápidas; Slee mostra que a economia do compartilhamento converte-se sistematicamente em seu contrário. Ou seja, em lugar de distribuir oportunidades, ela vem dando lugar a uma concentração crescente de renda e de poder.
+A quarta grande ameaça trazida pela inteligência artificial refere-se à privacidade. Michael Sandel, professor de filosofia política em Harvard, pergunta-se se não é perigoso estarmos nos aproximando de um cotidiano em que a vigilância –de governos, empresas de que compramos, companhias de seguro e empregadores– torna-se cada vez mais intrusiva.
+ADEUS À PRIVACIDADE
+As companhias de seguro já começam a propor a clientes que vistam dispositivos capazes de acompanhar sua vida cotidiana (exercícios físicos, consumo de álcool e tabaco, alimentação, sono). A partir dos dados coletados pela indumentária, os valores da apólice seriam elevados ou reduzidos. Segundo Sandel, a troca da privacidade pela conveniência levanta questões éticas que deveriam pautar as decisões de empresas e indivíduos. E se um empregador exigir que seu funcionário use o dispositivo?
+Mas o pior é que estamos o tempo todo fornecendo o que há de mais precioso no mundo contemporâneo, ou seja, a informação, de forma gratuita e inteiramente involuntária. Em uma fala no TED (conferência sobre tecnologia, entretenimento e design), a jornalista especializada em tecnologia Marta Peirano mostra que, sem que saibamos, nossos celulares e todos os dispositivos conectados de que nos servimos estão produzindo informações processadas por algoritmos cada vez mais poderosos.
+Essas informações não são só utilizadas por serviços de inteligência mas também por empresas que nos oferecem pontos por compras e que conhecem melhor nossos hábitos que nossos familiares. Diferentemente das empresas telefônicas, a maneira como esses dados são usados não é objeto de regulação estatal.
+A privacidade, muito mais que um instrumento, é um valor. A ideia tão frequente de que o cidadão honesto nada tem a temer com a transmissão à rede dos dados de sua vida pessoal passa por cima justamente de um dos mais importantes fundamentos éticos da vida contemporânea, que é o poder do indivíduo sobre sua vida pessoal.
+Não foi à toa que, em fevereiro, a Alemanha proibiu a comercialização da boneca Cayla, que ouvia e dialogava com as crianças. Enquanto fazia isso, ela armazenava as informações do diálogo –e o fazia sem o conhecimento dos pais. A preocupação das autoridades alemãs não impediu que o produto continuasse à venda nos EUA.
+DISCUSSÃO ÉTICA
+Em suma, nunca foram tão poderosos os meios técnicos para melhorar a saúde humana, permitir que as pessoas levem adiante trabalhos interessantes, favorecer a cooperação social e ampliar a soberania dos indivíduos sobre suas vidas e suas decisões. Ao mesmo tempo, nunca foram tão avassaladoras as ameaças que emergem da concentração de riqueza e de poder ligada a esses meios técnicos.
+É fundamental que se amplie a discussão pública (sobretudo a de natureza ética) sobre esses temas, pois é daí que virão políticas e iniciativas empresariais e cidadãs que poderão colocar a inteligência artificial a serviço do florescimento da espécie humana.
+RICARDO ABRAMOVAY , 63, professor sênior do Instituto de Energia e Ambiente da USP, é autor de "Muito Além da Economia Verde" (Planeta Sustentável).
+CAROLINA DAFFARA , 32, é infografista da Folha .
+GABRIEL CABRAL , 28, editor-assistente de Imagem da Folha e fotógrafo.
+THEA SEVERINO , 36, editora de Imagem da Folha .
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "81a5113ae48a653589402a709f1a2895b579fa251bcc5e89d51231ff0c1d792a",
+    "mention_text": "José Saramago",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57c31a4adb94cd6c0b688ee347f8baa19b520b796c3c3f14e63a955bf3476ea1",
+    "mention_text": "Ray Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "794ff3ede105aa42da3b7481837711443c144e4c409bfaceceee7f00d6064a62",
+    "mention_text": "Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1df7a5ebeaf29acfdb7cb011f073aaa049f8959f5dc0f77b2b0423e3d3e9bf4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "001d395da9c4d4036b02c8005c6de7d8ac7c6b0101a9bad7993e26edce05b9c8",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9e6b203fc03238f715f26aa590cdf54bf68bee8cf2c4ef25511d1dd010bf2300",
+    "mention_text": "Agência Internacional de Energia Renovável",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40cf7d23eda8d3d10903cadfd93076b4b9410fd9ea2260048f362b4788e7df41",
+    "mention_text": "Nick Bostrom",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd9d91d6648e1f0c5ed6dffdde3218802e3c53277f609eac2ac02e9166866d5e",
+    "mention_text": "Oxford",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7083f3e811627c9ae016678885ed1422e7d2beb76ebfdce8d51246661349eab",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8607cba2ff8669dae55f6c11dbb11c45f405aa221768f7be31ea4526bbae0de7",
+    "mention_text": "Oxford University Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a16031f3e48d3561896dab0ada3f4de0a8f1ab4828ef24241885c28024509d5",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4d8e47470f6268f6cf4df5707e387a7913e40ef664dd5b84af92ad13cbfee508",
+    "mention_text": "Santiago",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ad0095c39929419594dd06899703289ba3bc7dc3e60876594bf27aa2ea4119d",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd72fea46490067413b014912b2935f463bc7c7366b39f4473c89fd47891a136",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b347ab4b89f1744b40197f3fc94e7b67668933141fd59244b35430034286e931",
+    "mention_text": "Emotient",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51357e519e22426f2743b041de1bcf8a7e1a6ed3ca6a9ed7ffaea76827f717a2",
+    "mention_text": "Yuval Noah Harari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "277efecd9a2d3c52fcadd2328d597c232a0c3ada31d0dfbc25a46242eb400c23",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d19588c7d2bd33e32d7529ee81b365f2e267a608b615d2013cd2c050c9ba5da8",
+    "mention_text": "Gerd Leonhard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd902ab32eaa5e39c213b8c7036ec1b587aa80b042cd5a375d1576b8a3643376",
+    "mention_text": "Fast Future",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "daaf076ddc8efb7559f5acb22542b93363e0c3dfc5ef85068cc6bbed4ac56681",
+    "mention_text": "Conselho Global de Ética Digital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b3411a4bf216100347813cb536d26b85f50b04731ca5668b7ec7d23f290ad60",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0817386070c287a23406565467fe3220197a2fa78b1906c3a867080b12e39c72",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89e63b2da0515bccfd5386163f0f96afeeae5cb5eb22979ebf67e0d223c1c15d",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3c0d0520d657d0dcee0fb364e9cdf7cfceb0e6ed198f89aebe4526a3cfc93dd",
+    "mention_text": "Carl Frey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1836b1da83aff79104602a76b26f40b6ab16174938a3ff681feaf63bad1adc7",
+    "mention_text": "Michael Osborne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ac3ca215dac80997f5fe12b6ec0e6e6d6e838813696f533995a144fefd92ea7",
+    "mention_text": "Programa de Tecnologia e Emprego",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eacc40ff8e87aa8b603aa8293be81076b5ba13a2e4da7fa533354082e370b3c1",
+    "mention_text": "Oxford Martin School",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f362586f0351b9f9e530bf1bf08fe75a704afac28ccea05a8db8bdbee466a7c7",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "67095cbc5d0248aaddb3dab5acce5f301b3f51a7404fc67ca6de946e7de8ea4d",
+    "mention_text": "Frey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a2c70353603573221d3d6aaad157cfdf4b77cc514473d99a8bb2b997caad41b",
+    "mention_text": "Osborne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a40545e146fdaf003a9151cb1a60fe4d7ff8132e6a79a59682769d9f4d95bdb7",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0ab305c1c2948dc04093dfc928f26430beba726c35682cb128f3fd494234bf2a",
+    "mention_text": "OCDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b0452c98498098ef67f78ab388dd21b9a1b001867608b185915302a3a4c39ead",
+    "mention_text": "Organização para a Cooperação e Desenvolvimento Econômico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "458e7c2f01ffacb17d466a0f43b2f21d70ce888baa6608d27594a95079ccbfd3",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d84f9801faa25c9b2c57df48e0373e93b35e2c90273c5bb10edb62e27f61bc7",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "680eddae0c853ce9df654db0b607b47a3c3811d3cdd690077170d483a4ec1e1b",
+    "mention_text": "Etiópia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8143d4fe4e961e2a487f16d6f9ff7f7eb7f77c907c585d7d5719dcfc12aa8474",
+    "mention_text": "Stephen Hawkin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97083b6aedc8410159447ef2f5df31c56dbf6eb6580f9b07f6d19243534c325a",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d291bc8de0b9bfec0872c18bd822b4c869322dd88e59dc8c594877878ef26e79",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16cfd73f6f30709f70e910251ab10b8d59e7b059feb1ee5be94b5b9dc2d52498",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9eae92daca9ebac58636b76a30d75a7cd89a7ef98d51b5d36faf4d37a367fee",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "530aec339206f49896bb8e31bd0bb5943408d522b015a9f843935257f06d07d1",
+    "mention_text": "Rachel Botsman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3999b7a6b82c2e060c2122c7cb1274462279bf8a6060e5f2d43e6961d9c487c",
+    "mention_text": "Roo Rogers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd9cc4db4575a44503708ffd79e90ff70d882fee276efa9056cdcdf670ad7cd6",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6551dd0190bb5a60c145c556ae5eb6fff621ebefcb978c1cc814ea4f81803656",
+    "mention_text": "Airbnb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdeca61fad33f586035fa966908943a37c962989011a778d79e8a08ea6a614e0",
+    "mention_text": "Botsman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b987c1cd2e9bffc618eb2e01860dc956c04c296f465addbc677e20c20b40e855",
+    "mention_text": "Rogers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "552388c902dd7a260ce615db3c69571c5474a36f1e39e7f8d9ac7f7a6a3c5ea9",
+    "mention_text": "Bookman",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89893b7f44c950e1225df5e4c7c7f579367c5f696877f195e4a14df7c985f0d8",
+    "mention_text": "Jeremy Rifkin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfe2720fe018a3cd95b3086f8c1a12bdd497c22cf047a09efa740616dfc69e6d",
+    "mention_text": "M. Books",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf16c4cbdea5561b3d0429f8d09f8bd826f4b474e96c041813fcd6355c20dcd6",
+    "mention_text": "Rifkin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a56ef30c585dbc48ecca45c839fd01990d3f2b5a6c6a41beefe72aa5568cb87",
+    "mention_text": "Palácio de Inverno",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b288b2b07bcd39f6b13f3267b55c2185f0a5a09919344972a6255223905bfc9",
+    "mention_text": "bolcheviques",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6b29748c9876ee993b9e10919ce8d6a2c577e3fc9bd26f6cb47b2a6a89a3484",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b7e16ab109a5ef07e5c58cfe32cd9e3db4fd1ddb220b51d11ea62a6b0bab50e7",
+    "mention_text": "Yochai Benkler",
+    "categoria": "PESSOA"
+  }
+]

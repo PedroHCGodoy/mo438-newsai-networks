@@ -1,0 +1,350 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 5fb026498f5d72612e272dfa088c4d8af1cea324ca463ddc3b7a18e545acc901
+
+TEXTO:
+Em novo 'Millenium', Lisbeth Salander tenta hackear inteligência americana
+
+A Agência Nacional de Segurança dos EUA (NSA) será o próximo alvo da superhacker Lisbeth Salander. 'A Garota na Teia de Aranha', continuação da trilogia "Millenium" de Stieg Larsson, escritor sueco morto em 2004, escrita pelo também sueco David Lagercrantz teve seus primeiros detalhes revelados por sua editora na Inglaterra, MacLehose Press, nesta quarta (22).
+Com lançamento previsto para 27 de agosto –inclusive no Brasil, pela Companhia das Letras–, o romance foi produzido debaixo de sete chaves. Lagercrantz escreveu a obra em um computador sem conexão com a internet e entregou o manuscrito pessoalmente, em cópia única para a editora sueca Norstedts, que então enviou por correio cópias para as editoras nos 35 países em que o livro será lançado no próximo mês.
+Mesmo com todo o esquema de proteção criado para a obra, a editora britânica decidiu revelar pontos-chave da trama, que dá continuidade à história de Salander e do jornalista Mikael Blomkvist a partir de "A Rainha no Castelo de Ar" ("The Girl Who Kicked the Hornet's Nest", na edição em inglês), lançado na Suécia em 2007 e no Brasil em 2009.
+O romance começa com o "renomado cientista sueco Professor Balder" entrando em contato com Blomkvist e pedindo ao jornalista que publicasse a história dele, Balder. Segundo a editora, é uma história "assustadora". As forças de segurança da Suécia ofereceram proteção ao professor, mas o que ele quer é preservar o trabalho de sua vida —avanços inéditos em inteligência artificial —ao torná-lo público.
+Mais tarde se descobre que Balder já vinha trabalhando com Salander, que esteve sem contato com Blomkvist por um tempo após o final da trama relatada no terceiro livro da série. A hacker voltou a usar o codinome Wasp e vem tentando invadir os sistemas da NSA, "uma loucura motivada por vingança e com a disposição de ir até as últimas consequências", segundo relatou a MacLehose Press.
+Ela também é alvo de um grupo de "cyber gangsters" denominados "Aranhas" e "a violenta falta de escrúpulos dessa conspiração criminosa muito em breve trará terror às ruas bloqueadas de neve de Estocolmo, à equipe Millenium e para os próprios Blomkvist e Salander.
+As informações são do jornal britânico "The Guardian".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9fc6909ed7718d5a83c7b540a94dee1d8e704b9305b6e45d9feacf968cfb2471",
+    "mention_text": "Lisbeth Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85be5892722999bca5072c14df6b464e11fe060b40615eb3ab310ea41b364914",
+    "mention_text": "Agência Nacional de Segurança dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b67dde7ded5906198b1f9dbdc0b7bee68e5f81e47ffb9ba2f0a520137ef3e9a9",
+    "mention_text": "NSA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01d080e250db9f7d21be8e7c51515cccf55693ae28112bcaa51bf94a00c7e647",
+    "mention_text": "Lisbeth Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4ab143934d1be11d6cac2994fc15bf9e24165209adf0198938425ce2a253ded",
+    "mention_text": "Stieg Larsson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d116132e04b6ea77c7c5ab6a047b3174c3b8c2ea02a801c364a5afc54f2a646",
+    "mention_text": "David Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16230314a834cac41d8c1b5da25fe375fec821cb83b044cf89aa5a99dd2d8eb6",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b39e4a164309bf2dc47d54c0a30b4f87ec84dbc33e323ee0d73782cc37c8349",
+    "mention_text": "MacLehose Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63b2940623a37f26ec84bc1b6677fca9a76176f4a8d1625a396e50945b71245b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cef39af7686f1825d8d1fcf4eff7254b90c674eaf44e37d3b907cebb98512c88",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1874ebadf1c3bd921a32c6bc4233c50f8e4aebdb5edf67dbf9f447550b6fce4e",
+    "mention_text": "Lagercrantz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05014e5e616b93215a876c1956f0389b9c9af914d6099ee106884121670e12e2",
+    "mention_text": "Norstedts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bccbb9878384a3b8567c3adb217895086c668e4a95a3974273282f30eceaabd9",
+    "mention_text": "Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a6a1c010d44bc2ced4d65680588b9eb533cd6bbe9ded966c7e347aa10fda6e5",
+    "mention_text": "Mikael Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dbee7257c892696f788b9b1368a34bd6f01a1d8acb1245664f2c620f25c03946",
+    "mention_text": "Suécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8e0892c40c7865a031d5b35a8f33aecb8694a25d996828926af35ecdf465fb2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b990925252fcee7149791b81aa7eaa719fb2b2a79c8e977ef8a19c8c7902fd6f",
+    "mention_text": "Professor Balder",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15977852b03e1ff7f53530e730f143972a1d9940a84eee3fc6de1c233e91c934",
+    "mention_text": "Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c73258e76658094922c3b26f458e82766adfa2180f71ceabf6a370a2722259cd",
+    "mention_text": "Balder",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "534e3a9858806ffbd58068646ff996dd2371b52b60ddf58b5ca160c4321c1c37",
+    "mention_text": "Suécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b4cce5a07cd23e3656ba8d23ed161fcb7e345e021c9e45d044d547bd04c151b",
+    "mention_text": "Balder",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b263ce90a9eebc1b92a45c232ebb6615feb12c335505c0ab16ffe2ec63870b5",
+    "mention_text": "Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "847751cbabd2b930800c39e4b8435c2169ed7b799f6a2057f524bc59537fd1c9",
+    "mention_text": "Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ed0e6e9a6e84a113c07b0c9c6d4d9befb48a1ae44b61fc6c2a3c40ff82ae063",
+    "mention_text": "Wasp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80396975ee95800cb60ad156447452f1f5c8d96d52eabd0c1b683b1de5aac2ca",
+    "mention_text": "NSA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b2f6376968c1b21c7776469b1c171dfcf3f6ba6844f5d3b96b008711ebb33f32",
+    "mention_text": "MacLehose Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9736bc01086fdd730c67b92c3a03a533a595271c4812bcde906636d2e65bec1c",
+    "mention_text": "\"Aranhas\"",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a87ef715c23b9cec5fe63bfcdd3e44e4bfdc59d3e884f5f977346ec21760cb57",
+    "mention_text": "Estocolmo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "99696e81869e58fa4de881882a33fb91d6e53b4440fe4ef9ca7aa2df191cbaaa",
+    "mention_text": "Millenium",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ac563b30a68aa1d08928eaf799540c8e4a1a70da11b77ac758e68c410d0b43d",
+    "mention_text": "Blomkvist",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b114c607d145d7282efc8d3837b56f40181091f6b4d6405db955eee0060cd9f",
+    "mention_text": "Salander",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "098ba564477b5717a2d468e3fa20533c8cddfb1c101b0c127a6ad4c78766f925",
+    "mention_text": "\"The Guardian\"",
+    "categoria": "ORGANIZACAO"
+  }
+]

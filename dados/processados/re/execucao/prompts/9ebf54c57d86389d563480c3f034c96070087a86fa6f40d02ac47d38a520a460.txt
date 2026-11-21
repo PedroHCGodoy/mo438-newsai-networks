@@ -1,0 +1,359 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: de5cfffe755c14937a7334ab998f06afbcbd4d16951f38d3c5e2f453828fd335
+
+TEXTO:
+Genes ensinam criança a falar
+
+DA "NEW SCIENTIST"
+Uma criança de quatro anos normalmente conhece milhares de palavras e tem um senso de gramática e sintaxe de fazer inveja aos mais poderosos programas de inteligência artificial. Como pode tanta sofisticação linguística decorrer de ouvir os pais falarem com ela em linguagem infantil?
+Há pouco mais de três décadas, o linguista americano Noam Chomsky aventou uma resposta a essa pergunta: as línguas faladas no mundo são todas governadas pela mesma gramática universal, e cada bebê nasce conhecendo essa gramática.
+A idéia abalou a então dominante concepção do behaviorismo, que dizia, em resumo, que os animais têm que aprender tudo, partindo do zero. Mas sua teoria suscitou tantas perguntas quanto aquelas que respondeu.
+Como evolui a gramática universal? Como ela se inscreve nos genes e nas estruturas do cérebro? Se a linguagem tem origens biológicas, qual sua relação com a mente e o pensamento?
+Hoje os linguistas estão trabalhando em conjunto com neuropsicólogos e geneticistas moleculares, tentando encontrar algumas respostas.
+Steven Pinker, psicólogo do MIT (Instituto de Tecnologia de Massachusetts) que estuda como os bebês aprendem linguagem, procurou explicar essa busca no livro "The Language Instinct".
+Pergunta - Por que as idéias de Chomsky levaram tanto tempo para serem reconhecidas? O atual interesse em genes de linguagem não será simplesmente parte da preocupação da biologia em encontrar explicações genéticas para o comportamento e as doenças?
+Resposta - Existe realmente uma receptividade à idéia de que há genes responsáveis pela linguagem. Mas o simples fato de encontrar um gene não nos diz nada sobre a lógica da linguagem e como ela se desenvolve.
+A mania por genes é apenas parte da história. Permita que eu volte um pouco para trás. A idéia da linguagem ser uma capacidade inata começou a ser recebida com entusiasmo pela primeira vez na década de 60, quando Chomsky pôs a bola para rolar e Eric Lenneberg escreveu o livro "The Biological Foundations of Language".
+Chomsky examina sentenças; ele é um teórico de lápis e papel. Lenneberg fez o trabalho de apoio –ele é neurologista.
+Depois, na década de 70, o pêndulo balançou de volta à outra direção, à concepção da linguagem como algo cultural e aprendido.
+Mas, nos últimos cinco a dez anos, várias descobertas vieram fortalecer a idéia de que a linguagem é inata.
+Uma delas é que os estudos de desenvolvimento da linguagem em crianças revelaram importantes descobertas empíricas que dão fundamento às idéias de Chomsky.
+Hoje sabemos, de modo bastante detalhado, como as crianças processam mentalmente as sequências de palavras nos discursos de seus pais, de modo a decodificarem a gramática da linguagem de seus pais.
+E sabemos que elas não podem fazer isto sem aplicar regras linguísticas inatas.
+Há o caso de Chelsea, a mulher surda que, diagnosticada erroneamente como retardada, jamais aprendeu a falar quando criança.
+Quando foi equipada com um aparelho de surdez, aos 30 anos, ela fracassou em suas tentativas de aprender gramática e inglês –uma demonstração interessante do período crítico para o desenvolvimento da linguagem.
+Há também o caso das pessoas que sofrem da síndrome de Williams, ou "síndrome da matraca", forma rara de deficiência mental na qual adultos jovens falam fluentemente, com boa gramática e parecendo saber do que estão falando, mas têm um QI de mais ou menos 50 e são incapazes de amarrar os cordões dos sapatos.
+Essa condição parece estar associada a um gene deficiente no cromossomo 11 e mostra que a linguagem não pode ser apenas uma manifestação de inteligência geral.
+Pergunta - Em seu livro, o sr. argumenta que a habilidade linguística de nossos ancestrais evoluiu como um verdadeiro instinto biológico, uma adaptação benéfica que foi favorecida pela seleção natural. É uma idéia controvertida. Por quê?
+Resposta - Chomsky, assim como biólogos como Stephen J. Gould, diz que nem toda característica é produto da seleção natural e que isto se aplica à linguagem.
+Ela pode ter surgido como subproduto da evolução de um cérebro grande ou de um processamento analítico, ou pode ser consequência da aplicação de uma lei físico universal ao cérebro.
+Como exemplo de subproduto, não se precisa de nada para postular uma vantagem seletiva de ossos serem brancos, em oposição a serem verdes. Os ossos foram selecionados por sua rigidez. Uma maneira de tornar os ossos mais fortes é fazê-los de cálcio, e o cálcio, por acaso, é branco. A brancura dos ossos é apenas um subproduto.
+Mas acho que esse argumento não funciona no caso de uma máquina complexa. Seria como dizer que um furacão pode atravessar um depósito de ferro-velho e montar um Boeing 707. A linguagem é complexa e útil e, portanto, ela certamente é fruto da adaptação.
+Pergunta - Alguns behavioristas passam um tempo imenso tentando demonstrar que chimpanzés e outros animais compreendem a linguagem humana –que eles também criaram, através da evolução, um instinto de linguagem. Por que o sr. critica esses trabalhos em seu livro?
+Resposta - Como demonstração teatral de que a linguagem não é exclusiva dos seres humanos, essa afirmação é enganosa. É claro que se pode fazer com que chimpanzés façam algo que possui alguma semelhança com a linguagem humana, mas a interpretação que você dá ao que eles fazem depende do que queremos dizer quando falamos "linguagem".
+É irônico que as pessoas tentem "elevar" os macacos, impondo nosso sistema de comunicação a eles, como se essa fosse uma medida de valor biológico.
+Pergunta - Quem visita países estrangeiros às vezes discute se as pessoas pensam em alguma língua específica ou não. Será que os ingleses pensam em inglês, os japoneses em japonês e assim por diante? O sr. afirma que o pensamento é em grande medida livre de restrições linguísticas. Por quê?
+Resposta - Existem várias razões. Uma delas é que quando os cientistas da computação começaram a tentar modelar conhecimentos que fazem parte do domínio do senso comum, eles não conseguiam porque sempre os formulavam em inglês.
+O inglês é ambíguo demais –palavras e frases têm múltiplos sentidos– e é pouco explícito. Quando converso com você, sei que você poderá completar parte das coisas que eu deixo de dizer.
+É por isso que acho que a linguagem do pensamento provavelmente é muito mais rica e mais explícita do que qualquer língua específica. Qualquer sentença é muito mais uma sugestão do que uma "fatia" de conhecimento.
+Pergunta - Mesmo assim, muitas pessoas podem rejeitar a idéia de que não pensam em nenhuma língua específica. O pensamento consiste em que, se não em palavras e sentenças?
+Resposta - Pensamos em vários meios diferentes, utilizando recursos mentais diferentes para representar o mundo. Pensamos em proposições lógicas abstratas, e a linguagem é o meio usado para externar estas proposições para que possam ser entendidas.
+Como seria possível inventar uma nova palavra se os pensamentos dependessem crucialmente das palavras? Como se poderia emprestar palavras de outra língua, a não ser que já se tivesse uma representação mental do conceito anterior à palavra e se sentisse a necessidade de expressá-lo?
+Pergunta - Mas e a educação, onde fica? Se a linguagem não influencia o pensamento, como pode qualquer professor universitário afirmar que tem a missão de "ensinar alunos a pensar"?
+Resposta - O que se aprende na escola e na universidade são convenções históricas acumuladas no decorrer de milhares de anos. As habilidades mentais e os costumes para os quais não desenvolvemos uma capacidade inata precisam ser recriados a cada nova geração. O que a escola não nos ensina é a ter pensamentos ou idéias.
+Pergunta - Há quatro anos Myrna Gopnik e seus colegas da Universidade McGill, em Montreal (Canadá), publicaram uma análise de um distúrbio de linguagem que acometia uma família inteira em Londres. Os membros mais prejudicados da família têm QIs não-verbais de nível médio, mas falam lentamente, frequentemente fazendo uso errado de pronomes e sufixos. O padrão sugere que seja uma característica controlada por um único gene dominante. Será que a coisa é tão simples?
+Resposta - Em primeiro lugar, o distúrbio revelou ser mais difícil de definir do que davam a entender as primeiras informações sobre o caso. Os membros desta família que sofrem do problema realmente têm dificuldades com o "teste wug". "Wug" é uma criatura que não faz sentido. Mas, se você pedir a qualquer criança de quatro ou cinco anos que dê o plural, ela vai te responder com "wugs".
+Nessa família, porém, os adultos, que eram inteligentes, trataram este pedido como um quebra-cabeças complicado. Eles também têm problemas de pronúncia, que parecem superar com o tempo. Na realidade, o distúrbio herdado não é facilmente definível.
+É provável que existam casos melhores de distúrbios puramente gramaticais. Por exemplo, Heather Vanderlay, da Birkbeck College, em Londres, selecionou um grupo de crianças com esses distúrbios.
+Um dos garotos, de uns 14 anos, é muito inteligente na maneira como utiliza a linguagem com computadores, mas chega quase às lágrimas pelo teste wug. Assim, acho que a idéia de um distúrbio de linguagem inato é real.
+Pergunta - Isso implica que um defeito em apenas um gene pode afetar profundamente as habilidades linguísticas. Até que ponto isso é provável?
+Resposta - É bastante plausível, porque qualquer coisa que é uma máquina complexa –como a linguagem– pode ter seu funcionamento interrompido por um defeito em um de seus componentes. Quantas maneiras existem de impedir um carro de dar partida?
+Tantas quantas forem as peças no motor. Mas não se pode afirmar que a linguagem ou a gramática seja baseada num único gene, apenas porque pode ser obstruída por um único gene.
+Pergunta - Em seu livro, o sr. lamenta que 90% das cerca de 5.000 línguas do mundo estejam à beira da extinção. Mas barreiras linguísticas também ajudam a manter pessoas em guerra umas com as outras. Será que deveríamos nos preocupar com a extinção de línguas? Não é inevitável que as telecomunicações espalhem línguas dominantes, como o inglês, pelo planeta?
+Resposta - A extinção de línguas tem importância sim, e é negativa. É uma questão ética e prática complexa. Seria fácil para mim promover uma cruzada baseada apenas em considerações estéticas –vamos salvar o plinget e o apache, porque são belas.
+Mas existem outras razões para salvar línguas, como para salvar espécies. Elas são altamente informativas em termos científicos, em termos de pré-história e psicologia.
+Examinando semelhanças e diferenças entre línguas vizinhas podemos traçar a história das migrações de populações.
+Na diversidade das línguas também podemos ver como o maquinário mental da linguagem, da gramática universal, pode ser ampliado e quais são seus limites.
+Tradução de Clara Allain
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d349cc773b12822ff4813a0f53b43dedb10eadf78479ad80454883ca4fac74ae",
+    "mention_text": "NEW SCIENTIST",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01ce7275355eb6b0791ca72678465187bbdeafac4473f3e1b379e9017e0732f3",
+    "mention_text": "Noam Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85610a350de754a64020c8b025df33fa384788a36c51dd441ae469a75de3471c",
+    "mention_text": "Steven Pinker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1634b7b20caf2c077bc2ebda87bae3ff3512ada5f8fc5418b74bac3399aa1afe",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "326b219c2fa2e5041aa7db227dd1a9a44cfe2a609b85ee13e19cdf14a25dc155",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9ed523dc2068cbe9a64cd2ef72327adde6d0b449ce116c598a9fe40181b0de1",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "70e97a567f8e5805c3df82bf3ba11e48ccc8ff9f578daf23808ca433dfab6bc6",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b28bd1e7217e86a82e1076a506d6bee2a7c6355fba56fa3ab174eed2afc65527",
+    "mention_text": "Eric Lenneberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83c91dd1694e82ec6ecea2a857bcd2b9b00c1deadaedf8a12e5d1484e3d1eaf5",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "474974df791d9bf665f14fc7675789cf7db38cb29e3339f0ae887a83f9d7e6df",
+    "mention_text": "Lenneberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4316471e3747bed2b047307716e31378c03f679ded5818a0c53ad47d34e2f5fc",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ec489dde1d01801ca0b8bcd2543d7f23b9afd9b22939a11544e0c6e0a76d5c3",
+    "mention_text": "Chelsea",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "324a71f556144f69d29abb94f2272969e176cbccc340a7c52cd110ae2c4cbf5a",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da22dd400aac72ce42aebc51af5e8364eb0f202b424b3b50fa8b0ec0ed61adad",
+    "mention_text": "Stephen J. Gould",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "507279fd1d6292813b9dc8e3636c5704d0980d94c1ca6c32cee7fc560c6caa19",
+    "mention_text": "ingleses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bd3ce16e4d22bd84c67621ec3cb20e7451cd3d85f22dc3f8da9128f57c1ee13",
+    "mention_text": "japoneses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ce8285ac9d4781d79de0f1da740445e96cf98c90f951eac5382dacdd952d316",
+    "mention_text": "Myrna Gopnik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ce5241b5545aa72402b2164d8d13b93832bdfa685799f1c31361333297fc021",
+    "mention_text": "Universidade McGill",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ccb018269c472418387bd4b9082cd643d8656c4636f63c8622666b05bdd38c4",
+    "mention_text": "Montreal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "796eca1d0c9a4b0cb85702028e7f03bda99fcd0a84565b94230ffaed4b282291",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46ce2b420b11fc8631a961a5c749f0303dc47b4bd8d955ddc8be0fca8ff6ea12",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a92c7ce2d61a55c979a3cc67104318068ce9f2ce9e6bcf84b21a36cccb42b245",
+    "mention_text": "Heather Vanderlay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e395bbd03152770f878936c964e11fee7811f23307f885b4ae2306ac05f64df1",
+    "mention_text": "Birkbeck College",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0b335929a56b2ae6258c33209135da2f7bd14c48bcc789497f91fee01d44e40",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "340c602cfd530388cc87ae960301a95e71f58ba9e9971cf4bbe35225d1060f1f",
+    "mention_text": "Clara Allain",
+    "categoria": "PESSOA"
+  }
+]

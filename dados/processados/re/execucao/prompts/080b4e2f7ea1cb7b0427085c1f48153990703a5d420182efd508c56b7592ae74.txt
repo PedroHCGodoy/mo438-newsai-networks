@@ -1,0 +1,427 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e65b3a7282f6b7fca8ad61bdf1d562e37f70c6746a17578107cdf18fd94c6b30
+
+TEXTO:
+Redes sociais são uma ameaça à liberdade, afirma George Soros
+
+RESUMO Autor afirma que o comportamento monopolista de Google e Facebook cria problemas graves para a sociedade. Ele chama a atenção para a influência que essas empresas exercem sobre as pessoas sem que a maioria se dê conta disso e destaca os riscos de uma aliança entre as gigantes de tecnologia e governos autoritários.
+O momento atual da história é doloroso. As sociedades abertas estão em crise, e diversas formas de ditadura e Estados mafiosos, exemplificados pela Rússia de Vladimir Putin, estão em ascensão. Nos Estados Unidos, o presidente Donald Trump gostaria de fundar o seu próprio Estado em estilo mafioso, mas não pode fazê-lo porque a Constituição, as instituições e uma sociedade civil vibrante não permitem.
+Não é apenas a sobrevivência da sociedade aberta que está em questão; a sobrevivência de toda nossa civilização está em jogo. A ascensão de líderes como Kim Jong-un , na Coreia do Norte, e Trump , nos EUA, tem muito a ver com isso. Ambos parecem dispostos a arriscar uma guerra nuclear a fim de se manterem no poder.
+As causas reais, porém, são mais profundas. A capacidade da humanidade de exercer controle sobre a natureza, tanto para fins construtivos quanto destrutivos, continua a crescer, enquanto nossa capacidade de nos autogovernarmos flutua —no momento, está em baixa.
+A ascensão e o comportamento monopolista das gigantescas companhias americanas de internet estão contribuindo fortemente para a impotência do governo dos EUA.
+Em muitos casos, essas empresas tiveram papel inovador e libertador. Mas, quando Facebook e Google expandiram seu poder , ambos se tornaram obstáculos à inovação e causaram diversos problemas dos quais apenas começamos a nos conscientizar.
+Empresas obtêm lucros ao explorar seus ambientes. Mineradoras e petroleiras exploram o ambiente físico; empresas de rede social exploram o ambiente social. Isso é particularmente nefasto porque elas influenciam o modo como as pessoas pensam e se comportam sem que estas estejam cientes disso, o que interfere no funcionamento da democracia e na integridade das eleições.
+Como as empresas que operam plataformas de internet são redes, elas auferem retornos marginais crescentes, o que explica seu crescimento fenomenal.
+O efeito de rede é verdadeiramente inédito e transformador, mas também insustentável. O Facebook precisou de oito anos e meio para atingir 1 bilhão de usuários — e metade desse tempo para chegar ao segundo bilhão. Se esse ritmo for mantido, dentro de menos de três anos, o Facebook já não terá pessoas a converter no planeta.
+Na prática, Facebook e Google controlam metade da receita da publicidade digital. Para manter seu domínio, precisam expandir suas redes e aumentar a proporção de atenção que os usuários lhes destinam. No momento, fazem isso pela oferta de plataformas convenientes. Quanto mais tempo o usuário dedica à plataforma, mais valioso se torna para a companhia.
+Além disso, como provedores de conteúdo não têm como evitar essas plataformas e se veem forçados a aceitar os termos que lhes são oferecidos, eles também contribuem para os lucros das empresas de mídia social. A excepcional rentabilidade dessas empresas decorre, em larga medida, de sua omissão diante da responsabilidade — e do pagamento— pelo conteúdo.
+As empresas dizem que só distribuem informação. Mas o fato de que sejam distribuidoras quase monopolistas as transforma em serviço de utilidade pública, o que deveria sujeitá-las a regulamentação mais severa, com o objetivo de preservar a competição, a inovação e o acesso livre e equitativo.
+Os verdadeiros clientes das companhias de mídia social são os anunciantes . Mas está emergindo um novo modelo de negócio, baseado não só na publicidade mas também na venda direta de produtos e serviços. As empresas exploram os dados que controlam, criam pacotes com os serviços que oferecem e manipulam preços, de modo a dividir com os consumidores uma parte menor dos lucros. Essas práticas ampliam ainda mais sua rentabilidade, mas solapam a eficiência da economia de mercado.
+As companhias de mídia social enganam seus usuários ao manipular sua atenção, direcionando-a a seus propósitos comerciais, e engendrar mecanismos para aumentar a dependência de seus serviços. Isso pode ser muito prejudicial, sobretudo para adolescentes.
+Existe uma semelhança entre as plataformas de internet e os empresas de jogos de azar. Os cassinos criaram técnicas para levar seus clientes a gastar todo o dinheiro que têm e até o que não têm.
+Algo parecido — e potencialmente irreversível— está acontecendo com a atenção humana. Não é uma simples questão de distração ou vício; as redes sociais estão induzindo as pessoas a abrir mão de sua autonomia. E esse poder de moldar a atenção das pessoas está cada vez mais concentrado nas mãos de poucas empresas.
+É preciso empreender um esforço significativo para fazer valer e defender aquilo que John Stuart Mill definiu como “liberdade de espírito”. Uma vez perdida, aqueles que crescem na era digital poderão ter dificuldade de recuperá-la.
+Isso pode ter consequências políticas graves. Pessoas que não exerçam a liberdade de pensamento serão facilmente manipuladas. Não se trata de ameaça para o futuro; basta olhar a eleição presidencial norte-americana de 2016.
+Há uma preocupação ainda mais alarmante no horizonte: uma aliança entre Estados autoritários e os grandes monopólios de tecnologia da informação, controladores de vastos repositórios de dados, o que uniria os sistemas nascentes de vigilância empresarial aos sistemas já desenvolvidos de vigilância estatal. Isso bem pode resultar em uma rede de controle totalitário de uma dimensão que nem mesmo George Orwell poderia ter imaginado.
+Esse casamento profano deve ocorrer primeiro na Rússia e na China. As empresas chinesas de tecnologia da informação são rivais à altura das plataformas americanas. Além disso, desfrutam do pleno apoio e da proteção do governo, que tem força suficiente para proteger as principais companhias, ao menos dentro de suas fronteiras.
+Os monopólios norte-americanos já se sentem tentados a ceder a tais governos no intuito de ganhar acesso a esses mercados imensos. Os líderes ditatoriais desses países talvez se disponham alegremente a colaborar, no interesse de melhorar seus métodos de controle sobre suas populações e de expandir poder e influência no resto do mundo.
+Também há um reconhecimento crescente de uma associação entre os monopólios na internet e o aumento da desigualdade.
+A concentração da propriedade nas mãos de poucos indivíduos é parte da explicação, mas a posição peculiar que os gigantes da tecnologia ocupam é ainda mais importante. Eles conseguiram estabelecer monopólios enquanto competiam uns com os outros. Só eles são grandes o bastante para devorar startups que poderiam se tornar concorrentes, e só eles têm os recursos necessários para invadir território de outros gigantes.
+Seus proprietários se consideram senhores do Universo. Na verdade, são escravos da necessidade de preservar sua posição dominante. Estão engajados em uma disputa feroz pelo domínio de novas áreas que a inteligência artificial vem ajudando a criar, como a dos carros sem motorista.
+O impacto dessas inovações sobre o desemprego depende das políticas dos governos . A União Europeia e especialmente os países nórdicos são muito mais previdentes em suas ações sociais. Protegem os trabalhadores, não os empregos. Estão dispostos a custear o retreinamento ou a aposentadoria de pessoas alijadas do trabalho. Isso oferece à população dos países nórdicos um senso maior de segurança e a torna mais simpática às inovações tecnológicas do que os cidadãos americanos.
+Os monopólios da internet não têm interesse, nem vocação, em proteger a sociedade contra as consequências de suas ações. Isso faz deles uma ameaça pública, e é responsabilidade das autoridades regulatórias fazer algo diante disso.
+Nos EUA, as autoridades regulatórias não são fortes o suficiente para resistir à influência política dos monopólios. A União Europeia está em melhor posição, porque não conta com gigantes de internet sediados em seu território.
+A União Europeia emprega uma definição de monopólio diferente da adotada pelos Estados Unidos. Enquanto as ações das autoridades norte-americanas se concentram primordialmente em gigantes formados a partir de aquisições, a lei da União Europeia proíbe o abuso de qualquer poder monopolista, não importa de que maneira tenha sido constituído. As leis de privacidade e proteção aos dados europeias são muito mais fortes que as dos Estados Unidos.
+Além disso, a lei norte-americana adotou uma estranha doutrina que define “dano” como um aumento no preço que o consumidor paga pelo serviço recebido. Mas isso é praticamente impossível de provar, já que a maioria das gigantes da internet oferece serviços de graça. Além disso, a doutrina não considera os valiosos dados que as companhias de plataforma recolhem sobre seus usuários.
+Margrethe Vestager , comissária da competição da União Europeia, é a paladina da abordagem de seu continente. A União Europeia precisou de sete anos para montar seu caso contra o Google. Mas, como resultado de seu sucesso, a implantação de regras adequadas foi acelerado. Além disso, graças aos esforços de Vestager , a abordagem europeia começou a afetar atitudes nos EUA.
+É apenas questão de tempo para que o domínio mundial das companhias de internet dos Estados Unidos seja quebrado. Os esforços de regulamentação e tributação que Vestager vem liderando serão o seu fim.
+George Soros , 87, é presidente do conselho da Soros Fund Management e presidente da Open Society Foundations .
+tradução de Paulo Migliacci
+Texto publicado originalmente pelo Project Syndicate .
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b88a45e7a7a5025d0c297c2ff865a32d876272b54f42e623ab7cc4cc4b02dfcb",
+    "mention_text": "George Soros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29fb18b46290682125a13aa74a8a23b66721e8f7f280a8f826575cb83f968376",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a700937ee8d2ac1e25d255caf12976d7f68bbce36b7b94c39f60213b271055f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6afff852f73bb611bdcfb3e3f0c893fbb2ab9e9c8d033e6c45c51c105666b63c",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cee133a999c62dd38fab24aeb0fc13cf7177203e9d34eec8e1e7e51abfcffb70",
+    "mention_text": "Vladimir Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0d61d0bd48cf5da22e989ad4ca4e04d81bf75bd1e2f68bb060f8edeb30be0d2",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7eb9b8810335c04cae01b8bd02c0d51a0713806ead2338bb06c4da6c0e224e11",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "289545849204ec7eeaec924fbf7ccef7339504658ebd917f620fe519b5d76c4e",
+    "mention_text": "Kim Jong-un",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aed738ede237b361dec8d52654512fa2e32bf115e4754c24d2eac50bc7d7bdd1",
+    "mention_text": "Coreia do Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28bdc31265b64a7003e3b6489ee114cd80b5b0662f26800ee10b7fb9cb516ffb",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86a192699a88d9f3c7bf1193be43df5a3291557e51eee5e35657cd1806f7ae2b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "049551df657ef79773080780fa3c27062569ce9e3692402dc40f9b5d3616846c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d701490032cb12a9d0d67f634be07275ce32ae2996064d71b29b8231a7b0110",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01a2bc72d5e23a840b433e012b2d2ec20357cf6092bf5c872e165899402bd0a4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c94fe18c252aa42ca824e8324167f592554757463791fc7825ee9e22fde07134",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ac07668009879bc30c79d7f715425497e99c86002c6f403089a6fb5152e3e72",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78dcf3c85d49e22d491584d8331911f482be9c15acde77acbecd5c69927fb99c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "578c8875e6ae0f13f2dc8b84a7c9ec3aa7765b294444871e1584e7ffb6993874",
+    "mention_text": "John Stuart Mill",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e164e8701bb3999972de380386c7cdb2764c8c34ec3160b3f39dd0117417cd61",
+    "mention_text": "George Orwell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b9cf0976740be93e0224b5603b3c0dac8ba44234a26f8b9efc125f9d0d013a53",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fae139c3072df59b602df74e78b2e2a17b0598470a71d7bfd4127cc1d25ea825",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c0591dcd5c47aa87320ca601aff8697d781c83ad58b20a488be978e74dced2e",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49d1c271102752b50fc17c4d1e58ddb7c7b5214b4d4862496fdb450a8786d705",
+    "mention_text": "países nórdicos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "adf75b9b91491cf2cc091b764ce5ecb69e08382f878d1455b7254e372535414a",
+    "mention_text": "países nórdicos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98084dddd092aff82a6c8bc2b1768d264eb960db9cd8865ae5e4647b8b0fa2f4",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4fdd16d967919dc83f2c6d65bac4e8c9d584c50205849ce369eae36aa3fffc7b",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3077296d74e1b399718741949a4489fd8040afe163bfb547cac44e1016d6de03",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2013cc5cfa4994019873b006d47f2aeba1a69370572073214e0ecde159ebc6ac",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "795d483b2abd87dac442acaee258c9dba2eb2c9b7a3833d8380f51bacee79ab8",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a83ed9d8b9a68943d9b257d11ef7d9c578f5f93014232758407cee94a5fd6be6",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d42b2ab0ec1b6ee86e36486c357d21fdeb0c36da2ef1b9d2fb5eb09187047ce",
+    "mention_text": "Margrethe Vestager",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfbfbf47c75df5e8cdc0109a7c8193f2a059ef88884fea38981b7eb8db698d9b",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b0fed249da9332652781d559addebedda969ea41aa11a19c58fd860f867cac5",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f925e9acb107696eda50b12561a1353d44cfa1bda52e3907ab43bc1e30cd7bb8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49ad1da9435897629290d533c5e31237552c53970cf8243258c4bc78ab5351e9",
+    "mention_text": "Vestager",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5faee823e192ce7d99d129532f6d1900da8c24b20feefbc3a20293acdd73481c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c3736172fb54febefac46caf68e1b09e862756db82854b95fd4d76e881ef5075",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7bef7872759375c57592fdf1e73fd478e0ae4e702cca0d2a17f85b52f0804571",
+    "mention_text": "Vestager",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fdc13a263df5b8c882e04774d1b80d6dc8f622b8bab4f62dabbd283d6648e0f",
+    "mention_text": "Soros Fund Management",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "848e9ab9b09ee0d2c2713b9507c9fbf893709a2052180ee9f81e736d908f8220",
+    "mention_text": "Open Society Foundations",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ef02d09aaa6b9481e9e317aebd89a2cae70835f4a2f893d921659f3ab6c5664",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e1462a58c048089d12731ff237da29627761ca572ff8e116d9fe1fab16c41a1",
+    "mention_text": "Project Syndicate",
+    "categoria": "ORGANIZACAO"
+  }
+]

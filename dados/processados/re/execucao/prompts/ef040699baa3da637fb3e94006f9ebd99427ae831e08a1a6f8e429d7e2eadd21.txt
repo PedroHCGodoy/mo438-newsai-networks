@@ -1,0 +1,709 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8f2790eb4d387c71fc7a5dd95bdc681dbeed6af7b0f8354f7678b2c319e1b5aa
+
+TEXTO:
+Filmes e TV Paga
+
+FILMES
+INÁCIO ARAUJO
+CRÍTICO DA FOLHA
+O Rapto do Menino Dourado
+Globo, 15h10.
+(The Golden Child). EUA, 1986, 96 min. 
+Direção: Michael Ritchie. Com Eddie 
+Murphy, Charlotte Lewis, Charles Dance. 
+Criança perfeita, capaz de trazer a 
+iluminação espiritual para todos os 
+povos do mundo, e que só nasce a cada 
+mil anos ou algo assim, é sequestrada 
+por uma seita contrária à tal pacificação 
+planetária. Murphy pode encontrá-la. A 
+produção já é velha conhecida de 
+sessões da tarde de tempos idos. Ou seja, 
+nada.
+Os Idiotas
+SBT, 15h15.
+(The Jerky Boys). EUA, 1994, 81 min. 
+Direção: James Melkonian. Com Johnny 
+Brennan, Kamal Ahmed, Alan Arkin. 
+Dois bobos, que gastam o essencial de 
+seu tempo pregando peças nas pessoas, 
+mostram que são mais bobos do que se 
+poderia imaginar quando decidem 
+pregar uma peça na própria Máfia. A 
+única questão relevante que o filme 
+suscita é: que diabo estará fazendo Alan 
+Arkin (o embaixador norte-americano de 
+"O que É Isso Companheiro?") nessa 
+história?
+Perseguição
+Bandeirantes, 22h.
+(Fatal Pursuit). EUA, 1994, 90 min. 
+Direção: Eric Louzil. Com Malcolm 
+McDowell, Shannon Whirry. 
+McDowell comanda um assalto ousado a 
+um local no qual são guardadas valiosas 
+jóias, mais exatamente valiosos 
+diamantes. Na sequência, audaz 
+investigadora (Whirry) é encarregada de 
+persegui-lo na cidade de Nova Orleans.
+Sangue Ruim
+Cultura, 22h30.
+França, 1988, 125 min. Direção: Leos 
+Carax. Com Juliette Binoche, Michel 
+Piccoli, Denis Lavant, Julie Delpy. 
+Estamos num momento indefinido perto 
+do fim do século 20, quando um 
+laboratório isola um vírus mortal que se 
+dissemina pelas carícias dos amantes. 
+Marc (Piccoli) é o homem que pretende 
+roubar e vender o vírus do laboratório, 
+pois precisa desesperadamente de 
+dinheiro. Mas o homem de confiança 
+dele, Alex (Lavant), se sente 
+inteiramente atraído por Anna 
+(Binoche), amante de Marc que se opõe 
+ao crime. Ficção científica, ambiente 
+"noir", muita fantasia para compensar a 
+trama sem novidade nenhuma e que 
+parte de uma premissa no mínimo 
+duvidosa. O filme está inserido no 
+contexto do cinema pós-moderno 
+francês, do qual Carax é provavelmente o 
+representante mais talentoso. 
+Legendado. Inédito.
+Uma Promessa para Carolyn
+SBT, 1h.
+(A Promise to Carolyn). EUA, 1996, 94 
+min. Direção: Jerry London. Com Delta 
+Burke, Swoosie Kurtz, Shirley Knight. 
+Quarenta anos depois, duas irmãs 
+decidem denunciar os maus-tratos a que 
+foram submetidas pela madrasta 
+durante a infância de ambas e que 
+resultaram na morte da outra irmã, 
+Carolyn. Reviver o trauma da época em 
+que eram crianças não será tarefa das 
+mais fáceis, mas elas resolvem encarar 
+mesmo assim o drama pessoal e familiar. 
+Típica produção feita para TV. Inédito.
+Intecine
+Globo, 1h45.
+"A Lua dos Amantes" (1991, de John 
+Bailey, com Ed Harris, Madeleine Stowe, 
+Benicio Del Toro, Charles Dance, Pruitt 
+Taylor Vince, Roger Aaron Brown) ou 
+"Blue Tiger - Desafiado a Yakuza" (1994, 
+de Norberto Barba, com Virginia Madsen, 
+Toru Nakamura, Harry Dean Stanton, 
+Dean Hallo) irá ao ar hoje na sessão dita 
+interativa do canal, segundo a escolha 
+dos telespectadores-votantes.
+Pesadelo no Ártico
+Globo, 3h30
+(Ordeal in the Arctic). Canadá, EUA 1993. 
+Direção: Mark Sobel. Com Richard 
+Chamberlain, Catherine Mary Stewart. 
+Richard Chamberlain é o capitão do 
+Exército canadense que luta para salvar 
+sobreviventes de um acidente aéreo com 
+avião militar, até que chegue a equipe de 
+resgate e desenvolva o salvamento 
+propriamente dito. Não seria fácil ao 
+natural. Como o desastre foi nas gélidas 
+regiões do Ártico, pior ainda. Mais uma 
+produção feita para TV e, como tal, 
+baseada em fatos reais.
+DESTAQUES DA TV PAGA
+FILMES
+O impossível transformado em possível
+Méliès chamou a um de 
+seus filmes "Viagem Através do Impossível". Com isso designou, de certa forma, o cinema: é, ao menos 
+em parte, o lugar aonde vamos para ver o impossível.
+Os acontecimentos da 
+última terça-feira em Nova 
+York nos fazem lembrar de 
+que o impossível talvez não 
+seja assim tão distante.
+É um pouco isso o que 
+Hitchcock reivindica em 
+"A Sombra de uma Dúvida" (Film & Arts, 14h e 0h), 
+no qual uma família recebe 
+o simpático tio Charlie.
+Mas uma sombra parece 
+insistir em não se desgrudar da imagem de tio Charlie, em designar, nele mesmo, um outro aterrador.
+No registro do puro fato, 
+convém não esquecer "O 
+Caso dos Irmãos Naves" 
+(Canal Brasil, 23h30), obra-prima de Luís Sérgio Person.
+(INÁCIO ARAUJO)
+ESTRÉIA
+Marina Person volta a falar de cinema no "Cinecontato"
+A partir de hoje, a VJ Marina Person -que comanda o 
+"Meninas Veneno" e apresentou o extinto "Cine 
+MTV"- retoma sua antiga 
+paixão: o cinema.
+Às 19h30, dentro do jornalístico "Contato MTV", Person estréia um quadro diário 
+de cinco minutos todo dedicado aos filmes que fazem 
+ou já fizeram sucesso nas telas do mundo algum dia.
+No primeiro programa, a 
+VJ pega carona no badalado 
+lançamento de "Inteligência 
+Artificial" (de Steven Spielberg) para falar dos filmes 
+que retrataram o futuro da 
+humanidade, como "Metrópolis" (de Fritz Lang), 
+"2001" (de Stanley Kubrick) 
+ou mesmo "Os 12 Macacos" 
+(de Terry Gilliam).
+Ao mesmo tempo, Person 
+vem se dedicando a finalizar 
+um documentário sobre seu 
+pai, o cineasta Luís Sérgio 
+Person, morto em um acidente em 1976.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2e36f27c66f70f83c57ec7d537a6883a97578513b969c6bd286a42172025d819",
+    "mention_text": "INÁCIO ARAUJO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d8a4bb257276e7510d5a3310c13cbe8b48167b55df8489758b24e3ea6c3b040",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52541e6adc0b0dc7d49c96c2df19fcf4cc2543025b5f12adb78732c67a260442",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "462f92b22e68511ef7700d3d8b667e69d1da8fe2be37859183d1b227b6d3a10a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8bac1ca16811122087a099838556a9f41fc72fe009ef5e6a58a5455f0ace82fa",
+    "mention_text": "Michael Ritchie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0330cbbcbfed7f59e64dfb8d3687d0b3e9b8daa8c2351184e79c8225eae5fe1",
+    "mention_text": "Murphy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d48744a428b0430ba14e63288e0411d9e714b98cfd880d107517f6fab578f506",
+    "mention_text": "Charlotte Lewis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc927f76285b0ca8771a8470e86bdd2d7a867cdba0176060439dc8884a4884b0",
+    "mention_text": "Charles Dance",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "294c274cb5b94f90afceec3e65b6c6477f8b8310dcd25c3dd26c481c6ff543f1",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48106b59adb05bd287af2824e17d1de121e67366b306bed23ac5d30e9ccc9bdb",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e468c909fae5addcc95d7aa9e9c93750d89dece3b4fc988ad03e94fa6c4dcb0",
+    "mention_text": "James Melkonian",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79d5714c54285eb0332460f610fe0421b5b4d1aeefc907fac56e9409aa157f80",
+    "mention_text": "Kamal Ahmed",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1df86c1b7bb72fe3dd2d368c7b0ce1e05b12f119812884b3a6323773920e7fb3",
+    "mention_text": "Alan Arkin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a62124f772b0c81e5a9b55c6e9bfcec1b3272341ab509a3c2d0086dd7213605d",
+    "mention_text": "Máfia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ab5496c7e45dde5f634bab15a014c67982a79b66d4351acd255b070ef1241a8",
+    "mention_text": "Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d29b15171d2b064d305fe6116553c511dc75080df5bbd79843beed8565a46aa",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4368bc553e765c00bcfcc195febd7578820506d9a740f2a8d59550ed164fa3d5",
+    "mention_text": "Eric Louzil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "016ba94e3454803caaab86d7150f626cde77929f6a50d80744733450b1f5adfc",
+    "mention_text": "McDowell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f014eedbac329dc1d34dd468d8ccd45a1c1f4397dbceee5ed66ceb04586fab0",
+    "mention_text": "Shannon Whirry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "712664a15045da4edd4be222f77b8bbd745bb0a8b0b1e0696360c08fece94131",
+    "mention_text": "Whirry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f77d1225cba845903dc3d7e51034c62b176e33f3557011272076b5a754b32dc",
+    "mention_text": "Nova Orleans",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c101eedf769e6c903a468dfaeb3d594f4cfdd080a01afea111451bd315668fd1",
+    "mention_text": "Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a37802403f9d1aa865644b23f7f0177730984e34e6e34dc55520492bff24448b",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "510d84fd2125e56a8f34332d3a2bda91e041e250f63fde2686d6ed56ee572342",
+    "mention_text": "Carax",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7d2d1244ec22a3a6b0c3835fb9623a320ee0d66e4ee54a6cfe1ba78d94c787e",
+    "mention_text": "Juliette Binoche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61c580d71c30813de8a398daf279cf82af71df0c81daed9818d7abc2a40ef282",
+    "mention_text": "Piccoli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "471a7063cc44053e62a93ba2c9b03f18842008720ec53376e3cfa07e80b40065",
+    "mention_text": "Denis Lavant",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c6dead6a78756f1cf6e4fb81dbbf23b9d923574fb0035d680622856089da950",
+    "mention_text": "Julie Delpy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14264eabf17c1b88d04aa72d698eddeade25ed57314b9b22a59209c8e5feca5f",
+    "mention_text": "Marc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "332956bfe5f9df1c5347ce35458770ab1813ba480e3c0fea399aa7b93c46d388",
+    "mention_text": "Alex",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88df14d9300e0919b85fda4be5ac3fcad39a76adcfaabde844bfc615296aeaef",
+    "mention_text": "Lavant",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0749958e3a33d7e901e9b59bd60354caa3ef2d79bd91ac07b1ff597947f11ae8",
+    "mention_text": "Anna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9dca725cbf083c4f72eadbed5e4174bbdc51dde7ccfe66df622f1ab98a8fdbd9",
+    "mention_text": "Binoche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "919dd74697db72c371ba72c938b13594ea9e9e7f4a92012b3e1129b9953fe216",
+    "mention_text": "Marc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbf0c373a70053368e63f3c3fd81bbd9e381eb4803056e61480f8fd912ed4e7e",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "059eb80da1de45ab23472747770e1a8fc509c776b9a920c988d8b0677dadc465",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "14c37cec328e55c66fdafb6547c757e52fbdf2ce875e11f400eb26d400318e6f",
+    "mention_text": "Jerry London",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9ed3bb34d928000bf3e15dbc7b0d032f43bf91ecd953d333c575467f1fe23dc",
+    "mention_text": "Swoosie Kurtz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9537a5187a02e857f05cb8a662c2306d1962a3fc2abb93239e16481eda973d49",
+    "mention_text": "Shirley Knight",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23e91544b83219eaf185fe0d30e5057a7e0ad0fc3bbef416c084c55ccf858f06",
+    "mention_text": "Carolyn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4a59ca2b32dc23569a6708ef6ce443d80ddc30ae5cd1878036066142aef36b9",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "adc6071fea105026a8ea7bdaf0d987134a6ea8a272eb0aba599dab6fbf2ec462",
+    "mention_text": "Ed Harris",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10c993fb8cb78e9f7391e5e533369ae651547b8266a44050fdc0b7319730ac4a",
+    "mention_text": "Madeleine Stowe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2a2a7e2ef398f18694e037f8c8aa9082b2c07942c0c7f1976a40813e083a162",
+    "mention_text": "Benicio Del Toro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77ef7f22912191d67277754a2844268d43e8eeb636cd082c3093a1322cc874d6",
+    "mention_text": "Charles Dance",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ec01dc328ac933357722ac7d2f0f748bac8b8b528ff0c3e4e74b382f8ea1cf8",
+    "mention_text": "Roger Aaron Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9cf96bf3907d38e9d2012442e70ba07edfe18c78f8d12d970fcbd10a59693774",
+    "mention_text": "Norberto Barba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0a63c71db13ede57da358b19e3191fca2f51c23d8b05cfeffd2b83fcaa0ab17",
+    "mention_text": "Virginia Madsen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "985b7f369cf494db5e1503917680aeb8331d320e34455d5e98e099a90f7b52c5",
+    "mention_text": "Toru Nakamura",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aebf750c47c6493a15353738ad1ad5168979b36e135461b84efa570f4cca23d3",
+    "mention_text": "Harry Dean Stanton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "260437547e1540661d0166661a309aba762493b5b4916d1f964db747aa08399b",
+    "mention_text": "Dean Hallo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "320dbb75b66ec2d617c12ad0838f41502c1abf59148fb8fa3bcad1b00a9e6873",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69013c22ea4a8b4d4bdbf2bd975aa07221f6bde28cf8bbe0da58187fbb591b6a",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "00c781603aa3c6e82fe7351260ef61d62f17339b8be305fe2f8ee219ddc5ffa1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c14663dfeba09e3a340ed47e6391410f2ff02595b792475f444205884988b726",
+    "mention_text": "Mark Sobel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5832abab8615b966f2e4e46b26877c9c6da4018ddfbfcefc1f7c0998cbc7313a",
+    "mention_text": "Catherine Mary Stewart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d24d6d0b0150e11881da22fc8bd8740897bf34d12c05a66974b9bcbc4db137c",
+    "mention_text": "Exército canadense",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbc6645f887c8b448cb82b6b4027c7ad6f3f189fec9fadcde1cee9b7c95306a1",
+    "mention_text": "Ártico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ba87b3e6ff43cd9772cc624691a284447da675bd8b317362aa0090070e937de2",
+    "mention_text": "Méliès",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d8a1a09c20c0ef9911b28c0aef785580667d4818905bffbee86ae1e78461bea",
+    "mention_text": "Hitchcock",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aed2772d6faba9ddd38c3c3f6a69527aaf200a5f45f62473597ed5b2b3e226da",
+    "mention_text": "Film & Arts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12a973cd5ab5ed131fe65a91a9375d7407c511622ccd1acfd3a1f8bb231dca6c",
+    "mention_text": "Charlie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b9b08680d81dbbd1804f4e09336d3a04e62695aa61fb543690c96a61ef4e73d",
+    "mention_text": "tio Charlie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d66dbebbdae84e20736b145439f619110ff4b692e2fa6ff5e7fc0be3269d0896",
+    "mention_text": "Canal Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d2e3b0ea202d4cc890747c40bbbc938353f41c0f9a1f0b396e93879d0c1ff6b",
+    "mention_text": "Luís Sérgio Person",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0960188e4012265271f349262432b1e5b232cb65c9065fecbb8775d665c2d2fb",
+    "mention_text": "INÁCIO ARAUJO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fcb0e03c2d4372d4aa0b9214bb74a195588ef8dcc0d088878463973590c0d5ff",
+    "mention_text": "Marina Person",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b348316050e9c180b8827d24e1fdfbc50c9ccc0c7f6290bd9332b0d891512dde",
+    "mention_text": "Marina Person",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73183e8d0c8a4033b2dc5020d485bc2b189bd52edc4cd8d7fe6c8cd17ea60cb5",
+    "mention_text": "Person",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "faef45d379e987c58120ee5328f93329e267eeb6fed4ecb494c767636ee68eb1",
+    "mention_text": "Steven Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8b75c8ad1375fca0a299668c04242c7dcffcf4a223eb6e838f53b13c34fdac3",
+    "mention_text": "Fritz Lang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "944a35e5da55f2078af7ec015c07c4c00f1aae4889461d0927d76dfd5e8f3172",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82eeb55da5ed8403d0e8c144d04a34a7d806381baf54d8204f4524c9dcff47ab",
+    "mention_text": "Terry Gilliam",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f413fae4c29847d5d5e88dfdc42edc45fb45ac4d136b3aa5edcbdc99388f656",
+    "mention_text": "Person",
+    "categoria": "PESSOA"
+  }
+]

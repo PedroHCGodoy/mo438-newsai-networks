@@ -1,0 +1,388 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 94e698dbd2b6328e0b39ca9e110e0774e6618398badef6c1a23ab04c3dc2ffd6
+
+TEXTO:
+No centenário de Asimov, suas ideias nunca foram tão atuais
+
+Não seria exagero dizer que ele foi um dos maiores escritores de ficção científica do século 20. Mas o que mais impressiona no legado de Isaac Asimov (1920-1992), no centenário de seu nascimento, é a presciência e a relevância.
+Autor e editor de mais de 500 livros, muitos voltados para a divulgação científica, Asimov previu com notável precisão muitos dos elementos tecnológicos e sociais de nossa época, com décadas de antecedência. Além disso, usou de sua ficção para introduzir discussões éticas relevantes para nossos dias , e mais ainda para o futuro.
+Nascido em Petrovichi, na Rússia, em algum dia entre 4 de outubro de 1919 e 2 de janeiro de 1920 (esta última data a adotada pelo próprio para seu aniversário), Asimov era filho de um casal de judeus russos que trabalhava em moinhos. A família mudou-se para os EUA em 1923. Nunca aprendeu russo.
+Formou-se em química em 1939, depois de abandonar o curso de zoologia em protesto pela dissecção de um gato. Doutorou-se em química e tornou-se professor de bioquímica da Universidade de Boston em 1949. Mas sua maior paixão era pela escrita. Seu primeiro conto saiu em 1939.
+Marcado pela presença da robótica em sua ficção (palavra que ele cunhou), sua maior contribuição ficcional para o mundo real talvez sejam as três leis da robótica, código de ética implantado em inteligências artificiais para impedir que os robôs prejudicassem os humanos. Apresentadas no conto “Runaround”, de 1942, elas dizem o seguinte:
+Primeira Lei: um robô não pode ferir um humano ou permitir que um humano sofra algum mal; Segunda Lei: os robôs devem obedecer às ordens dos humanos, exceto nos casos em que tais ordens entrem em conflito com a primeira lei; Terceira Lei: um robô deve proteger sua própria existência, desde que não entre em conflito com as leis anteriores.
+“Mesmo longe desse futuro vislumbrado por Asimov, as três leis da robótica são tidas como a base de um código de ética para qualquer máquina inteligente e autônoma que preste algum auxílio aos seres humanos”, diz Cassio Leandro Barbosa, astrônomo da FEI (Fundação Educacional Inaciana), em São Bernardo do Campo (SP).
+“Eu diria que a primeira lei merecia discussões mais aprofundadas”, analisa Alexey Dodsworth, autor brasileiro de ficção científica e filósofo da ciência. “O que não falta na internet são robôs virtuais que induzem humanos a cometer erros. Isso quando não são esses mesmos robôs os responsáveis por ataques em massa e linchamentos a pessoas reais —basta ver o que acontece quando você decide criticar alguém poderoso que controla os robôs.”
+Para Dodsworth, “ou seguimos as leis de Asimov, ou iremos nos destruir, e os robôs não terão culpa, já que os programamos sem os imperativos éticos propostos pelo escritor.”
+De fato, organizações voltadas à inteligência artificial têm realizado reuniões para definir um código de ética para pesquisas no segmento, uma das potenciais ameaças existenciais que a humanidade enfrentará no século 21 .
+De forma marcante, a ficção científica de Asimov é quase totalmente livre de alienígenas. “Em mais de uma ocasião, Asimov foi acusado de ser excessivamente antropocêntrico em sua produção ficcional”, diz Dodsworth. “Talvez Asimov tenha feito uma aposta na perspectiva mais pessimista da equação de Drake, que pretende calcular a probabilidade de existência de vida inteligente na galáxia: seríamos apenas nós.”
+Seu maior legado como autor é a série Fundação, um conjunto de livros que compilam contos ambientados num mesmo universo ficcional e retratam o futuro longínquo da espécie humana.
+Durante os anos 1950 e 1960, Asimov dedicou boa parte do seu tempo a escrever livros de popularização da ciência, motivado em parte pelo lançamento do Sputnik, em 1957. “Fui tomado por um ardente desejo de escrever ciência popular para uma América que poderia estar em grande perigo por sua negligência com a ciência”, escreveu, em 1969.
+Seus livros influenciaram gerações a se interessarem por ciência e entenderem que é com ela que se pode construir um futuro próspero.
+A incompreensão da ciência que ele combateu em vida tornou sua morte um episódio nebuloso. Em 1977, Asimov teve um ataque cardíaco. Em 1983, foi submetido a uma cirurgia de tripla ponte de safena; com uma transfusão de sangue durante o procedimento, contraiu HIV.
+Aconselhado pelos médicos a não revelar sua condição por conta do preconceito anti-Aids da época, que poderia se estender a seus familiares, ele jamais revelou o diagnóstico. Morreu em 6 de abril de 1992, por complicações causadas pelo vírus. Sua obra, contudo, permanece.
+Em dois artigos, um de 1964 e outro de 1983, o escritor fez exercícios de futurologia sobre nossos dias. O primeiro, mais focado em tecnologias cotidianos, o segundo mais orientado ao futuro da humanidade e do planeta. E os acertos são tão dramáticos quanto os erros.
+1964. Painéis eletroluminescentes forneceriam luz das paredes, em todas as cores
+2019. A tecnologia até existe, mas o mais simples e econômico é usar LEDs para iluminar as paredes
+1964. Máquinas tomarão cada vez mais o trabalho doméstico e comida congelada será lugar comum
+2019. Na mosca! Asimov ainda indicou que, a despeito do avanço, robôs em casa ainda seriam raros e limitados
+1964. Além do aumento da presença de painéis solares, haverá uma ou duas usinas elétricas baseadas em fusão nuclear
+2019. Ainda não chegamos lá, mas os painéis solares estão por toda parte, e há projetos experimentais bilionários de fusão nuclear
+1964. Veículos terrestres flutuarão, usando jatos de ar para se manter acima do solo e avançar por qualquer terreno. Esteiras servirão como calçadas
+2019. Não rolou. Mas há os trens-bala, que usam campos magnéticos para flutuar e viajar mais depressa. E as esteiras são usadas em aeroportos
+1964. Conversas em vídeo serão comuns, e será possível falar com alguém em qualquer lugar do planeta, via satélite
+2019. Acertou em cheio, apesar de ele também mencionar conversas com colônias na Lua. E ele acerta ao dizer que Marte ainda não terá sido visitado por humanos, só sondas
+1964. As televisões de tubo grosseiras serão substituídas por grandes painéis de parede. Aparelhos cúbicos oferecerão projeções em 3D
+2019. Com as TVs, mais um acerto em cheio. A tecnologia de 3D também avançou, mas não na forma que ele imaginou
+1964. A população atingirá 6,5 bilhões de pessoas em 2014 e a alimentação será um problema, exigindo cultivo de alimentos em laboratório
+2019. Em 2014, a população era de 7,2 bilhões. Embora a agricultura tenha conseguido acompanhar a demanda, exigiu muitos avanços tecnológicos
+1964. Apesar da proliferação de maravilhas tecnológicas, ela aumentará a desigualdade. Em termos relativos, quem estiver na base da sociedade terá andado para trás
+2019. Embora bens de consumo sejam acessíveis a boa parte da população, a desigualdade de fato está numa tendência de alta
+1964. O ócio crescerá com o avanço das máquinas, e o tédio dominará boa parte da sociedade, com consequências mentais, emocionais e sociológicas sérias
+2019. Ainda não estamos lá, mas há sinais de que isso está se aprofundando, com o crescimento do desemprego estrutural em todo o mundo
+1983. Não terá havido guerra nuclear. Se houve, qualquer outra previsão se torna perda de tempo
+2019. Asimov acertou nessa. A humanidade ainda não cometeu a insanidade de travar uma guerra com armas nucleares. Na verdade, vivemos a época mais pacífica de toda a história
+1983. A computadorização continuará avançando. Muitos empregos serão perdidos, mas outros serão criados. Haverá uma fase difícil de adaptação, mas em 2019 já estará superada
+2019. Uma análise do mercado de trabalho diz que estamos bem no meio desse processo, na verdade. Basta ver a controvérsia para extinguir a função de cobrador de ônibus, por exemplo
+1983. Com políticas de estímulo a controle de natalidade, espera-se que a população global atinja um nível estável por volta de 2019
+2019. As populações ainda estão crescendo, e a ONU espera que cheguemos a 10 bilhões de habitantes em 2050
+1983. A irresponsabilidade humana com questões ambientais ficará abundantemente clara e, em 2019, avanços tecnológicos permitirão reverter a deterioração
+2019. A primeira parte está correta: toda a população informada sabe que estamos numa rota de devastação ambiental e climática. Mas, em termos de ação, deixamos a desejar
+1983. Em 2019, estaremos de volta à Lua, a colonização do espaço avançará e eventualmente levaremos nossas indústrias ao espaço
+2019. Há quem, entre governos e empreendedores, já trabalhe para começar esse movimento, mas estamos um bocadinho atrasados, pelo cronograma de Asimov
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c98561c0aca31d54d19ed8f05822f406e72695c25bf209aee9a9e0c4850c0757",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b80aecc532265a3c33d33b90d2b735d380f34845ecd534b148a785ebabc459c",
+    "mention_text": "Isaac Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc50ba652dc49f52909afdba971d6cb7f451a780cf8ea7665b208424d76ec6aa",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51cf3d84c850c0517627f15a9a71b367df730eb4a5335bbc55b314d6a624a297",
+    "mention_text": "Petrovichi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88446e5f53ab06c6e6eb21b34b7737532aa38c90ff088fd686e4dafde866224c",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c7e52b6c30a6083885f6d0ad229d21f48a1dec15b50e0007b2618a07fb5de1f6",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8aa8780039f48ac3a9109186bf6b8aefd299959f0219e94afde31a94feeeac81",
+    "mention_text": "judeus russos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1d18085d73aa61f39b42dccdc33e2e43916131f23c6d73417af284234cb9995",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1983308ed4186e40695cc8f2402aacd1c2a02a300c1b2e14e588071f63a3bd8",
+    "mention_text": "Universidade de Boston",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c0498251646c882178ee5ce4e95db97201f73cab376b15d4df2467565680680",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f1390281d045a919924ed0c805c092655d6f549e79534ce44288b3d3681a397",
+    "mention_text": "Cassio Leandro Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5f37e5be5ea68e1b85c909ade25691806e745b81ac8ae65cb4879583926adbf",
+    "mention_text": "FEI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e4175632685778d51e2f619fdbacd14c560c124ffd2d97f356465556acbc161",
+    "mention_text": "Fundação Educacional Inaciana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3005d26a785dc133b05bd63ea990a6786a8fdaa640f3223fd159f80f8ceba7d1",
+    "mention_text": "São Bernardo do Campo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "feb654d7c42c87fbb78e847e0bfd9180662ad5cd56244d7c815b3e19dd729993",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1c904526bd8761c925034a63201248334859594ac5b22ba3c295888597cc9cf",
+    "mention_text": "Alexey Dodsworth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07126dab369f22a80b95b124627c838fbcd94697aba0b4a3869ef7af49ce7d74",
+    "mention_text": "Dodsworth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9c93da820fda8b28eb3c1d6e70272f0153a2dec6b74ac535a3bec7eb87d3d46",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b62980c48220402a613e5bbc457e36808401dd4493879fae8a95b70cc41dd26c",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8f14c35ec9ffbb2ee7ae016d2fbcdee8467a4ed64eecda0ab14ab4cbbc6f15b",
+    "mention_text": "Dodsworth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "582d59a8b0cc47c8bcdd8c986d225685940314c28cdbeea7d7ac7b15245bc97d",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06254d19b4b76f548941d721ce21af1188e50f9c1fba733cc492cacb20495611",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "443156b618045720462d91cad4e41fd0aa404210a8c4bd481485cb3b196dfa01",
+    "mention_text": "América",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "528489a0f56c35a687da176a84ac339347d9d2d13519fa3f906c4797c468f478",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94024a6c926c8ce5e28d68581a66344775ca8a8db28582a7c36f16c50e3e72bb",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6e5b3b1ae340702d287e9fac908f19f503ad873f3d106ad3a29f0a86f389154",
+    "mention_text": "aeroportos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ca31f0488eb86636a1e84e2f50b08127344243d6c6815a741a080feef727a28",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "80710f65836846ecafda8fbbf06353d1d1fa91b96a792bb895d1369fe6d66d2e",
+    "mention_text": "Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c83829e52f53c41b2050a8ef173e1c3b147a5090744e706374daf57b6891a3bb",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "67793e53c9442f2aa88840c59ff8adcaedcd5b2b0ec33bb1e8b09edc58f3f263",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6e0849d20fdc0472fe9b76b7e2e11e45df71e746aa54a236eecdf1fcbd3a14c",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "23544652915b7855fcc788c2ad99f57a347dd4c919d446e6693660f76a978c68",
+    "mention_text": "Asimov",
+    "categoria": "PESSOA"
+  }
+]

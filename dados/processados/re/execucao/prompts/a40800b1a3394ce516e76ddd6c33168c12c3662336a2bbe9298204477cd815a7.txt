@@ -1,0 +1,399 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a6f94fc09c7ceeb8b29f50898309d6efd95f2d7a5b472806d6efd42f1ac8b1a2
+
+TEXTO:
+Grupo SEB adquire rede de colégios no Rio como parte de plano de expansão
+
+O Grupo SEB, de educação privada com foco no ensino básico, anunciou nesta segunda-feira (22), a aquisição da rede de escolas e cursos pré vestibular Colégio de A a Z, que atua no Rio.
+Os valores pagos pelo Grupo SEB, do empresário Chaim Zaher, não foram revelados. A rede do A a Z conta com sete unidades na cidade do Rio, com 3.000 alunos e ticket médio de mensalidades de cerca de R$ 2.000.
+A aquisição faz parte do plano de expansão do Grupo SEB, que estuda abrir capital na bolsa neste ano ou no ano que vem.
+A ideia com o Colégio de A a Z é expandir os negócios no Rio, que deve receber ainda este ano uma unidade da escola Pueri Domus, voltada para o público AB.
+O Colégio de A a Z já atua nesse segmento. As escolas e cursinhos competem, por exemplo, com a rede PH, tradicional no Rio. A própria rede foi criada por antigos professores do PH, em 2006.
+A ideia do SEB é expandir a prestação de serviços dos colégio do de A a Z. Atualmente, as escolas atendem da 9a série até o terceiro ano do ensino médio. As aulas são ministradas exclusivamente de manhã. No cursinho pré-vestibular há também aulas a tarde.
+Um dos objetivos é oferecer também educação básica noa colégios adquiridos. Para isso, seria necessário investimento de cerca de R$ 40 milhões entre este ano e ano que vem para bancar expansão da empresa.
+Há também o desejo de implantar nas escolas do A a Z o ensino bilíngue. O grupo SEB adquiriu no ano passado a rede canadense de escolas bilíngues Maple Bears, por cerca de R$ 130 milhões, segundo estimativas do mercado. A ideia é tentar incluir cursos bilíngues em pelo menos uma escola da rede A a Z ainda este ano.
+Outro desejo para o Colégio A a Z é que em breve ele possa abrigar o primeiro ensino superior do SEB no Rio. Atualmente, o SEB possui a universidade Dom Bosco, em Curitiba, e a EPD (Escola Paulista de Direito). A ideia seria ter uma faculdade com cursos voltados para a nova demanda de profissionais na era da tecnologia. O modelo são de cursos convencionais, como direito, medicina e matemática, mas com foco nas novas tecnologias, como inteligência artificial e grandes dados.
+EXPANSÃO
+A expansão do grupo SEB, segundo Zaher, se dará por crescimento orgânico e também por aquisições.
+Para isso, levantar capital é uma necessidade. Zaher disse que está estudando a possibilidade de abrir capital na bolsa. Nesta semana, o empresário fará apresentação a investidores interessados em aportar recursos na educação privada. O empresário, que tem participação minoritário no grupo Estácio, fará uma apresentação nesta terça no banco Morgan Stanley.
+Zaher diz acreditar que esse ano seria um bom momento para a operação, mesmo com a expectativa de oscilação da bolsa brasileira em razão da corrida eleitoral de outubro.
+"Vou investir independentemente de quem estará na presidência", disse, durante divulgação da aquisição, na tarde desta segunda, em um hotel da zona sul do Rio.
+Zaher disse que está no radar do Grupo SEB investir nos próximos anos até R$ 100 milhões na criação de escolas privadas de ensino básico voltadas às camadas de mais baixa renda, das classes C, D e E. Serão 200 escolas, em todo território nacional, com mensalidades de R$ 600 a R$ 800, para competir com a escola pública.
+"O nosso foco serão aquelas pessoas aue são de mais baixa renda, mas que querem uma educação de qualidade para seus filhos", disse.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "73c05d8091b69d958e9e0e8592de3dc91b905f85ce0f72845b0fa31e60df5ed5",
+    "mention_text": "Grupo SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b7f09551effd8bbead4d34c69c8e34319caaca3fdda116a95ebb5320db1bd9b",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee05e7a13bfbf1f891be8b92bdea69ace256b5cd35e8078f85f3c1e5ca3ab53b",
+    "mention_text": "Grupo SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00d9ea8b86871f5587a6d89d08206c4499f0871c89f5a7474cc2693e2a00e5b9",
+    "mention_text": "Colégio de A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "080bcf720005d3a60c3cd4adccbeeeef8a864b3a00cee31bd4c8e1290b6afa39",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2edb25e39ae1db0c1831f087f6f0b40045c2113eb6ea55c7bf2e2cb5df8b470",
+    "mention_text": "Grupo SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2b690bc042753d0c5daea49ec38c749a6ff1bf4477c7da1dca60b9f4bf4250e",
+    "mention_text": "Chaim Zaher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e05e8bed86bf093dbe5970a5ef1bf431b8ea291c3518020aa3d3ab5f20c603a8",
+    "mention_text": "A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c560246954e074650b44061383dcf281d03ccbd0548705508fa395fbfb8c6d51",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "83d4f97db74fbda4b80a1a93ca70b312ef87479c49d816e909922be5220a329f",
+    "mention_text": "Grupo SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0f1a71691a173a87cda25c257e57baf8c89b6eba236f7564fd9cbbe1e515554",
+    "mention_text": "Colégio de A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02093dec0e3ebaaeb953e776355cb63ab53e06f39568c0f4eb8924241c747dc4",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "488cca26c6ae327745e73b191664432fa99acd1f5ff58618de317b8689ca44fb",
+    "mention_text": "Pueri Domus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "023355d59cd99126197bf2dcdb294ef3831d81db555dda563020e22bc0ade070",
+    "mention_text": "Colégio de A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db4a6ae2f4c8e31be7f2256084b788bc9f4fe74053f3f16c98d741ae8783b540",
+    "mention_text": "PH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6f0055ce78aacead08179b88044ad70f880114e5f957ebd71231306cae441ef",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3c9b8c69e6cca8e2c497ad1c09546257feac101020bad4808e4facd81b3998c5",
+    "mention_text": "PH",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ddeeccbea5198a07c5d339d7202f4a389065bd46ce7044bfb9cc845ec16db26",
+    "mention_text": "SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c1431e3f6ec03c330262343d1a366ec3a964438da09dec4707058f3e542d929",
+    "mention_text": "A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5aac10de8403357527fc9d24af651a375d0eb1bba080b105b415516a8f5e10e3",
+    "mention_text": "A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e1e559acffff0c7520860d66aedd56edd500c503581effe909b7ec5826bc533",
+    "mention_text": "SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "595b238d04044aa1a84125b4a9835d37e49df59b954334f0fa6353e712ea7985",
+    "mention_text": "Maple Bears",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39211f94f1a660e62ff1886d80520b4b48d85e6c89b68ef5045750339a833eed",
+    "mention_text": "A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5b4c52ca39c992cc691f01fbd817fa03c526ae4448255c30008357acf8e04fb",
+    "mention_text": "Colégio A a Z",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63487772cff4ac7ee77d6a7e642046ad00b70be57dcc99d1ee3fbb0a6e512b4d",
+    "mention_text": "SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "492d155825be0970bf53227bb5c99b0f6e260182bdee68004c6757f6ced5745c",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34b9d11969b3975f7b37b57da8010d73bc294d92e21aba3af3a509ccbf24e6e6",
+    "mention_text": "SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6425abc92bac64185e048b3ed8ff6acb53d560fb79a0de4c2bb18cc94b0f1ef",
+    "mention_text": "Dom Bosco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d7a632e48906a4f45b78a91f591b325d145d63356194ee8975815526a683bd0",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "187a7662e1f8f668fca1f878a1998e0a131d4a2e4c381d5794fa97cd443da341",
+    "mention_text": "EPD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b21608a3c4845a2a44b2e34f49f731d0a60aa024362ec3b1bf1ff9898570a560",
+    "mention_text": "Escola Paulista de Direito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c36e43b88df11b73a30cdb3405e7b1099b18919ad0deb893671fb86af2a4b495",
+    "mention_text": "SEB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8e8f2bf8d034c4e5f00a428a78d7577769b4fb0dbcbc30b4c101d60d98ac740",
+    "mention_text": "Zaher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6b7cdf24fc292612c0fad920b0aaf3a1abea22b2510533343f614c74ee79f1f",
+    "mention_text": "Zaher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71103c0ba2296a9e4e1d184b332fe0b366ff1784cca7a315059fe6664b5d0902",
+    "mention_text": "Estácio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a55d2a0e88a3ee81b50077f35701b369b5fe476669c9c7a35cb5f9e8a58e766a",
+    "mention_text": "Morgan Stanley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e008acde7d9bf85353b82336c55ecc4c60e7bca5cde0b0282ef2d5471b3b791",
+    "mention_text": "Zaher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "492ee9bd93745023e477717d1ca536085cff0a837c740ba2161bd7484f71e66f",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7abd91061c3e8cde9ceeec080205a3424cfce51b077a6d0df38d51a58a24075b",
+    "mention_text": "Zaher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e07b0b98f57ad0e57ec48087f767d6fa689391d0d0a05f82556d17fa85209375",
+    "mention_text": "Grupo SEB",
+    "categoria": "ORGANIZACAO"
+  }
+]

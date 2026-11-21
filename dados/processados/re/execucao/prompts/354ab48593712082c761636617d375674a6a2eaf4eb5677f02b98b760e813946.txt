@@ -1,0 +1,732 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 542811483f34e7ed5c9e6280c512fa71240b710fca2fcb44f919822d6f4de377
+
+TEXTO:
+Na China, reconhecimento facial é arma na campanha por vigilância total
+
+Para Mao Ya, 40, a câmera de reconhecimento facial que permite que ela entre em seu edifício de apartamentos é simplesmente uma conveniência.
+"Se estiver carregando sacolas de compras nas duas mãos, basta olhar para a câmera e a porta se abre", ela disse. "E minha filha de cinco anos só precisa olhar para a câmera para entrar. É bom para a garotada, porque eles costumam perder suas chaves".
+Mas para a polícia, as câmeras que substituíram os velhos cartões de entrada dos moradores servem a propósito muito diferente.
+Agora os policiais podem ver quem chega e quem sai e, ao combinar inteligência artificial a um imenso banco de dados nacional de fotos, o sistema nesse projeto-piloto pode permitir que a polícia identifique aqueles que um relatório policial, visto pelo "Washington Post", define como "os bandidos", e que no passado teriam conseguido entrar.
+O reconhecimento facial é o novo tópico quente da tecnologia na China. Bancos, aeroportos, hotéis e até mesmo sanitários públicos estão tentando verificar a identidade de pessoas, por meio da análise de seus rostos. Mas a polícia e o Estado de segurança são os mais entusiásticos partidários da adoção dessa nova tecnologia.
+O projeto-piloto em Chongqing é parte pequena de um ambicioso plano conhecido como "Xue Liang", o que pode ser traduzido como "olhos afiados". A intenção é conectar as câmeras de segurança que já vigiam ruas, shopping centers e polos de transporte público às câmeras privadas dos edifícios residenciais e de escritórios, e integrar tudo isso em um uma imensa plataforma nacional de segurança com dados compartilhados.
+O sistema usará reconhecimento facial e inteligência artificial para analisar e compreender a montanha de dados em vídeo obtidos; para rastrear suspeitos, identificar comportamentos suspeitos e mesmo prever crimes; para coordenar as operações dos serviços de emergência; e para monitorar as idas e vindas do 1,4 bilhão de habitantes da China, afirmam documentos oficiais e relatórios do setor de segurança.
+Esses esforços todos devem se fundir a um vasto banco de dados de informações sobre cada cidadão, uma "nuvem policial" que pretende recolher dados como fichas criminais e médicas e vinculá-los ao rosto e aos documentos de identidade de cada chinês.
+Mais
+RASTREAMENTO
+Um objetivo de todos esses esforços entrelaçados é o de rastrear onde as pessoas estão, o que estão fazendo, em que elas acreditam e com quem elas se associam —e por fim até mesmo conferir a cada uma delas uma nota unificada de "crédito social", que tomará por base a confiabilidade atribuída à pessoa pelos seus concidadãos e pelo governo.
+No condomínio residencial de Mao Ya em Chongqing, "90% dos crimes são causados pelos 10% de pessoas que não são moradores registrados", afirma o relatório pessoal. "Com o reconhecimento facial, podemos reconhecer elementos externos, analisar seus horários de entrada e saída, verificar quem passa a noite no condomínio, e quantas vezes isso acontece. Poderemos identificar os suspeitos, dentre a população".
+Adrian Zenz, acadêmico alemão que pesquisou sobre as políticas étnicas e o Estado de segurança na província de Xinjiang, oeste da China, disse que o governo quer onipotência, dominando uma população vasta, complexa e irrequieta.
+"As tecnologias de vigilância estão dando ao governo a sensação de que poderá enfim conseguir o nível de controle a que sempre aspirou sobre a vida das pessoas", disse Zenz.
+Nesse esforço, o governo chinês trabalha em estreita cooperação com o setor de tecnologia do país, dos gigantes estabelecidos a startups vigorosas dirigidas por formandos de grandes universidades norte-americanas e antigos funcionários de empresas como Google e Microsoft, que parecem alegremente despreocupados quanto ao temor de que estejam ampliando o poder de um moderno Estado de vigilância.
+O nome do projeto de vigilância via vídeo vem do slogan comunista "as massas têm olhos afiados", e é um recuo aos esforços de Mao Tsé-Tung para levar os cidadãos chineses a espionarem uns aos outros. O objetivo, de acordo com executivos do setor de tecnologia que trabalham no projeto, é iluminar todos os quadrantes obscuros da China, para eliminar as sombras nas quais o crime prospera.
+O projeto Xue Liang também pretende mobilizar os comitês de bairro e os moradores bisbilhoteiros, que podem recorrer aos seus celulares e televisores para ver as imagens das câmeras de segurança e reportar qualquer atividade suspeita —um carro sem placa, uma discussão que termine em violência— diretamente à polícia.
+Ou seja, o plano é combinar os cérebros de um setor de tecnologia nacional que cresce cada vez mais rápido e os olhos das massas.
+Até 2020, o governo da China pretende tornar a rede de vigilância por vídeo "onipresente, plenamente integrada, colocá-la em funcionamento permanente e exercer pleno controle sobre ela", combinando mineração de dados com recursos sofisticados de análise de vídeos e imagens, demonstram documentos oficiais.
+Mais
+EUA
+A China não está sozinha em experimentar essas novas tecnologias. O Sistema de Identificação de Próxima Geração do Serviço Federal de Investigações (FBI) norte-americano usa reconhecimento facial para comparar imagens de cenas de crime a um banco de dados nacional de fotos de criminosos. Forças policiais em diversas regiões dos Estados Unidos já vêm usando técnicas baseadas em algoritmos há anos, para prever onde é provável que ocorram crimes.
+A polícia de Chicago identificou e um tribunal condenou um ladrão com base em análise conduzida por um sistema de reconhecimento facial, em 2014, e o Reino Unido usou um programa japonês chamado NeoFace Watch para identificar um homem em meio a uma multidão, em maio.
+Os Estados Unidos, onde havia cerca de 62 milhões de câmeras de vigilância em operação em 2016, na verdade têm presença de câmeras maior que a chinesa, em termos per capita, de acordo com Monica Wang, analista sênior de vigilância em vídeo e segurança na consultoria IHS Markit, em Xangai. (A China emprega 172 milhões de câmeras de vigilância.)
+Mas é a ambição da China que a separa dos demais países. As agências policiais do Ocidente tendem a utilizar sistemas de reconhecimento facial para identificar suspeitos de crimes, não para rastrear dissidentes e ativistas sociais, ou para monitorar grupos étnicos inteiros. A China busca atingir diversos objetivos interligados: dominar o setor mundial de inteligência artificial; aplicar sistemas big data para apertar o controle das autoridades sobre todos os aspectos da sociedade; e manter vigilância mais efetiva do que em qualquer momento do passado sobre sua população.
+"O aprendizado profundo vai revolucionar o setor de vigilância por vídeo", escreveu Wang em relatório recente. "A demanda na China crescerá rapidamente, e servirá de propulsor ao crescimento futuro do mercado".
+Nos show rooms de três startups de reconhecimento facial em Chongqing e Pequim, os vídeos capturados por câmeras de vigilância são exibidos em telões; faces pinçadas da multidão são comparadas a bancos de dados de pessoas procuradas pela polícia.
+As câmeras de rua automaticamente classificam os transeuntes por gênero, roupas e até comprimento de cabelo, e o software permite que pessoas sejam rastreadas de uma câmera a outra apenas com base em seus traços faciais.
+"O quadro mais amplo é rastrear movimentos de rotina, e depois de obter essa informação investigar comportamentos problemáticos", disse Li Xiafeng, diretor de pesquisa e desenvolvimento da Cloudwalk, uma empresa de Chongqing. "Se você sabe que há jogos de azar acontecendo em determinado lugar, e uma pessoa vai a esse lugar frequentemente, ela se torna suspeita".
+Gradualmente, um modelo do comportamento das pessoas toma forma. "Quando um criminoso ou suspeito é identificado, suas conexões com outras pessoas são estudadas", ele disse. "Se outra pessoa têm conexões múltiplas com a primeira, também se torna suspeita".
+As startups também exibem aplicações mais simpáticas de suas tecnologias. Empresas como a SenseTime, Megvii e Cloudwalk oferecem softwares usados em apps para smartphones para permitir que pessoas alterem, "embelezem" ou transformem seus rostos, por diversão.
+Boa parte de seus negócio vêm de bancos e companhias financeiras que usam reconhecimento facial para verificar identidades em caixas automáticos ou celulares. Alguns aeroportos da China já empregam reconhecimento facial em suas verificações de segurança, e e hotéis estão fazendo a mesma coisa no check-in de hóspedes.
+Uma versão chinesa do Airbnb promete usar esse recurso para verificar a identidade de hóspedes, enquanto a Didi Chuxing, a versão chinesa da Uber, a está usando para verificar a identidade de seus motoristas.
+Alguns dos aplicativos parecem servir mais como brincadeira do que a qualquer função prática. Um professor em uma universidade de Pequim estaria usando um desses aplicativos para verificar se os alunos estão entediados nas aulas; uma máquina que fornece papel higiênico em um sanitário diante do Templo do Paraíso, em Pequim, supostamente reconhece rostos para impedir que pessoas roubem papel higiênico demais, e um restaurante da cadeia Kentucky Fried Chicken em Hangzhou permite que os clientes "paguem com um sorriso".
+Outras ideias estão enfrentando dificuldades para sair do estágio experimental: um plano para identificar pedestres que atravessam fora da faixa em Chongqing já foi abandonado, e os moradores de alguns edifícios residenciais de Chongqing e Pequim preferiram manter as portas de seus edifícios sempre abertas, quando portões dotados de reconhecimento facial foram instalados neles.
+Mas o reconhecimento facial chegou para ficar, e promete se tornar uma ferramenta poderosa para manter o controle sobre a sociedade chinesa.
+Até o momento, a tecnologia não satisfaz as ambições de seus criadores, e está longe de ser infalível.
+"Pelo futuro previsível, haverá muitos casos de identificação incorreta", disse Jim Dempsey, diretor executivo do Centro de Lei e Tecnologia da Universidade da Califórnia em Berkeley. Isso desperta duas questões críticas, ele disse: os procedimentos judiciais de um país protegem as pessoas contra condenações baseadas em reconhecimento facial incorreto? E os casos de reconhecimento incorreto são desproporcionalmente mais comuns quando os envolvidos são membros de dadas minorias, como os muçulmanos chineses?
+Mais
+PRECISÃO
+Na China, as empresas de tecnologia afirmam que seus sistemas são muito mais precisos do que, por exemplo, os adotados pelo FBI, e com razão, dizem os especialistas: afinal, elas puderam recorrer a um grande conjunto de fotos dos registros governamentais a fim de melhorarem seus algoritmos, sem nenhuma preocupação incômoda quanto a proteger a privacidade dos envolvidos.
+Os especialistas dizem que as tecnologias de aprendizado profundo precisam, acima de tudo, de imenso volume de dados, para que possam desenvolver algoritmos acurados. A China dispõe de mais dados do que qualquer outro país do mundo, e há menos restrições para que as informações referentes aos seus cidadãos sejam exploradas.
+"Agora, nossos sistemas operam puramente com base em dados", disse Xu Li, presidente-executivo da SenseTime. "É mais fácil recolher dados suficientes para treinamento na China. Se quisermos promover novas inovações, a China terá vantagens na coleta legal de informações".
+A tecnologia inteligente, embasada por sistemas de inteligência artificial, será um instrumento para as forças policiais do futuro. A Huawei, gigante das telecomunicações e tecnologia chinesa, diz sua tecnologia Safe Cities já está ajudando o Quênia a reduzir a incidência de crimes em áreas urbanas.
+Mas quem são os criminosos? Na China, documentos do projeto Nuvem Policial obtidos pela organização de defesa dos direitos humanos Human Rights Watch listam "queixosos" —pessoas que reclamam ao governo por conta de supostas injustiças— como potenciais alvos de vigilância, em companhia de qualquer um que "solape a estabilidade" ou tenha "pensamentos extremistas".
+Outros documentos citam membros de minorias étnicas, especificamente os uigures muçulmanos de Xinjiang, como alvos de vigilância.
+Maya Wang, pesquisadora da Human Rights Watch, disse que o distingue a China é "a completa falta de proteções efetivas à privacidade", combinada a um sistema explicitamente concebido para reprimir indivíduos vistos como "politicamente ameaçadores".
+"Em outros países, muitas vezes nos preocupamos com o uso de sistemas big data para aprofundar distorções políticas existentes - que tomam por alvo grupos historicamente prejudicados, como os negros no contexto dos Estados Unidos, por exemplo. Mas com os sistemas chineses, tomar por alvo pessoas de determinada etnia é uma função fundamental do sistema", ela acrescentou.
+Na província de Xinjiang, cuja população é majoritariamente muçulmana e onde a culpa por uma sucessão de incidentes violentos foi atribuída a separatistas ou radicais islâmicos, câmeras de reconhecimento facial se tornaram onipresentes em postos de controle, nos postos de gasolina, aeroportos, estações de trem e rodoviárias, e em áreas residenciais, alojamentos universitários e nos pontos de entrada de bairros muçulmanos, dizem especialistas. Coleta de ADN e registro de imagens de retina sofisticam ainda mais os controles.
+Na Megvii, o gerente de marketing Zhang Jin se vangloria de que o programa Face++, criado pela empresa, ajudou a polícia a deter quatro mil pessoas, do começo de 2016 para cá, entre as quais cerca de mil em Hangzhou, onde a conferência de cúpula do Grupo dos 20 países mais ricos, naquele ano, gerou presença maciça de câmeras de vigilância em hotéis, metrôs e estações ferroviárias.
+É provável que o total de detenções mencionado por Zhang inclua dezenas de dissidentes, queixosos e praticantes do jornalismo-cidadão, aprisionados na cidade e em seus arredores naquele período.
+Frances Eve, pesquisadora da organização de defesa dos direitos humanos Chinese Human Rights Defenders, em Hong Kong, argumenta que as empresas de tecnologia da China são cúmplices de abusos dos direitos humanos.
+"Na China, defender a proteção dos direitos humanos é basicamente um crime", ela disse. "O governo trata os ativistas dos direitos humanos, advogados, e membros das etnias uigur e tibetana como criminosos, e essas pessoas vêm sendo detidas, aprisionadas e em muitos casos torturadas como resultado dessa tecnologia".
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7bee9f761bb69da551c69ec22cf241c1f4fcd53b6283b25c6b4d980eabbb3a71",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c8d3824dfd3cf94c65f1b77c55b77551ab3fe36e66c35c821c118aff146eccc",
+    "mention_text": "Mao Ya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28ed1a465b0f255533ae9fc95942bb6c72babbfbac7e16d3e9869aba76a980c7",
+    "mention_text": "polícia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7917529c36904a4586b9a8540785867f15a7e19307964f873249eb5c27c1b840",
+    "mention_text": "polícia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "172f1bcaa7a33c04aa7ddbd9a8c90c2355f5a88a9415e3fd1d6a87a0e48b6186",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c7514dd28f26f2a89091ea40c0a25cb95bc4aa66bdca655ecf37219cb4f81c5",
+    "mention_text": "Bancos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2cdfc26dbe7f4e17b2e81836703fe564a194aa4d68f7cbccf94e7e10d8b53f4",
+    "mention_text": "aeroportos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b2482bea51d0239f5fac9c8e0ddcec5a918db8a545fb81673b81e166887ea69",
+    "mention_text": "hotéis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9c61abfed8ce3c25f45969de39cf258e156a9018fac323963205d29c1d99775",
+    "mention_text": "sanitários públicos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8f3c12782fb7de50013011fcd6556074a1c69ab13a8b52dd76ef571a4e20e0b",
+    "mention_text": "polícia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddd7363684d0d50739c9964aad7ece37b73035762985511d6594efd545eadc83",
+    "mention_text": "Estado de segurança",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39e6028dfc9212b3d93587f2e100202cbeeafa5126de0de1f02418c921d480ec",
+    "mention_text": "Chongqing",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "59d0985ab49f78a3f4218abe4af9a86b87f909e2acf363abd87766ced66b7442",
+    "mention_text": "shopping centers",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "df1a1c1bb004807c8f89c726dd2a4cb0fee41590f783f5aa54b67d1eb8adc4dd",
+    "mention_text": "polos de transporte público",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ecf755ca4e3cb1453d6523a28083586cc6819a82083d8370c96de7e895ec4793",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96a75251ebee13a32da0b3a13d9be1251ce0e73d9c39a83df1c23a2fa2f06715",
+    "mention_text": "Mao Ya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0bc8f14e17c7414e72e01c3a0efec0d618202863f61aaf48d28fde310db43e87",
+    "mention_text": "Chongqing",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ad6a18a771a84573a71d670d864e06fdb425eddee468b58f5fd24f4a4b6f4c31",
+    "mention_text": "Adrian Zenz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "073d1aa8caf293dc245ac4fbed4d35d81079d47af9f65ba518425e3ecb5f9c44",
+    "mention_text": "Estado de segurança",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "626a006b333a0f0d02732cc51e3d6087b54909e8c9d81a7be0c098aed6fdb86d",
+    "mention_text": "Xinjiang",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "48dc669a327a95cb9232d71a556ecd2ef3251e17ad29d0f32fdd85ec8854b162",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52b6c41c373f371f63eaf19533069336313d7b47bb868b7a372c9c5103f62671",
+    "mention_text": "Zenz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f5b58ba7898188c39590ba10d6c423f812c8f77c81c61374d10662adeb5c16ea",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37d90489768ba4f29382457352c77894b539801c238a5ee86a8e8f104eb72e60",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99b383120422644a89d08744830ee0d3bcabfef362a6e8ee3b3f08ad8adc83be",
+    "mention_text": "Mao Tsé-Tung",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "944a8ae4445bd38659d03bbcfeb483644b23f2f723833c2c74c1a9d8beb108e9",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "df35c11988086174e24bc204dd111abf9af911a581ccb04dca2f08a357ce9343",
+    "mention_text": "polícia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bcb263a02c8568a750ce8cc1165036076e7f0e5c542dc18f15741c93458afd3",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "91a6b1e7d255100cf9086e34f3c5e9516a9ab192c171191343b749fa8483ba89",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a5186b3477e8db4167ea8ccaf36b52f521dee12d4f3bec34d2215fc579cdb92",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc604b6912d0045d705cedb9cce0e5f6b10c7a120850777e7812bcd84b5203fd",
+    "mention_text": "Serviço Federal de Investigações",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be448d094b8b2e39eb70a7cbb25dd0116b3770027387d6bab688e13233e09aad",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c17e26a69b0e61918e33e5ebbe85a479a36c4ad7ca0c0d1afb47139a9160e794",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1874e476b9963dd0912e9da341028c8e6c0a72b5cff0a5587d6c458f5503817e",
+    "mention_text": "polícia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01687a83e9ff2b0672ee474cc4e307f0d9e137bfaa6f58e08d6e8d611fa4ba28",
+    "mention_text": "Chicago",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b0b9458ecc9a92598445f205dc0949cf28d275ce94e4e2a564ed2cdb09eb4cda",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2a81f8de9200f984605b820f555dac73fdf7bad74a74099704827b52207b03b",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "398394c602fc248ef37697180dbce8b09f4727d06bdd831fb4ad956dff62cc41",
+    "mention_text": "Monica Wang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52ca273ce885e2cf94a220ec48bfd033d3c64c9a8ddc9bf3457adcf79b6b64e1",
+    "mention_text": "IHS Markit",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7589165564a524a5b8f615af9241d62fd2d5e45c5e2ac051f5c5936155a4ebe8",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8793f4c4ed2b12641b31dcd8e54df6de8a3ae8d81789e2e9228732cdb19180f7",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d14653534e3e1007ab37db18472919072d135654b27b5cd664ff3b68c9dac1f0",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88776ec412fb8c1f389e26540deae1ef123c9829016d556e69fe33e5979b2b73",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8dbc5f297c8a77849dcfb30b8856531d677a2ec22636b266b7095bf0d6518bf",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "170392a467ed207bf1988f334e720bc676d05c12635a8fd346669dc4f485866c",
+    "mention_text": "Wang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c8c2b6a760043c96e03e3606fbec77c57630e99bdd7e8d7d2f9b8877dab7fc35",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0ad605308ebffb45455bdab0fb5ae5b5f7db700b3af297a15ac89ed2c432534",
+    "mention_text": "Chongqing",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "699a4e2f6da626bfbf5ae74912fcc0d72104671787531bad5c7764aa1da66247",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6fef29b17616173a7ce2000cf750c28a96e3a8d48df8ffe843dea7a3449a624a",
+    "mention_text": "bancos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef7cee930f1cb5a1572f3621be7e0387a3ae6a03503cca3100979e37a74a6ff0",
+    "mention_text": "polícia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d57b382f6712f1dd223c82f047f827529836a36202f3363951deddd46a627e68",
+    "mention_text": "Li Xiafeng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc7881f74e1bbda3a49de9d94eacfd1cc831311e9db6694aaf57a50c14cf7014",
+    "mention_text": "Cloudwalk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44254e18eac827d5c6f98159e373ede7be17819a5c3bd1e19483728376b727f2",
+    "mention_text": "Chongqing",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5bb01fb55e7cd89ecb14bc78a131f724560fbbdd16527762a039e981e72e3f65",
+    "mention_text": "SenseTime",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a93333e2328198ec64570ee093b88304394fa1cd04cd9d8b9888d5c732069b92",
+    "mention_text": "Megvii",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f706de9411563a87c826730e0a3665890ae57f201f27df01ee6693e2358d21e",
+    "mention_text": "Cloudwalk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a5bde1fb90a3e770376f36773010e64972c8aa0b8f4bb7b1794365e7113b395",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd949fda34385b1a7ba1811bf1386aa4027a10a942ed83c4a2eb40004083a4c9",
+    "mention_text": "Airbnb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79644f1695cef1997ee2d014f0533a91c0fa5d08ea219bebeb5a0ec693deae92",
+    "mention_text": "Didi Chuxing",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ce66323b18499318887af3d3f5efe135923636c417adbd945901d039fac5efb",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e08f985f172184ce0dc569097090954e0ddead9bf97d0119e8009b5c737e2c9",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "33e193f89f390346dd2785ce3de836cdf1878df13cf14f8237f2fb32dd942f86",
+    "mention_text": "Templo do Paraíso",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b800d176758e5e58e4edb4139084d3659ac027ae3a8621d25c2d30b7475a3ffa",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e3509a4a8eff54d263f919ceb2d35db8d0c5a3f6833cf2937bcd936dbe70de9",
+    "mention_text": "Kentucky Fried Chicken",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7afccb12421f7217caba55f9769c43d22ed0579c7d48762a37c7aabb79b83b87",
+    "mention_text": "Hangzhou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02b638d3ecf946c55efd779148f8e5ce1c2715ef60fe66927d6759232a7a30cd",
+    "mention_text": "Chongqing",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b249a49dc8e37c85d37f89fa4756498fd38c8d48a06601d3c646d3b4a29a8965",
+    "mention_text": "Chongqing",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f810626da0789db1f946f6d17a8e16ed98ea24a5d0b02b83f79c8b6ca59c729",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4d7246b50e1bb7e6a55be2d9e126329ec89c137b0ba57d4c9ab259c09867f447",
+    "mention_text": "Jim Dempsey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72b292a6415b2c475fb1a75833f04ff3928fc6e3eabd50d8c8a7263735f7ca66",
+    "mention_text": "Centro de Lei e Tecnologia da Universidade da Califórnia em Berkeley",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "144c011495233dd7d97049803ff11af49514ac4cd39977bf489d78286deeab77",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a32672e60ad48ddff45a7e8922017db9de4cbf975fd803d29a4ca6113bdca7f",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e51ea37647e3ba7e6be3783f3b90973bf8d31f1f9ba11e281b3f689c1528834a",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd5793638e23c9691e4b292f6115d6666f3d0823258c86b5a3cbe4c00c8f0286",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e338d04cde8f0c969e558d42676836c8ff67df27ab42169443add9f3bf3bc90",
+    "mention_text": "Xu Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43026fde6cd8574004f1678112a497830794e09f7986dff8692c76d367e57e78",
+    "mention_text": "SenseTime",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87c446227c988d56a879c9668b0993c661940e7d8d6f28dec09e760c305d9e5a",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f933adfd665141cc2738ed9e95d698c4ae218e79639b53f2dc434a7be66df756",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ecaf84b0e69aa56fc437722396c906bbc2adf5400e6c3e7a37ee95f5412a1d62",
+    "mention_text": "Huawei",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "471acf84a314a87fccac5efb74bb31c0ef1ec7a15179e65e408f50f4103db871",
+    "mention_text": "Quênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "377e4de0ea05d8b9e5b8e54eaf7d9d0f6cb87444d9a68af3baac8eff26a87a18",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7184488b72cdc8041825cd7cdfda95d81d86290caf34439244e3e6192182c17f",
+    "mention_text": "Human Rights Watch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c3c216d6205e0d14ef5dc0a9f5969d9b9514501b6b1adf691cdac9aba7bf2c3",
+    "mention_text": "Xinjiang",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "869c0822947fdf05b0f5422621fc081116d2792f6c5eb076e04b50b5ca02bba4",
+    "mention_text": "Maya Wang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "def636645f7c703b64c06d674a4e58439800db9e5709151b3f1adca265f00e67",
+    "mention_text": "Human Rights Watch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a55066cdb93fdac50aa908933d9020836a7b2a5a55360472ad023932b645d78",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10d9acb2f90d7e132f381149daf501b0a4326aaeacef0bc046e85beb5e67c74c",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b993bf705b3d1500aa9c2ac11ad735cc7affa32c80b3766f9afd15a5dc7c6665",
+    "mention_text": "Xinjiang",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88c03e21602dfe4a96efc0c47224704b7df9b284f60bd93acee388b0a373a894",
+    "mention_text": "Megvii",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "206c1b14c3918578347c640ff5a1021c39c3ae393e46a5a2507d9e1099154028",
+    "mention_text": "Zhang Jin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08d5933c7706647aaa3550e96928121574af91a27a8da7c1ddee3cc5422ec846",
+    "mention_text": "Hangzhou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "588aa024e6b2d9f31870a992939f45f3357f6eedc2da686d9cc8232c833344ea",
+    "mention_text": "Grupo dos 20",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2acbb85292d154492b7d8aa71cdee8823a7cfea124f49f5f40e54d5af0a9ebbc",
+    "mention_text": "Zhang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c9861dabfdcc13d95181a2cbe27878c55161e042a4129c528408ff28939ed4d4",
+    "mention_text": "Frances Eve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de8934bf470dd077b03469048ab4713445f4eaf5f143f97eda4b19bce6015fbb",
+    "mention_text": "Chinese Human Rights Defenders",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e013fb58a697c96e99136c0b7b2f7a5e2b7afdae8b7cf14f2f5bcbf73b53bd0",
+    "mention_text": "Hong Kong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "706fc1fec5599b2fbe2475a9fc4a37bf19a1767c8a13fb3cee61696d72f316d3",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2234225be58734c9b93525ae48173eeed8ad9eca825904869cfd155a8e1e2ee",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ff9c4f0f9b77e772fb9a76e2f1e369b5d49e8a2a89d5d2ea559f6e17dd0ffcc",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

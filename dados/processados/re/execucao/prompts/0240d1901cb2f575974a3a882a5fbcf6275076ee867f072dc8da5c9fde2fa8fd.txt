@@ -1,0 +1,466 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a7bc641af320fc88016cca82e8539cf7a61766f0456257253c90ee97c14a0a54
+
+TEXTO:
+Especialista ensina a vender fazendo as perguntas certas; veja lançamentos
+
+O Cifras & Letras seleciona semanalmente lançamentos nacionais e internacionais na área de negócios e economia.
+Como ser um Grande Vendedor Tom Hopkins, ed. Best Business, R$ 49,90 (576 págs.) Especialista em vendas apresenta suas técnicas para ter criando desejo de compras, fazendo perguntas certas e despertando emoções. Conta histórias de sucesso de quem adotou suas estratégias.
+O Perfil do Gestor de Comunicação Pedro Ulsen, ed. Aberje, R$ 36,70, 208 págs.
+Doutor em ciências da comunicação pela USP discute quais as competências e valores que gestores de comunicação precisam para alcançar objetivos estratégicos em organizações.
+Dinheiro É Emocional Tiago Brunet, ed. Vida, R$ 24,90, 89 págs.
+Coach afirma que a saúde emocional é um dos principais fatores para se ter uma relação saudável com o dinheiro. Resultado de tese de doutorado realizada na Florida Christian University, nos Estados Unidos.
+Das Quadras para a Vida Luiz Alberto Machado e Guga Machado, ed. Trevisan, R$ 54,90, 192 págs.
+Apresentam lições aprendidas no esporte úteis nas relações pessoais e profissionais. Tratam de temas como disciplina, resistência imaginação e liderança.
+Can Democracy Survive Global Capitalism? Robert Kuttner, ed, W. W. Norton & Company, R$ 89,80, 384 págs.
+Aponta a globalização e a desrregulamentação como responsáveis pelo avanço da desigualdade e do extremismo. Indica caminhos para fortalecer a democracia.
+Prediction Machines Ajay Agrawal, Joshua Gans e Avi Goldfarb, ed. Harvard Business Review Press, R$ 68,40, 272 págs.
+Professores da Universidade de Toronto, no Canadá, descrevem o impacto do avanço da inteligência artificial nos negócios e na escolha de políticas públicas partindo da ideia central de que ela diminuirá drasticamente o custo de fazer previsões.
+Veja os livros que se destacaram na semana
+Práticas e Pessoas
+1º/2º Seja Foda! ,"‚Caio Carneiro, Buzz, R$ 39,90 2º/1º A Sutil Arte de Ligar o F*da-se ,"‚Mark Manson,Intrínseca, R$ 29,90 3º/4º O Poder do Hábito ,"‚Charles Duhigg, Objetiva, R$ 49,90 4º/- o Poder da Autorresponsabilidade ,"‚Paulo Vieira, Gente, R$ 19,90 5º/- Direto de Washington ,"‚Washington Olivetto, Estação Brasil, R$ 49,90
+Teoria e Análise
+1º/2º Scrum "‚Jeff Sutherland, ed. LeYa, R$ 34,90 2º/- Gestão do Amanhã ,"‚Sandro Magaldi e José Salibi Neto, Gente, R$ 49 3º/3º Marketing 4.0 ,"‚Philip Kotler, Hermawan Kartajaya e Iwan Setiawan, ed. Sextante,  - R$ 49,90 4º/- Rresponsabilidade Civil da Empresa Perante os Investidores ,Modesto Carvalhosa, Luiz Gastão Paes de Barros Leães e Arnoldo Wald, ed. Quartier Latim, R$ 120 5º/1º Rápido e Devagar ,"‚Daniel Kahneman, Objetiva,  R$ 62,90
+Lista feita com amostra informada pelas livrarias  Curitiba, Martins Fontes, Fnac, Argumento, da Folha, da Vila e Cultura; os preços são referência do mercado e podem variar
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "24007a66bc3d1f7a034b4c92da9dfff4665cd4716471b8783b2e2b7d97119e46",
+    "mention_text": "Cifras & Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a2c477a6e05b229db7b6aeea34bc61c68ddd748228c1eabd0eb4b7a43ea581a",
+    "mention_text": "Tom Hopkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cebc3a181b7c23b7dcdbb245a8f2b7d5a4078103abd64e456762c766d894cc7",
+    "mention_text": "Best Business",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e535a1fce00f2f8c525793680f153b101ee367942cf79919f307cf88c55b45f5",
+    "mention_text": "Pedro Ulsen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7118b9e6ef887e930c704abbebdef168c882d004127c36b414617378fe5fadd",
+    "mention_text": "Aberje",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8aa80f0803c28588748a85ef99d04a428cd9a1426ee1e09cbf271591bc094c3a",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bba2796d8d5dcb781eefbf966455d4ce756bd1773fef9901cdab9f3df10dd9c1",
+    "mention_text": "Tiago Brunet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5dbb01e9b2a4070c2ef709e5ae2d39be67ef74918ff8b8afc56e49188fdf17d",
+    "mention_text": "Vida",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "306af0ee1361ca2c02baf4d457a8c6bcc38a889a5c4ac7ee5561df0e5908267a",
+    "mention_text": "Florida Christian University",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca2753f6beeda6027c299522cd6e72f7d86fd93f711d838c0ddba8a46ecb7e99",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "daacb2574d5a4f9abc5b401bcd79c7ee469f52054bb889862bcba9991ccd8d06",
+    "mention_text": "Luiz Alberto Machado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da274ef435a7212898f23cb0dcff4b4fba84383d72ebe99ca61ead00c8394fad",
+    "mention_text": "Guga Machado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e9c957447a93a49b2115f92ffec07fa29e49ba550af88aaaf3269e61eebdb31",
+    "mention_text": "Trevisan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05c31c49020cb4f533e54bf4ca46430aaeb5f5f4bcd32cbbfe71064b2fea9b8d",
+    "mention_text": "Robert Kuttner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb1db84c100eef2b8b261a42ca9f70e252a39e4eeee603b166df114eae2cd85f",
+    "mention_text": "W. W. Norton & Company",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "881d0eaabf1b4c7c6ba73da52fb7b28fb59758b470b99bb9ee740083517898d2",
+    "mention_text": "Ajay Agrawal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee10a614e7c15acbd5a7b5e4d7997f9990e8923383e47ef25d767b8ac733915f",
+    "mention_text": "Joshua Gans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5766d182daef670f97b1b17eea294eba0ee38ab4f1fa827a749b66ce61f98640",
+    "mention_text": "Avi Goldfarb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd76c31159a15b0ee28c148960ef75febb226e6e3bfe0da66f4bc0b0cc5c6baa",
+    "mention_text": "Harvard Business Review Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c1935009e8b3a98d7ba450d56e02850a2842a05cc7d32fc38d3f82d9b8386c1a",
+    "mention_text": "Universidade de Toronto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c48be5fef9b88f56b9679c6e1e40f2c3042ccd5bb1c49767b20cc12f649447e",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a1957e6963d313a99d7d33ad68e5f74e59fd0b3539f11adc405d5ccbb9838abd",
+    "mention_text": "Caio Carneiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c0596de08ba0fe467ec259a68b9955d4fe4ac567c14355c24e7e47eb6754ff12",
+    "mention_text": "Buzz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7189e35ddc2239b1e661296439f0e31fba8b2d9b2bda3322393bcf69b3bdaba0",
+    "mention_text": "Mark Manson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "927226f30b9f0c41b1c7f23c460806e98cdc463a19334a3bd523ce4b1aca2a53",
+    "mention_text": "Intrínseca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "740655223d6ddfe63a4d067652b76b95a68c5b1d85335b513f2ac7f50fb77245",
+    "mention_text": "Charles Duhigg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "032b1dfa81f00517ed64c035a2c4777df6119bd215306b9b40392aba6c2f6368",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c1d3665a5015608f1c7e46622bca3acfcfa1f65b8e0649dc354ed15c6b87522",
+    "mention_text": "Paulo Vieira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e37885e5878bf49bd0ef00f9d5260ca32a5f7c41852270c377aaa460e9b53499",
+    "mention_text": "Gente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1b270c523fd87d5f659f87ec53c1f0c221822a3a2d1e5c586197a2cc9025bec",
+    "mention_text": "Washington Olivetto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a59de378d47cf2050c56f974825f28de61b22405b1b7598a652ffaf78190e0c5",
+    "mention_text": "Estação Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "947706572bce57bbcb74561df37a11e1fae3614f1ea774f715b6f39dcb428042",
+    "mention_text": "Jeff Sutherland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c66a5ceb3a62d5b22b5a7fabf2aefe80ab6f8409886d5ac6b6d90da276d865c",
+    "mention_text": "LeYa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdc000b3b5690f1f6e25963f324a605c8a67565aef4b6b371b341b3f6f8e6db8",
+    "mention_text": "Sandro Magaldi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08de80c58c0c1e92996e12a82310f797635520f95c5a7d7a07d19225a331c3a9",
+    "mention_text": "José Salibi Neto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72f84d3ea83697a63a57b678becd026aca0cd09668e4cb12d927645e5ba99a59",
+    "mention_text": "Gente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6875782c67a6cda4fd15ef08654fb9bf4b5059ad38a1b02a547d28278ac1d3a",
+    "mention_text": "Philip Kotler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "98d994d3caedd76499e4d5c2b97eb3a88f1f1709c8e55c210296062ddd1d2958",
+    "mention_text": "Hermawan Kartajaya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4be9838c60c54ad7872b749483c40720700f36bd1ecdcb32bd7f05c2b158c3c7",
+    "mention_text": "Iwan Setiawan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c70dea9d66ca9ebfa2eaf352e1523dd09875d55410280286268a9ce547865686",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f34572f762746e39e365e5beed5317a1253b175802f72d2f90cc0686b606a3f",
+    "mention_text": "Modesto Carvalhosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94f1ff906808b8fb280b40fb17ef2d505b216926a1852210c5b2f0b52c640ab7",
+    "mention_text": "Luiz Gastão Paes de Barros Leães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e1707a1583a4cc3373bea768fbddc7ac28c45d9d92ac7db9b3d66a5510a3e14",
+    "mention_text": "Arnoldo Wald",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57d46b7c6cf4a19f931e1bdfcd22b6e89081cbeac88639f1febda5c4346b1d47",
+    "mention_text": "Quartier Latim",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f274ae3739134c8e851bc79b6286b2732a9d6938c8a2c6ee665b1567fd8fe16c",
+    "mention_text": "Daniel Kahneman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2860839bdabc481d2f574b62cc9aa1bb436e13298bcfaf446b39d2b6c416296",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1700297fc9914811c0af74823b670007016554cb90a69edbc2198e41c2def222",
+    "mention_text": "Curitiba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd3960efe907cc62d3de45db4329114a44e871867d19cc106220b71605bd2cc2",
+    "mention_text": "Martins Fontes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac80490ce26333bdc46da134994c43a604b38a386eaf152f38aea0742743f777",
+    "mention_text": "Fnac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3530651987d3b9f9b81dc80de75eb34e2b835897f0d04f391d49f5283b0e14a",
+    "mention_text": "Argumento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bd54fd2cee9b65f83cb2f71f0b2583392e9621cc37de7a4f9ea2db9b8a8159b",
+    "mention_text": "da Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9340d3c95510359206f739c6d9f1689d3a2b703f7afecf6f5ba515c36fb6902c",
+    "mention_text": "da Vila",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f687522bb8c134e8ff8e6db26b2aed093170e05163d209f7b6fe89ccfaaf0cd6",
+    "mention_text": "Cultura",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,295 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c1346299f7a5a049c575eafed0d7fdca5718ef16c00a3e661869f268716bc845
+
+TEXTO:
+Crítica: Johnny Depp é o mais perdido do elenco em filme monótono
+
+Direto ao ponto: "Transcendence - A Revolução" é muito fraquinho. Se fosse lançado há 40 anos, talvez emplacasse. Mas hoje tudo na tela soa óbvio, previsível, sem graça.
+Nesse novo fracasso de Johnny Depp, ele tem muita gente com quem dividir a culpa. O roteiro não é nada inventivo, a edição das cenas é monótona e as atuações são de nível ginasiano, até mesmo de gente normalmente boa, como Morgan Freeman e Rebecca Hall.
+Tudo bem que na maior parte do filme Depp só aparece numa tela, mas mesmo no trecho inicial, quando ainda é de carne e osso, ele não dá a mínima consistência a seu personagem.
+Will Caster deveria ser um cientista arrebatador, um Steve Jobs com mais cérebro e carisma. Depp deixa o personagem sonolento. Quando é envenenado e aguarda a morte certa, continua atuando em tom enfadonho.
+A ideia de passar a mente de um moribundo para os arquivos de um computador é manjada demais na literatura de ficção científica. Por isso, cenas que deveriam ser dramáticas, como aquela em que a mulher de Caster consegue contato digital com ele após a morte, são óbvias e sem brilho.
+Assassinado por terroristas contrários ao desenvolvimento de inteligência artificial, Caster, um gênio nessa área, se torna onipresente em tudo que está conectado à internet e a satélites. Daí para que comece a delirar e querer ser Deus é um pulo.
+Talvez o problema principal da atuação de Depp esteja justamente aí. Querendo provavelmente criar um tipo cool, frio, ele cai em profunda apatia. Suas reações não correspondem ao que se espera de um cérebro que busca conquistar o mundo e reformatá-lo.
+Morgan Freeman, como um cientista veterano, e Paul Bettany, no papel do melhor amigo de Caster, que resolve combatê-lo para proteger o planeta, são atores tarimbados que não têm o que fazer. Encaram papéis rasos, que não dão recursos para a dupla.
+Rebecca Hall, uma atriz charmosa e interessante, carrega a pior missão no elenco. O amor por Caster deveria conduzir a moça a uma aceitação inicial dos planos do cientista morto-vivo, para que depois ela percebesse a roubada megalomaníaca na qual acaba se metendo.
+Mas o roteiro não ajuda em nada a personagem, que tem reações totalmente incoerentes. Enfim, ela está perdida, como seus colegas.
+Depp, mais do que todos.
+TRANSCENDENCE - A REVOLUÇÃO DIREÇÃO Wally Pfister PRODUÇÃO EUA, 2014 ESTREIA na quinta-feira (dia 19) CLASSIFICAÇÃO 14 anos AVALIAÇÃO ruim
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "0d4d2fab431456fae86b3b2f2193cb2e97e4c103d8258e48b1fa17ecf12ccf5c",
+    "mention_text": "Johnny Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ecb11c8c324894bda5c6ecd08b38ee0025a768a8759c44d1d204b1f1c117d01e",
+    "mention_text": "Johnny Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b74004f493dd5dce8dd69c70b2c2ac091cd7d142c512c2188523b4a4090524f",
+    "mention_text": "Morgan Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b56741397fd34cb4d8b1dfe703f369e97b18c9d879e69e923b1347d37e9b32f9",
+    "mention_text": "Rebecca Hall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f54ab01024abcad3ef434221c175b8fe3880c91a3aef02a6fac102054ed8914",
+    "mention_text": "Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "225a91b566306247d60092505ed132e001d0cce5195c7916cabf62884fb64ff4",
+    "mention_text": "Will Caster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "260fd7ce824c40928def1c504a21744eb683a678b1c05d671e006b7d2ae55f60",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4207a02d67e66f782defb3ce4b0f166abcad498fa8fe9d71933dd318dcd5eeb4",
+    "mention_text": "Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a9efd253fedbf8dfeb0b8cc42a1ac163d04724c42b6e640db94504440307922",
+    "mention_text": "Caster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ffe7c705e1f24faf7bd8e606ff7a64c2ea1577046a87badb4c35b6ff9d0ad6d1",
+    "mention_text": "Caster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef2ffe055bf880bd0c70f7c20ec9f9f65b459d13b174b1556ed359e484fb7ada",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54599f85ae11e617b4390b5eecf9f04664f89f22eda1d2d700832a0c129cf6aa",
+    "mention_text": "Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66035574e2248fc3d037a6d42580ef6f699870a8a07b3e353231c0f78f4747dc",
+    "mention_text": "Morgan Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bacccac018475f7e2bc4e0335cd9b239d05269c4dac4294b691df4f95de4711c",
+    "mention_text": "Paul Bettany",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bf3119c11b9d7172488f1c136af0567be711e08affc629c54bf5e59b5b77dce",
+    "mention_text": "Caster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21431d65938aea57a37011784c684adbf50c3234b574690c857313160f584833",
+    "mention_text": "Rebecca Hall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed720df346b2ea98eaa26b64492f84bafb7a00f024324cd24d2f7b64c4029ace",
+    "mention_text": "Caster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e8d07884510dd7e56bf79666cf942bce7f6cfa32e9e780fbcddfa65e480ae17",
+    "mention_text": "Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e842c0a16e56c21d2714b07fbb1e517edf097e03845efa3896c3cbeb63a1579",
+    "mention_text": "Wally Pfister",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9974cba99be8298dfba8b24edf08b7d63c0325280651a5abc7abd8428545072d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  }
+]

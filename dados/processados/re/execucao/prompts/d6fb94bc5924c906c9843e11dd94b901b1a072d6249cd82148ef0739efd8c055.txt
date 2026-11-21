@@ -1,0 +1,525 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ab628abfac633338ad671ca9a5d3afdb4420a3aa222f748967f82f0e67e6bfed
+
+TEXTO:
+O que imprensa mostra de Hong Kong está longe da verdade, diz executivo chinês
+
+O presidente do Grupo de Mídia da China, considerado o maior conglomerado de comunicação do mundo, estatal formada no ano passado a partir da rede CCTV, disse em São Paulo que vê hoje o quadro em Hong Kong como de terrorismo, não simples protestos .
+Falando à Folha , com tradutor, Shen Haixiong criticou a cobertura no Ocidente de maneira geral, por não retratar o que diz ser a realidade do território chinês.
+“A mídia no mundo ocidental, especialmente dos EUA, ela só pega um pedaço de um cenário, e isso é muito longe da verdade”, afirmou Shen, citando que “até seu presidente, Donald Trump, não acredita em alguns relatos da imprensa americana”.
+“Nomeadamente, eu gostaria de mencionar o que acontece em Hong Kong, onde os casos já são de terroristas”, acrescentou. No fim de semana, um manifestante foi baleado por um policial e, por outro lado, um homem, ao discutir com um manifestante, teve seu corpo coberto por gasolina e queimado.
+Dizendo-se orgulhoso de ser jornalista, ele que começou como repórter na agência Xinhua e depois trabalhou no jornal japonês Asahi Shimbun e na rede pública de TV da Coreia do Sul, afirmou que “alguns veículos da imprensa norte-americanos estão longe do profissionalismo, porque primeiramente têm que respeitar a verdade”.
+À pergunta sobre censura em seu próprio país, ele insistiu que “os internautas chineses não questionam que não têm acesso a algum site, e sim se queixam que as reportagens que viram na internet, sobre a China, não são verdadeiras, que não é o que está acontecendo”.
+O executivo veio ao Brasil para acompanhar o dirigente Xi Jinping, que estará nesta quarta (13) em Brasília para a cúpula dos Brics e para nova reunião com o presidente brasileiro, Jair Bolsonaro, que esteve na China no último mês.
+Shen passou por São Paulo para assinar um acordo do GMC com a Rede Bandeirantes , voltado ao compartilhamento de conteúdo, inclusive produção conjunta de um programa diário.
+Segundo ele, não há no momento o propósito de ir além da parceira ou de buscar novo negócio em mídia no país. “Por enquanto ainda não estamos dispostos a investir em veículo de imprensa no Brasil”, disse.
+Mas lembrou que, há três semanas, ao receber em Pequim o ministro da Cidadania, Osmar Terra, ouviu dele a sugestão de que o Brasil tenha um canal na TV paga chinesa, para divulgação de “programas, telenovelas e filmes”, e a China tenha um no Brasil.
+Questionado se o canal a trazer para o Brasil seria o CGTN, canal internacional de notícias do GMC, em inglês, respondeu que seria uma opção “muito boa” e, mais que isso, “factível”, mas não detalhou.
+Sublinhou que chegou a vários consensos com Terra, inclusive de “intercâmbio de tecnologias”.
+O contrato do GMC com a Bandeirantes é marcado pela entrada no ar, em diferentes canais da rede brasileira, de três programas —o diário Mundo China, com cinco a dez minutos noticiosos, com um apresentador da Band e outro da CCTV, os 24 episódios do documentário O Caminho da Nova China e a série Frases Clássicas Citadas pelo Presidente Xi Jinping.
+O acordo e os programas representam, segundo Shen, “um novo ponto de partida” para os dois grupos. “Ainda vamos promover nossa cooperação em todas as raias, em todos os níveis”, acrescentou, sem detalhar outros planos.
+Após apontar o que descreve como aprofundamento da “parceria estratégica” entre os dois países, na viagem de Bolsonaro a Pequim, três semanas atrás, ele afirmou, sobre GMC e Band: “Nossa parceria também está no momento mais oportuno”.
+O executivo afirma que, de maneira geral, o objetivo do GMC “é construir uma instituição de comunicação de nível internacional”, com atenção para a adoção de novas tecnologias em vídeo, citando 8K, 5G e inteligência artificial, e a atuação em plataformas de mídia social.
+Durante a assinatura, o presidente do Grupo Bandeirantes, João Carlos Saad, saudou a parceria dizendo ter ficado “muito impressionado”, em especial, com o programa Frases Clássicas Citadas pelo Presidente Xi Jinping. “É uma aula de filosofia, uma aula de democracia”, afirmou.
+Também presente à assinatura, o governador de São Paulo, João Dória, declarou já ter lido dois livros de Xi Jinping e que volta no ano que vem à China, encabeçando duas comitivas, uma de governadores do Sul e Sudeste, outra de empresários paulistas.
+Adiantou que “o primeiro investimento chinês em São Paulo será no setor metroviário”, onde deverá “ajudar no programa de desestatização” do governo estadual.
+Para a edição em português, o programa Frases Clássicas conta com comentários do ex-ministro do Desenvolvimento, Indústria e Comércio Exterior, embaixador Sérgio Amaral, que disse que a parceria em televisão cobre uma demanda que ele sempre ouviu, de empresários brasileiros, de “maior conhecimento entre as culturas”.
+A presença da China “é hoje uma realidade mundial”, não apenas como principal parceiro comercial do Brasil e de boa parte da América Latina. “Tem potencial para crescer bastante em áreas novas, inclusive investimentos”, acrescentou o diplomata.
+Amaral acredita nem ser necessário usar a marca Iniciativa do Cinturão e Rota. “O nome é como os chineses chamam a cooperação na área de investimento. Não precisamos chamar assim. Em poucos anos, o investimento já se expandiu para US$ 70 bilhões de investimento no Brasil. E tende a crescer.”
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "18540c59644fe88813c1c074b07146e25c887adaf2b51cdd52a507b162e73740",
+    "mention_text": "Hong Kong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d72427e4b292c27bc5d5a7e9c3e0223fced262d728d9035de3cabc78db5c43e",
+    "mention_text": "Grupo de Mídia da China",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba08bc4aabc103a9a021758fdaa6cee1f9d1c485ed8c46ea495de516e2fd0406",
+    "mention_text": "CCTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b54b1b646eda1ab3be6a48d121a20573c9e70ff7805b17826cd12fa28eb0ade9",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc186c95aa5b70aa72235ca3ea055101505bf40b52509f7a975b9c48d4fcf394",
+    "mention_text": "Hong Kong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d78ab395577f52b57d7fa2c1dc21587aa244c51e236d66456260c090f4e88f8e",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b8340ce2683c3d4d83f67bf1821d3184f03c19c6d61acd4583ddeb428b1231b",
+    "mention_text": "Shen Haixiong",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b5d78018c47f39d1988492da6042b92f67d1e181723ddd9d445e14824902dc5",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9fd2f4e649a02bba1bd99a30e718d65368495cf4d18354b55ad9c46644bab54",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff7121482e987510b46d32b244d230ed7d0d09716561e4cbba78f1c86c984cdb",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f95bf701898beda4f9f69c8bd74025bf75813b261d581aa30d8e2c8b54ee1cf",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d266d0d69891873b133ccfe3790c10db613f787577129cdd1d5da11015dfe53f",
+    "mention_text": "Hong Kong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b91ffa26821d468bfcad05912cb329dc4b3a873d3c917eab2faac4fd07a993c5",
+    "mention_text": "Xinhua",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "075498bb5ecb741771f839ef06cc6e135de196aa813204f85112e5bb5039e2af",
+    "mention_text": "Asahi Shimbun",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da3f16e294649a3fc821e49487203f5e0be418a96d5e13a751cc463e9f58606b",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c917003c2ef45c8a64f29a336a038f9abafae3590064e537febae980ee941164",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dd17977c845646b6b43829cafe070475effab2614b6a42b4d73db05a01cfcf31",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d165aa5dd1cbbad2768d8e18ef583ab215f30b2ea8333a9d7e0fd24c2b2d9f4",
+    "mention_text": "Xi Jinping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e662920647d0466e8388245c1c2ca6f7f9385a5dfeb92345ef6f409653d77821",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9c31f05941faba7840592d9335c6a92a729b73b23c714bba20750ba444e95ac",
+    "mention_text": "Brics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6aa30e4b6e943186e6a993feca32bf4b6607fd1f6a798c21ccd32999a6425c1b",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "580c0f46af85e3bea248180b542c4396e433b2493cababe8d3e40854dec80d6f",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ae0d481b4295ebc630f3bf4fe3b7bcbb1218341361d7ed9da233e1ca95393bc",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "388d7d1a186243b1e608a2244a15c1f5ade50482fea3faecdeab849d202200e5",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1ad168b915de5cb628b369b177627ca64742bdbdf7c6b8b30b75dcd8dddc21e",
+    "mention_text": "GMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a67236771e2deb29ca0b686404a09867b038537c33ed36144a5424bf034eaa67",
+    "mention_text": "Rede Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06f56577b929f3c2d92ca0ea9f544d929675b7eecdc2cacf6dd0271fb2048be7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "940bc08452cf7e997c423c4f9deb6f8f6bdf9958b5b8bb3bc412c2abd2486ba9",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e1ef42fb19791c2cd6bf3b12301ee60fb13952ed797ff06eb45813ae2006db3",
+    "mention_text": "Osmar Terra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be74f2a639f615eac778c5602f08728f6abe7b77a1213911f5df8a86eeed97df",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "55c2b1ac75be4bf8addf11da8efd4ce84ccf2c37a4e4827e2f90216fce8d1d79",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a74237630995ff0fb1ed2174848ba07bf8c74617df2620d54e62093723b5e6f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4cd656365a611a11ad85c47f2045b2f6d89ad0b8b8434bdf1d6fe5eba141993a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9076d6059a0ae7eb36bf92d3a081c57046675d318fbebfd37d63c76c6654d286",
+    "mention_text": "CGTN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac6f578350508db1cd0652c86aad3e93c289aeec230ed74656719c04b45e4e0c",
+    "mention_text": "GMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f7ba914445320de009096ab775fd16aec29f47472a5fdeafa80bb2afc3d8428",
+    "mention_text": "Terra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29cc99f4d56cd7ed4eb2f9a5c9bfe0033b5f9a5fe7e7dc506f5f261ab5df5303",
+    "mention_text": "GMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5ff439e579f870ab2a0c23d0b97e5be87b992cc070698e820590d16e52909ed",
+    "mention_text": "Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "571206f0ac58e50f759c24d81b18a671df7f8ecd314916e8e21086d13df13fd9",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70d4bdbfd78b29cef37ef4779e0e843e54c6a068e67b011ecc6f509593291fbe",
+    "mention_text": "Band",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "357588ab49c566bf3f9b06d2b265b78e2ebdd06e723e0340ac97b46aaa73e762",
+    "mention_text": "CCTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f98e95806ae1e248b3fcf7997a167ac3eb261c9d3afd898f04ee369331a88072",
+    "mention_text": "Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a93c2bb9529acc7c28b04d85d943e87b39665a4758924699341420208eb7c615",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8095b5536d05a5b184437ba2dac95811308c014939e2ad280213249f9d32fa02",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "60f2ecd225c1e11b4bd826c8fc0143956bfba0da66bd6753992fb467bc9181d8",
+    "mention_text": "GMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9adeb25f15dabc264cfccbccad4a9d7817090b26d99291b539b3910e1fee2ec2",
+    "mention_text": "Band",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "595aceca91adf9cdcaa9cfee08c40959e374736955e2dca0018bd15131198289",
+    "mention_text": "GMC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b1ec10aa6caa4e47de307c3c0b5a856eb58028d93b7ea32fc8adc7fc21e3345",
+    "mention_text": "Grupo Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "173b40ba8e388c163448e7549166d9148bc73fccb3091a6b34921a9ebf9e1caf",
+    "mention_text": "João Carlos Saad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df00bd2664133ed75973d29860795a56e39f0959ced26c857f65118eb29e1038",
+    "mention_text": "Xi Jinping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a01f59f3855bc39f5c3408a86572754760c88598750253e7fc24d439c5cb6e74",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d59f68eebad7a04697e49353fec44277fd1390e104f88d76c3ac35b8b47a93ac",
+    "mention_text": "João Dória",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45627a8a9be4d5d764c5088aac819e627be9bcde8fd29d17ba8a3a9ab5d028a7",
+    "mention_text": "Xi Jinping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa5631111b6605962fdb08b665a9f8d6fdc78f6a5105b8d706439f772149f8d2",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b80ce97eccea7df29c6ca19b6828a670acdb84d4706ef4ef9d0020e8bf05e87e",
+    "mention_text": "Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5115242b8d339765c27c4d9d6c8cf73b100ddc12e54d5cf65dcd4332cfa9498c",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1784cacdb8b467d5f70eeb464754ce45e6f150ffca044e3fb20191838c493928",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d99a71b7142b1ba16aa47bc7e34e9f7bbd16c2f60d45b08f3ecebca2d0e7883",
+    "mention_text": "Desenvolvimento, Indústria e Comércio Exterior",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52e46cc82d52dfa409f5e7e614375d51b1939e0c6fb39985abdd63993d3de541",
+    "mention_text": "Sérgio Amaral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e8e26f6e9c00d58d9201dc7a95b6eb1b63dc1f6420899d8e2555bcc8e8731f1",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d3c771a6fad33f673623ab397938d6b3ca20e8e14871c2a5f530a86c6c9d063",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8cf2cd7d653d231b7feb20a5b44072bc4825e4775aa9f84ce789e0f572d63d2e",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e8f7cbab83b3df8985fa86b11b9eb76440c8a066e7e10e63cf13839b59ef3a4",
+    "mention_text": "Amaral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c4931d553f557c336ee1e91bdd871b9d5885a8c6512281f8b3dbd93412a990d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

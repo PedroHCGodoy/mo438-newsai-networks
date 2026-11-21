@@ -1,0 +1,330 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 4d475c6562cff3fde9907920ac64135ea19c29324e1736ec1c25991c8c6cfb91
+
+TEXTO:
+Sala de aula vira oficina para criança pôr a mão na massa
+
+Baseado no conceito de “faça você mesmo”, o movimento maker chegou às escolas tradicionais e está transformando estudantes do ensino fundamental e médio em projetistas e criadores de novas tecnologias.
+Em salas de aula convertidas em laboratórios, alunos usam ferramentas de serralheria, cortadoras a laser e impressoras 3D para traduzir conteúdos teóricos em experimentos práticos.
+As atividades são desenvolvidas em disciplinas obrigatórias específicas de ensino maker ou em aulas opcionais , em que os estudantes têm contato com fundamentos de marcenaria, costura, robótica e programação. Entre os projetos desenvolvidos estão maquetes, carros movidos a propulsão e jogos que utilizam inteligência artificial.
+O objetivo é estimular crianças e adolescentes a exercer um papel mais ativo nas aulas.
+“O modelo de educação tradicional é mecânico. Aqui, o aluno percebe que tudo o que ele aprende tem significado, e ele pode criar algo novo”, diz Bárbara Ferreira, instrutora do espaço maker do Colégio Franciscano Pio XII, na zona oeste de São Paulo.
+Complementando as aulas de história sobre a Idade Média, os alunos do sétimo ano da instituição construíram no laboratório maquetes para representação de feudos. Aproveitaram o protótipo e desenvolveram pequenas catapultas, armas usadas no período medieval, para observar o movimento do lançamento oblíquo, estudado em física.
+A escola também aproveita essas aulas para incentivar os alunos a pensarem em aplicações de novas tecnologias. “Quando fazemos modelagens em uma impressora 3D, discutimos a possibilidade da criação de próteses no campo da medicina”, diz Bárbara.
+No Stance Dual, na região central de São Paulo, o ensino maker é oferecido do quinto ao nono ano na disciplina oficina/workshop.
+No oitavo ano, os alunos criam projetos com a temática da energia sustentável. Um dos trabalhos que estão sendo desenvolvidos é o protótipo de uma bicicleta em que o ciclista recarrega a bateria do celular enquanto pedala. A ideia é converter a energia mecânica em eletricidade.
+Para isso, as alunas responsáveis pelo projeto trabalham na adaptação de um dínamo, aparelho que funciona como gerador, de forma que possa ser conectado ao celular.
+A estudante Beatriz Freire, 13, diz que as aulas mostraram que é possível inserir a sustentabilidade em quase tudo. Ela planeja seguir a carreira de engenharia ou arquitetura, e é uma das autoras do projeto, ao lado das colegas Carolina Berenholc e Rafaella Trindade, da mesma idade.
+A disciplina maker também aborda conceitos de empreendedorismo em aulas expositivas. Neste semestre, os alunos usam seus projetos como base para a criação de um modelo de negócio, com logomarca e vídeo promocional.
+Os estudantes do ensino médio do Colégio Bandeirantes trabalham com a cultura do “faça você mesmo” em aulas ministradas por dois ou três professores de química, física, biologia ou artes.
+Como os alunos têm fácil acesso a celulares e computadores, eles buscam inspiração em vídeos publicados na internet. Um dos canais mais populares é o Manual do Mundo, sobre ciência, experimentos e curiosidades, que tem mais de 12 milhões de inscritos e 2,1 bilhões de visualizações no Youtube.
+Durante o laboratório maker os estudantes também aprendem a programar softwares para operar máquinas como as de corte a laser.
+Mais
+No Liceu de Artes e Ofícios, na região central de São Paulo, os estudantes têm contato com a plataforma BIM (Building Information Model), que projeta virtualmente as etapas da construção de uma obra.
+Segundo o professor de física do Colégio Bandeirantes, Renato Villar, o barateamento de tecnologias contribui para a disseminação desse modelo mão na massa. Hoje, uma impressora 3D usada nas escolas custa, em média, R$ 2.500.
+O aluno Gabriel Garcia, 16,do segundo ano do ensino médio do Bandeirantes, sempre gostou das disciplinas de exatas. Diz que pensou em cursar engenharia, mas estava inseguro porque não sabia como o conhecimento teórico poderia ser aplicado na prática.
+Os laboratórios, afirma, tiraram suas dúvidas. Hoje ele se diz decidido pela profissão. Um dos projetos desenvolvidos por ele estuda os efeitos da corrosão da chuva ácida em diferentes materiais, de concreto a prego.
+Por usar equipamentos cortantes, as oficinas são ministradas para grupos pequenos, sob a atenção constante do educador, explica Guilherme Pasmanik, professor responsável pelo setor na Móbile, na zona sul de São Paulo. Na escola, a atividade tem até 28 estudantes.
+“A cultura maker é bem-vinda desde que não se perca nela mesma. O conceito funciona como um meio, não como um fim. Não temos aula para aprender a martelar, mas para usar o martelo na resolução de um problema maior”, diz Villar, do Bandeirantes.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "cf0704f88f7318c000af1168aa8fe4c0b1d62bc6cc7d7f93c5fc23cf0b9fefee",
+    "mention_text": "Bárbara Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "268f556192b4bdf0f2042118af90a3fc38d3db36d61deb83bdbaac704028a177",
+    "mention_text": "Colégio Franciscano Pio XII",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41649f1103b39093360120e77dc698484f4977c8673545a10a1bf2a77c8d44f5",
+    "mention_text": "zona oeste de São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef92792a09774d67dff51edfdf489828bb6f75a9866a7ad4630d2a9d49e21aa6",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "815a62c0bd4fd6a2d458a05ba1bb1392226648b4ca5160732a9fc971de0fa670",
+    "mention_text": "Bárbara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6195891209f8951803f6307cc987c72f448bfd9f3a8ea76505ee9a035d552dd5",
+    "mention_text": "Stance Dual",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e3f20c0fe7d80ba2300fc83093fbe92039d45e8378cf9475f46ebe8674b96bc",
+    "mention_text": "região central de São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "113d1037179d51e77303e2a1d859c8069b22f5007b497f7d232f5b02590f0e05",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f60860d2a57aa61972f4fc2bfbe0d0718f52fdb96935bc533862d0fb98d49997",
+    "mention_text": "Beatriz Freire",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9534540560c990a70b29de0d874866b09ab47aa0a7b06526618b777452fc4628",
+    "mention_text": "Carolina Berenholc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e28d48ce7e19ea4dc2414a87d6040d4bc1e48cecff4dfd83984e098458dff115",
+    "mention_text": "Rafaella Trindade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a539e4a5f2d6a779fd9bb2b1d21fc6cc0169443bea5d1b9c38ad9d6fdaa2e647",
+    "mention_text": "Colégio Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "594d7c6292d95651136ab45963105b18f0c912ba2414df92ff6e03958d2f8c55",
+    "mention_text": "Youtube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6a6f65b4e89b96205661d9e9bcbf3f56ddf28907d3095d42bf2676b336599b5",
+    "mention_text": "Liceu de Artes e Ofícios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58f04bcfc63c17699c01fbcc6a0ced6a29787b3b11e078a23e95547b39538757",
+    "mention_text": "região central de São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62954f57a641343511c4343433b6cf4bcd3c5110cf916efee3166a4b99c0be5a",
+    "mention_text": "Colégio Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4956c01d3cd150f41728ab790945d42c921cb9da02f19e48db714cf4484fc2af",
+    "mention_text": "Renato Villar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd097b945ce0bb6cdc462e9f76c6abb51ee304b972d192e1ffd9c02f0b37bb80",
+    "mention_text": "Gabriel Garcia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5cb4c573234769c34ad5e1e108b9141ca649ae160aae2ae8352bf6a28704bf4b",
+    "mention_text": "Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78d403467e8463052601a1ac8c91178001f7a0b8519e1ffd996f0a477940a635",
+    "mention_text": "Guilherme Pasmanik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da11cb8e594b49bee9c13b19af04aa6263f046679c928a9992be26884d58549a",
+    "mention_text": "Móbile",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19778ef3a18bc823625a83e30e847cc6fdb66b325320f37bde5321751c42c797",
+    "mention_text": "zona sul de São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9892c494d3829bc46555ec9eb1f9356ca5fd4507ba804771cb770e75bd3b9b86",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "038154e7fbdb9e95bedfe7dd1eeeaddf4f50df78760843d5d640abd268eecee3",
+    "mention_text": "Villar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "53a5753eff8ea664b89c025c961130b8308cfcbd00cad304dde22ba5ada8f98f",
+    "mention_text": "Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  }
+]

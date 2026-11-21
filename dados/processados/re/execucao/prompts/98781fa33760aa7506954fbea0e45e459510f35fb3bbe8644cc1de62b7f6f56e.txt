@@ -1,0 +1,727 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 291e5055e012a797145622766d37203ad25bb6a6c73f6f6209370710401b219a
+
+TEXTO:
+STF sabe as consequências desastrosas da erosão do Estado de Direito, diz leitor
+
+Transferência de Lula
+O STF barrou a transferência arbitrária de Lula ao presídio de Tremembé ( "Supremo veta transferência de Lula de Curitiba para presídio de SP" ). Os arrogantes juízes e procuradores de Curitiba foram e serão cada vez mais enquadrados, desmascarados e desidratados por aqueles que sabem as consequências desastrosas da erosão do Estado de Direito.
+José Marcos Thalenberg (São Paulo, SP)
+Mais
+Com a suspensão da transferência de Lula para um presídio, onde já deveria estar há muito tempo, fica patente o fato de que a banda podre da ínfima corte está fortemente do lado da corrupção.
+Paulo Roberto Gotaç (Rio de Janeiro, RJ)
+A Justiça brasileira cada vez mais se amesquinha e se avilta ( "Juiz autoriza transferência de Lula para presídio de Tremembé, no interior de SP" ). Ela é arrogante e valente com o ex-presidente Lula, mas não consegue fazer Queiroz depor. Será medo de Bolsonaro?
+João Praes (Bom Jesus do Itabapoana, RJ)
+Criminoso comum condenado tem que ir para a cadeia comum, como todos os criminosos.
+Antenor Silva Neto (São Paulo, SP)
+Mais
+O comentário desnecessário de Doria demonstra que ele só se distanciou de Bolsonaro por alguns instantes ( "Maia, centrão e deputado do PSDB chamam transferência de Lula de perseguição e absurdo" ). Já foi dito que, na política, se têm adversários, não inimigos.
+Ricardo Candido de Araujo (Taboão da Serra, SP)
+O povão, em vez de se preocupar com a reforma da Previdência , está de olho na transferência de Lula. Aí se nota a falta de prioridade desses bobos, que têm contrato de fidelidade com corrupto de plantão.
+Marcos A. T. Garcia (Curitiba, PR)
+Governo Bolsonaro
+Bolsonaro está certo ao questionar os números do Inpe , até porque os dados devem ser mais compilados. Não se ouve falar, por exemplo, em percentual de reflorestamento em áreas privadas. E não podemos ter uma floresta a custos altíssimos sem nada produzir. Precisamos fazer uso econômico de nossa floresta e, se o mundo a quiser preservar, que nos pague por isso.
+Otávio de Queiroz (São Paulo, SP)
+Mais
+Parabéns a Rodrigo Maia, por mostrar a Bolsonaro como deveriam se comportar verdadeiros estadistas numa democracia ( "Maia defende modelo de transição em MP sobre publicação de balanço de empresas" ). Só ditadores buscam asfixiar a imprensa dessa forma. Aliás, foi o que Chávez fez na Venezuela. Aqueles que votaram no "mito" para o Brasil não ficar igual ao vizinho não percebem as trágicas semelhanças dos líderes populistas Chávez e Bolsonaro.
+Alessandro Souza (São Paulo, SP)
+Observem o nível dessas pessoas ( "Mourão associa tremores de Merkel a medo de Donald Trump" ). A falta de postura e de educação, a deselegância e a arrogância. Falam ao microfone como se estivessem batendo papo num botequim. Um governante que se dirige a outro desse modo machista e de maneira tão desclassificada.
+Maria Joselita Souza Ferreira (Araçoiaba da Serra, SP)
+Previdência
+Frota deveria não misturar as coisas ( "Alexandre Frota diz que governo Bolsonaro não precisa de seu voto em segundo turno da reforma" ). A reforma interessa ao país e às pessoas comuns. Se ele não entende isso, misturando suas sensibilidades pessoais, deveria ceder o lugar a outro. Já a Folha é jornaleco oposicionista-socialista de sempre.
+Francisco Henrique Dias (Campo Alegre de Lourdes, BA)
+Mais
+Não que a aprovação dessa reforma seja uma boa, mas é muito interessante ver o Legislativo funcionando a todo o vapor enquanto o Executivo e o Judiciário se afundam a cada dia e não saem do lugar. Realmente são outros tempos.
+Willian Marques (Curitiba, PR)
+Desigualdade global
+O avanço da inteligência artificial é a principal causa do aumento da desigualdade no mundo ( "Sociedade precisa se convencer do problema que é a desigualdade, diz Martin Wolf" ). Os avanços atingiram produtos manufaturados que empregam grande contingente de pessoas, o que reduziu drasticamente os ganhos no setor privado. No caso brasileiro, há o agravante de que os ganhos no setor público são elevados e tendem a aumentar.
+Eustaquio Nunes de Morais (Belo Horizonte, MG)
+O problema não é a desigualdade, é a pobreza. Ninguém passa necessidades porque outro é mais rico, mas porque é pobre. Ao entrar na falácia apresentada no título da reportagem, combateremos fatores importantes para fomento da produção. Se focarmos a pobreza, teremos soluções de maior impacto. Concordo que o fator educação é prioridade. Uma sociedade justa e aberta às diferenças só se alcança com muita educação e ciência.
+Julio Silva (Recife, PE)
+Agrotóxicos
+Os efeitos do uso de muitos dos agrotóxicos aparecem depois de muitos anos ou décadas no corpo e na mente ( "'Nenhum consumidor brasileiro está sendo intoxicado', diz ministra da Agricultura sobre agrotóxicos" , Ambiente, 6/8).
+José Valter Cipolla Aristides (Colombo, PR)
+Prefeitura de São Paulo
+Por muitos anos, Celso Pitta levou a fama de ter sido um dos piores prefeitos de São Paulo. Injustamente, pois era excelente técnico, mas, por não ser político, deixou os malufistas dominarem a prefeitura. Mas vieram Gilberto Kassab, Fernando Haddad e Bruno Covas para limpar a imagem dele. Esses três conseguiram destruir São Paulo ( "Covas mira centro de SP como vitrine para eleição, mas esbarra na Justiça" ).
+Moyses Cheid Junior (São Paulo, SP)
+Mais
+Colunistas
+Adoro textos de humoristas. O politicamente correto perde espaço para a vida real, a vida que precisa ser real e ter graça. Parabéns pela fluidez de seu raciocínio, Gregorio ( "Já tivemos outro assunto" ).
+Jorge Augusto Leme (Mairiporã, SP)
+Temos excelentes mulheres matemáticas, assim como temos homens que não conseguem fazer cálculo nenhum. Ser bom matemático é uma condição que provém de capacidades inatas, que podem ser bastante potencializadas através da estimulação correta ( "O que querem as mulheres matemáticas, afinal?" ).
+Pedro Quinderé (Goiânia, GO)
+PARTICIPAÇÃO
+​ Os leitores podem colaborar com o conteúdo da Folha enviando notícias, fotos e vídeos (de acontecimentos ou comentários) que sejam relevantes no Brasil e no mundo. Para isso, basta acessar Envie sua Notícia ou enviar mensagem para leitor@grupofolha.com.br .
+​
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4d94c472e8258dcb52f688f1f8f445e81c6b1be63993378c37a655de8889fa13",
+    "mention_text": "STF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3bc33aed8292c020b2c5babaf8884adcc0c19754d6f5389d994e3622509590c5",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "00f916f721682991639cfbdb2353d3af54f85589b7423fbef910ce890a47b150",
+    "mention_text": "STF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29a3616456dc35f8a73e80d1359daf325fb3f06d9ac83b54dbdae18952a38a0b",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f664d28c20f4c985e22af940396cbe9e4c35d5a6c5322b5f7c43c59bde08edf0",
+    "mention_text": "Tremembé",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6054bc5f3f77dd7b22e8a9dd064e5debfe87aade70fe4952eee660e3da826fb2",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30bc64781f7feaa2cfdcea593470b2b11ea64a61e9bd99a65d7d450a032f5709",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bcaded9141b716101a52d60fc7420961094a76f385fe2057f4ceb1e7e47e75c",
+    "mention_text": "José Marcos Thalenberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0293c322a2d4bdd88723983ea1430e43409c061e84d076475751dac9a507b4e0",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c224e3b0aec72572c66454010f75b9de88b295ca42f9a71e22b366500a601009",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f9a746b13cec94f3e480eeee1daab23e8668b68277e44f2782c96ce5dbe2deb8",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dac4eabaf804242ae3f07f3a87dcc1cba5793fc351d42f8add5ef4b7f2be3663",
+    "mention_text": "Paulo Roberto Gotaç",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0570618903e2b9eef199cf1471aa38a7e292d72d069bf9debc7a25a52e736fe3",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "402863ca534ac27917aee162496c505a26cffad7b27229db399fdad5aa88dd71",
+    "mention_text": "RJ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8011e3852328a2e7df52a5205fab4efc9fc9ac871ff942eb99cfa463a786ed6f",
+    "mention_text": "Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fabaa5314eb519be901008f54f6238d6e18cee445d16559c71d8b32929756af0",
+    "mention_text": "Justiça brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f81d4749472a7f96a9830397cc4a97e3b0d630aac52423da5416603b5cb19e78",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b692513d7016e04f3b257a51dd13d0df4fe8342fcaf357013cb967cefb98cf0",
+    "mention_text": "Queiroz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a82af5d5893b0be97205ec8d23500a59df01146d246d6c7c1e1333925ba129fa",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "234dff367c3aa8ef0c2a3d0fa3a10cf61415ba66feaa5a3100ddae1dedb8fc6c",
+    "mention_text": "João Praes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4d78c3d7c6aa4aa584f9349424a6e2019d1c8c7e794ff2009b4deca32000072",
+    "mention_text": "Bom Jesus do Itabapoana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65a73e6e13db8606b79799ea493645db351d53672be3aec8d968018c896fc1ed",
+    "mention_text": "RJ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "004580d34f5ad10ec744fd4e7069d931354706ce75d890cda3222e7973a36e85",
+    "mention_text": "Antenor Silva Neto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "869e42d3349ad675ac410d97766c6c3dbc8f208dff4f374512679a911f154a1f",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8fad810111a9347c5d220d523cb02524b16d27776887c4aec768d19a6bb501fa",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56458ca3c80bba533d70fff636720ffcf3c8436efe5bb9216f573b9c41eba397",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05279ffb195732fc188d4071469d550790c56af2652b8df6f7ab247297f3944a",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55dbf12d0c9c9ab8dd98eb2a1ce8abedfa816bbf99f1dc9dad187987bb943496",
+    "mention_text": "centrão",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "858396d6ee5f13f24b30447777861066a860140b46326d8c8bdfe8cf13d0f92d",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ce62b2fbafdd4c9d93d8e47ef25ad145d6b036a0791a2c2508307613d573d5c",
+    "mention_text": "Ricardo Candido de Araujo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7eca5dcad7bdbd4a0e334ea9ea99568d065f29990497ae0e043cdff4411f54a",
+    "mention_text": "Taboão da Serra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8dd02454b63e76fd3607d295be3fd0e4cd7b28f667a2ca543fa04014be53cb9e",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "140f8da572e0910a20ec06407dcd491c99610d19a994e37ecc83730ef94c83b5",
+    "mention_text": "Lula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e02e8f91b9806cf64cdb1c51d2d184347d10b8ff01af959dc1bc1db18a057803",
+    "mention_text": "Marcos A. T. Garcia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64bb002bc92be79dde15f752bf806a7ae7116502865f9c07e9d26a5a542d9f58",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c97e4aa811e7674594cda8f30160fb0522283a72b7d0d0f95a70e1f97e826ac",
+    "mention_text": "PR",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b7109c20acb1584d3a7f3aa4338f685e466819aecb7622b6e968ba4c02ab8e0",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aae7ce3f897088dd7580b5c1fa3404b365959e95ae0be0849f20e8c8d6d4b0a1",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8db97a8f2da2c49e8d436ce1dab64c97224da857da3b2457902504ef6f792798",
+    "mention_text": "Inpe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6487715fd11ff84e5af2a654e5d48ee43bc00e8ac4a0c7ea5d8bb0728384db41",
+    "mention_text": "Otávio de Queiroz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c0d7f91ca8619ef1af6acf7e2c6aa738fba6ca035dcb21723acd6133a86f9dc",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e900f4a2ff46810011b4c1ab50f2278cfe44c13cd5f453298596202ef38065b7",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5df1cc4037b28da393093e738ba2b7be9a5ba2c8b4307b3866f032b0b9c08955",
+    "mention_text": "Rodrigo Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7579f392dbda18fce8872650e2e6b158402f808a7a5291c8c338a0a32ab89037",
+    "mention_text": "Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f18dc2fb029f0d15791488daa9b757a2e83493235419dcdf4ee7d585eaa3432",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19b578c4920de0f89259bf32c2b6eee6a89bd7e7549295af281571d03a237026",
+    "mention_text": "Chávez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "117ef648c39c4ce8b44567dad802a27ea5f4cead15e68a5f0b640f0c2163cf6c",
+    "mention_text": "Venezuela",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eea426863a94c37ab5116b5129bcd466f6454bbf5da372b0568ade106d950fd5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e34e9cd95cf052be6227d41a34cf3fabe53de03e6d51ca9620b416a84b8ccd5f",
+    "mention_text": "Chávez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "354c36baae8dd08daa0e00c558b96b46def8af86c801465bdd33c4ff03e19c0a",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7e153a0040f8c4644b6f0566d19e475cd6909523fabc3054355506d46536ac3",
+    "mention_text": "Alessandro Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc88c1e8313f6fd1dd68a6ba2b5de0a533f2dd820e86c88197a881b28fe64fd4",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a6db5c63451c0f664d37846648e66d8ab79a489f37076d5d42ca0c75451c5b8",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2fc0d3bfc46fcc10e42c72645f180824a91d065e6cbffc75ee69c76f7fe8a00",
+    "mention_text": "Mourão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20bf92995dd8567143927c136f43f1d447ecf65b4519480baf1018a4de4446ab",
+    "mention_text": "Merkel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b87698feb60bbf433dec043a9308715e4e0c5e2cd8d35880d06879b2b806a5cc",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91df4d166ccfd7767b6d412de3aab125e836a74a025ee0538e904876f285cbcf",
+    "mention_text": "Maria Joselita Souza Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14ad62449c863f1e4474e1b07a3a4c33f5582cce9f352db6bc4547c5a8be79ab",
+    "mention_text": "Araçoiaba da Serra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9c7e1964774012f44d286e7788c00ba66b5bfda5790ae46bf808b96f1208c69a",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d279c660fc5dfca7434fa6f20286d91be8bc2c4a68f6c5d5d4b071c1d045b703",
+    "mention_text": "Frota",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b2192ef5e4b5e4dfe4154b613c69e1e4a8db147ca21b1b6c737c77a162d9754",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05bc1dbb14e1a36146bbcad286ad4f1d7a629fd8f545fbef5db178605c41a52f",
+    "mention_text": "Francisco Henrique Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78615a088b2d85b794e87cb0c560e56fd9a6aa20b732d2d2b4bf608d5a769907",
+    "mention_text": "Campo Alegre de Lourdes",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a7a8909c8bf85a1ed8df8ece525bbef63ff9c47a3e8a2df4ff70836e654226be",
+    "mention_text": "BA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3c878aaab19ec6fa12e7dae6e06f29fdb3202014391a45d2408add3884e05e5",
+    "mention_text": "Legislativo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ce0c5e3f7e65e65e2b3b8b98ffe80967e5ec3029feb58baae4c228fd2563ea0",
+    "mention_text": "Executivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75fb23de2b70392affd6835d8c1d6952751805422e80ec0c003013f748dc3924",
+    "mention_text": "Judiciário",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6d0027dfce61038409f06cbdb97f3a615d89196418ddf759579b9aadb1f3af2",
+    "mention_text": "Willian Marques",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c90c25b9c59263700994785b83cac2432f7f9cad1a7a91deaf7fc700589098c",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6cb230bde8ec58002c6393ff8d7c447feefeadea38b4cc5761eccab8781b68ba",
+    "mention_text": "PR",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77d28358bd7782c0bbb634bea5edaa967286da141fd53f7db0748f0627e51ecb",
+    "mention_text": "Martin Wolf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fed903b3d2565b6d6a5bf4b65ef0d63f0de021145f8ba29b8eb2bfe003fefc0f",
+    "mention_text": "Eustaquio Nunes de Morais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4d45e228625be68a87a1bc32d3c70adf61e7878c53efac9707fe94321dbe754",
+    "mention_text": "Belo Horizonte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a151be2fcdfd12b36892c1c9cfea485a23c7301683e64cc5120ad0f38a4654b",
+    "mention_text": "MG",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3606dfd596374be0ed33fa9e4c357d355dc45b8f335016ba3f21fd1d9021093d",
+    "mention_text": "Julio Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99d176f536b457ef67d4bb839fa652c5d14b8e29f1239b02c07f5605d8c0d10f",
+    "mention_text": "Recife",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "33e1f96bb8e9a50f54d6b83a98221bce1f31e0a171a5938ffa46c96ca573081b",
+    "mention_text": "PE",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "06789a6b051ad2fdccd5840cb70690189b8e0870a58dad8d927586285d2ea58e",
+    "mention_text": "José Valter Cipolla Aristides",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6202afbf037392cbce00c334353d6fbbea37cade0c67cd23cfd545f70e9ba61",
+    "mention_text": "Colombo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "59733f50b6d2225f01167d631aa8b62aa20e114fe118d9ee49f48741555ef2c8",
+    "mention_text": "PR",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f541eab184a4960ec2b226d7a651a597391bbd6c34f16255a71d0b2924af344",
+    "mention_text": "Prefeitura de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed3853d2229b3841053f944362dafebcd788de6f962a45a7804c2814b873a8d3",
+    "mention_text": "Celso Pitta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5df5506173f243b2ce49b7e7005225e136e8e2d65c32c34232e4e5bbfcd40983",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e23d215a8a4ce728a9aa74e2808b57060d7bcf0989ad1a26797a2c7716499138",
+    "mention_text": "Gilberto Kassab",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ddd95e0d180bdb40be252dd7dda4cd626c5a9bb17a1bc3135a017684c27e4dbc",
+    "mention_text": "Fernando Haddad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "feefc5fc39237cf58d0bc57cbdb37e1a78f794cd195090e11bb04a8de4ac2e07",
+    "mention_text": "Bruno Covas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "889470145340f044f23a4f7ad094c82bcc52dd80ae832f9f285aa36053640986",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ab42de7f14414ef5b087494e987761c18b016383b8516eea5f72de4aac340a06",
+    "mention_text": "Moyses Cheid Junior",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4574d4141f7880fe32c139f9daff8a6b8dbb30ccd4401f868938e34b9dff89e6",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "698e0c24919915fa190fb1ba948c9606427819033e1209fef22b70493a56ceaa",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdd04e506750f304f55a111b4cc7bb9c5a687f682f144173f84ad5155a2b194f",
+    "mention_text": "Gregorio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37c75b9f069ebb819f1f405c733a9927423c48385ae400f6335c82279413fdf1",
+    "mention_text": "Jorge Augusto Leme",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "413fa980bce0212eb891c4b45e8b23155972887cc002316fe1c0fc74f7f71289",
+    "mention_text": "Mairiporã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "05ee65d60c22a84c78d9605e0d68c021bf9ad035ed5a71442db1928a83f92868",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bacac00c68d7dcf45f19099c46614b2403db7f6971ee2d19921d02a040b2cb4a",
+    "mention_text": "Pedro Quinderé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40e20d7d660d5acbae0e54375a29ee2d435f25f6fa7518763733178390831c6c",
+    "mention_text": "Goiânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c35a43b853010b0b7880c4ad2bfa3de8d83b1df0ee3f7f14ffbc15fb1eda5f0a",
+    "mention_text": "GO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a4cf856418f88c6e60edddacdd8cfce47988955e0ca2840ffabc622cb01a7fd",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfc239cc4c6430a1d2d636e110cc8323ab57c82d301299abadb10dc594a30bf8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

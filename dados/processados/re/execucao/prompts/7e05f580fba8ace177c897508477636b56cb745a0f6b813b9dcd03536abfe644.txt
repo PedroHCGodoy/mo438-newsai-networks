@@ -1,0 +1,434 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f7ba2edf2343a6a25776d38d914cffc36abee91df4260b0a0a02f37cc9245261
+
+TEXTO:
+Indústrias criativas crescem no país, mas ainda falta investimento
+
+Mais do que imaginação, criatividade é negócio -e bilionário. Em 2015, as indústrias criativas geraram uma riqueza de R$ 155,6 bilhões para o país, de acordo com levantamento da Firjan (Federação das Indústrias do Estado do Rio de Janeiro).
+A participação desses setores no PIB brasileiro subiu de 2,56% para 2,64% de 2013 a 2015, ainda segundo o mapeamento, publicado em dezembro do ano passado.
+"É um crescimento que parece mínimo, mas muito relevante se considerarmos o momento de crise profunda", afirma Thamilla Talarico, especialista em desenvolvimento setorial do Sistema Firjan.
+Novas Ideias - Participação do PIB criativo no PIB brasileiro, em %
+Todas as atividades econômicas inovam de alguma forma. No entanto, são consideradas indústrias criativas apenas as que fazem da criatividade a sua matéria-prima.
+Uma empresa de contabilidade, por exemplo, até pode ser inovadora na hora de resolver seus problemas, mas o foco do seu trabalho não é esse. Já um escritório de arquitetura só existe porque vende sua capacidade criativa aos clientes.
+Arquitetura, design, moda, audiovisual, gastronomia, música, desenvolvimento de softwares e pesquisa e desenvolvimento: tudo isso compõe a economia criativa.
+"São produtos e serviços vinculados tanto à cultura e arte quanto à ciência e tecnologia, os dois grandes campos nos quais a criação humana faz a diferença e gera valor agregado", diz Ana Carla Fonseca, professora do curso de economia criativa e cidades criativas da FGV.
+O conceito surgiu na Austrália, em 1994. Mas foi o Reino Unido, em 1997, o primeiro a entender o seu potencial como estratégia de desenvolvimento e criar políticas específicas para esses setores.
+"Naquele momento, o governo britânico percebeu que a participação da indústria fonográfica no PIB havia sido maior do que a da automobilística", diz Caio Bianchi, professor de economia criativa e compartilhada da ESPM.
+Esses segmentos ganham agora um papel estratégico, já que, hoje, sai na frente quem consegue migrar da lógica da produção em massa e da concorrência pelo preço baixo para a lógica da diferenciação e da experiência. "Se o Brasil tivesse investido nesses setores, eles poderiam ter crescido muito mais", afirma Bianchi. "O meu receio é que o país esteja dando murro em ponta de faca apostando em segmentos tradicionais, que claramente estão caindo."
+NOVAS IDEIAS - Participação estimada do PIB criativo nos Estados em 2015, em %
+Em 2011, a Secretaria de Economia Criativa surgiu dentro do Ministério da Cultura. Extinta em 2015, deu lugar à Secretaria de Economia da Cultura, que ainda existe, com importância reduzida. Os movimentos se deram no governo de Dilma Rouseff.
+Com a posse do novo ministro da Cultura, Sérgio Sá Leitão, em julho, a promessa é que a economia criativa se torne uma prioridade .
+Porém, para Talarico, da Firjan, a preocupação em desenvolver a economia criativa deveria estar no Mdic (Ministério da Indústria, Comércio Exterior e Serviços).
+"Estamos falando de estratégia de desenvolvimento econômico, e cultura é a primeira coisa que é cortada em tempos de crise", diz.
+*
+Divisões da economia criativa
+Fonte: Mapeamento da Indústria Criativa da Firjan (Federação das Indústrias do Rio de Janeiro) - Dezembro/2016
+*
+Para desenvolver a economia criativa no país, ideias novas, claro, são fundamentais, mas não bastam. "Há uma leitura de que brasileiro é criativo e, então, está tudo resolvido", afirma Ana Carla Fonseca, professora do curso de economia criativa e cidades criativas da FGV.
+"Lógico que não depende só disso. Estamos falando de negócios, e há toda uma carga de preparo que não necessariamente é levada em conta", afirma.
+Umas das instituições que tenta suprir essa lacuna no Brasil é o Sebrae (Serviço Brasileiro de Apoio às Micro e Pequenas Empresas): está investindo R$ 65 milhões em 104 projetos de economia criativa até 2018. "Não vou ensinar o cara a criar. Ele está com a cabeça nas nuvens, no bom sentido. Nosso papel é ser a linha da pipa, e ajudá-lo na capacitação de gestão", explica Guilherme Afif Domingos, presidente do Sebrae.
+O Estado de São Paulo cedeu à instituição o Palácio dos Campos Elíseos, sede do governo entre 1912 e 1965, que abrigará o Centro Nacional Referência em Empreendedorismo, Tecnologia e Economia Criativa a partir de outubro. Segundo Domingos, será um espaço para conectar criativos e investidores.
+ESTÍMULO Se empreender é difícil, ser criativo também não é assim tão simples. As dificuldades do país até ajudam a estimular a capacidade dos brasileiros de inventarem soluções, mas o grande diferencial para formar profissionais criativos é a educação.
+"O Brasil está tão preocupado em vencer desafios de uma educação do século 19 que não pensa no século 21", diz Fonseca. "Talento criativo será um dos únicos perfis de trabalho que sobreviverá à inteligência artificial."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c5487578dfd883233616a18c21d81973f72cac828ef77818929050a156669798",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3af7c841adc74aed524ad6a0d9b8f348ca7ea48b55ea6109c5d511a8d8a99c4",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb3cc374b89ccb78c6ce1fa0b19f99554cce8cb21e9002c535d46de8d0d9f5e8",
+    "mention_text": "Firjan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12e5be35aae6331cf26bb6875fd0800876a9cdeba672d378a5f4edd5ca501aca",
+    "mention_text": "Federação das Indústrias do Estado do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c994afe8a3e582ae1cfca20c40cd02f74db41e6e1a9b335f114d4149f7d39e2b",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1cffdb8948b6a6ffedbd574d0218e9e2c274df392416bced7eb80361ccb0f51",
+    "mention_text": "Thamilla Talarico",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f447934a87f47725af9d29de48f97ab33b5415f3e83a10e416a99471adf9f3f",
+    "mention_text": "Sistema Firjan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b54cb3eb3aef689eebfc9b9de74aadca23d406ebedad0ddfcb179647db873796",
+    "mention_text": "Ana Carla Fonseca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51fae434bda6af3e263a08c4aa353a324270ac43eb773180c8e03cb12ab2f02e",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d9611e4c7ab578026abb78f62df3208519bb5013ea40d7dda0a779762e34455",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "82e76a9944bcae98671889d798900d88a1596601bbfd413ce336babad8852009",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1aedd48ee0b6630f7dfc0764e550974b5f0cfeb7f5a5c53f49d8a67d060216e9",
+    "mention_text": "Caio Bianchi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb03774fdbbeb9dff9263ef9abc07f281a5dc82a00135ade669b244a7e86e98e",
+    "mention_text": "ESPM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "331eefc396901251e141ce2d7013b328c13b7341b36a69f87f2a3e3f7ca50f88",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "60594eb253ec0c3e0cecc552baa21511cf0808c740b8dc3c70ead21a02cd5b84",
+    "mention_text": "Bianchi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a9ffd367e4edf748322d6c35f683543b9db526acbadfaa4fc8f5f84fe0cd4818",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "90f8eb72afdf0f286b556c4ce2e3557247cf55d832a20eb2b3e3b6dd7f55d97d",
+    "mention_text": "Estados",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "044ab61479a3755ca490b1bde5db166650849468bf0f4ea552555a340b3841e3",
+    "mention_text": "Secretaria de Economia Criativa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ea4f5ca02362fcf2ef0956dc9dfd7cd0dab28036d07dd5576248c29d93559f8",
+    "mention_text": "Ministério da Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64144a694c8045f4e457879b5798870244cd7ac808c435b08f5010fa4495aa8b",
+    "mention_text": "Secretaria de Economia da Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbf6ba7d2a63cab96457af0266860190e00a6ac0415dbcea224a616c660a79ac",
+    "mention_text": "Dilma Rouseff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5976f94c05565ef31ba4207ebcf226f8fe6ca045701d4071d80f33251ae0cc3a",
+    "mention_text": "Sérgio Sá Leitão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18cc39c019875b40aab89a8bf8e1425c3316c2bd3e2714c390a13b75dbd482fe",
+    "mention_text": "Talarico",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6048f0a91fe3761aa66caac49b58b7b59fc7d20ea8190bfbff4cca849078b4a9",
+    "mention_text": "Firjan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7afefc24a45cf108bb021a5620c302bb313f6711cb91d5c394233dac0455fd0",
+    "mention_text": "Mdic",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00c46d81042cb8331ea263b9e3b32be314b8a881a5df9288a0de51860442672f",
+    "mention_text": "Ministério da Indústria, Comércio Exterior e Serviços",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9b33eca8be57e20f51b9b4b56d02dce20bab2a185e7e65ba88ff3dafca68fd3",
+    "mention_text": "Federação das Indústrias do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb3a07b2b0239ba91605e59ee1624ca9af0398f04e1a5361d983e1d7f45d0637",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e5e70b863e7be505b802b3f0ff060bbe7eeada65ad09437860ff5a97e2f5db89",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01896e2dbdc1ba0f04006c7f8978a2a03656625b232a4031a60dce2eb915073a",
+    "mention_text": "Ana Carla Fonseca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8baad430c4ab80530941b01bd1f0f9c73a934f9e821d76b932a75275e11f1e5f",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a50e89b74ffe96009ef63345642f95a8c0c46cc35d00bda3719e1f2f712ae32b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7165657afcb6ab21b5f24504882a6876dfe52f0c5e48f4340913de1314e03360",
+    "mention_text": "Sebrae",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f93b084406a540266f47a9b207ce8e68e9e9a85871b89b67765d78f2a10cf198",
+    "mention_text": "Serviço Brasileiro de Apoio às Micro e Pequenas Empresas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "605bc89470234efabd4ca00a776c5c9e97f9c3470b169574ad6368a2f53cfda6",
+    "mention_text": "Guilherme Afif Domingos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ab9c2bf214f0e00692fef392e0201b83ab5150eeaa39e74d57f098cef6e74cc",
+    "mention_text": "Sebrae",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d613c8d378f1df3e941fb71885f7becd4cb8b4d71413e0ef73bda6bd201531c6",
+    "mention_text": "Estado de São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "92ae8f8977197f5588b1f591fefee1139d06def26764a63d2c02c7704d6fa6c3",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e08a2596bbc87d204744e1dbd819ecdf9cba0c777b2021f6281c82e7ddd732fb",
+    "mention_text": "Palácio dos Campos Elíseos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6e26aa4fc414c33a1a4e6e3a7a54abf5022374c9b048fe3a9afa7ecd89f56b48",
+    "mention_text": "Centro Nacional Referência em Empreendedorismo, Tecnologia e Economia Criativa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ac8ebdf739db1a9f9b82e586c61008008edd44119bc2b53b3b23a865bd26d3c",
+    "mention_text": "Domingos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8fc886b4003f017a003fc66d787b1f447e0c9bc0a96c01612dc4f812c4e51ffa",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2ad10806f5e98124dc61631bc2bae4b32333579fb94b4541afae253bbd742ae",
+    "mention_text": "brasileiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34bc2f8d0bc923333258d4434b89012d190ca6995eb4bfd215634f8d134077a6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ed559438939a8f2a6a0038a9fe0b383ba00a9a174e160e29901b3fdb9b2367c",
+    "mention_text": "Fonseca",
+    "categoria": "PESSOA"
+  }
+]

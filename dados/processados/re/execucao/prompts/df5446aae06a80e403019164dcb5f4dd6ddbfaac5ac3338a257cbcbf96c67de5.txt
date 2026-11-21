@@ -1,0 +1,955 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ac7fde056b8867ab45b242d908928b3289abfd6a5e1c5b25d9ae981223a62c47
+
+TEXTO:
+Folha de S.Paulo - Ilustrada -  - 01/09/2012
+
+Comunicar Erros
+Programação de TV
+CULTURA, 2
+SBT, 4
+GLOBO, 5
+RECORD, 7
+REDE TV!, 9
+GAZETA, 11
+BANDEIRANTES, 13
+MTV, 32
+A&E MUNDO
+AXN
+CANAL BRASIL
+CARTOON
+CINEMAX
+DISCOVERY
+DISNEY XD
+E!
+EUROCHANNEL
+FILM & ARTS
+FOX
+FUTURA
+GNT
+HBO/HBO2*
+INVESTIGAÇÃO DISCOVERY
+MAX
+MAX PRIME
+MGM
+MULTISHOW
+NATIONAL GEOGRAPHIC CHANNEL
+NICKELODEON
+SESCTV
+SONY
+TCM
+TELECINE ACTION
+TELECINE CULT
+TELECINE FUN
+TELECINE PIPOCA
+TELECINE PREMIUM
+TELECINE touch
+THC
+TNT
+UNIVERSAL CHANNEL
+VH1
+WARNER
+CULTURA
+14h30	Cultura Documentários
+15h30	Pé na Rua
+16h	Reis da Rua
+16h30	Manos e Minas
+17h30	Cultura Livre
+18h	O Milagre de Santa Luzia
+18h30	Sr. Brasil
+19h30	Viola, Minha Viola
+20h30	Horário Político
+21h	Jornal da Cultura
+21h30	Clássicos
+23h	"De Passagem"
+SBT, 4
+13h	Horário Político
+13h30	Eu, a Patroa e as Crianças
+14h15	Programa Raul Gil
+18h	Aventura Selvagem
+18h45	Chaves
+19h10	SBT Brasil
+19h45	Esquadrão da Moda
+20h30	Horário Político
+21h	Supernanny
+22h	O Maior Brasileiro de Todos os Tempos
+23h	"Assédio Sexual"
+GLOBO, 5
+13h30	Jornal Hoje
+13h55	Estrelas
+14h45	TV Xuxa
+16h	Caldeirão do Huck
+17h50	Amor Eterno Amor
+18h45	SPTV
+19h	Cheias de Charme
+20h	Jornal Nacional
+20h30	Horário Político
+21h	Avenida Brasil
+22h15	Zorra Total
+23h20	"Eu te Amo, Beth Cooper"
+RECORD, 7
+12h	The Love School
+13h	Horário Político
+13h30	Record Kids
+14h	"Beethoven 3 - Uma Família em Apuros"
+16h	"Beethoven 4"
+17h30	O Melhor do Brasil
+20h	Jornal da Record
+20h30	Horário Político
+21h	O Melhor do Brasil
+23h	Legendários
+REDE TV!, 9
+14h	Sábado Total
+17h	O Encantador de Cães
+17h45	Parceria
+18h15	Polishop
+18h45	Companhia de Viagem
+19h30	Amaury Jr. Show
+20h10	RedeTV News
+20h30	Horário Político
+21h	RedeTV News
+21h30	Igreja Internacional da Graça de Deus
+22h30	Good News
+23h	Mega Senha
+GAZETA, 11
+12h	Gazeta Motors
+13h	Horário Político
+13h30	Gazeta Shopping
+14h	Polishop
+19h	Jornal da Gazeta
+19h30	Gazeta Shopping
+20h	Igreja Universal do Reino de Deus
+20h30	Horário Político
+21h	Igreja Universal do Reino de Deus
+22h30	Gazeta Shopping
+BANDEIRANTES, 13
+14h40	Deu Olé
+15h40	Campeonato Brasileiro - Série B - Paraná x Goiás
+18h50	Terceiro Tempo
+19h20	Jornal da Band
+20h25	Momento da Sorte
+20h30	Horário Político
+21h	Show da Fé
+21h55	Mr. Bean
+22h15	"Anaconda: Rastro de Sangue"
+MTV, 32
+14h45	MTV 1 - Top 10
+15h40	MTV 1 - Top 5
+16h05	MTV 1 - Top 24
+18h	Programa do VMB
+18h30	 - Top 10
+20h	Para Gostar de Música
+20h30	Horário Político
+21h	Show na Brasa
+22h	Programa do VMB
+22h30	MTV 1 - Top 5
+22h55	MTV 1 - Top 10
+TV BRASIL
+14h	Dango Balango
+14h30	Cozinha Brasil - Receita de Família
+15h	Programa Especial
+15h30	Conhecendo Museus
+16h	Expedições
+16h30	Alto-Falante
+17h30	Segue o Som
+18h30	Aglomerado
+19h30	Paratodos
+20h	Revista do Cinema	 Brasileiro
+20h30	Horário Político
+21h	Repórter Brasil
+21h30	Musicograma
+22h	Sábados Azuis
+22h30	"Fala Tu"
+0h	Curta TV
+A&E MUNDO
+13h	Fugitivos
+14h	Unidade de Pessoas Desaparecidas
+16h	Law & Order: Reino Unido
+18h	Billy, o Exterminador
+19h	Guerra de Entregas
+20h	"Tiro Certo"
+22h30	"Sem Vestígios"
+AXN
+13h	Unforgettable
+14h	The Protector
+15h	The Firm
+16h	Body of Proof
+17h	Missing
+21h	"O Mundo Perdido -	 Jurassic Park"
+23h30	AXN Flix
+0h	Missing
+CANAL BRASIL
+13h	Maratona Curta na Tela
+15h05	"Cildo"
+16h30	Curta na Tela
+17h05	Malditos Cartunistas
+17h25	"Casseta & Planeta: A Taça do Mundo é Nossa!"
+19h	Faixa Musical
+20h20	Curta na Tela
+21h	Cinejornal
+21h30	Mpbambas
+22h	"Deus é Brasileiro"
+0h	"O Gerente"
+CARTOON
+13h		Apenas um Show
+13h15	O Incrível Mundo de Gumball
+13h30	Total Drama: Revenge of the Island
+15h	Max Steel
+15h15	Hora de Aventura
+16h	Young Justice
+16h30	Pokémon
+17h	Apenas um Show
+17h30	Mad
+18h	Votatoon
+20h	Cine Cartoon
+21h30	Green Lantem
+22h	Cha Cha Mix
+22h30	Mad
+23h	Hora de Aventura
+23h30	Apenas um Show
+0h	Hora de Aventura
+DISCOVERY
+13h	Bizarrices
+14h	Armas USA
+15h	Desafio em Dose Dupla
+16h	Feras da Engenharia
+17h	O Mundo do Futuro
+18h	Casal Selvagem
+19h	Monstros do Rio
+20h	Criaturas das Trevas
+21h	Ciência ou Ficção?
+22h	De Volta ao Triângulo das Bermudas
+23h	Portas Para o Além
+0h	À Prova de Tudo
+DISNEY XD
+13h	Os Guerreiros Wasabi
+13h30	Minha Babá é uma Vampira
+14h	Lab Rats
+14h30	Par de Reis
+15h	Ninjago
+15h30	Kick Buttowski - Um Projeto de Dublê
+16h	Phineas e Ferb
+17h	Ratatouille
+19h	Kick Buttowski - Um Projeto de Dublê
+19h30	Minha Babá é uma Vampira
+20h	Os Guerreiros Wasabi
+20h30	Lab Rats
+21h	Ninjago
+21h30	Bondi Band
+22h	Phineas e Ferb
+23h	Ratatouille
+E!
+13h	E! Vip Brasil com Amaury Jr.
+13h30	Behind The Scenes
+14h	Fashion Police
+15h	Chelsea Lately
+16h	Ice Loves Coco
+17h	Then & Now
+18h	Bank of Hollywood
+19h	Project Runway
+21h	Khloe & Lamar
+22h	Ice Loves Coco
+23h	E! Vip Brasil com Amaury Jr.
+23h30	After Lately
+0h	After Lately
+EUROCHANNEL
+13h	As Ilhas Desconhecidas
+15h	"O Inspetor Maigret e a Eclusa N.1"
+17h	"O Inspetor Maigret: Assinado Picpus"
+19h	"Sem Maquiagem - As mulheres do vinho natural"
+20h30	Eurocurtas Itália
+21h	Home/Work
+22h	Anna Pihl
+23h	"Kontakt"
+FILM & ARTS
+13h	Vozes de uma Geração
+14h	Later... with Jools Holland
+15h	Direto do Actors Studio
+16h	Inspetor Gently
+18h	Hansel e Gretel, de Engelbert Humperdinck
+21h	Case Histories
+22h	Whitechapel
+23h	"A Rainha"
+FOX
+14h30	"Uma Equipe Muito Especial"
+16h15	"Alvim e os Esquilos 2"
+18h15	"Lisbela e o Prisioneiro"
+20h	"Dois Filhos de Francisco"
+22h	"Shrek Terceiro"
+0h	"Temos Vagas"
+FUTURA
+13h	Ação
+13h30	Globo Universidade
+14h	Nota 10
+14h30	Globo Educação
+15h	Tempos de Escola
+15h30	Globo Ecologia
+15h50	Recortes do Brasil
+16h	Um Pé de Quê?
+16h30	Ecos do Brasil
+17h	Vida de república
+17h30	Zero, Dez, Vinte
+18h30	Criaticidades
+19h	Dinheiro no Bolso
+19h30	Nossos Atletas
+20h	Globo Ciência
+20h30	Afinando a Língua
+21h	Livros que Amei
+21h30	Entre Fronteiras
+22h	Umas Palavras
+22h30	Cine Conhecimento
+GNT
+13h	Mãe & Cia.
+13h30	Boas Vindas
+14h05	Alternativa Saúde
+14h30	Perdas e Ganhos
+15h	Desafio da Beleza
+16h	"Prazo Final"
+17h45	Santa Ajuda
+18h	Que Marravilha!
+18h30	Diário do Olivier
+19h05	Chegadas e Partidas
+19h30	Casa Brasileira
+20h	Em Busca do Pai
+20h30	Desafio da Beleza
+21h	Prisioners Wives
+22h30	Viva Voz com Sarah
+23h	Saia Justa
+0h	Cartas na Mesa
+HBO/HBO2*
+13h50	"Harry Potter e as Relíquias da Morte"
+16h29	"Harry Potter e a Câmara Secreta"
+19h23	"Harry Potter e as Relíquias da Morte"- parte 1
+22h	"Harry Potter e as Relíquias da Morte" - parte 2
+INVESTIGAÇÃO DISCOVERY
+13h	Blue Bloods
+14h	Vozes do Além
+14h30	"Nunca Mais"
+17h	"Cão de Briga"
+19h	Encontros Perigosos
+20h	O Diabo a Seu Lado
+21h	A Sangue Frio
+22h	Suspeito Improvável
+23h	"Luzes do Além"
+MAX
+14h10	"Segredos de Um Funeral"
+16h05	In The Loop
+18h	"O Caso Farewell"
+20h	Borgia
+21h	"Adoração"
+22h55	Filhos do Carnaval
+23h50	"O Exorcista"
+MAX PRIME
+14h25	"Luta Pela Liberdade"
+16h	"Marca da Vingança"
+18h	Filhos do Carnaval
+19h	64th Frankfurt Motor Show: Passion On Wheels
+19h35	"Mar em Fúria"
+21h50	Garotas Max Prime: Maritza Cienfuegos
+22h	"Hanna"
+MGM
+13h30	The Bachelor - O Noivo Perfeito
+16h15	"Descontruindo Harry"
+18h	"Risco Duplo"
+20h	The Bachelor - O Noivo Perfeito
+22h	"A.I. Inteligência Artificial"
+MULTISHOW
+13h	Viagem Sem Fim
+13h30	Nalu pelo Mundo
+14h	Beaver Falls
+15h	Tvz Experimente
+16h	Sem Destino
+16h30	Vida de Mallandro
+17h	Até que faz Sentido
+17h30	Viajandona
+18h	Reclame
+18h30	Especial Prêmio Multishow
+19h	Top TVZ
+21h	Bastidores
+22h	Tira Onda
+22h30	Vida de Mallandro
+23h	220 Volts
+23h30	De Cara Limpa
+0h	Sexcetera
+NATIONAL GEOGRAPHIC CHANNEL
+13h	NatGeo Hits
+14h	Tabu
+17h	Montros Pré-Históricos
+18h	Obras Incríveis
+19h	Verdade ou Mito?
+19h30	O Melhor do Natgeo
+20h15	NatGeo Hits
+21h	Tabu
+22h30	Missão Pet
+23h15	Tabu
+0h	O Melhor do Natgeo
+NICKELODEON
+13h	Os Pinguins de Madagascar
+13h30	Fanboy e Chum Chum
+14h	Bob Esponja, Calça Quadrada
+14h30	Zoey 101
+15h	Brilhante Victória
+15h30	Zoey 101
+16h	Brilhante Victória
+16h30	Zoey 101
+17h	Brilhante Victória
+18h	iCarly
+18h30	Julie e Os Fantasmas
+19h	As Aventuras de Bucket e Skinner
+20h	Fred O Show
+20h30	Boy Who Cried Were Wolf
+22h30	Avatar
+SONY
+13h	Happy Endings
+13h30	Rules of Engament
+14h	Royal Pains
+15h	Once Upon a Time
+16h	Happy Endings
+16h30	Rules of Engagement
+17h	Franklin & Bash
+18h	Castle
+19h	America's Next Top Model
+20h	CSI
+21h	Covert Affairs
+22h	Top Chef Masters
+23h	"Uma Noite de Amor e Música"
+TCM
+13h	Kung Fu
+14h	"Rastros de Ódio"
+16h05	"Beleza Negra"
+17h35	"O Amanhecer Violento"
+19h35	"A Águia Pousou"
+22h	"Apollo 13 - Do Desastre ao Triunfo"
+TELECINE ACTION
+14h	"Kung Pow - O Mestre da Kung-Fu-São"
+15h30	"O Grande Mestre 2"
+17h30	"O Sacríficio"
+19h25	"Piratas do Caribe: A Maldição do Peróla Negra"
+22h	"Scott Pilgrim Contra o Mundo"
+TELECINE CULT
+13h35	"O Estranho"
+15h20	"Convite a um Pistoleiro"
+17h05	"Milagre em Sta. Anna"
+20h	"Adeus, Meninos"
+22h	"Caché"
+TELECINE FUN
+13h35	"O Rei Leão 2 - O Reino de Simba"
+15h05	"Turma da Pesada"
+16h55	"Buck - Meu Adorável Cão Selvagem"
+18h35	"Segurem Essas Crianças"
+20h20	"As Férias de Mr. Bean"
+22h	"O Dono da Festa 3 - Diversão Sem Limites"
+23h55	"As Apimentadas: Entrar para Ganhar"
+TELECINE PIPOCA
+14h05	"O Poderoso Cachorrão"
+15h50	"Deixe-me Entrar"
+17h55	"Minhas Mães e Meu Pai"
+19h55	"Amor e Outras Drogas"
+22h	"Transformers: O Lado Oculto da Lua"
+TELECINE PREMIUM
+13h45	"Água para Elefantes"
+16h	"Justin Bieber: Never Say Never"
+18h05	"Rango"
+20h10	"Não Sei Como Ela Consegue"
+22h	"Super 8"
+TELECINE TOUCH
+13h45	"Loucos de Paixão"
+15h40	"O Vigarista do Ano"
+17h45	"Dr. T. e as Mulheres"
+20h	"Um Lugar para Recomeçar"
+22h	"Homens de Honra"
+THC
+13h	Caçadores de Relíquias
+15h	Trato Feito
+16h	Top Gear
+17h	Caçadores de Relíquias
+17h30	Top Gear
+20h	Alienígenas do Passado
+22h	Os Super-Humanos de Stan Lee
+23h	Super-Humanos: América Latina
+0h	Os Super-Humanos de Stan Lee
+TNT
+13h05	Hollywood One On
+14h15	"Piratas do Caribe: No Fim do Mundo"
+17h30	"A Lenda de Beowulf"
+19h45	"Quem Quer Ser um Milionário?"
+22h	"Um Amor de Tesouro"
+UNIVERSAL CHANNEL
+13h	 "Coração de Dragão"
+15h	Grimm
+16h	Commom Law
+17h	Flashpoint
+19h	Law & Order: SVU
+22h	"Velozes e Furiosos 4"
+0h	"Miami Vice"
+VH1
+13h	South Park
+14h	The O.C. - Um Estranho no Paraíso
+19h	South Park
+21h	"E! Mariachi"
+22h30	On the Record
+23h	South Park
+WARNER
+13h	The Big  ang Theory
+13h30	"À Espera de um Milagre"
+17h20	"Invasores"
+19h20	"V de Vingança"
+22h	"Sem Vestígios"
+Comunicar Erros
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8120f245c0c302008f970f45e449b4e2a79986c8fd6c36033932c3df069af878",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26a9760e6edcde585a1e65290986bd9d65f2d902dbbb55976983a71b2d0dd05b",
+    "mention_text": "CULTURA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f66f2574e2a5d5dd782c9e7377d936ea260fd8c9d78881f1176017b94d58f1cd",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "959b17289a226fe6d1ca0877f7f0c7280fd9181280f6fa216e178684f10b6999",
+    "mention_text": "GLOBO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58a8e711013e54d9c13337416682f2f99aa37a1a514a8196403f779135273902",
+    "mention_text": "RECORD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b09d63366295c68127c85e1f4541e38213c7e77ca5e9f7a662e295b7c07d3815",
+    "mention_text": "REDE TV!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "446380826f9d0aacf76a7c16552ee9fa89302cf1e077423b2b9a250c188297cd",
+    "mention_text": "GAZETA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e65351232ff344e970b807ece57229c476f33f4b6dbeae9296ac1cccaccb86cf",
+    "mention_text": "BANDEIRANTES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5aadbe57a13b18b7e8f8ba378d6a62a3fe731594b20472e8d0ba1778aeccb52e",
+    "mention_text": "MTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64f4ef6243ce02258f657c40b21b32c6a0ed8d8c915ac841e11fb3cef4de74c0",
+    "mention_text": "A&E MUNDO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc9c6c5baca9bc1241d725f9fc33c52de6ccd56c847f6b4f002db7dfe978cb1d",
+    "mention_text": "AXN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fe4bf9ca4fa04fd39acc2fa3e1efd01f284eb159ea3c6fa4ea38441943c7e1a",
+    "mention_text": "CANAL BRASIL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85f28ff99f750b3a69dd472db3687c0e0b4be0e0f869c5520f669f10302f9ae0",
+    "mention_text": "CARTOON",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "452061380ca7f23f40a1a5fa104e19b86eb743dc19c05db0d8479d1cb09b978c",
+    "mention_text": "CINEMAX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "947441e5668d2e89c5d0f77c14daa91283dc33b4390eeb80b61db71ba4fb4489",
+    "mention_text": "DISCOVERY",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "794401499e8f301d0c3849b15eb358a143441ff8a98c16bdaf9bd5638fbfd0b2",
+    "mention_text": "DISNEY XD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed996450313b6c9e3718e00c8bbdf415b63261fb518aa32a98fb9ee01389d7c6",
+    "mention_text": "E!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f467fc75ed1aecc462718ddec163ea1b24d58c5bbb09fa99fcfb482be6a1b85",
+    "mention_text": "EUROCHANNEL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a68b423c6c823811d63773ea04c24aa5fa25f145c953736e0b3ae67c73579588",
+    "mention_text": "FILM & ARTS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18dbf7aa33bc1d183015faaef875ae42eddcfc5512525b8ab75e455f782e89e8",
+    "mention_text": "FOX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d088878aa4658801b297bfd889428622ec5c7209a350497e0cb19c2736b896b8",
+    "mention_text": "FUTURA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0da52f3020842f839b0f9195ed8a8daabebc9baef0e6a0cafc1b825d1b0191bb",
+    "mention_text": "GNT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b4ed6f6466337a1e795d8b544dcbfaf5435f388247a00609c179d9bf09831dc9",
+    "mention_text": "HBO/HBO2*",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ccb6b043cc5ae57f4568451cb1da337b774b50d5a501ba7f05554113a1f449f",
+    "mention_text": "INVESTIGAÇÃO DISCOVERY",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ce23045afa0ded1b699d49625f7aa94a6516d00dfb5c13ae8879b4979922229",
+    "mention_text": "MAX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0c035093fa40a5e4edf23b50f0601ff3f3a28ca2c4b187c4d056bcccfbb1dae",
+    "mention_text": "MAX PRIME",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c8f91fdd9aeb328b32e4336427e950d40cfaba50dda58cd87cb004a121436c8",
+    "mention_text": "MGM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a856bb83c4e30603d6a54118433d1f93b19eb43928bf49452852232997beb71",
+    "mention_text": "MULTISHOW",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e92454cf5b898dd8ce2efd089a72db0c64961e9fa9f018ad7423758c552e7349",
+    "mention_text": "NATIONAL GEOGRAPHIC CHANNEL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32123325dd65910ec3e1508e84341dbd81078c6c4e01e6773c5ad69d34ccfc55",
+    "mention_text": "NICKELODEON",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3887600e15afe5a7927a6a47b3574c0a35150f512d2cbd2e4951153fa9ae2ddd",
+    "mention_text": "SESCTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "643fb8069fe607a429db962ec5ebb2f18b9e1c602008f3c8cce2d1edef1059bb",
+    "mention_text": "SONY",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed708df987427efecaa567cc01997dab77f5323b00f8754c3324f5745b207a80",
+    "mention_text": "TCM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd2d1d2fd5fdb4ce9c28bfbc96eb8178d2fbce48234142dd7d712924483ed8f2",
+    "mention_text": "TELECINE ACTION",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61f8c9f0f6a5977df6ff39eb9ba5ae742ad6a91ac5a77e5d19c81c91e93b2e26",
+    "mention_text": "TELECINE CULT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e7f49a7dc09be4c2d83142af300208b8457fcdaf26975efc0e5ab83040df978",
+    "mention_text": "TELECINE FUN",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "010eef096149978a40339dbec32621c4df8f5f0af0ffc68956eb899a0770f70e",
+    "mention_text": "TELECINE PIPOCA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f4925e6d858bdcb832b4c40dd25d42d1854ef60cd17d62a7877e99fc475960f",
+    "mention_text": "TELECINE PREMIUM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5c7110e1b1f0cbae930c921d80007b63f8b9dc129eafd981efc340edc217432",
+    "mention_text": "TELECINE touch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08e857ea84f1b50ea5dc75baa09a46c2c0d1b9615df36af2d6e2c9f63a695478",
+    "mention_text": "THC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a1a82ff5d3656ff7b506cf0ee3d9ac242fd26ce3339b24fe7419a8ee65167217",
+    "mention_text": "TNT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f876f532e360f5e7d731ceb78763132009900686bf12c045e1e5640caf4b0bf",
+    "mention_text": "UNIVERSAL CHANNEL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1884eace6d58e3b040e7483fc961eba68cb7d8e691f1e29a9521654f321c52c",
+    "mention_text": "VH1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9905ad6e1afc7594237cad958435b135b2b17a8954862903cf0abea3f91cf1f3",
+    "mention_text": "WARNER",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d84d3fe31127056986cba64690dabf76f36acbd3bf0e733590c45e397b7de5f9",
+    "mention_text": "CULTURA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f16ceea5f344b8bb102c0242316237406c57028d4907911a2aaa9639a71ea5d",
+    "mention_text": "SBT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "118cd32b88a0fd39bd1d35c1a7283f22bbfdbc3cff0e096c8a7f5246ac9634b9",
+    "mention_text": "GLOBO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf7635080686df85656bf606e0bd42eb40f9e3cfdc71277f6c71184b6f2de3df",
+    "mention_text": "RECORD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c48c19e6dc42f280d320127b69e2022c07cf2195e0a815a8628500e58bbe745d",
+    "mention_text": "REDE TV!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a65da68bb3db87fadc2c0be3f2b0b2302f108d1c4aee675d325bdbbc0a3737d3",
+    "mention_text": "Igreja Internacional da Graça de Deus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c634e9ac2327d90785b495b8ae1172b7cbc6f5c773f96f8b9d88e82b0655d2a",
+    "mention_text": "GAZETA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf41f744d881801f9c269f20d3813f96851e2c770bb608d0588f55480e66dac2",
+    "mention_text": "Igreja Universal do Reino de Deus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af7b11e2ffd2b91680d2fc60a02de35efc92090717dc13a5d0618684054c23a1",
+    "mention_text": "Igreja Universal do Reino de Deus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "60726349327e17e93073b3b2b1e51cf31a085cc8c3bb07da128b0c6ff13cf210",
+    "mention_text": "BANDEIRANTES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a3987e0777f3f7eb4201a5b01fe5147e113ef22f0ab328f072ce233ab6518de5",
+    "mention_text": "MTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2dce8ce860d7d960ddd6962bcec7b5d1707fe9c26c029295059b2daa2762685",
+    "mention_text": "TV BRASIL",
+    "categoria": "ORGANIZACAO"
+  }
+]

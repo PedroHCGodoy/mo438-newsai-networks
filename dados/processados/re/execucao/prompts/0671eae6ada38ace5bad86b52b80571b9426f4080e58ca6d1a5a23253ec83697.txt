@@ -1,0 +1,604 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: fde256a07457ea1a9e53224e64ad177cc93e3b133d86a2df2049b0f66e773a12
+
+TEXTO:
+China deixa copia e cola e busca liderança em tecnologia
+
+​O “Made in China” ficou para trás. Se por décadas a China foi reconhecida pela mão de obra simples para produtos consumidos no Ocidente, hoje quer ser protagonista em áreas como inteligência artificial, biotecnologia, computação quântica e exploração espacial.
+Com superaplicativos que agregam dezenas de serviços, um ecommerce que entrega em menos de 30 minutos e subsídio estatal para a tecnologia, a segunda maior economia do mundo ergue a bandeira do “Designed by China” (Desenvolvido pela China).
+Hangzhou, capital da província costeira de Zhejiang, no leste, é uma das metrópoles que refletem a transição para a China digital.
+Cidade natal de Jack Ma, fundador do Alibaba, sexta maior empresa do mundo, o município de 8 milhões de habitantes tem 30 incubadoras e 16 unicórnios —startups que valem mais de US$ 1 bilhão (cerca de R$ 3,8 bilhões). O Brasil, com 208 milhões de habitantes, tem quatro.
+Em 2015, o governo chinês inaugurou a Dream Town (Cidade do Sonho), uma infraestrutura de três quilômetros quadrados dedicada a empreendedores locais e estrangeiros de tecnologia.
+Segundo Anran Feng, funcionária da administração, o local aloca 14,9 mil pessoas que trabalham em 1.645 startups. O governo dá espaço físico, acesso à nuvem de dados por três anos, auxílio-moradia e treinamento e dispõe de um fundo de investimento anjo de 500 milhões de yuans (R$ 277 milhões).
+Dream Town é cercada por duas universidades, institutos de pesquisa e dinheiro. Além do incentivo estatal, 1.386 fundos privados depositaram 294 bilhões de yuans (R$ 136 bilhões) em três anos.
+“Como diz Jack Ma, essa cidade é histórica [foi capital da dinastia Song] e também um ótimo lugar para jovens perseguirem seus sonhos, por isso o nome”, diz Feng.
+A vocação inovadora da cidade não vem só do trabalho do Alibaba de Jack Ma , o homem mais rico da China e membro do PCC (Partido Comunista Chinês). Hanghzou tem o apreço do dirigente Xi Jinping, que governou a província de Zhejiang e foi prefeito de Xangai, a 180 quilômetros dali.
+“A cidade foi a primeira a permitir a privatização de estatais, o que explica parte do sucesso e do pensamento daqui”, diz o suíço Lucas Rondez, presidente do Nihub, mistura de incorporadora, aceleradora, coworking e intermediária entre empresas e investidores.
+A Nihub, que incorpora 50 empresas de big data, internet das coisas e realidade virtual e aumentada, levantou o equivalente a R$ 138 milhões em menos de dois anos.
+“Nessa região, os grandes talentos estão em Hangzhou e os bons administradores estão em Xangai. Se você é grande, deve ir para lá. Se é pequeno, para Hangzhou”, diz.
+Programadores e desenvolvedores têm a cultura de trabalhar 12 horas por dia em seis dias da semana. Apesar da carga horária, há mais flexibilidade em relação ao passado, com espaços informais como os que pipocaram na Costa Oeste americana nos anos 2000.
+Thierry Nadisic, doutor em comportamento organizacional na França que dá aulas de gerenciamento a altos executivos da China, diz que a forma de gerir dos asiáticos passa por lentas transformações. “Os empregados são mais acostumados a obedecer do que a engajar, mas isso está mudando. À medida que a ideia não é mais copiar, chefes precisam de pessoas criativas”, diz.
+No capitalismo ao estilo chinês, guiado pelo pensamento comunista, o governo dificulta a entrada de empresas interessadas apenas em mercantilização, mas abre caminho e dá suporte se a ideia servir ao bem-estar social.
+John Lin, sócio da consultoria EBDS, ajuda multinacionais a ingressar no mercado. Ele diz que a missão do Partido Comunista é garantir o progresso e o desenvolvimento harmônico da sociedade chinesa.
+“Xiaoping, líder da Revolução de 1978, assumiu que, se o capitalismo podia elevar a qualidade de vida do chinês, então o governo acataria”, diz.
+Em outubro do ano passado, o 19º Congresso do PCC, conclave de membros que define as diretrizes dos próximos anos, determinou prioridades como o investimento em longo prazo em tecnologia e infraestrutura. O país forma 4,7 milhões de engenheiros e cientistas ao ano.
+“Nos anos 1990, 50% das pessoas que conseguiam visto para os EUA não queriam sair de lá. Hoje, a maioria volta correndo”, diz Lin.
+Além da intenção de ser protagonista na Ásia, a China trava uma corrida contra os Estados Unidos em inteligência artificial, área que pretende liderar até 2030.
+As câmeras de segurança estão entre as principais aplicações práticas da tecnologia que não encontram equivalência em outro país. Toda a captação de imagem feita em metrópoles é disponibilizada a autoridades em tempo real.
+O sistema da Dahua, principal fornecedora do governo, detecta sexo, idade e emoções, além de reconhecer identidades e rastrear placas de veículos. O preço da segurança é a privacidade.
+As imagens passam por uma análise que identifica comportamentos “anormais”. “Se a pessoa sempre aparece à noite, apresenta um alto grau de perigo”, diz Elena Yu, uma das 16 mil funcionárias da Dahua.
+Segundo ela, a empresa não armazena as gravações, que são “de interesse do Estado”, apenas vende os softwares. No escritório de Hangzhou, há mais de cem modelos de câmeras expostos.
+A China independe de apps sociais do Ocidente, especialmente Facebook, Instagram e WhastApp. O WeChat, da Tencent, com 1,1 bilhão de usuários, agrega serviços como os prestados por Uber, Amazon, WhatsApp, Tinder e Facebook. Também substitui o cartão de crédito.
+Devido à popularização do pagamento por smartphone, Lin, da consultoria EBDS, diz que o banco central diminuiu a emissão de dinheiro. Em 2017, US$ 7 trilhões foram transacionados pelo celular.
+Em algumas lojas, o cliente paga com um sistema de leitura facial, que reconhece a pessoa e a relaciona com sua conta cadastrada em aplicativo.
+“Da mesma forma que choca os chineses não falarem de Google e Facebook, choca o Ocidente não falar de TikTok [vídeos] e Ctrip [aplicativo de viagem que vende passagens e reservas em hotéis]. O tsunami chinês logo vai chegar ao Brasil”, diz Ricardo Geromel, sócio da StartSe, empresa de educação que faz a ponte entre startups e investidores.
+A China desenvolve empresas de tecnologia para seus cidadãos. A expansão global é um passo posterior.
+A ByteDance, avaliada em US$ 75 bilhões (R$ 290 bilhões) com os aplicativos Toutiao e TikTok, no entanto, destoa desse conceito. Agrega mais de 800 milhões de usuários ao redor do mundo em suas marcas.
+Impedido de entrar no país, o Facebook não pode comprar nada da ByteDance. Há um mês, então, anunciou o Lasso, um app de vídeo de 15 segundos, ou uma cópia americana do chinês TikTok.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1b0d97063ac102d597c015ea4a2e3ac10a9f891ca5f3b72b8e661010b21da454",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f16376dc6f41fead0603ba466bbec1cc9e31df60812d38789c7568b87246f06",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6add7c1440643bd7060542de32b8d7fb89690ab82a5ed02f28c476f1ff5904ea",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62e5675adb536b577c1239ab2df5aa62cc38f1530a68dd488a9c1545870faa29",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c84e256dd2f4b49aa9978135d986ae28eb10f2efd239ca3e383563ad1643e40b",
+    "mention_text": "Hangzhou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "26ecedbc3ffbb3a46ce538619106aecc6aa742639746a17b6a53a2d9ecc1a1ca",
+    "mention_text": "Zhejiang",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87e934487906a81babc51a80147d19c113ef21871751ab1ceaf3fca6cdae3805",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5d79a649388718aed2e702c44b99728147b2face972f5a3910e1daa5d6c94cd4",
+    "mention_text": "Jack Ma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21f0f75cd7e4d5cdb3fb2aa9083fd41c0444e7f0db32adf0f5d1fd1a2f34d325",
+    "mention_text": "Alibaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e90d0df2e2529d8578ce1df7d8be24283c4d7454617e826318edab6a2c64864",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3eddfa0c8ba0af72f2d147fc2dda2af9b1e9855a5507386fc56fd732ad3a244c",
+    "mention_text": "Dream Town",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2edb6950f478b91648a540d790911e9e88d10e711212e08ae66b4923d5e7967",
+    "mention_text": "Cidade do Sonho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0df25fdd801819855d17f3eacf0a1d2c29bfd58531147b670234eef25c2e09b2",
+    "mention_text": "Anran Feng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa9fd59923d29f6b998cf27b67d3de3528b6c26c2c84bbae4ca4c72d92e61dcc",
+    "mention_text": "Dream Town",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38ef1b9e4b36e1e0263a0b9724097462243397583509e80cb3caff6211e0f12f",
+    "mention_text": "Jack Ma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66a5bffd8d15cbf09ef24d85be2ffaff5f2f742228261ddda8076805b2cd8e2d",
+    "mention_text": "Feng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0634f07236858c3b000117747352b63aa764dc8bca6734a35a0e74803f889081",
+    "mention_text": "Alibaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9af197b5ed7e447ca6764aa017ea216a8c37f9fe90dd9cfd69239dcd08099ec",
+    "mention_text": "Jack Ma",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6af25c398e08fe9b7658278aeba8b50154eda27480c44c20439106e9f785049b",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8069708c82e035e656291501985de0bbe958d5bb0d3bb8c864645af15dfbc46",
+    "mention_text": "PCC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9da8e5694fa759dfd6ecc493a09c11d2153df137fc085c7d8ffcdd290d3fe126",
+    "mention_text": "Partido Comunista Chinês",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2b2bf1dcf47d3767fd8a9865b8e1472291bcb75a15fd70773c6a1538136627ba",
+    "mention_text": "Hanghzou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "99dc1b58c0a819e890e7e561ffd2c011b259f1a17a7824fd6f60709ecbbad0c4",
+    "mention_text": "Xi Jinping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "681875a17446342aeedc8faace414b9615ad2b49aa7f17915e654a414aa83980",
+    "mention_text": "Zhejiang",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87700f7361a29a8ec21a787ce4ba0a18c332f2e269db2241d1354a0184f6c257",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0914b9c4d52d9ff3320bf9d7c730c08950cbe446d5af43e62ad45ca0c065a525",
+    "mention_text": "Lucas Rondez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d49c5413bc3ba8e045190d09c3873a7886b71273a81356380b7d07b4d9a87642",
+    "mention_text": "Nihub",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "630a4c0fa958f65e621026f73cb66d078322eef6ba87cdccc953507b9e1f1922",
+    "mention_text": "Nihub",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "852b6fd026d263de278566881d952622957d95f3aa2adde03564ff1d5571ff41",
+    "mention_text": "Hangzhou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2442f1e175eff2c70c7267bf6e802d58d0346b3b6614622e89c3e82f5a8d3b8",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff82826cac35362cb83aa0e779209bcb4434bcb36a6292676feeafb2c1fa67b6",
+    "mention_text": "Hangzhou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bfe35d47964e8c574aacc3177c1e37cb90c8a3b382e71101de26a74719cf7a40",
+    "mention_text": "Costa Oeste americana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d07a7e0e289d869d36efb0b9db495da3f842095f7a6d99d549da616bff2b238",
+    "mention_text": "Thierry Nadisic",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c5c4e7275baf85738b43e235ae96bdde8ff3bad7763d8bc3875aeab406b3ac1",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e95d477d2f0cff52869240f401e4c2cd0baedc4b556bc3be6c2a0fe296e0a69",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "723bb0093a73e49ad3eda22ce7aaf312b1f8dae073f214c11ac3758a3108defb",
+    "mention_text": "John Lin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4271b64266ad20c6f58b582855f7316e90ed71d15f2f29bf5b27918e837eeb80",
+    "mention_text": "EBDS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "496662dd681f3ad535b80adc80557251ce76c5953cb9258a0435d5d532025bf5",
+    "mention_text": "Partido Comunista",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f43dbdfc337816d470e96f1527e1774e8cf486abedde5c4dc65305dae28e189e",
+    "mention_text": "Xiaoping",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee998c43c26beeb61e18fb3f41e012b110bc4fa450aa5bdd9cb954044744deab",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2395cc10d76de14242f912ece4a8188d2a4543722141f3fdc52ed3bc3c73b544",
+    "mention_text": "Lin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07ccf120a951e758b7db2068cd2a861c4b3d3be333f38bded37e82ea04a2f005",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "82e63c18476f3cb73b815b2c791f6680c7381e9397debc4698cc42f8faee09da",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cccd4c71c70fb44f516f45990bfdd8ab0c12436fe797d386b9793f8a25adc4bf",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f577a5d5e5f79a5677ff25a9c806c9cae11856343ef7ab9f8c0124ec7bd9999",
+    "mention_text": "Dahua",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "276f33807ae59948051bc1fc35c4afa2950032be1fedc4b82ab037266bda72ca",
+    "mention_text": "Elena Yu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c1b914560592bd9756f4cdd1ea4a421359b89f8586edd1347120763847d0aae9",
+    "mention_text": "Dahua",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87ce1df8693efbc60a1212140266d71f2753498a79295e62301b9c61416d97c0",
+    "mention_text": "Hangzhou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "92b0080eff502d352dde68a47cbba08a0ed5304d7d9e3b977a31c491e3c15ff2",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ee40bd265799aa50a78ef82504eb6ebba41a22f3d2831df7a30becd9532347f",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "80ed313fbe5fba4f0af0ed0a79dc8055c1d4f18ccd4cf36665b1081a90b89744",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edd92cc5fe10e1d33e03d908128786c42e77b10e4f3cc1d3afcfbab16d9b460e",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f56054a8be9e160e2317fd0aa911b76adab8dc56cd708f085337126d43ec849b",
+    "mention_text": "WhastApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d56bc8bcb36d3fe2405467cbf7e5bfa7e82a2a34fa7a9516a4e8d07eb5768ee",
+    "mention_text": "WeChat",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "738e273b1acb53287e50757aee08bf861df17a3579a6976eb79c5471847999e2",
+    "mention_text": "Tencent",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71142845aba81d273b36090539cee21cf18ef6592955d386544f1aa5669955eb",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac7dd7b3f9fa85acc2ac61e5b7257675e227ef3fbcff2da85bed9ce5f6e461fe",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "666f3b030c1fca8a96563315ac9a737f5fa04b9b8cdd4451c6eb01183e98ca71",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53a41752f9ddf1ef2adc70d76543c23d392b1e5d80a03b6687a0a907dc95760b",
+    "mention_text": "Tinder",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f4bc7b21bf7c7879a7692693c7788159f4df595706303a472a2732102936048",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a118a3c9053d98965ba90d38247ec00acd8486d016e1132f7ac9cacd3e2e2a8",
+    "mention_text": "Lin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff6bfa0f4ac094b2c7c7a67732180afc0e6dd5edc927e6a21db0dff03e148a85",
+    "mention_text": "EBDS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6800cfe2b424b7e7f92bbe860ec8b2355fe89df5eabeee49115122753bc7594",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8f4bcedac81515d10ecb7ad488ed135158ffd21f57991b8428fa382719d0446",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff5a45e483277cb8ebde62902c4c1c7da4e463d0cdbdb348076f3d0a683c8159",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0048302acce73ee8075668c1c67df5ace880a5455583fea5fd2b2111d43e722",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e58e6e07218225c69694ebf991eb656ce7ee05a02e9012c338aa030410d10e1d",
+    "mention_text": "Ctrip",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "684049ac8edb8ada239e32cb9fbe85bdf8fda8d2c74349eb90374020f00283f3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "367394cd216370c9efeac9809649429fd3556188fa41c74b3d7feb0123f45d69",
+    "mention_text": "Ricardo Geromel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5b7e69d7527376ab2f7d2d09af597687d18889f8a3bb54eea8ee5f591fc047f",
+    "mention_text": "StartSe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6f673f828c82b64268c5172bcd700db77c6d9061d4f89f08bf1710eb2939ee9",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca1dd142f7fe02bf14dd9f596580d3654e6a061fcc01b01bd2a977614624e6d8",
+    "mention_text": "ByteDance",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c02dcff1bb931ec0070be422f3728e594853d1c9cac5a3df8e08f1d63f1797ff",
+    "mention_text": "Toutiao",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d776dd56f24270409afc585cff880a1b9b81e0fd2a4e45dfb3b6065def53a81b",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce8be59dcd963a4fb5751dc22e42b50a35f8b42e48579490b5ca68d98c76a618",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ebe4aa87c8fcda8dc28b148dae1955baf55f09696a492ece12505e5b93993d7",
+    "mention_text": "ByteDance",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "725066f6d15c488eda82f31e9c19006c80140e572860a0782a5e4a320e417add",
+    "mention_text": "Lasso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e6c8eae556d33052374c449a040ecc100e6c582994b8ea722d8b05b5511536a",
+    "mention_text": "TikTok",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,461 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 89f25257f0ae53f06b7aab441bd6108266ebf8354c02bcf06f7ea318cf41def2
+
+TEXTO:
+Veja depoimentos de quem optou por MBA para incrementar a carreira
+
+(...) Depoimetos a DENILSON OLIVEIRA
+Confira abaixo a opinião de quem optou pela especialização para alavancar vida profissional
+*
+IVIM PELLOSO, 35
+Quando começou o MBA de inovação e empreendedorismo, no ano passado, a arquiteta Ivim Pelloso, 35, mal sabia o que era uma start-up. A ideia era melhorar a gestão da empresa de cozinhas industriais que toca com o pai.
+"Hoje estou criando uma plataforma digital na qual vou conectar restaurantes e prestadores de serviços por meio de um aplicativo. Desde um encanador até quem conserte uma fritadeira elétrica", conta Pelloso.
+Com o protótipo e o plano de negócios do aplicativo prontos, o projeto está numa incubadora de start-ups e deve chegar ao mercado em 2018. "O MBA me deu essa visão de negócio", diz Pelloso, que também produz conteúdo para blogs de serviços alimentares.
+MBA EM INOVAÇÃO E EMPREENDEDORISMO Onde Faculdade Estácio Duração 18 meses Valor R$ 12.300 (em 24 parcelas)
+-
+PEDRO MAZZUCA, 24
+Formado em análises e desenvolvimento de sistemas, Pedro Mazzuca, 24, decidiu sair da zona de conforto e encarar um MBA em governança, inovação e sustentabilidade. "O curso é bastante prático: preparar os profissionais da área de TI para buscar inovações e modelos de negócios com uso racional de recursos", diz.
+No curso, iniciado em 2014, Mazzuca criou um projeto de eficiência energética para o autoatendimento de agências bancárias.
+"A tecnologia usada atualmente é cara e consome muita eletricidade, mesmo quando não é utilizada pelo cliente. Estudei um sistema capaz de reduzir o consumo drasticamente", conta.
+Depois do MBA, Mazzuca assumiu a liderança da equipe de projetos de inteligência artificial do banco Bradesco.
+MBA EM GOVERNANÇA E INOVAÇÃO DE TECNOLOGIAS DIGITAIS COM SUSTENTABILIDADE Onde Escola Politécnica da USP Duração 18 meses Valor R$ 24.300 (em 18 parcelas)
+-
+FERNANDA TASINAFFO, 24
+Na adolescência, o sonho de Fernada Tasinaffo, 24, era ser delegada de polícia. "Foi por isso que fiz a faculdade de direito. Gostava da área criminal. Mas comecei a estagiar numa empresa de internet e minha carreira foi tomando o rumo da área digital."
+Em 2016, a advogada foi aluna do MBA em direito digital e compliance da Damásio Educacional.
+"Como é um braço do direito novo, quem correu atrás e se especializou já é disputado no mercado de trabalho", diz Tasinaffo. Em empresas de grande porte, a área de compliance oferece salários acima de R$ 10 mil.
+Depois do MBA, a advogada passou a prestar consultoria e dar palestras sobre a importância de auditorias na prevenção de fraudes digitais.
+MBA EM DIREITO DIGITAL E COMPLIANCE Onde Damásio Educacional Duração 12 meses Valor R$ 10.752,67 (em 18 parcelas)
+-
+PETROS GEORGIOS, 29
+Logo que concluiu a faculdade de direito, em 2014, Petros Georgios, 29, foi trabalhar em um escritório de advocacia que analisava contratos de transferência de tecnologia para o Brasil. "Foi então que percebi que, mesmo com o marco civil da internet, as regras para as empresas não são claras e muitas nem sabem o que fazer", diz.
+Georgios decidiu fazer no ano seguinte o MBA em direito eletrônico, da Escola Paulista de Direito. "Conheci uma infinidade de temas que podem afetar a segurança de uma empresa e como é possível gerenciar esses riscos e se amparar legalmente", diz.
+Quando ainda cursava o MBA, o advogado foi trabalhar no Cubo Network, um coworking de start-ups. Lá, atuou em uma empresa de reconhecimento facial. "O MBA me deu acesso a novas questões de direito eletrônico e me proporcionou uma boa base para trabalhar com mais segurança nessa área", conta.
+MBA EM DIREITO ELETRÔNICO Onde Escola Paulista de Direito Duração 18 meses Valor R$ 22.550 (em 24 parcelas)
+-
+JHONATAN KRIPSSON ROJAS, 27
+Há quatro anos, o peruano Jhonatan Kripsson Rojas, 27, chegou a São Paulo para um intercâmbio no curso de sistemas de informação. Desde então, só voltou ao país natal para férias.
+Em 2015, investiu em um MBA em desenvolvimento de aplicações Java, SOA e internet das coisas, na Fiap. O programa inclui linguagem de programação e desenvolvimento de softwares.
+"Eu trabalhava numa empresa de tecnologia e queria atuar com arquitetura de software. Esse era o único curso do Brasil que atendia às minhas necessidades", diz.
+O curso, de um ano, foi todo feito em laboratório e incluiu um projeto de casa inteligente. "Mudei de emprego e tive um aumento de 15%", conta Rojas, que trabalha num provedor de internet.
+MBA EM DESENVOLVIMENTO DE APLICAÇÕES JAVA, SOA E INTERNET DAS COISAS Onde Fiap Duração 12 meses Quanto R$ 24.698 (em 25 parcelas)
+-
+THIAGO VIOLA, 30
+Thiago Viola, 30, sempre quis trabalhar com tecnologia. Aos 15 anos, fez o colegial técnico em processamento de dados, que lhe garantiu emprego na multinacional IBM. Em 2012, voltou de uma temporada na matriz americana da empresa decidido a se especializar em computação na nuvem.
+"Naquela época, as empresas já conheciam o conceito mas não o utilizavam muito. Fui atrás de uma especialização na área e cheguei ao MBA", conta Viola.
+O curso ajudou a colocar o conceito em prática no trabalho e ainda lhe garantiu uma promoção para gerente e um aumento de 40% no salário. "Antes do curso, era vendedor de serviços na nuvem, hoje tenho uma equipe de 20 pessoas", diz Viola, que tem ainda um blog sobre o tema, atualmente com 2.800 seguidores.
+MBA EM ARQUITETURA DE REDES E CLOUD COMPUTING Onde Fiap Duração 12 meses Quanto R$ 24.698 (em 25 parcelas)
+-
+LEANDRO RICCI, 30
+O relações públicas Leandro Ricci, 30, queria mergulhar de cabeça nas redes sociais. Encarou dois anos de um MBA em marketing digital, da FGV.
+"Muitas empresas estão apostando nesse mercado, mas se limitam a plataformas como Facebook e Instagram. O MBA me ajudou a ter uma visão de 360 graus dessa área", afirma Ricci.
+Depois de oito anos numa agência de comunicação, a indicação de um colega de classe o levou a assumir o cargo de coordenador de marketing digital na filial brasileira da Deloitte, de auditoria e consultoria na área empresarial.
+"O MBA ampliou meu salário, hoje ganho cerca de 15% a mais, e minha rede de contatos. Conquistei um conhecimento técnico que coloco em prática todos os dias."
+MBA EM MARKETING DIGITAL Onde FGV Duração 24 meses Valor R$ 36.865,21 (em 25 parcelas)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "68f9f1e4fd094b96101f660d59330142adad07725edd7df7f499c95cff863e08",
+    "mention_text": "DENILSON OLIVEIRA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ecafe406ef255692d78d3453215f8bda25fc770dede9e45533b6d55605e1db14",
+    "mention_text": "IVIM PELLOSO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4ba2b8b24f85fe5ab6120c67207cebec2137a1aa58a1830cbe157f3df72b5fa",
+    "mention_text": "Ivim Pelloso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "baae4550a9f5cda8e947b52b11929ed0edaba50374f89c4d0ebf5259da62beb1",
+    "mention_text": "Pelloso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4548ed75f5cbf691da6404953eedfb7da80fe2ccfc2f89e4b122222b5af125ba",
+    "mention_text": "Pelloso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e06457a6a3c12fcfe6f7dd7a22fda6e13b3c01063cbe975ba816196a6d769387",
+    "mention_text": "Faculdade Estácio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e7ba784d777b00e5d1c18551a6a6a125dc7071b58556c41bcd9831bb5b7bec7",
+    "mention_text": "PEDRO MAZZUCA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "312101ed5dc770f72f0db7ee1a709eac4da5d1093b3c2a39ff2404dcaa89c05e",
+    "mention_text": "Pedro Mazzuca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cadbe5f16e8e8631e111bcdb894d803fbc487e7fa8a6bd4ea6da17b0e0524cae",
+    "mention_text": "Mazzuca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ef1bacfc1a768a2b0fee95fdb5e43c06e8bc94ad7e5ee2a4470405889093f30",
+    "mention_text": "Mazzuca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81ae6bd5c8de6b53d8b9adee2912fab5bd17fd9333ee5cb547d3e02d7782d995",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5918e639e3033a0bb87294f60ab55075c0ea945293d92b4fa8b9f3414d4018c1",
+    "mention_text": "Escola Politécnica da USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1272625535631cd99d83db5799f3daabf771023bbda8fe76ed1da022e220552",
+    "mention_text": "FERNANDA TASINAFFO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4669f0cd94cb3cae76a3e7464608f80becc76cb631cacf38d271e82fa7b7dafc",
+    "mention_text": "Fernada Tasinaffo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f87ffb65ea774e0cafd40d7863d1ac3c6daa5f80542634f1b9deabe82d9530fe",
+    "mention_text": "Damásio Educacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fd7dd01550c0a8d0a8cf06bfa6c91c0d846542b66bd45f1e7c8ce1295e70afa",
+    "mention_text": "Tasinaffo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fcec60558b6c2d19366af90fb986131a2243937d57fc4376a6f767e96fe1988a",
+    "mention_text": "Damásio Educacional",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4521d0650ca102b191bd697f04daf04f5d2b1c13ef9ef22cf203c88f09583639",
+    "mention_text": "PETROS GEORGIOS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d20afd3b9c3490d45337c68fef903212610d8bea83662e9cfab4ac9570f1ff4c",
+    "mention_text": "Petros Georgios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2feb9cbd6cc86e1660ac39980d40c268c5198523d10444617e553eb2221cc828",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb29af93c4918b85304793a79fc232cbeaaad3dfc76e8d8d318b20a1eac405e1",
+    "mention_text": "Georgios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "641e0652a4c518cb046b692be1beeb2a4b2024c5b33aa7131a3e969aa6bcf58b",
+    "mention_text": "Escola Paulista de Direito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62d99003326903515727a310e5bb3f189acbd5a59298f72e6167d54a10e9c8cc",
+    "mention_text": "Cubo Network",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2615e0e8f7c8b7fd551463950a78dd21ec4bc6eacfddfbae08e844f3df6c36f",
+    "mention_text": "Escola Paulista de Direito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39b91c9ef588ba114bafe75527524898f45d41142d3c8671b1e7ca134a05fedf",
+    "mention_text": "JHONATAN KRIPSSON ROJAS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0c04c78ea20323e5504b382377980fec13d2fb168b98052e407c83c80a67949",
+    "mention_text": "Jhonatan Kripsson Rojas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d9026c0ef5843b77ec23f7a9b326c44d851bd94e7d7785eca0ff183356a8eb9",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "32f4b0ce50a167b6015bc1a169856dfec77a2059704c21543856516eef0967f8",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5d2750be996afeb6a32f6ade8e5be50d583b4e8d6a3c0bd731f2c841f064fa8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6fe0ad4158e8f075edbd21d9d12d51d7670872fcf101ae1cccab1a7d148ef04e",
+    "mention_text": "Rojas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "feb87fd6e22f83478a4ed8ff8d15ef6a6a8bbf5d2b393379ac7db95da0d6a23a",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbbbe4a951789d9d5e40bc9a2bcc08567cc53eb4c158cec114bd8009258466ca",
+    "mention_text": "THIAGO VIOLA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11ff86e31c7fb0e8bc5e9e54fa3f975074ad9c2faa74c842ba7ae4eb2ceeb02d",
+    "mention_text": "Thiago Viola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9eadda05292d63740cc35de473a8cd3e63f48549201e760b2f515480256733ad",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "301ebf88b34c848a26e1937a78208968d380b1aa0216e5f9ad3258a1d68a6d3b",
+    "mention_text": "Viola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59af364060c0a35b97d8131e6e6241c481f6ccee293a38c507af4dba72831118",
+    "mention_text": "Viola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43514135bf43e865939424426a8838eda5cc9014a778bdd0722db157421fd0f6",
+    "mention_text": "Fiap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a9393b19f6690fff69e7614d13d3f8a0ab2a71a62147f4fde8885c20e672f97",
+    "mention_text": "LEANDRO RICCI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49541155943f61dc5a649e37fc5651daaf5c32f4ce0c17061bd3381545d2ad92",
+    "mention_text": "Leandro Ricci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52221e00c27e7fa4faf1f5d6f4439aafb0c4b9870621bf68a8bda1948bc88d56",
+    "mention_text": "Ricci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68a9a20669df75bd0c76dcc9741082db06322cfd2053beee1469c64c274aea6c",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84b49a82de1486b165081571697c22edc01e642478fa97bc970f0e6380483587",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "611ee0fef576dcb507d5684305c8c950c193f06aa0872d9498639be52309dbb8",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "521c972ec018b85f4fe3a375650867418ea2742d8d098cbdd7ee242e3beba6a4",
+    "mention_text": "Ricci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38e624d22f8a3df95e1681b86bd5a9d5fbc306500adf9252026baf987248f2ef",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "831fba530a24119bff1f9fc2b971d9c4fc6b1a9de00696323206affde985dad2",
+    "mention_text": "FGV",
+    "categoria": "ORGANIZACAO"
+  }
+]

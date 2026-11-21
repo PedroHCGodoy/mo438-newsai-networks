@@ -1,0 +1,336 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e524ca9aa09477f3b0d38df05bc263150f64226d2b230d4ccf15b153b2ea7cd1
+
+TEXTO:
+Cientistas estudam forma de criar busca visual na internet
+
+Você pode pensar que é possível encontrar qualquer coisa na internet.
+Porém, mesmo enquanto imagens e vídeos rapidamente dominam a web, os mecanismos de busca geralmente só encontram certa imagem se o texto inserido corresponder ao texto com qual ela foi rotulada. E os rótulos podem ser pouco confiáveis, inúteis ("peludo" em vez de "coelho") ou simplesmente inexistentes.
+Para eliminar esses limites, cientistas precisam criar uma nova geração de tecnologias de busca visual --caso contrário, como disse recentemente a cientista da computação Fei-Fei Li , a internet estará correndo o risco de "ficar no escuro".
+Agora, junto a cientistas de Princeton, Li, de 36 anos, construiu o maior banco de dados visual do mundo --num esforço para imitar o sistema de visão humano. Com mais de 14 milhões de objetos rotulados, de vidros vulcânicos a orangotangos e jaguatiricas, o banco de dados oferece um recurso vital para pesquisadores de visão computacional.
+MARCAÇÃO MANUAL
+Os rótulos foram criados por seres humanos. Mas agora máquinas podem aprender a reconhecer objetos similares sem rótulo, possibilitando um notável aumento na precisão dos reconhecimentos.
+Neste verão do Hemisfério Norte, por exemplo, dois cientistas da computação do Google, Andrew Y. Ng e Jeff Dean, testaram o novo sistema, conhecido como ImageNet, numa enorme coleção de fotos rotuladas. O sistema teve um desempenho quase duas vezes melhor do que algoritmos anteriores de "rede neural" --modelos de software que tentam replicar funções cerebrais humanas.
+Os pesquisadores do Google não foram os únicos a usar o banco de dados do ImageNet para testar seus algoritmos; desde 2009, mais de 300 publicações científicas o usaram ou citaram.
+A visão computacional é um dos maiores problemas para os desenvolvedores de inteligência artificial e robôs. Uma enorme parte do cérebro humano é dedicada à visão, e cientistas ainda lutam para desvendar os mecanismos biológicos pelos quais os humanos reconhecem objetos.
+"Meu sonho sempre foi criar um sistema de visão que reconheça o mundo como fazem os humanos", disse Li, cujo colega de Princeton é o cientista da computação Kai Li (sem parentesco).
+Quando Fei-Fei Li começou a montar seu sistema, em 2007, as únicas alternativas eram bancos de dados que reconheciam apenas um punhado de tipos de objetos. O desafio era como aumentar a escala do sistema para deixá-lo mais próximo das capacidades humanas, especialmente com a torrente cada vez maior de imagens online.
+"Na era da internet, de repente somos confrontados com uma explosão em termos de dados de imagens", afirmou ela. "O Facebook tem 200 bilhões de imagens, e as pessoas carregam 72 horas de novos vídeos no YouTube a cada minuto".
+TRABALHO COLETIVO
+Li fez um cálculo rápido e determinou que, se passasse a tarefa a um de seus alunos de pós-graduação, isso poderia levar décadas. Felizmente, embora a internet tenha feito surgir uma gigantesca pilha de imagens digitais, ela também oferece um caminho para a luz.
+Li percebeu que o Mechanical Turk , o sistema da Amazon.com para organizar milhares de humanos na realização de pequenas tarefas como descrever os conteúdos de uma foto, era a maneira perfeita para montar seu banco de dados.
+Usando fundos de pesquisa disponíveis na universidade, o projeto de banco de dados visual ImageNet se tornou o maior usuário acadêmico mundial de trabalhadores do Mechanical Turk, conhecidos como "turkers". A cada ano, o ImageNet emprega de 20 mil a 30 mil pessoas que são automaticamente apresentadas a imagens para rotular, recebendo um minúsculo pagamento por cada uma.
+O turker médio pode identificar cerca de 250 imagens em cinco minutos. O banco de dados do ImageNet possui hoje 14.197.122 imagens, divididas em 21.841 categorias.
+"Seu tamanho é de longe muito maior do que qualquer outro serviço disponível na comunidade da visão computacional, e ajudou alguns pesquisadores na criação de algoritmos que nunca poderiam ter sido produzidos de outra forma", explicou Samy Bengio , cientista de pesquisa do Google.
+LONGO CAMINHO
+Ele acrescentou que o ImageNet não é perfeito. Para organizar a vasta coleção de imagens, Li usa o WordNet , banco de dados de palavras em inglês criado pelo psicólogo George A. Miller , de Princeton, que morreu em julho passado aos 92 anos. Para Bengio, as categorias são um pouco elevadas demais.
+"Eu preferiria que as categorias escolhidas no ImageNet refletissem mais a distribuição de interesses da população", afirmou ele. "A maioria das pessoas está mais interessada em Lady Gaga ou no iPad mini do que numa espécie rara de dinossauro".
+Mesmo assim, o projeto continua. Jia Deng, um dos alunos de Li, desenvolveu um classificador de imagens que ele chama, por brincadeira, de infalível. Como o WordNet é organizado numa hierarquia de categorias, o software pode simplesmente escolher um nível de abstração onde ele tem uma alta probabilidade de estar certo: se não há certeza de que certa foto mostra um coelho, por exemplo, ele vai para o próximo nível (mamíferos) ou um nível acima (animais).
+Em um desses níveis, ele quase certamente não estará errado. E Li espera que outros avanços permitam uma precisão ainda maior.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e835b234f6e3266a90e6df545b6fb4e9cdb4b24a1462c8c3a4037e16723aba90",
+    "mention_text": "Fei-Fei Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d795ca6189a8674cf411f2183d1c6928434d4b72b8e2b16c13c3999b74e6dac7",
+    "mention_text": "Princeton",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93a6c97fc04faa623845f11260e17c31917deacbf18f21441213acae742e2995",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ceabe49e96a2e4bf6509bd61670765196066ad9c9bc91cfb3aa247b8d6043592",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5823aa62c51f9d86cf624442a0d29d2fa586f5e3726f29da4991563c74ecae6f",
+    "mention_text": "Andrew Y. Ng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a88b76999c9d0b30f7230890cc7bea6220f28670e26661578bdd6b3b95bd312",
+    "mention_text": "Jeff Dean",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d3e2a91241d3928c33237fe9328f5a78ddd99259b95fadf4916f4b03fb98434",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c84d42455a2feab4be1fbde43f014dc1944fcf02f58f594c2a3048ed78483a4",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "41cfa715da56ed95de300d9b30748d1e7c4833547851603220c7d5c7b4f39edd",
+    "mention_text": "Princeton",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "391c14209181d9c7c0bc403b902a525ae1c9d0576ede23e9275a60dd9129cb23",
+    "mention_text": "Kai Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c6437d186099b0533179005d6ecfb6e623acd2527bf511d4e0aef1ff9b5596b",
+    "mention_text": "Fei-Fei Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "402799bc7b88e1811d04581604c9d1510e106d60b954ddd817cd7cffe5d1bca2",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f831175f3534e6ef616fb9afc112cbe79302a51da753321329effdc31fe6999",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7baa6a7cbb99c7601b2fcb58fb1c26955733119b32679b818af0a6b19ee6d31",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ef86f0f0ebbadff51eefd2054be100666346f97b7f5764c6283d8a09733c9c6",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5491359e593932f14f866ebf8b8ca4e95c756c7ee9c2f052db6c5081d3601ae5",
+    "mention_text": "Amazon.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cac1a1445403e4b646390a86237e3da17bb13c35f499cd80afa02b5d475aed47",
+    "mention_text": "Samy Bengio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f083c15af9d21300782448b0374e1b9d994ae8b5df9c35c0e6c81052216be98",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41a8c0ddd46f09488deebcf6c06cccb01a7d5265f9ed1db383f250731939c9c3",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df01099cdca025dc29c0f0ae44ef08750b44d7eca2b0abad9efa12290d59e33a",
+    "mention_text": "George A. Miller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5dedea4abe2650c86285a317f8701e670524990bcc6255c1ea93cecb088fbc37",
+    "mention_text": "Princeton",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6b3628d64b45ae80eb7e7a6c0bb964b33859775a62c79a2cf86c738e83f1ff8",
+    "mention_text": "Bengio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56c0d2e902d674911deb8cf2fbaa98c3fbed744e08e81439b64cacfabd23da56",
+    "mention_text": "Lady Gaga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b7aa1b388b808271e0a9fd8e2769a56e78820ea9f4d643824a5b421a52bfc9d",
+    "mention_text": "Jia Deng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0cc1ce766c6b585073fd8e918f24425d3b5d3b0cc8038c256e357f8b312c7fd",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08cb19fcff95b9165243f7ee7e3d552afc933d182801c85da30f970faa55f1d5",
+    "mention_text": "Li",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,412 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9b9724e7580695129921b32b4b21f1a35b014384b011c8806c677ff42f279037
+
+TEXTO:
+Um muro na fronteira da mente
+
++ ciência
+Americano aponta fracasso da ciência na compreensão do cérebro 
+durante o século 20 e diz que o quadro não deverá mudar no século 21
+Um muro na fronteira da mente
+Reinaldo José Lopes
+Free-lance para a Folha
+Para começar, uma historinha instrutiva, do tipo 
+que nove entre dez autores best-sellers costumam colocar no prefácio de seus livros. O jornalista científico John Horgan, quando discutia a 
+premissa do livro "A Mente Desconhecida" com seu 
+agente literário, foi pego de surpresa por uma observação desconcertante, mas pertinente, daquelas que se 
+costuma esperar de quem está preocupado com custos 
+de publicação e perspectivas no mercado editorial. 
+"Tudo bem, então você mostra toda essa coisa negativa", observou o agente, informado de que o objetivo de 
+Horgan era mostrar que os mecanismos gerais da mente humana continuavam basicamente inconquistáveis 
+pela ciência. "Mas qual vai ser o lado positivo?", questionou. Horgan não entendeu e o sujeito continuou: 
+"Sim, a mensagem positiva, oras! O que você dará às 
+pessoas no final do livro para que elas não saiam deprimidas?". Sem saber exatamente o que pensar da sugestão, o autor simplesmente disse não estar interessado 
+no tal lado positivo. "Resmunguei algo sobre a verdade 
+ser sua própria recompensa", conta Horgan na introdução de seu livro, lançado nos EUA em 2000 e que sai 
+agora no Brasil pela Companhia das Letras. 
+Quem está atrás de aconchegantes lados positivos do 
+progresso científico provavelmente vai ter problemas 
+para engolir o livro de Horgan. Não é a primeira vez que 
+o autor, ex-editor da "Scientific American" (maior revista de divulgação científica dos EUA), volta sua metralhadora verbal contra os resultados frustrantes da 
+ciência moderna. Em "O Fim da Ciência", publicado 
+em 1996, Horgan não teve medo de expor a teoria sugerida pelo título do livro: o progresso científico "real" finalmente deu com a cara no muro. 
+As grandes sínteses teóricas capazes de gerar uma explicação abrangente da realidade, como a relatividade 
+geral e a teoria darwinista da evolução, foram as últimas 
+da sua espécie a caminhar pelo ecossistema científico, 
+acredita Horgan. O próprio sucesso delas teria sido uma 
+vitória de Pirro: já dotados de uma visão razoavelmente 
+consistente da estrutura do Universo, os cientistas teriam de se contentar com um eterno jogo de palavras 
+cruzadas, ligandos os (poucos) pontinhos que sobraram do desenho cósmico e enquadrando-os na forma 
+geral, já bem esboçada, do conjunto. Fora disso, restava a especulação inútil sobre os "porquês" do Universo, às vezes 
+recheada por teorias tão mirabolantes 
+quanto impossíveis de provar, ou a fronteira final e inatingível: a mente humana, 
+seu funcionamento e sua existência. 
+É esse último ponto que Horgan elabora à exaustão nesse novo livro, que leva o 
+sugestivo subtítulo de "Por que a Ciência 
+não Consegue Replicar, Medicar e Explicar o Cérebro 
+Humano". Entrevistando uma infinidade de psiquiatras, neurobiólogos, psicólogos evolucionistas e cientistas da computação, Horgan bate na mesma tecla: se no 
+início do século 20 a ciência tinha Freud e a terapia com 
+choques elétricos e hoje vive à base de Prozac, ressonância magnética funcional e computadores que jogam xadrez, os resultados continuam os mesmos. A compreensão da mente e o alívio para seus males continuam 
+essencialmente inatingíveis.
+Horrores no consultório
+Não dá para acusar o autor de sectarismo nessa jornada iconoclasta. De marretada em marretada, vão-se esfarelando os ídolos de gesso de Freud (para Horgan, um grande escritor e um mestre retórico, sem dúvida, mas também um manipulador de péssimos bofes), da neurobiologia e de seus filhotes, os remédios psicoterápicos como o Prozac, da genética comportamental e do darwinismo aplicado à 
+psique humana. Depois de vasculhar os registros científicos que relatam a eficácia relativa de cada tratamento psiquiátrico, o autor é 
+obrigado a cunhar a desanimadora "hipótese Dodô", batizada em homenagem 
+à ave de "Alice no País das Maravilhas".
+Em essência, a hipótese diz que "todo mundo ganhou e todos devem ser premiados" -isto é, toda e qualquer psicoterapia, se aplicada numa amostragem significativa da população, consegue resultados semelhantes. E iguais, diga-se de passagem, aos de um placebo qualquer.
+As tentativas de resolver problemas mentais com intervenções cirúrgicas ou por meios físico-químicos também não se saem muito melhor. Horgan conduz o 
+leitor a um passeio por alguns dos maiores horrores da ciência no século 20. O que dizer, por exemplo, do psiquiatra austríaco Julius Wagner-Jauregg, que tentava trazer pacientes psicóticos à lucidez induzindo neles febres altíssimas, usando os micróbios da malária, do tifo ou da tuberculose? Jauregg levou o Nobel em 1927.
+Também laureado pela Academia Sueca foi o português Egas Moniz, inventor da lobotomia -procedimento que consiste em simplesmente extirpar os lobos 
+pré-frontais do cérebro, conhecidos como a sede da cognição humana, para "acalmar" doentes mentais graves. Um dos seguidores de Moniz, o neurologista americano Walter Freeman, resolveu sair pelos EUA em 1951 numa expedição "caçadora de cabeças", como ele dizia, para demonstrar as virtudes da técnica: 5.000 cérebros estraçalhados depois (muitos deles presidiários violentos, mas sem qualquer problema mental), Freeman acabou matando seu último paciente, sem que a lobotomia mostrasse qualquer eficácia real além de entorpecer quem passava por ela.
+Quando se trata de reproduzir os procedimentos da 
+mente humana, Horgan mostra que o sucesso foi, na 
+melhor das hipóteses, limitado. Claro que isso é um reflexo da compreensão imperfeita de como o cérebro realmente funciona: por mais que a vitória do supercomputador Deep Blue sobre o enxadrista Gary Kasparov, em 1997, tenha empolgado os adeptos da inteligência artificial, nada é mais claro do que a constatação de que a máquina não pensou nem por um segundo para 
+ganhar. Enxadristas humanos, ainda que imperfeitos, 
+baseiam seus movimentos numa curiosa mistura de 
+cálculo e intuição que nem todo o silício do mundo foi 
+capaz de duplicar até agora.
+Embora às vezes exagere na ânsia de provar sua tese, 
+como ao afirmar que as bases químicas das doenças 
+mentais nunca serão descobertas, Horgan escreveu 
+uma ótima "cautionary tale" -uma "história para ter 
+cuidado", termo que os cientistas usam quando lançam 
+ressalvas sobre alguma nova técnica revolucionária.
+A humildade diante dos fênomenos é uma das características mais nobres da ciência, mas um tom perigoso de triunfalismo -ou de tirania- perpassa alguns dos 
+pesquisadores que povoam o livro, como a psicóloga 
+evolucionista Leda Cosmides. Disposta a fazer das leis 
+darwinistas que guiaram a evolução da mente humana 
+a chave para a compreensão do homem, ela murmura, 
+num desconsolo revelador: "As prescrições de políticas 
+sociais se fundamentam mais em nosso sistema de valores que em descobertas científicas". Bem, talvez seja melhor que a coisa permaneça assim. Se há um lado positivo no livro de Horgan, é mostrar que a mente inconquistada, pelo menos, ainda tem o privilégio de ser livre.
+A Mente Desconhecida
+Por que a Ciência não Consegue Replicar, Medicar e 
+Explicar o Cérebro Humano
+408 págs., R$ 39 de John Horgan. Companhia 
+das Letras
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c7459e76e4d3e9c6ec94521280c506b6f79097970090ebda2d4b11c36acb54f4",
+    "mention_text": "Reinaldo José Lopes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31a72ce5715d4bca671a1983d7dbc0bdf1bdb53b76b8478275c85b097be0d875",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d4e920981b6edad97990334a953c04ba2f418f9073247a1753e2db2a428e088c",
+    "mention_text": "John Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c50af72ae4cbc26413654ddddfe3c60d58f6eebe1ec7175aa806b85dca6c4245",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fbee79f71b1435d5e2cfe4f2d9801e9dc4d1f303840ad7d23b76c429a834b37",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3af85daeaf25567aa6f085152b58a6dc2da5f8c3159f01710038113cb0f3909",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76942e4163b4a45c40300098e06caa05f607bf6e084eb1afbc70bf08b29a89df",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "90dfce43bc244efb4c6b40f97fc71921517c9a8878b1ba9294ece520c079cd46",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1561b35f31aa950707e218921bcf45455058dd29b6f0a8bb6111a0eb05bf090",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ccd3916657cd934e7348b29c9e762b6585540f7a15f77e69c6238118159b6bb6",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bc14a0c7a73e1aed9568489037e1d7998e3abc6c3318f5ff68be33c84602ba5",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee667f2035f6d986eaf7e41f1b5947a5284bebb1b918233998a7d36eef5a25c9",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "140181d7d94de339c17c2c2a44165d054ad00851bc30f41dc3c7120c9320d09f",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "080693d050c3af899359220bb9ab593be87595112081613c5218eb3f82c99eb5",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8773b5710a1730d96bf358546deb8e1935a5bdb19f3b33b17c8902112a776d78",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ea69df96b4de70d94aa7c91f64efdf58db2ac30eaffd74f1bbfaeb7def013ba",
+    "mention_text": "Freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ad2dc40a5b89dfca2fabcc09ac29d4f2dd23073dad49bcb76ca0d132e5ac1fd",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fcda6052a894e61d497fbd90db5e22caff166711066199891f379dab36676b3e",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "806f70c24170e53ff8869513fad3fb143605b526eb9f793b61c56ecffc8c343f",
+    "mention_text": "Julius Wagner-Jauregg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c2310bed6bf7472fb0a906500d762d6da328405f48049cb3180f7d608cf9674",
+    "mention_text": "Academia Sueca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac4c3fdf7fbbc79e8290fb5ac43a92ace1cf0378528943f587501c4b7cc99fd1",
+    "mention_text": "Egas Moniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a129b28f8e23ca9c589ce3acbfff12d2f4d9e50a3bf9956549763faff300b42",
+    "mention_text": "Moniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10a374c3aa4eaa1fa7e68910574cd7536d8b885b1e1512b93c97bcc45b1ec4d4",
+    "mention_text": "Walter Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4aabfa3ac55429d8fb37e95e9f1f889202645d87b8cadbbd0fc202e96b0effa3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "393db576e48edb725b6256b6401b0db541e121dea02c2ec298d93e5247d7c6a5",
+    "mention_text": "Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e5c6655f644059c9f62f96770ca4459676903f07138aa5818f3eaf09e8c7890",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7908149365346e1c0c8c31c9c7f50755d5b70cebb6936b982c370bc4cb522ba",
+    "mention_text": "Gary Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b606a518cc181ea8eba7694fbfd477b9ad143c017b16f1527a10c664bc467aa3",
+    "mention_text": "Horgan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "486acd3446a68f46c6eaffde27af1e438d28e8970f6e2b517bf751d46cbf4210",
+    "mention_text": "Leda Cosmides",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af4f5e13acd8a12db6e7dbda4fe42c59fd9403c113fcb430498f9e15040b0ed3",
+    "mention_text": "John Horgan",
+    "categoria": "PESSOA"
+  }
+]

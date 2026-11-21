@@ -1,0 +1,388 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b075e889bc802df0aeee89ee7a6f98dd8e082f2e68b22c03fec9ba6f851e88af
+
+TEXTO:
+Modernidade: Conheça o homem dos 200 mil livros
+
+modernidade
+Conheça o homem dos 200 mil livros
+Sistema faz criação automática de textos
+DO "NEW YORK TIMES"
+Não é fácil escrever um livro, 
+mas Philip M. Parker parece ter 
+gostado do desafio. Parker gerou mais de 200 mil livros, conforme mostra uma busca avançada no site da
+Amazon.com
+usando o nome da editora dele. 
+Esse montante faz dele, segundo suas próprias palavras, "o 
+autor mais publicado na história do planeta". E ele ganha dinheiro com essa atividade.
+Entre os livros lançados sob 
+seu nome estão um sobre a acne rosácea e outro sobre o mercado de tapetes de banheiro na 
+Índia. Não são livros convencionais: talvez fosse mais correto chamar Parker de compilador, e não de autor.
+Ele, que também trabalha 
+como professor de ciência da 
+administração na Insead (uma 
+faculdade de administração 
+com campi em Fontainebleau, 
+na França, e em Cingapura), 
+desenvolveu algoritmos de 
+computador que coligem informações de acesso público a respeito de um determinado assunto -seja conhecido, seja 
+obscuro.
+Como funciona
+Em um vídeo colocado no 
+YouTube, Parker mostra a criação de um livro. O computador 
+recebe uma tarefa: avaliar a demanda latente por remédios 
+antipsicóticos em todo o mundo com base nos dados de venda desses produtos nos EUA. 
+"Usando um pouco de inteligência artificial, criamos um 
+programa que imita o processo 
+de raciocínio de alguém que faria um estudo do tipo", afirma 
+Parker. "No entanto, em vez de 
+levar meses cumprindo essa tarefa, o computador a realiza em 
+cerca de 13 minutos."
+Um editor escolhe os anos a 
+serem analisados, mas o computador escolhe o modelo ideal 
+para extrapolar as vendas em 
+vários países. E, em ordem alfabética, elabora uma tabela para 
+cada país.
+"Depois, ele abrirá um documento de Word e transportará 
+a informação para lá como um 
+autor de verdade faria, repassando a informação de sua 
+mente, por assim dizer, para as 
+planilhas", explica.
+Parker ampliou sua técnica 
+para abranger palavras cruzadas, poesias simples e até roteiros para animações do tipo game show. E deu início a esforços para criar novos algoritmos 
+capazes de redigir romances. 
+"Já comecei a elaborar isso", 
+disse. "Mas há tantas partes a 
+serem levadas em conta..."
+Crítica
+A qualidade dos livros nem 
+sempre agrada. Um crítico da 
+Austrália comentou sobre o 
+trabalho referente à acne: "A 
+informação é tão genérica que, 
+para surgir um livro-fonte sobre o próximo tema de medicina, bastaria realizar mais uma 
+busca e algumas substituições".
+Parker concorda: "Se alguém 
+tem talento para usar a internet, o livro não serve de nada", 
+mas disse que, para pessoas 
+pouco afeitas à rede mundial de 
+computadores, guias como esse 
+revelam-se úteis.
+Parker acrescentou: "Meu 
+objetivo não é fazer com que o 
+computador escreva frases, 
+mas fazer com que realize as tarefas repetitivas que seriam 
+dispendiosas demais para serem realizadas de outra forma." 
+Ele diz trabalhar para prover 
+conteúdos que o mercado negligenciou por falta de um público-alvo -uma língua, uma 
+doença ou um produto relativamente obscuro. Como os livros 
+são impressos a pedido do 
+cliente ou entregues por meio 
+eletrônico, já há lucro depois da 
+primeira venda, afirmou.
+Tradução de
+RODRIGO CAMPOS CASTRO
+SERÁ QUE CHEGA?
+Entre esta semana e a que 
+vem, devem chegar às lojas físicas e virtuais os celulares e as 
+TVs portáteis de 3,5 polegadas 
+com receptores de TV digital 
+-ao menos as televisões da Telesystem e da Toshiba e os celulares da Samsung e da Toshiba 
+(disponíveis pela Vivo), segundo essas empresas.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "435d5cb1ed5bc33d3e560fddb3b7f3e7f6a3694153badea0f4933370cfd29e57",
+    "mention_text": "NEW YORK TIMES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1ebdaf463b019369cd025904ceacef2cf29c052b2def650d82cf08bd2f7d79f",
+    "mention_text": "Philip M. Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "276e2ef5b1e3607d5d12780b70e1c76c324d4a70738b171969ec753dac09daf8",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac030ca0a6e2529fe5dab2b46cdd243681f30076cf5b169cadbed23e24d06461",
+    "mention_text": "Amazon.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e876808caaedf46fea1e64587091fd78e503968cb6c4d7b81577a7a343bebb7",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ace78002cdf26675dab9b666ef3d6862d5a7c8fe78c4045da47189d0287b7283",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68ae7f24399ca7a433a8dd26c9e4842ec79d28a2604e9974414857042fffb8f2",
+    "mention_text": "Insead",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8df29f000cb7456b3980d045c951296f146578c33983d8b19cf56c091e0a6a84",
+    "mention_text": "Fontainebleau",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ecb7dc4a362cb7e4340a6fd8bcd3bef3347e32251fcb908129a323fcc5f5c34",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b03738f2c64effc406ab52f6bef07282e6acb0dba51723aeb9ea67ac94db9eb",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0ea64dc5fbf2f6a0ef215c8bc5844408aaac2564a5f6a51b8904ec8e41688fe9",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d511a2a32b1a6b800a2673786a6f07e6ded90614c419d115a73018be42e5997",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e78b9f7666b3d6cfe4a564597a9bd7bb282e5c95c0d672a7e641de8a60d0036",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ac0445430c119846cfd996653c4f5b800316c014e35f135b6c11efc50a7336d",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f2832fcbbddcafef707ad27a212a6d21547c38263e9b6d63487529c68efb98c",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be300e0db37683f5a585029abb4fa42dff0fb3bbfdb760da9d22f8125fd6741e",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a67e19799cc7bce50829a8e63fa810836bc85704cd369cc25d28c22e950e8af",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b0397d070cb871aea75c0473e483cfc5676912bccf731f1860589d0bd78767c",
+    "mention_text": "Parker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2383349350e4dcf99e2f1afae9abd4433360c256aa0a62ada3107fb38a42527f",
+    "mention_text": "RODRIGO CAMPOS CASTRO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e2d7356d8b647950812275085f02080fe5e4e203ac274d2f11f9e57679ba936",
+    "mention_text": "Telesystem",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14defaba7d2e20c3c87d261eaa0d0696670be567b14ad667e864b788448e99ed",
+    "mention_text": "Toshiba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f764e04f52630f2c85e89dbaf51d6e63ca064711b4b93474c7d1b841780b30e",
+    "mention_text": "Samsung",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5956de6cdb1aa7dd7e78266a21e4a781d35d3343a70e07f9e586cfb91e1c51fd",
+    "mention_text": "Toshiba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08c95835a412ede517185391d002f71e69510d4c4cf506b8069629eedf8fe555",
+    "mention_text": "Vivo",
+    "categoria": "ORGANIZACAO"
+  }
+]

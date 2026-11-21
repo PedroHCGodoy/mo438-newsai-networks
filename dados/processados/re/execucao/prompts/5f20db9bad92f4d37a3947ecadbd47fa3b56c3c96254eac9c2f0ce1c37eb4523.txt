@@ -1,0 +1,336 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 4366f0376248ec1eb225384caa84d5abab20d842288655069dcc4cdf82adb072
+
+TEXTO:
+A inteligência artificial vai mudar o futuro da música?
+
+Neste ano, a cantora e youtuber Taryn Southern celebrou o lançamento do seu álbum pop "I AM AI", que foi produzido inteiramente com um software de inteligência artificial (AI, na sigla em inglês). Ela usou um programa chamado Amper, um gerador de música open source.
+Após fornecer informações como duração, tempo e chave, Southern deixou que o software fizesse a composição e a produção. Depois ela reorganizou as várias partes fornecidas para criar uma música estruturada. Sua estreia foi saudada como o "primeiro álbum produzido inteiramente com um software de inteligência artificial".
+Parte de uma nova onda de composição de música AI e startups de produção como Jukeeck, Groov.AI e Humtap, o Amper é um serviço on-demand, que oferece músicas originais baratas e sem royalties para todos, de cineastas a anunciantes.
+Taryn Southern
+Como muitas tecnologias revolucionárias, a inteligência artificial gera receios de ruptura e redundância. Para compositores e produtores independentes que criam música original para o mercado publicitário, por exemplo, um aplicativo que pode fazer o mesmo trabalho em um prazo menor e por menos dinheiro é uma perspectiva assustadora.
+John Groves, diretor da Groves Sound Communications e um peso-pesado internacional em termos de música para fins comerciais, não está preocupado com a possibilidade de se tornar redundante. Na verdade, ele disse estar "muito animado" com o avanço da inteligência artificial.
+"Isso irá causar arrepios na nossa indústria", disse. "Mas temos que dar uma olhada no ritmo e perceber que as novas possibilidades superam os efeitos disruptivos."
+Já Nick Collins – autor de uma série de livros sobre música e cofundador da Chord Punch, uma gravadora independente que lança trabalhos com base em algoritmos – lembra antigos temores da indústria musical em relação a novas tecnologias.
+"É como o sindicato dos músicos que protestou contra a chegada do MIDI (Interface Digital de Instrumentos Musicais) na década de 1980", observou. "Olhe para todas as possibilidades criativas que surgiram a partir dessa tecnologia."
+Valerio Velardo, diretor da Melodrive, startup pioneira da área de música dinâmica para videogames (trilhas sonoras que mudam de acordo com eventos no jogo), afirmou que o mundo está às vésperas da "próxima onda de democratização" dentro das indústrias criativas.
+"Hoje em dia todos têm uma câmera digital de alta qualidade em seu telefone, mas isso não significa que os fotógrafos profissionais tenham desaparecido", disse ele. "Acho que será o mesmo com a AI. Duvido que o papel do compositor será prejudicado por esta tecnologia."
+COMPUTADORES CRIATIVOS
+Mesmo assim, a estreia bem-sucedida da AI dentro da indústria da música pop desafia os preceitos comuns, em especial o de que a imaginação artística e a criatividade são traços inerentemente humanos, que não podem ser reproduzidos por computadores.
+"A música representa um desafio", disse à DW Steven Jan, pesquisador de música da Universidade de Huddersfield. "É uma das exigências mais cognitivas, mecânicas e emocionais de todas as atividades humanas, o que dificulta sua criação por um computador. É a última fronteira da AI."
+"Ainda estamos em uma fase de criatividade exploratória", disse Velardo, referindo-se à forma como os sistemas AI são capazes de aprender e operar de forma criativa dentro dos limites de um espaço conceitual e, em última instância, imitar estilos de música estabelecidos.
+Até o momento, no entanto, a criatividade transformadora, ou a capacidade de criar novos estilos musicais além desses limites conceituais, permanece fora do alcance. Velardo chama isso de "o santo graal da criatividade computacional".
+SOM HUMANO
+Então como a AI afetará a indústria da musical? Será que ela levará a uma maior previsibilidade na música? Collins diz que não, ressaltando que há "um número suficiente de programadores trabalhando em diferentes projetos para criar um ambiente diversificado".
+A incorporação de computadores ao processo criativo já permitiu a quebra das divisões de trabalho entre compositores e intérpretes. Embora o advento da música eletrônica e de diferentes softwares já tenham provocado uma enorme onda de democratização do processo de criação, a AI poderia levar esse processo um passo além.
+Mas o artista desaparecerá? Pascal Pilon, diretor da Landr, uma startup que usa big data e machine learning (aprendizado automático) para automatizar o processo final de produção musical conhecido como masterização, não pensa assim.
+"Música é contar histórias, gostamos da personalidade do artista. Não acho que as pessoas vão querer ouvir música feita exclusivamente por computadores", disse ele.
+De fato, a maioria das pessoas que desenvolvem essas tecnologias são compositores. O artista audiovisual e compositor eletrônico vanguardista Ash Koosha disse ao jornal The Guardian: "Estou tentando preparar música digital de uma maneira que ela não perca os valores humanos e não resulte não caminhe numa direção em que você simplesmente deixa a máquina decidir o que é música."
+O musicólogo John Blacking escreveu de maneira semelhante em seu livro How Musical Is Man? (sem tradução no Brasil) que a música é, em última instância, "o som humanamente organizado".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7d6b4fdafc7dc6a994ecb6ccf49fc351a28fa1743bd9508a13a0912e04cc808d",
+    "mention_text": "Taryn Southern",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74ea03f8ac77f86b2b895ca3257326367c0bd4b2dd2e4c0e4117bddcb8200284",
+    "mention_text": "Amper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a10d0f01d1373a5faa911a911a83a70a927d69c6ca1faa9622026b4b14a6469d",
+    "mention_text": "Southern",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e57d0bec689ca4961355655e9029b193096777bb9ab14a0a23c2c610f0fcf844",
+    "mention_text": "Jukeeck",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "900e12e98cddee07d5cd10d4479a8b0fc3cfc0ebdd1d82163e4cf489bf8ce98f",
+    "mention_text": "Groov.AI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "985a3838e42cacf5cc60f7e6300bb1cdbe72cb16fec89807f485842894982d51",
+    "mention_text": "Humtap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2685af71d44b41a98bcb7860f8712fde0c29539b2bbcd15bd78c542709d4173b",
+    "mention_text": "Amper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74a58c972a9b6574e6da74ef99abb65e3b47efe8b86587131837d7bd6fba3840",
+    "mention_text": "Taryn Southern",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1576f62746583d62a2780ff6b549d988bf8f4d65fc638e65bd987fb54a68daec",
+    "mention_text": "John Groves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b4f3c25ac596b87e1238ce6361a1b0a1ca2f3decb0de74309889f3260694d6f",
+    "mention_text": "Groves Sound Communications",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dcd3860580632d1530301713a6fd20ae46a0046d056c2b30fac47d9db305c266",
+    "mention_text": "Nick Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4843f4da7d758e3cf47a50e61f866a5c9dfa4ca095126ae61c6e1bf225512651",
+    "mention_text": "Chord Punch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da8ff65dcfaf8447d40e1e262b0fb01cf2f033d1f45a626fe8bd820daf712749",
+    "mention_text": "Valerio Velardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "027a71a00f3cdfa4e603090d77c1be2e417fa036f9230200b950fef83c1c9ea6",
+    "mention_text": "Melodrive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "330250d4179fbc4b376897b871f169719ca78c29bbc2e510edd085d8ffff8ef3",
+    "mention_text": "DW",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "298ac48704adee7766c7425cff95186a9b05ce64cec47e1fa9e4e0bcd8b1a874",
+    "mention_text": "Steven Jan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e383ee54e7ee610da9665826f53fa5121ad5923b14f0efb666c8d39acf597145",
+    "mention_text": "Universidade de Huddersfield",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c61eca09ae4535ce8519fa758279ecb60dba1fdf3b9aaa174cd4d8620f9cab1",
+    "mention_text": "Velardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7864467beefc828494a7adf467e19d5bc41b8627aec45c47e4a6375c868e220",
+    "mention_text": "Velardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd327788c5d35e5e92dc968e12d3b4c219b434fec82f338ab4e5b6d67758ab6b",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d78e3e3c99844d4a359f62e969f5e9812736dab052ffd70e7ef44399f89b2978",
+    "mention_text": "Pascal Pilon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "878279dd0e3e6aa59fc30a3ca458a24227caecd3d7d879da227640b301873dd1",
+    "mention_text": "Landr",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05c60cea1afd05551b9353de5683f4cd72ca8edb9122a6fb27cf78712780aba1",
+    "mention_text": "Ash Koosha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f667584b9223b0c5dccec6fe23ba05c3a397687335f10d60f1ab838f93632aae",
+    "mention_text": "The Guardian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06ba467e2ff4938309170d0a6072a20333e6a1b7d1911ecadd538ad6abb5946a",
+    "mention_text": "John Blacking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ffeef1db9b7b049619b163ddc8ae09fd74c271957a9e6b8c26cf795036d2e298",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

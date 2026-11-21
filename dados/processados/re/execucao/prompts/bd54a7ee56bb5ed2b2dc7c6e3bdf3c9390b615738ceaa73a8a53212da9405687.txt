@@ -1,0 +1,320 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f4e297e32e5b95df0c502d8541f5b0823ba742eea81b7ba0513147312c05264a
+
+TEXTO:
+Gigantes da tecnologia faturam o equivalente ao PIB da Suíça
+
+​As cinco maiores empresas de tecnologia do mundo, em 2017, faturaram juntas US$ 667,5 bilhões. Para se ter uma dimensão desse volume de recursos, o valor é superior ao PIB (Produto Interno Bruto) da Suíça, em 2016. A diferença, de quase US$ 8 bilhões, por sua vez, quase equivale ao PIB do Haiti.
+De acordo com a Economática, fornecedora de dados financeiros, Apple , Amazon, Google , Microsoft e Facebook tiveram juntas uma receita 19,67% superior a registrada um ano antes.
+Juntas, as companhias lucraram US$ 93,7 bilhões, sendo a Apple a responsável por mais da metade deste montante --a dona do iPhone lucrou US$ 50,5 bilhões no período.
+Apenas a Alphabet, controladora do Google, e Microsoft tiveram queda de lucro de janeiro a dezembro, ainda que suas receitas tenham aumentado, assim como a das rivais.
+No Google, o lucro foi de US$ 12,6 bilhões, uma queda foi de 35%. Pesou no resultado a multa, de 2,4 bilhões de euros , imposta pelas autoridades regulatórias europeias contra a empresa, sob a acusação de favorecer ilegalmente seu mecanismo de comparação de preços de produtos. A empresa ainda está recorrendo da ação.
+Ainda que as vendas da Microsoft tenham sido alavancas pelos negócios na área de computação em nuvem, o resultado foi afetado pelo pagamento de US$ 13,8 bilhões em repatriação de ganhos fora dos Estados Unidos.
+A regra faz parte da reforma tributária aprovada pelo presidente Donald Trump, em dezembro, para estimular a economia norte-americana. Entre as mudanças está a cobrança maior de impostos para companhias que tenham de repatriar lucros oriundos de multinacionais e afiliadas estrangeiras.
+Por enquanto, entre as cinco gigantes de TI, apenas a empresa e Bill Gates foi afetada. No entanto, a Apple anunciou em janeiro que vai repatriar para os Estados Unidos parte dos US$ 252 bilhões que tem em reservas internacionais e pagar em torno de US$ 38 bilhões em impostos em 2018.
+MAIS SERVIÇOS
+A dependência maior de serviços foi a regra das cinco companhias de setembro a dezembro. No intervalo, a Apple faturou US$ 88,3 bilhões, ainda que as vendas de iPhone tenham caído pela primeira vez. A contribuição maior veio do seu relógio inteligente, o Apple Watch, e da divisão de serviços, que inclui a App Store e a Apple Music.
+No Google, contribuiu a maior demanda por publicidade on-line de empresas em seu buscador. Além das vendas da Alexa, sistema de inteligência artificial, a Amazon faturou mais com a oferta de computação em nuvem, a exemplo da Microsoft.
+No Facebook, os usuários reduziram o tempo gasto na plataforma em mais de 50 milhões de horas. Ainda assim, a rede social foi a que apresentou maior incremento de receita e lucro entre as rivais.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9af3f21cf1f37c899bdd28e4bd0b86f9718e4d9f5cfb4f761a7714358374daee",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a00ddd2dac0ce9f6773a6164a0a0842aca26076d0eb75d073b8d148f3ab55e8",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f72196731022b4d5328789c00c1f09ae9811c8593eae32ee3f4f995081cfbf26",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c0c136966651611f352fac941ae5bc99f49cfebb8107772ed26bf1a4413ee000",
+    "mention_text": "Economática",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7589c9faf7b09395eaceac9f59890a138ef03e62095ce6dc6b766e06af0106c6",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c8e9995e4491ecafb9d50715d9e75e12691767a564d4f0f532d74beefce3a01",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd06c94500dc0582093703e2a62562a04db3822846cfa603618b0bce49f90651",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ce382c46cd188b0b8fe282565f0fda4e804eee15e360024b9b083ecba41061e",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81d9f374220cf9b6e0e968117ea98f78d8b29fe434bbc008e3c36c969d9bfc8b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "adcd95350cd395535800ba6719bcc0ddd5f640f372966ea9e35dd4dcdcaaa61a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b652a9ff53db63646419d62ed7dd4b1bad7f99d29b81ea5a3f4223b73f41d05c",
+    "mention_text": "Alphabet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "252e40502c083e13ebd4c242831116592ff2fd49bc74ab581b97bbed44a74a39",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d79546214caac3700eefaadc1fcd999fe7638c9131505ddd306450c468026a7",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71fa86469da2a3335c83c2861fbcbdcdcca9192372824a57894ce6f43f3869b8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ad7b881fffd8b9da5ffa4194cf84c42f687a705ef3b22381ac8d1f9111aa035",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c056d34fd4fc843b0917e9eec73c4cffc7e312b544b93be09bfc6cb22a31f2f",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40a02092b3cf28013e1d1f997e27c1083e0177b6afe494dace756ffd6f1d5d3a",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c78e8ab20a5b6e891cb4eaf85d60f1e9226ebdb3662d8f4c9e2b09ccd51ce0c",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "571ad37bc549cb9154671f8a3a37ddab9dd4299bdbd829622edfcced1afa00a3",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3443d67f1e7eb62eaac815d93f1f79a3ca95c8be2f975f79232f65e609ba9b6c",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "68516ef6f7364749da5fb5262486da201289836ad8de7d8861ecf91b67931dd6",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "536981fbbe2a2133a208d45d685168a19dc49e671f94d63ecf636352983b8d84",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6096e688ad620e5b424ba5f1729a1676c6698644693deaa3b57759548459ec50",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "471e5ea8fb5e12d7a3cf31f1de309217c5dd74810a3818a770c75c0765e94a04",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3ce50f1eff962a25960c6667dc87a6548ad51912afcc765a420934df9b60d8c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  }
+]

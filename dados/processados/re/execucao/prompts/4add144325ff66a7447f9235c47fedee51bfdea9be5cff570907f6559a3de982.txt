@@ -1,0 +1,473 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2c1ca9ab5f2dad53252200c4ce389bf823d8575cf98ec637beaab96d53134444
+
+TEXTO:
+Comportamento / Entrevista - Scott Fahlman: Basicamente, sou uma pessoa feliz
+
+comportamento
+ENTREVISTA
+SCOTT FAHLMAN
+Basicamente, sou uma pessoa feliz
+Inventor dos sinais gráficos que evidenciam emoções dos internautas critica emoticons animados
+DIÓGENES MUNIZ
+EDITOR DE MULTIMÍDIA DA FOLHA 
+ONLINE
+No dia 19 de setembro 1982, o 
+cientista norte-americano 
+Scott Fahlman, então com 34 
+anos, acordou tarde. Já passava 
+das 11h em Pittsburgh, Pensilvânia, quando ele pulou da cama. Como de costume, a primeira coisa que fez foi se debruçar sobre o computador.
+Exatamente às 11h44, disparou 
+um e-mail para um fórum on-line na Universidade Carnegie 
+Mellon. Nascia ali o primeiro 
+emoticon da rede.
+"De vários ângulos, aquela foi 
+uma das coisas mais desinteressantes que já fiz na vida", diz 
+Fahlman, hoje com 62 anos, em 
+entrevista à
+Folha
+por e-mail 
+de seu escritório na Carnegie 
+Mellon.
+Seu recado foi curto e objetivo. Teve pouco menos de 170 
+caracteres. Cansado de mal-entendidos surgidos na troca de 
+mensagens entre pesquisadores e estudantes, que misturavam assuntos sérios com recados humorísticos quase nunca 
+interpretados de forma bem-humorada, Fahlman sugeriu: 
+quando estivessem contando 
+piadas, colocariam :-). Caso enveredassem para temas importantes, a carta eletrônica viria 
+com um compulsório :-(.
+Seu e-mail é o mais antigo registro do uso de emoticon em 
+uma rede -mais especificamente na Arpanet, embrião da 
+internet. Para muitos, é a própria invenção da carinha, embora o pesquisador admita haver outras tentativas antigas de 
+montar uma expressão facial 
+por meio de caracteres.
+Alguns meses depois da 
+mensagem pioneira, as carinhas de Falhman tinham se espalhado por outros fóruns. 
+Conforme seu e-mail circulava 
+pelos EUA e em outros países, 
+novos emoticons iam surgindo. 
+De óculos escuros, boca aberta, 
+com boné e até uma versão do 
+Papai Noel.
+Fahlman, um prestigiado estudioso de inteligência artificial, diz nunca ter recebido um 
+centavo por sua criação. Mas se 
+mostra orgulhoso da invenção 
+ao rechaçar os emoticons animados. Ele também relativiza a 
+ideia de que o uso desse tipo de 
+muleta verbal torne as pessoas 
+mais preguiçosas na hora de articular ideias.
+"Nem todos têm a habilidade 
+literária de [William] Shakespeare ou [Mark] Twain, e mesmo os gênios têm seus dias 
+ruins", diz, em sua página na 
+internet. Além disso, "se Shakespeare estivesse fazendo 
+uma breve nota de reclamação 
+sobre a falta de vagas de estacionamento, ele provavelmente ia produzir a mesma prosa 
+desleixada que nós".
+FOLHA - O senhor já conseguiu algum dinheiro com sua invenção?
+SCOTT FAHLMAN -
+Eu nunca tirei 
+dinheiro disso e nem acho que 
+seria possível. Se as pessoas 
+precisassem ter uma permissão 
+ou pagar royalties para usar os 
+símbolos :-) e :-(, elas simplesmente procurariam outra coisa 
+para usar no lugar. Então, para 
+o bem ou para o mal, esse tem 
+sido o meu pequeno presente 
+para o mundo. Uma ou duas 
+mesas de palestras entraram 
+em contato comigo, mas estou 
+ocupado demais com as pesquisas para gastar tempo dando 
+palestra por dinheiro.
+De qualquer forma, não tenho muito a dizer sobre os dez 
+minutos da minha vida em que 
+elaborei o :-) e coloquei numa 
+mensagem. Vista sob vários ângulos, aquela foi uma das coisas 
+mais desinteressantes que já fiz 
+na vida.
+FOLHA - Que tipo de trabalho o senhor tinha antes de sugerir o uso de 
+emoticons em um grupo de e-mails?
+FAHLMAN -
+Eu tinha o mesmo 
+emprego que tenho hoje: sou 
+professor de pesquisa na Universidade Carnegie Mellon em 
+Pittsburgh, trabalhando com 
+inteligência artificial -sobretudo em tentar reproduzir o conhecimento do senso comum 
+em um computador e fazê-lo 
+entender a linguagem natural.
+Estamos progredindo, mas é 
+uma equação muito difícil.
+FOLHA - O que o senhor pensa sobre os emoticons animados, usados 
+sobretudo em programas de mensagens instantâneas?
+FAHLMAN -
+Não gosto daqueles 
+círculos amarelos e dos emoticons animados. São feios, meio 
+que estragam toda a diversão.
+É mais desafiador tentar descobrir maneiras de expressar as 
+emoções humanas usando só o 
+conjunto padrão de caracteres 
+do alfabeto romano.
+Suponho também que eu prefira esse tipo de emoticon porque desempenhei um papel na 
+sua invenção.
+FOLHA - Essas carinhas tornam as 
+pessoas mais preguiçosas na hora 
+de se expressarem?
+FAHLMAN -
+Elas economizam 
+esforço, se você quiser indicar 
+explicitamente que algo é uma 
+brincadeira.
+O que é preguiça para alguns 
+é eficiência para outros.
+FOLHA - Qual seu emoticon favo- 
+rito?
+FAHLMAN -
+Eu recebo crédito 
+pelos emoticons :-) e :-(.
+Outro que as pessoas usam 
+frequentemente e que eu gostaria de ter inventado é a carinha 
+piscando ;-). E talvez o emoticon que grita :-O.
+FOLHA - O senhor se considera 
+uma pessoa mais :-)
+ou :-(?
+FAHLMAN -
+Bom, há algumas 
+coisas ruins no mundo, outras 
+boas e há ainda as coisas neutras. Cabe a cada indivíduo focar no :-( ou no :-).
+Tive dias ruins, algumas vezes sem qualquer motivo óbvio, 
+mas, felizmente, me recuperei 
+rapidamente. Tenho tido muita 
+sorte na vida. Basicamente, sou 
+uma pessoa feliz.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9ecea15afbf613c72dcf36471ec31e303306e76acebba5d7ca10d725d0c88820",
+    "mention_text": "Scott Fahlman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3dc527d6dd5fae95a7242af6b6ebe9a75cef00b3d4de581ff3a1292e71304769",
+    "mention_text": "SCOTT FAHLMAN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da0871e82ec036ff9ea179ed20030a0ad289901255682517e54d72144a73374e",
+    "mention_text": "DIÓGENES MUNIZ",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35849c55e853ef51d59a732a68de905430cfd6ab574aab6a13274f63c76cb9d9",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da10da40d380ec565c6d07816c2e14444c6b3ee46a8834ef7e09afb8e7c155b3",
+    "mention_text": "Scott Fahlman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2bf59148fd93e0edbde4b47891270e7af3025cc25d949dccbfe42f7078fcba74",
+    "mention_text": "Pittsburgh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d21e54bcd6c42729b00153be1fb32a93aa2b6942609496a528270276235836a7",
+    "mention_text": "Pensilvânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86baf6443012ca7374433ef112a3d002d76e3227246b282a0a541aa5954a35b4",
+    "mention_text": "Fahlman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a97c923f784f55cfcd2b0f0e92782af3e0b278086198238c7f379c825f99fac8",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b750806974803de21cf5f794d40dc0d8b01f770cb5d02414fef7d5389390bade",
+    "mention_text": "Fahlman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01af4c15e552af89d3ce58d20270e6bf5ff90d78b6f8ecb43a8b74005ed376c4",
+    "mention_text": "Arpanet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20be0f42a7e32e23c15654363ada5f1d17397272698ba47a9f792f2ef486b9c6",
+    "mention_text": "Falhman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "698157b89a606d85c089ca5dd4c44418cd0b84ab0cd71e753d3394ae7087d985",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ada10ee22bf3fcb99ce0404307663f23492546e1dfd6278be5c83a0340266a80",
+    "mention_text": "Papai Noel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a2ff25e819c3f0a87f64f3f104b3cfe6753603cd587cc0dfa5cb241fa194d28",
+    "mention_text": "Shakespeare",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a516f472d5469111154edd97164411b2b47e961bcbbb03f62c1e0b39c97b7f5",
+    "mention_text": "Twain",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31e6be83c82be1d4182d1b6aa49622438eca8a7ad460e5c64b38be0a98caf59b",
+    "mention_text": "Shakespeare",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7aa827fa73ead68a402fc4df5d9b65fdbf9cdf87f5957db1da4e8fc845bc12af",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b27b648a11e43b450c6da3538eacf4d062d456b8e9ecb879ef16607c8e79100d",
+    "mention_text": "FAHLMAN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "569e1629901a1ac0e9d128d74ff8640d115b8f46f647e2ed13c00e268520eeca",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b8e60aebd68020ad374eaaa2b712043ab017a741585a7ec7e6d7ce120c58133",
+    "mention_text": "FAHLMAN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9de05cdfaae71629f296afe2995c6b5951f6b905f4cf5dd3bd65ff542f82511f",
+    "mention_text": "Universidade Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11862bd978d5c4935c6a29199e9a2c49034f930d7f5b644838df60177262f7d7",
+    "mention_text": "Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70ad3d049f900b253a5735c71506a4c24678a1920d684d011d7b8447671b6176",
+    "mention_text": "Pittsburgh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eda7a9d4bb81959699325a0f1714c535869001c4e6406b6e54ccc2afeff00452",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bef9f5915501f93a046f29fdab61f08c7c29502bdbe64e2eb569cb2199596bb",
+    "mention_text": "FAHLMAN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b025f08c5b2be8e2f4c4ab2f571c38ab330bdf8d0165131d0e9edb78fae2ea1c",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53e4914f1b05ba43837f12a0530ecc2359849e821cfab5d4571ca1cd9da66525",
+    "mention_text": "FAHLMAN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d040f05c617bcb6523c963588c0160d70496b50f77f2a182903926ba94440a06",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6ed19d3fec3299deab33a06aa24847af8d94568adda41ab4ad3a7b67e08a057",
+    "mention_text": "FAHLMAN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "099f63b3d3306bd6d37d02aa87b6ef9c1f5d86097d82830cc08bfa26b5805149",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  }
+]

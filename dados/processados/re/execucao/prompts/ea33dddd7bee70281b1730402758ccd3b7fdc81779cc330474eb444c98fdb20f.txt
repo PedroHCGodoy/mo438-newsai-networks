@@ -1,0 +1,1363 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f0d17cbfb9b26452a793dc13a03fd236b1eb3afaad036e13037d13e3c4acc49a
+
+TEXTO:
+Ribeirão -
+
+Cinema - Sinopses
+ESTREIA
+PLANETA DOS MACACOS - O CONFRONTO
+Dawn of the Planet of the Apes. EUA, 2014. Direção: Matt Reeves. Com: Gary Oldman, Keri Russell e Andy Serkis. 130 min. Não recomendado para menores de 12 anos.
+A crescente comunidade de primatas geneticamente evoluídos, liderados por Cesar, entra em contato com humanos sobreviventes pela primeira vez em uma década, desde que a gripe símia dizimou a raça humana. O contato entre eles leva a um conflito e uma série de eventos que ameaça levar as duas raças à guerra.
+Ribeirão ( Cinemark 1, 4 e 5; Cinépolis Santa Úrsula 2, 3, 6 e 7; Cinépolis Iguatemi 1, 2 e 4; UCI 1, 10 e 11), Araraquara (Cine Jaraguá 2 e 4; Cine Lupo 1), Franca (Cine Franca 1), Barretos (Centerplex 1), Matão (Cine Teatro 1), São Carlos (Iguatemi 1 e 3, Cine São Carlos)
+REESTREIA
+FORREST GUMP: O CONTADOR DE HISTÓRIAS
+EUA, 2005. Direção: Robert Zemeckis. Com: Sally Field, Tom Hanks. 142 min. Não recomendado para menores de 14 anos.
+Quarenta anos da história dos Estados Unidos, vistos pelos olhos de Forrest Gump um rapaz com QI abaixo da média e boas intenções. Por obra do acaso, ele consegue participar de momentos cruciais, como a Guerra do Vietnã e Watergate, mas continua pensando no seu amor de infância, Jenny Curran.
+Ribeirão ( Cinemark 6)
+THE LUNCHBOX
+India, França, Alemanha, 2013. Direção: Ritesh Batra. Com: Irrfan Khan, Nawazuddin Siddiqui, Nimrat Kaur. 104 min. Não recomendado para menores de 12 anos.
+O Mumbai Dabbawallahs é um serviço de entrega de comida bastante conhecido em Mumbai, na Índia. Em The Lunchbox, um erro na entrega faz com que uma pacata dona de casa conheça um homem que está na fase final de sua vida.
+São Carlos ( Cine Sesc São Carlos)
+EM CARTAZ
+AMAZÔNIA **
+Amazonia. França/Brasil, 2013. Direção: Thierry Ragobert. 86 min. Livre.
+Após um acidente de avião, um macaco criado em cativeiro fica perdido na floresta amazônica, tendo que encontrar um meio de sobreviver.
+Ribeirão (UCI 1)
+AVIÕES 2 - HERÓIS DO FOGO AO RESGATE s
+Planes Fire & Rescue. EUA, 2014. Direção: Roberts Gannaway. 84 min. Livre.
+Na sequência da animação de "Aviões", um avião de corridas forçado a se aposentar entra para uma equipe de bombeiros e luta contra um grande incêndio.
+Ribeirão ( Cinemark 7; Cinépolis Santa Úrsula 2 e 8; Cinépolis Iguatemi 2 e 5; UCI 5 e 11), Araraquara (Cine Jaraguá 4; Cine Lupo 2), Franca (Cine Franca 4), Barretos (Centerplex 3), Bebedouro (Cine Pop), Jaboticabal (Cine Uniplex), São Carlos (Iguatemi 2), Matão (Cine Teatro 2), Sertãozinho (Star Cine 1)
+CAUSA E EFEITO **
+Brasil, 2013. Direção: André Marouço. Com: Matheus Prestes, Luiz Serra e Rosi Campos. 105 min. Não recomendado para menores de 14 anos.
+Ao perder a mulher e o filho em um acidente de carro, um policial se torna justiceiro. Quando se apaixona por uma mulher que deveria matar, ele pede ajuda a um padre, a um pastor e a um espírita.
+Araraquara (Cine Lupo 2)
+COMO TREINAR O SEU DRAGÃO 2 **
+How to Train Your Dragon 2. EUA, 2014. Direção: Dean DeBlois. 105 min. Livre.
+Os dragões convivem pacificamente com os humanos, mas desta vez todos precisam se juntar para lutar contra Drago, vilão que deseja controlar os animais.
+Ribeirão ( Cinemark 6; Cinépolis Santa Úrsula 7; Cinépolis Iguatemi 3 e 4; UCI 9), Araraquara (Cine Jaraguá 3; Cine Lupo 3), Franca (Cine Franca 3), Barretos (Centerplex 2), Jaboticabal (Cine Uniplex), Matão (Cine Teatro 1), São Carlos (Iguatemi 2, Cine São Carlos)
+A CULPA É DAS ESTRELAS **
+The Fault in Our Stars. EUA, 2014. Direção: Josh Boone. Com: Shailene Woodley, Ansel Elgort e Nat Wolff. 125 min. Não recomendado para menores de 10 anos.
+Hazel e Gus são dois adolescentes que se conhecem em um grupo de apoio a pacientes com câncer. Eles compartilham o desdém por tudo o que é convencional.
+Ribeirão ( Cinemark 7; Cinépolis Santa Úrsula 1; Cinépolis Iguatemi 5; UCI 4), Araraquara (Cine Jaraguá 3), Franca (Cine Franca 3), Barretos (Centerplex 2)
+ELES VOLTAM
+Brasil, 2013. Direção: Marcelo Lordello. Com: Clara Oliveira, Elayne de Moura e Georgio Kokkosi. 95 min. Não recomendado para menores de 12 anos.
+Cris tem 12 anos quando é deixada, ao lado do irmão mais velho, na beira da estrada por seus pais. Ela espera a volta dos pais e do irmão, que foi até um posto de gasolina pedir ajuda. Sem notícias deles, Cris resolve percorrer sozinha o caminho de volta para casa.
+São Carlos ( Cine Sesc São Carlos)
+OS HOMENS SÃO DE MARTE... E É PRA LÁ QUE EU VOU *
+Brasil, 2014. Direção: Marcus Baldini. Com: Mônica Martelli, Paulo Gustavo e Daniele Valente. 108 min. Não recomendado para menores de 14 anos.
+Fernanda tem dificuldade de encontrar um amor. Ela se envolve com diferentes tipos de homens e, a cada tentativa, acredita ter encontrado o amor da sua vida.
+Ribeirão ( UCI 8)
+JUNTOS E MISTURADOS s
+Blended. EUA, 2014. Direção: Frank Coraci. Com: Adam Sandler, Drew Barrymore e Bella Thorne. 117 min. Não recomendado para menores de 10 anos.
+Jim e Lauren, após um péssimo primeiro encontro, viajam para o mesmo resort familiar com seus filhos, durante as férias.
+Ribeirão ( Cinemark 9; Cinépolis Santa Úrsula 1 e 5; Cinépolis Iguatemi 3 e 6; UCI 3), São Carlos (Iguatemi 1)
+KHUMBA ***
+Idem. África Do Sul, 2013. Direção: Anthony Silverston. 83 min. Livre.
+Uma zebra que tem listras em apenas metade de seu corpo é expulsa do bando e tem que achar seu espaço no reino animal.
+Ribeirão ( UCI 6)
+MALÉVOLA **
+Maleficent. EUA, 2014. Direção: Robert Stromberg. Com: Angelina Jolie, Elle Fanning e Sharlto Copley. 97 min. Não recomendado para menores de 10 anos.
+Malévola é protetora do reino das fadas. Após sofrer por culpa de um ambicioso humano que quer ser rei, amaldiçoa a princesa.
+Ribeirão ( Cinemark 5; UCI 3 e 5; Cine Cauim), Araraquara (Cine Jaraguá 3), Bebedouro (Cine Pop), Sertãozinho (Star Cine 2)
+TRANSCENDENCE - A REVOLUÇÃO *
+Transcendence. EUA/Reino Unido, 2014. Direção: Wally Pfis Com: Johnny Depp, Rebecca Hall e Morgan Freeman. 88 min. Não recomendado para menores de 12 anos.
+Um famoso pesquisador sobre inteligência artificial usa seu experimento nele mesmo.
+Araraquara ( Cine Lupo 3), São Carlos (Cine São Carlos)
+TRANSFORMERS - A ERA DA EXTINÇÃO s
+EUA/China, 2014. Direção: Michael Bay. Com: Mark Wahlberg, Nicola Peltz e Jack Reynor. 165 min. Não recomendado para menores de 12 anos.
+Anos após o confronto entre Autobots e Decepticons em Chicago, os gigantescos robôs alienígenas desaparecem.
+Ribeirão ( Cinemark 2, 3, 6 e 8; Cinépolis Santa Úrsula 4 e 8; Cinépolis Iguatemi 3, 4 e 5; UCI 2, 6 e 7), Araraquara (Cine Jaraguá 1 e 4, Cine Lupo 2), Franca (Cine Franca 2 e 4), Barretos (Centerplex 3), Bebedouro (Cine Pop), Jaboticabal (Cine Uniplex), Matão (Cine Teatro 2), São Carlos (Iguatemi 2 e 3, Cine São Carlos), Sertãozinho (Star Cine 1)
+X-MEN - DIAS DE UM FUTURO ESQUECIDO ****
+X-Men - Days of Future Past. EUA, 2014. Direção: Bryan Singer. Com: Hugh Jackman, James McAvoy e Michael Fassbender. 132 min. Não recomendado para menores de 12 anos.
+No futuro, os mutantes são caçados impiedosamente pelos gigantescos robôs Sentinelas. Para evitar a total aniquilação, Wolverine tem a sua consciência enviada ao seu próprio corpo nos anos 1970.
+Ribeirão ( Cine Cauim), Sertãozinho (Star Cine 2)
+AVALIAÇÃO DOS FILMES:
+**** ótimo
+*** bom
+** regular
+* ruim
+o péssimo
+s sem avaliação
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1a4d2147df22162ddb0254544ede65906ac167d08989fef0546cb86032009af1",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc4193fa3ba86a67768cb7da29bd04cf3b78c91e05819c22317c94966edfd512",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2bda638ef8df741580815b3faf93c12e4390205a1c292c77ef8506c80d44868e",
+    "mention_text": "Matt Reeves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7d6d5d844c7cc353b9ed00d447f5e0b24bd89d0de607e40e68ee08421f316e7",
+    "mention_text": "Gary Oldman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9df5fbbb73749ae772cfeee4a791486ab441159d9c68193f958afaae56fffa15",
+    "mention_text": "Keri Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f24f719e6dbdb59f0d50149c49878f342da524cb9df285627175767ace9add2",
+    "mention_text": "Andy Serkis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b6319b0694fa6ceffb361cdf84634329ab7f8d8d80d28da593d6a448faad366",
+    "mention_text": "Cesar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4cd6776d0a37a4eb5aba6de13f039a6525847f612fe4fde918cb945f54309cc",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed0c93a24f7f280c06f41dfab75a02baa28a145feb2175f0530402280a1c62cf",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f71e337a748bab49aafaa9a6a486c87d344985bc1b5378f4eb5e9c6bda52e9e2",
+    "mention_text": "Cinépolis Santa Úrsula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db046b55bb5f5bad2d52dae73b0d95c6db99dc5a6f2d984f11ad54705ee7a950",
+    "mention_text": "Cinépolis Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a1004a9a30a866727657932c494551567febe83c06ad01327b5955f5778dc59",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e10567e3753660a08d02db17bc02b22db15b4357534664994c40c690af1ac1e",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0c58655987a7542a372b6acd88f6e5d9ed6bd73c8c71e942ad533a0c16c0f5e",
+    "mention_text": "Cine Jaraguá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7740781dd62c4a2b7f7adedba070ed238cffd7bbe1e77a3f6fb82079ecb4a3f",
+    "mention_text": "Cine Lupo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3446e8f6d7f9d6030a8cbb3dd05aad468419e769d10ddfdcbbcee73abc3b0a55",
+    "mention_text": "Franca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9629e5a9bc85d6c04e279ff81ab7ea66ea72aab0fb11860d78f802c9d2cd4f45",
+    "mention_text": "Cine Franca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc2842c57be0a598a6e9f49c4fffa65fb46c3121d25c979e9802e26641d94667",
+    "mention_text": "Barretos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "349a4afbca26b516841850d5016a76778b4424192734f1b0177f0f5e7f6b588a",
+    "mention_text": "Centerplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b27a6731071555d808c0a2eb42a92196db1a14408d0e9391119472bd4ad7b3d",
+    "mention_text": "Matão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "55f94c735f8e58fdb12dfc8109136dafb4c67c7ac24cf4ef349df6dcb58587f7",
+    "mention_text": "Cine Teatro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de7a6b3c018af8f7ed1a8ef1a1ca6790b4c5d72c6cd7ad5cd8dc1989e87fb10d",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "babe3cf969275b29323ded08f6d29f0a449f266795ba4586ae3ec5a4bca78b3c",
+    "mention_text": "Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ccd04c530bbffea80000cb94f17c3dd8fa439b5461ad91e87b4b68e801556e9",
+    "mention_text": "Cine São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5c6e3e7a64166fba6e099934bcdf6254d7d6b75bfadc218512396edbc15359b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "668a6d3c4cdd4960aba876a27b5666b34716b922a599d84176db2523663a7159",
+    "mention_text": "Robert Zemeckis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1087421c61c8543825b691058124dbb145a071a309ec99df2ddd6cbf1f3d3e32",
+    "mention_text": "Sally Field",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d603b4601fad43055a3ffd8d69883433a95f7bf69fe60054f0a0fea15cf6129f",
+    "mention_text": "Tom Hanks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4ab7eadd1884cefb8a1efc887b7fcee238f8c6e3f148f6fc14ef1cd8f622b6d",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ad78fe05b65929cf5005a3488d1948bd97b0206fcc44fb576aa9c591e24c9fd5",
+    "mention_text": "Forrest Gump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88b986e7a66b474fa1bcf72e380174939c62196fcfd8bd776ede5b52a4e0feaf",
+    "mention_text": "Jenny Curran",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0971f7006340692acb07340e952ff48392bcd9f51e396519da4270ce2bac73f4",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69eb3eb7d7098bdfbee0bf87898e9cecf5638f2b7e001a412c32e0eaac2a9950",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5636a375ca83b14973b90fa6a109420629032e81fb6ebbe2b789d99bf797716b",
+    "mention_text": "India",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "177d60f750e719051c321938d5c2210685eaace75364be0c4d832942cae2880c",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96b5f75ad06c82c2ecf57951129cccca87bc90a94ecacc3885d554126e45cea1",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f3729c227e1b1b1bd035d2d67fdf8eec543d2511be20fa51f9c3979bf0f5e0f8",
+    "mention_text": "Ritesh Batra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f62558d61091685b1e5dc0a9bf8b825454bb7978ba304bf5a7ac4066ed1120c",
+    "mention_text": "Irrfan Khan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ec96a23798d3785cc57ea0f23da58352f82dc587e19fb361ba5bc6d4822bb1c",
+    "mention_text": "Nawazuddin Siddiqui",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88baa3a631877c01f0bdd42908395ca307ced400080b95fe543281f1cef2f9e8",
+    "mention_text": "Nimrat Kaur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "24dfabd08683cd15792c259a44551e14c594083dac0ccd4a9ef17b54dbaf129d",
+    "mention_text": "Mumbai Dabbawallahs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e30b4a956bbe4d62d0e9613bd13eeb86a9056eb63f60764ea481fb8f5f30c2b4",
+    "mention_text": "Mumbai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7786a8ffea3dc3016d16fc5f879b4400e9ae49d4229e615caf38fd22214ca323",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b7c468348139894b4beb759aea6955eb8f322fef160a73ac6002d6fe9098a079",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "403b2c0ccac55f4b35b8aabd561262ebb4aab3af348494089c4945ff99038b8b",
+    "mention_text": "Cine Sesc São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89811d3f87cef189f0218536370dc7abebbcbe5970a8cee7e49417dff283b8f8",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acfb52bb4d627d16ea04daa62a4c7b6a2c088edf0f91d377c2812b0aa98ed131",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe8f3868594e474453f08a2828597f21aa5c1b3d94721747e6034e2f6a3b54c0",
+    "mention_text": "Thierry Ragobert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b175eb6ed2a62b70ac8e9cd477306cab853f3d9d239890ceb7de497a58ba7a2e",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c7a9ceb8939b01e8c2f2889b55a17e28b893c3382ea7acefdd3717332fd80997",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8ebe94236e3cabde68f2278d924b738cc2803687a19cfeda5717ec17ddbf030",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88f57b77ba05c4427cacddc9aa3d8e0df0c22b874de4a5e6568c7579fafef5fc",
+    "mention_text": "Roberts Gannaway",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ff7924b6634d84d6ffb83cc5360abf0c1a600bb6e0bd8d1b3847cf52fe01d3f",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4ecb42a4fb823202564938da40326d558a10c4f28d9d84ca92592fc9ea702bc",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a44e85d8afe9e5e79976069526e3d0b121c58f4615c34e0476c969b2bf44613c",
+    "mention_text": "Cinépolis Santa Úrsula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b43f42b255e05598abb3a63e60bbf79230151d1933863d1934710d16cc12a0a8",
+    "mention_text": "Cinépolis Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b9fd4bab1edd7c8fabc10aa7e3e1facb8a001d8379495f157f2192a78208e2b",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d95acf349b06f93bcea82a92b7896b15529714136e123e63ae68d0fdb35fa8dc",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "340bc4cda39e2e08b1c3bb38f8a14e953e46dd9dc4f186e1a21ca1b35a869b7b",
+    "mention_text": "Cine Jaraguá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25e022340ff414a43ea4df311bda7999b4e9c6e167fd806fed8c874508237800",
+    "mention_text": "Cine Lupo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "798322300b0559b4826c5b3451c66281707719abd89bd98afe32fce7e5451e55",
+    "mention_text": "Franca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eaee2b6f7dc6a0c98c9dc9eec1e8e4df36445917d120f91274184fcba4189dcb",
+    "mention_text": "Cine Franca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "702f8633ea54d46d43f3639f450aab029602f40d1549aebe22aa763a297e644e",
+    "mention_text": "Barretos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03661b2f1a8e5198f2231e5e8017d92e9535ee44c41fed3eceda68597668627f",
+    "mention_text": "Centerplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "727d997ad475bbca3c78fd627526b14a655da2d6db9feb8851d12072d8f70712",
+    "mention_text": "Bebedouro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ba7149c8866af68db5215b573844b2220a2e000ee1a5956b6022a6e0165b6927",
+    "mention_text": "Cine Pop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b99339dfdefebbd8a8d0cc07b71de0e5ad0f50dff8feafb8fb45f661d37191d",
+    "mention_text": "Jaboticabal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "203cd2393949d73319a07dc8bc0592740d251f3fed53866d2448e3bb9b7ebcf8",
+    "mention_text": "Cine Uniplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f242e02e4503e3a4960303a7d07daf43a0a7c06ebf392a3e14fdd90db9c43c7",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa1ddff333e74c45d9c26edd4657a2cd3f3a3dfbb9a2745674efa395e24c8197",
+    "mention_text": "Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "591c21560a12b959accda16a3a2067b2ffc481427f7a034307bc2a15a9ca4d57",
+    "mention_text": "Matão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b601a47eca0f44891e40c25b7a783185e477cd5361335ecf80f2cae19333826f",
+    "mention_text": "Cine Teatro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2a7a088f86f8715b0537fee42132f0eccd2fb50c47febac9ed604541fa7eeb8",
+    "mention_text": "Sertãozinho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8383bcdeb51bad6ce6d55f26370c67165b7d42b4ea77aff6bda2bcfda5ca0582",
+    "mention_text": "Star Cine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fcba43b8e52e20befe18de32f2b373f6de327ebf094da27c3bac8a01b1e19fda",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11c6b8f8339bb07c0f9b847047206d6dc8c29223f47dd20c3649ff53cbccf8f5",
+    "mention_text": "André Marouço",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81f3924793979ce9a5f9be03dabfa5fb9d421cf86ae735bd904f276e3ecea534",
+    "mention_text": "Matheus Prestes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4beea10621e49f94f6e6cd0c66b3712498535cb4b933a61d3c42468605ddd7af",
+    "mention_text": "Luiz Serra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1dfd88227c3857454ca5753eae6f1ed8b9a62d66ec5c700f41baab49300da352",
+    "mention_text": "Rosi Campos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6d276cf0cd4feeeafcbc47d8172b375f0e9430ba4a975169cd194c08ab4a727",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9de613988e67a0c018b158ab5fbdd45c963119693c9bc2177aa967174d3bd1d",
+    "mention_text": "Cine Lupo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68daf8c2771fa2b4c91648ade8beaedff549b0f6853ff65c36bc76af21575677",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b033ed3a27e0182b837a269d7b33257c9451b7f515ecad8855e8f827cb29e472",
+    "mention_text": "Dean DeBlois",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71e944eec1c24b48ca57de98202bd9e6f4a7529a9967068cdfae4ce7b9509b71",
+    "mention_text": "Drago",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6dbd6d2e2a5c08c074a905010410199f0a524469b1efb83084a93cdecb29273",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c55cae5090980654deb0a9c17b6fde7324cf3efc434ffd0473627ef39cd5816b",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aac52b780f00c26146f6f82fc29a6b70808d3b266d8e9434277dcc501eadface",
+    "mention_text": "Cinépolis Santa Úrsula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28423b4a9eed713899eb1d339ee3e66862115aba6f28318487b56a5e98678d95",
+    "mention_text": "Cinépolis Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e934ebbc3e49fc08006b3950bd86eb7a0fcc202cb825968e64835c65b4ecdac",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bde9cd1d464fe57b6f8ffa30af1852ac8ce9c3565f333f08bded04ae1a03ab10",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aea8d411003d125755de70895b23bf1b853bd10ff7d7196f31d41580c984dc59",
+    "mention_text": "Cine Jaraguá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ec1b71147e1ed1c3c5102027133455455b2b2964797cba9dd8b25fd8b8014421",
+    "mention_text": "Cine Lupo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ade77408610975165f8cb68887ede6711b68dbc5183d48c7a7270070cef9afd",
+    "mention_text": "Franca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6243d47abdc1f5d28708071d293909f26d197f1879154d5349a2ce66e2dc5b9f",
+    "mention_text": "Cine Franca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "838cf118af266ba04a16df2611511483de3d0267582447ac4748111b2ace24fa",
+    "mention_text": "Barretos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2f2b64393388072f9ff852045699705d321dcca0076562971a6e1ae0377fa84",
+    "mention_text": "Centerplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ace5de388907b5f82f7193d7d0399407510f3fd43d1246b7bbf3fb6c3fa1bbb8",
+    "mention_text": "Jaboticabal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f4d3e79a2755cd6d2ebc476ebff57399068b3e0ea89530287e9fa9ec85d8b2ec",
+    "mention_text": "Cine Uniplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d079fff6225e89f0669724764884c7ac968de863235648060a2549ea4311a82a",
+    "mention_text": "Matão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c09efc43873c53cb6a27c8e0e2cc29e5438108bcdcf14a79e1afb20bdb8a6ead",
+    "mention_text": "Cine Teatro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ea4b6e5611b77a5f6cb2271911cefe6543646575ecb6eab1ef624468f5d9663",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4568822667cc98b275a7088642e6c8bf8c52a8e7c27fe65f1dc5a8aa57cfc0f7",
+    "mention_text": "Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab009e58ab507608aa6e58918ba037a89a1145b475a4fca2c6c55bfe822e1295",
+    "mention_text": "Cine São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e6d4dd210daae48091bfc8867527073c70cbfc4480cd7a0fe726de8f506e98c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e87028ce44917c4a7ab76dffc57eb9ca9c25a33b21bbb4ea96bf3d881dc4e314",
+    "mention_text": "Josh Boone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "430ae0aff1efcef00e2e2477cb7ff021ee5225a89de5db71d048b610ee3f3be0",
+    "mention_text": "Shailene Woodley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "255f9cf953680215aa9784c22a3e75e7d447cb97fa64baa7e590e6276dd5bb02",
+    "mention_text": "Ansel Elgort",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc2be35553a1763ca5eb4dca076a360fb93b42dddf0970897a42519d997a79f7",
+    "mention_text": "Nat Wolff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e4ca47b4227f4c54eb43616440d948030f21e8552273312dfc61fd09fbd0efa",
+    "mention_text": "Hazel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85ec8448a14b2cbda3fa074f450fecf14305a4bfe61627cc9faf6a1175e8dec5",
+    "mention_text": "Gus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "720e290c30f452b2488d82c439d541bde67235f8055330f658a33c09921034d2",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a21699100219bbe29e7ea64ae5e781a927d709c852e753480d0184978bdbab15",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "952c4560b70ad8487ba08172d4d871eb8f70be4761e8956023e0d47ed1cba90e",
+    "mention_text": "Cinépolis Santa Úrsula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d2bc9d760cb0c3ab9da2f4c120bf147f5b601510a7f6da29a9b5d284a6fe3af",
+    "mention_text": "Cinépolis Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85e45bca7ee14ee332df5149aa9c3f55b5a289ceeafb3a7783ded71a29aa3399",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9de72c5fb943f87d6f56cbe5b64011bf2acaea60a644dfcab28817569537d3a5",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "513c9b18b5a32be1c3e0992bd89d19842ceecb75d822fa6b7d77a7515f5ae842",
+    "mention_text": "Cine Jaraguá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75c528853eb477ce988f622c0912ad09db31f0f689f7bc3e81915950b14bca0c",
+    "mention_text": "Franca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "469d264e80335720e34d19363b9d57c4c6555dff123fae6601cf495a0867911a",
+    "mention_text": "Cine Franca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7418b1a0aee18f6616324e2b98be78ece7d65079eba208ddc3950d8bcb102513",
+    "mention_text": "Barretos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70f0c5799193eef2aefe4d34055b294b7000f3915bdc87709eb72341a19fc01f",
+    "mention_text": "Centerplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "672d49cb2546055c0cf7cf1ce2e0f0af368ac76409c54123ab4482a823908b86",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8875a2186e0c96cb98a41c144df39ecf5cb8025c526820a532b20af7733618cc",
+    "mention_text": "Marcelo Lordello",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0412f9eba7b5e3f9e9eabe1f039c2d568ea56c7c4bbd5a29962e10771eb5bc22",
+    "mention_text": "Clara Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d264b58faee6aec5f2de964568cfdfe38b9d0e4bdd1a2f97b35a1279a808b78",
+    "mention_text": "Elayne de Moura",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "342250b40fcfdf2fc6daccb07b6210ae30385e587938012e28d3d4dce078a9a0",
+    "mention_text": "Georgio Kokkosi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c37bee5ab539811044b66fefcfc471842accbcdc43bd6bab23cebd2a043bb18e",
+    "mention_text": "Cris",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0e004253f34337ca5e3fefe5de171ffabee0673cc78950de9fce6ed78f5681d",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7ff0fb655daba6e88f1fe52f5ee174ba89f35c31ff45c98ccd0596055a6234cd",
+    "mention_text": "Cine Sesc São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25cb71984d515c9de4fdbfb819ea616dfbef0c5854850855c8803402b6c82378",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e60cfa0f3f6f99d7e0ce05a7873b4c5c4a8cd4f6e91472b74c5759af2e302d81",
+    "mention_text": "Marcus Baldini",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5f412e685b82be12e1e08ea9ed1148831c370a58793ad64d080e7625474a65f",
+    "mention_text": "Mônica Martelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2f7d9d24e7f9f7c338aa5b5936748c23821b02fcda60b6c3d0185cc5fdda941",
+    "mention_text": "Paulo Gustavo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1f22c1eac11d07eb7c7374296679e84b4833d71ed8726041bebb47f36fdb0df",
+    "mention_text": "Daniele Valente",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3ecd0f93b268c35e3499f69283d13b405da008ce4b0f29a3a324385354ed0ae",
+    "mention_text": "Fernanda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55aa80986d1696038e4c21f6554b30115f18e2eb65d0288e28bf8e4f66b1430a",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10f2210dea67bbe96f49fb7966111a7618938c0f18856790544dd914d48e3532",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "425735a198de3ec8ed4935978a4b5f3aa8770c24ed6a785df3573b39ddba6574",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eaae43de09dffdc44ac779a53ee2791bee3aeee82c93aade2cadd49b3544684b",
+    "mention_text": "Frank Coraci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fe55aafb029729ee3f1759c38cce87a7454a2fad9bd5bfa47c05a3f07fda01e",
+    "mention_text": "Adam Sandler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4452c6b7e338aa9da7481b651dc404111a2b24e3b8f785fcf8ba3156aea4ccd",
+    "mention_text": "Drew Barrymore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b3a36a35c72f84c2fa02eb802fb4b3032ccdbf12c9036b16da7b9d06d5ae452",
+    "mention_text": "Bella Thorne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ac38dec8f1b1d0d48b47af45bd20ce4100e171fe9a935b6de24d2c869a29784",
+    "mention_text": "Jim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "123571de205d736fc2b50f77d9d568e76608e3f766917b729041351edd137d10",
+    "mention_text": "Lauren",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e304cd7adbda05027183edda8cafd641559ba5f097d06e7d70dfaa89e9e47db",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f090c70bd2ca9a2e3b17523f34ac248fb91dbb99c771007551cdc19f82c480b0",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2865ec509e779cd63ef6abb7d9ba9fc8551a59ecadbc8960527ffdacd727b1be",
+    "mention_text": "Cinépolis Santa Úrsula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08d306ca482f233536fb1d360d4bd901e6136729a0294d581d21bbdab06559c1",
+    "mention_text": "Cinépolis Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0cb186b9d4cc04e0337102a343f4d65b6875f5c03dc9a7d686d14b65fba277a9",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ba16611fdf8a552dff6343fb94141515495d52a400a2f47e1cd8aba0dd7ee8f",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9e53c147effc3ac918a94f70b9b7b472369d635e7335b30565e97111936f89a",
+    "mention_text": "Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b4d94e6dd319397e80141f3ed8497b0c7edc41eadf103f5d465fcfba0551dd35",
+    "mention_text": "África Do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "934ce1609cfd562dac9c9799f790a13b46f81f84328a67832cf544c9bf2e7b5e",
+    "mention_text": "Anthony Silverston",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "24c38bdea465c92ff53efec29ba58c1c7bd40039c3635cd667e8c224d8e59a91",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdf3dddc35e7b531f56b782b63aefcc62f4508e9c0e35da83502502179e1336b",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da8534414b2682f21c4de373911a09f05aaffe1f8ec459e4a751c3ec7df87cf3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "356bee264d2cc724e31cc264d7745aed6dcd00316ce80ef731dce1b3659d5b75",
+    "mention_text": "Robert Stromberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "475572fc887728aee2d7b7b1f146b841e7b98050eb150a9fbb7c021bc6a0c785",
+    "mention_text": "Angelina Jolie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ac00166f00a120b265d9494e09946b71d6cfd842a7b87e9bc19431df6e337a9",
+    "mention_text": "Elle Fanning",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5de0e815298e02b058f606ff0307812e4d260cc8894ac59bf7641c09cc93c05",
+    "mention_text": "Sharlto Copley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c4ebc6481935255b1837e7def3eca1689304cb22aba4e50fd13970bb81d1eda",
+    "mention_text": "Malévola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e69871baa6ef77f7ece64f9efc1d1881e8b6356deac4ca2ee400d68d64ebd5ce",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e87557fc4d6f7adf6ef5bc9161ecf1a4847988acbb444094ea8fa5ed25dfde1",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c18a1a3878a23e9b8d9e76fd61805487d995d015824d2575654c86022e993267",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2600ba99430d2c01dc1f1a65b562fcd585c731c4e18e876d480fdd698d71c721",
+    "mention_text": "Cine Cauim",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b3a38a7ade0224f9b2b580d993fefe4d4f85e15ae15d8bbd0a58858ffbf6466",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f89fd4ddc08d55882d47499f547675ba332983d4fd06099482d37b12a2bd782d",
+    "mention_text": "Cine Jaraguá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "398f6f2407f30683fb74fd4a463cb3412e6c87fc9fb770a86ec01782bc3c41c3",
+    "mention_text": "Bebedouro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62bc8e8885364832bee2b6010416e7ccf386f0b908f6b4051a8697aaa0d0befd",
+    "mention_text": "Cine Pop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c7fc4600bf8f8817edf82e1738d80859dd3f7c5bbdc9806d43f4a1c5d337458",
+    "mention_text": "Sertãozinho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "128637c2914544ca60cc506ca1d800a7a2a3f1133914a8d0c06af9f051b2beb3",
+    "mention_text": "Star Cine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ec529ed05ec6080e719cf27bc143a35e8b71484f59ea11201f39d226799334b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b61cb677ecfaca411878d7d855608d544eab1872e323da4ad36af5689b680503",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "95e847dde164e1bb9c30cee41c01e39459bc6c93ff372b7b34800eb508abb37f",
+    "mention_text": "Wally Pfis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd3f2386b2d1357998c4f1c6e9acbc11d273d0627acf4136befc2523bc9b9bd2",
+    "mention_text": "Johnny Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45995d0c61a8c01ce531a79d14a1f873dee447d4701445edc3cb58f93f9b1dc4",
+    "mention_text": "Rebecca Hall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3fabc376dce2b8215202744827d6d607c5f31ebaa028cbccfefde94ae28a6d0",
+    "mention_text": "Morgan Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2dd74b157ad4eea9d32d64ac68091796ecc08ad7c7ba05b049bf464c9a71e66f",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8af630448168d5b90e3045185d5794713d57eced80f63e05207e24d1f9f62283",
+    "mention_text": "Cine Lupo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22ef5583c4d7920086946f1a13c5c89f850142b6a16d57afc7da71b1b3ba3e40",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d8c4ad0888da1f755a867655a81cd1693e63c360db2f7c536439f58280367e2",
+    "mention_text": "Cine São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc629080c29175d363c06f77bc01e5d1b862523f6873cbd7ff8a571dbe18bddd",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0352d882c0dd9daee52bd01360b87f3ac8f2c28347e8a7e6fcb040c06b1d8e0a",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2cb6cf9d420b98ba4e298ab07d4e4c50863000606ef784e33a439d086eabb34f",
+    "mention_text": "Michael Bay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6c3c7e9945450cde0d744525df3125e0066e32c0b2406dbeb0e2c62c04809c8",
+    "mention_text": "Mark Wahlberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a795d276f2eb53703a9e721afcb3f14392c55a6446eae780dfd5a41240af0b67",
+    "mention_text": "Nicola Peltz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9356de50720353539be9c79aa5f99a30ce8fbf7cd77b9a166e067b0a3fc6ef29",
+    "mention_text": "Jack Reynor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c64d2098313ecf59c2a74617007e26db26a12eb34236359b89959c7341a6fead",
+    "mention_text": "Chicago",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ba7385299aba3017d82f44a0a23e4e3e9214ada07084926bc27fabaa08b065e",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "829588753b2091e85a6ba0fb2b515a955ef48063b93cff99fcddbc2d84aae445",
+    "mention_text": "Cinemark",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c06fe1f3d74ed5cc2194ca619769bd3deb39b5ea23a1aa9cbce1c7e0c59c3c5e",
+    "mention_text": "Cinépolis Santa Úrsula",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8c2c6d05a4610e8b0422e6f19f2e7cf06575edb48089cda35d9995445bcc33e",
+    "mention_text": "Cinépolis Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "454073a70312174c6b3d8a53d4baa0f53313296049b5ca305cdcbd55cd574fa0",
+    "mention_text": "UCI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "632c0529d7f8de8276df6e949f8dacf1ad50372cc7bca34a1504b227c9173476",
+    "mention_text": "Araraquara",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "194c3dfc442849c7ab98b92a9f7f3f34274d251b5e4f6eeb5e55324d460eb283",
+    "mention_text": "Cine Jaraguá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36f72c73ace6c1d7cadc0670a184d0a925b6050ce282ddfb730050ebe0cd2f74",
+    "mention_text": "Cine Lupo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6030db0008b5b3662030797f59f881e611292caac1757a0b7f0ba56d69133c00",
+    "mention_text": "Franca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6dd172e068a6ff79590fa49edfa243258a3d9c0f377c505a657b484a529a0395",
+    "mention_text": "Cine Franca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c0198b59c8bf407d10160b3234e931315b6f77659f94afd0719a34f2461036b",
+    "mention_text": "Barretos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "717310816ce9954ef85bdc6c6dc112c22ba420efd8989a76b6ec6caf24313502",
+    "mention_text": "Centerplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "642a38448887b424f14b3b5b0285c93690d7bc27231c694ab7a088f99f9cfbf7",
+    "mention_text": "Bebedouro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed602e4339248d44bff6aaeb52235e6cab0eb46ef8e033e4b391e1b3c68b09e5",
+    "mention_text": "Cine Pop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c1b5258348486ba9c63120edcfb929acfd395a0959db4c617ae586b42dedb4b",
+    "mention_text": "Jaboticabal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f700839750f527b145653d84ce22e676cec960470464716b3d979fd13243451a",
+    "mention_text": "Cine Uniplex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d37bcdedd8760e1191274d81f1420baaa2d6861502b105581db61b0c37db9ed",
+    "mention_text": "Matão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "35a66ccbc42e52f98d5510a792a2677e96306b253685d1bd1d832881ca90b759",
+    "mention_text": "Cine Teatro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68af352a1c5651bd26f5eb4f5ec3e7513395e230768a25261d7460a5c51dd41b",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6aa53705dd99f375c31941579839616a42c1c9d2458387cb465327fce68b9b0f",
+    "mention_text": "Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a074e901485a549fda8998cd09b1bb2b2bc55cd37d9d9b15fb04717dbaf8aa0",
+    "mention_text": "Cine São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dfe200601702a8c39ed57d8c1040b3780fb6727df6efaf61892049fd5af64ffd",
+    "mention_text": "Sertãozinho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c5ea122e8dfdd02c9cee5954580f93bab965c45d9a1ec6c1ad0f1ca3314989d6",
+    "mention_text": "Star Cine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8217a228798bba75732406fb7443c72f758dac60526794fadce7b3dde153d49",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a4d7f25e0a37ad40dabd7739b52db8ee021fcd183fc899cbcb7b8ef8a5104909",
+    "mention_text": "Bryan Singer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c2ba3c8ee927f7be169a62169c01895abb4f9e9a8e36ed161670cb4e6922179",
+    "mention_text": "Hugh Jackman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "243ebf6f68d6eab5a8a629f9b38592e03c44c17867c4af2a3233f04a8b4c8d76",
+    "mention_text": "James McAvoy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ea11eb5019633c4f02a3bc622ce6778bf5d59575ee837625f2162d72b1006cf",
+    "mention_text": "Michael Fassbender",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1acc94a87254252adbd30d69045741ea295b44be87d0d91aaee33549df2b4c57",
+    "mention_text": "Wolverine",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "515c5c7f1e1fa0f3d0278e386dae9835a73a4d676844c78cfa32fceb430b545c",
+    "mention_text": "Ribeirão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "94aff746d3806b5677949833cca32d6c6623d7fa0663a5a69b850887560b4bbb",
+    "mention_text": "Cine Cauim",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e1ad9241421ba29dea7a0c127278a1c7fa8365f167afb2442c21007086e6799",
+    "mention_text": "Sertãozinho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86c6512ce23035ff4db748490f7a196d61e7c3976e8708634bd129e330444607",
+    "mention_text": "Star Cine",
+    "categoria": "ORGANIZACAO"
+  }
+]

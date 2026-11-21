@@ -1,0 +1,426 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d4d118e10af9fc66319992743742f35e2fa4ef3c9ba971ebb382b5d415c86a5d
+
+TEXTO:
+Terror ressurge no cinema e nos livros como espelho de pesadelos modernos
+
+[RESUMO] Sucesso no cinema e na literatura , o horror supera o desprezo artístico e ressurge. Misturado a fenômenos culturais antigos, o gênero se atualiza e toma a forma de pesadelos modernos .
+No conto de terror “O Próximo da Fila” (1955), de Ray Bradbury, uma mulher visita as catacumbas de Guanajuato, México. Corpos mumificados forram as paredes. Acordada em sua cama, na noite seguinte, assombrada pelo passeio macabro, ela percebe que seu coração “era um fole eternamente soprando sobre um pequeno tição de medo... Uma luz entranhada para a qual seus olhos internos se voltavam fixamente, com fascínio indesejado”.
+Em nosso tempo atual, o coração da cultura assopra com força sobre um tição de medo, e o fascínio está em toda parte. Filmes de horror quebram recordes, e as vendas de literatura desse gênero sobem a cada ano.
+E o sucesso não é apenas comercial. Tradicionalmente um tanto malfalado, hoje o horror desfruta uma aura de respeitabilidade crítica. Como observou o jornal The New York Times em junho, o horror “nunca foi mais lucrativo e festejado do que é hoje”.
+Já houve eras de ouro anteriores, mas estamos mesmerizados pelo horror neste momento porque o gênero está cumprindo uma função que outros não estão. E nem podem. As raízes do horror são profundas, mas se contorcem para assumir formas modernas. A conversão do medo em arte por meio da imaginação nos apresenta um espelho tenebroso e penetrante.
+O horror é o que os antropólogos qualificam como biocultural. Ele expõe os medos que carregamos conosco por sermos primatas dotados de certa biologia evoluída e também os receios singulares de nosso momento sociocultural. Suas correntezas geladas se encontram no lugar onde toda a grande arte processa seu trabalho, nas profundezas das cavernas insondáveis do leito do mar da consciência.
+O gênero sempre esteve conosco. As pinturas rupestres estão repletas de figuras híbridas, metade animais, metade humanas, que continuam sendo temas recorrentes do gênero até hoje.
+Mais
+Todas as tradições folclóricas do mundo incluem histórias sobre criaturas malévolas, violência explícita e fantasmas que petrificam quem os encara. Os clássicos literários da antiguidade frequentemente são chocantes: na “Odisseia” de Homero, quando Cíclope se depara com os homens de Odisseu, o monstro os devora, “entranhas, carne e os ossos cheios de tutano, tudo por igual”.
+Sempre contamos histórias de terror e sempre vamos contá-las, pois se trata de uma expressão artística que carrega uma verdade ontológica: somos criaturas formadas em não pequena medida pelas coisas às quais somos avessos.
+O medo é um dos ingredientes básicos da consciência, ocupando circuitos cerebrais tão arcaicos que os humanos os compartilham com todas as formas de vida vertebradas.
+Assim, as análises evolutivas do horror mencionam monstros como o elemento mais característico do gênero. Durante um quarto de milhão de anos —a imensa maioria da existência do Homo sapiens como espécie— vivemos ao ar livre, com hienas gigantes, tigres-dentes-de-sabre e outros carnívoros representando uma ameaça real à vida.
+Mais
+Outro risco à saúde que remete a tempos arcaicos, o patógeno biológico, manifesta-se na tendência dos monstros a serem não apenas violentos, mas também repulsivos —brutais, destilando sangue e saliva, arreganhando seus dentes infecciosos. Do ponto de vista evolutivo, o vasto bestiário monstruoso do horror remete aos perigos do Paleolítico.
+Historicamente falando, a disposição de procurar arrancar diretamente reações de nossa fisiologia evoluída valeu ao terror uma reputação pobre. A cultura ocidental foi erguida sobre uma visão de nós mesmos como seres acima das feras, superiores ao animalismo que cede impotentemente às imposições do corpo.
+Mas o horror é capaz de passar ao largo de todo intelecto e arrancar de nós uma reação constrangedoramente animalesca. O aspecto físico assustadiço do “jump scare” é uma manipulação do que os biólogos descrevem como a resposta do susto, presente em todos os mamíferos.
+E o horror mais tosco sempre contém outro elemento asqueroso que nos recorda de nosso lado físico: o sangue derramado. Ele nos provoca repulsa, e o fascínio sombrio que isso pode suscitar também nos causa asco.
+A guetificação histórica do gênero faz com que o horror mais inteligente e substancial geralmente acabe ganhando outro rótulo. Os melhores filmes de nossa era de ouro atual foram classificados como “horror elevado” ou “pós-horror”. Nos círculos literários, as obras vistas como suficientemente cerebrais ganham novo rótulo: “góticas”.
+Mais
+É verdade, sem dúvida, que o grande horror sempre diz respeito a mais do que sangue e violência. Mas é preciso tomar cuidado para não gentrificar o gênero, purificando-o de tudo menos a filosofia. Os medos brutais do primata sempre estão presentes, mesmo quando se fala de arte.
+O horror codifica a história de nossa longa jornada como primatas, mas esses alicerces biológicos sustentam o alto edifício da cultura. E, durante milênios, o horror se misturou aos nossos fenômenos culturais mais antigos: a religião e o folclore.
+Na verdade, na maior parte de sua história o gênero não foi realmente arte, no sentido em que tendemos a compreender esse termo hoje. Certamente não era ficção. Antes de 1750, em nossa virada em direção ao Iluminismo, as melhores narrativas de horror ainda eram encontradas na teologia e no folclore.
+Na Europa, Satanás foi durante séculos tão medonho quanto Pennywise , o palhaço assassino de “It – A Coisa” (1986), livro de Stephen King. E a razão por que o horror —à diferença da tragédia, por exemplo, ou da comédia, ou do épico— não existiu como gênero artístico até tempos relativamente recentes é que sua história profunda é fundamentalmente pré-científica.
+Nada nos anais da arte é tão apavorante quanto o que podemos encontrar em visões de mundo passadas. Quem precisa de sustos de faz de conta quando todos que você conhece acreditam que vão arder no inferno por todo o sempre caso se masturbem?
+Não foi por acaso que o gótico —o antecedente real do horror— emergiu precisamente no momento em que muitas pessoas começaram a acreditar que Deus talvez estivesse, de fato, morto. O horror moderno é em parte a história do que acontece quando nossas mentes ameaçadas abrem mão de uma teologia.
+Mas os costumes antigos lançam uma sombra comprida. No panteão dos gêneros, o horror permanece adolescente. Sua relação com o passado é metade rebelião, metade dependência.
+Por um lado, o horror adora tematizar as formas de ateísmo mais frias. H.P. Lovecraft, grande nome da literatura do gênero, disse: “Todos os meus contos se baseiam na premissa fundamental de que as leis, os interesses e as emoções humanas não têm validade nem significado no grande cosmo”.
+Por outro lado, o horror é marcado em toda parte pelos séculos que passou vinculado a sistemas de crenças sobrenaturais. No maior filme de terror de 2018, “Hereditário”, um garoto adolescente é possuído por uma figura obscura da demonologia que semeia a morte em sua família. Muitos dos trabalhos japoneses têm “yurei”, espíritos enraivecidos e atormentados a quem foi negada uma passagem tranquila para a vida após a morte.
+O horror foi filho sombrio e mutante do iluminismo, mas não consegue se livrar de seus genes pré-científicos.
+Por que o horror tem essa relação ambivalente com seu legado religioso e espiritual? Talvez porque, não obstante toda a sua modernidade, a escala enorme da indagação teológica ainda reflita a ambição do gênero.
+Como me disse o destacado autor Joe Hill, o horror é aquilo ao qual nos voltamos quando queremos nos debruçar sobre “as perguntas maiores e mais tenebrosas”.
+E, mesmo depois de rebaixados de dogma para metáfora, os velhos mitos ainda oferecem uma ótima maneira de retratar concretamente os grandes temas aos quais o horror é tão afeito: bem versus mal, as provações da alma, o fim dos tempos.
+Embora o paranormal exija uma suspensão do ceticismo, ele nos apresenta a perspectiva muito real de a razão frágil se despedaçar em contato com o mistério da realidade.
+Ao cerne do impulso numinoso —aquela dimensão oceânica em que o horror passou tantos séculos submerso— está a estranha certeza de que a realidade é imprevisível e insondável, de que certas coisas vão permanecer eternamente fora do alcance da mente humana. O horror sempre fará parte dessa dimensão. Ele pode ter caído do céu, mas ainda não faz inteiramente parte desta Terra.
+Então, o que dizer do horror de hoje? Ele reverbera com medos paleolíticos e tementes a Deus, mas também reage sempre a seu momento presente.
+“Acho que estamos vivendo em um pesadelo, basicamente.” Foi o que disse o grande autor do gênero Ramsey Campbell quando lhe perguntei por que o horror está tão presente hoje. Essa é uma daquelas coisas que cabeças mais sensatas dirão que não passam de ilusão mental.
+Segundo diversos critérios objetivos, a vida hoje, para muitas pessoas, está melhor que nunca. Mas o horror não se preocupa demais com a trajetória de longo prazo da cultura; sempre fixou sua atenção sobre como tudo pode dar seriamente errado agora, a qualquer instante. É profundamente imbuído de preocupação, e suas narrativas frequentemente começam com a calma antes de uma tempestade terrível.
+O gênero sempre fez bom uso de nossa aversão profunda ao que Lovecraft descreveu como “o medo maior e mais antigo de todos”: o do desconhecido. Essa é uma das maneiras em que o terror (como os contos folclóricos) é capaz de exibir uma espécie de conservadorismo arquetípico.
+Em termos gerais, a melhor maneira de sobreviver em uma situação de horror é usar o bom-senso absoluto, entediante: não conversar com desconhecidos, não passar a noite numa cidade estranha, não socorrer qualquer pessoa que aparente estar doente, não entrar naquela casa antiga, caindo aos pedaços. Respeitar as tradições, não cometer sacrilégios, dar ouvidos aos conselhos dos mais idosos. Ao cerne de muito do horror está um anseio conservador pelo que é previsível e conhecido.
+A afeição de Jair Bolsonaro pela mão de ferro do autoritarismo militar exemplifica a reação de direita contra o desconhecido. Bolsonaro acha que está em um filme de terror, por isso quer ter uma arma na mão.
+Portanto, o gênero se fortalece com a confusão, o desnorteamento. E hoje o desnorteamento está em toda parte. Há avanços científicos do tipo dos que os executivos do Vale do Silício intuíram, mas que muitos outros sentem como sendo profunda e opacamente perturbadores.
+É o caso da inteligência artificial, cuja ascensão vem levando cada vez mais trabalhos de ficção científica a ganharem contornos de horror: “Um dia as IAs vão olhar para nós, em retrospectiva, como nós hoje olhamos os fósseis de esqueletos nas planícies da África”, fala Nathan, um dos personagens centrais de “Ex Machina – Instinto Artificial” (2015).
+E, mesmo que os robôs não derrotem o pobre velho Homo sapiens , outros tipos de experimentos científicos podem fazê-lo. Em todos os melhores trabalhos de ficção sobre zumbis , a causa imediata da epidemia é a mesma: um experimento biológico que dá terrivelmente errado.
+E o zumbi é a encarnação agressiva e brutal do terror moderno que é a pandemia global. As pessoas podem não sentir mais medo de Satanás, mas têm terror do vírus da zika.
+Fora do laboratório, existe um método mais lento de destruição planetária: a mudança climática. “O horror”, disse-me o autor Jeff VanderMeer, “é a beleza do mundo natural justaposta ao modo como destruímos esses sistemas naturais sem compreendê-los”.
+A trilogia “Comando Sul” (2014), três dos meus livros favoritos de todos os tempos em matéria de literatura de horror, diluiu meu desfrutar da recente onda de calor no Reino Unido e não me deixou esquecer que o tempo quente que estava me dando tanto prazer era fruto das convulsões de um planeta em sofrimento.
+Uma biosfera brutalmente desequilibrada forma o pano de fundo de “The Girl with All the Gifts” (2014, a garota com todos os dons), de M.R. Carey, em que a humanidade foi devastada por uma infecção fúngica. Se o horror antes se preocupava com os deuses do tempo, hoje ele se preocupa apenas com o clima.
+Enquanto isso, a mudança climática é uma causa importante de migrações em massa, combustível potente de algo que o crítico Leslie Klinger descreveu para mim como a tendência histórica do horror de se alimentar da “invasão de forasteiros em populações antes estáveis”.
+Em “Drácula” (1897), de Bram Stoker, o conde titular é temido por seus hábitos vampíricos, mas ele também encarna a contaminação da Londres vitoriana e correta por uma corrupção sombria, estrangeira, vinda direto da Transilvânia.
+Ou tome-se o caso de “O Sacrifício” (“The Wicker Man”, 1973). É uma obra-prima do cinema de horror, mas, novamente, a comunidade que é externa à sociedade britânica normal, com a qual as pessoas podem se identificar, revela-se perversa.
+Em um nível fundamental, nós nos identificamos com nosso grupo. Os tempos incertos podem nos levar a achar hediondo aquilo que vem de fora dele. Assim Bolsonaro pode dizer que os quilombolas brasileiros “não servem nem para procriar”.
+Se os medos soam egocêntricos, provincianos e insulares, não se deixe enganar: o horror nos oferece um mapa da psique, e, como o próprio medo, é inerentemente apolítico. Ele pode facilmente contrabalançar seu conservadorismo arquetípico com uma espécie de anarquismo radical. O horror pode tematizar nosso pavor do desconhecido —mas também nos alerta a não nos atermos demais ao que é familiar.
+Em boa parte das obras do gênero, a sobrevivência dos protagonistas depende de sua capacidade de adaptação rápida a transformações brutais. O sentimentalismo conservador que se pauta por ideias como instituições e tradição não é tolerado; mesmo algo como o Estado-nação muitas vezes é mostrado como uma espécie de ilusão enfeitada, mas fadada a acabar.
+As proteções da hierarquia social ou da propriedade privada nunca adiantam nada, e o horror adora castigar os personagens que creem de modo arrogante que a riqueza os protegerá. Os consolos do passado derretem em contato com o calor candente do medo presente.
+O conservadorismo fracassa diante da revelação de que, no fundo, não há nada a conservar. Como me disse o autor Michael Marshall Smith, o grande horror muitas vezes afirma: “É você sozinho contra o monstro. Sempre foi isso. Sempre será”.
+Nesse ponto, muitos trabalhos sobre o gênero são intensamente universalizadores. Com frequência um argumento se resume a uma disputa simples entre a humanidade e outra coisa. Separar-se é um passo suicida: a sobrevivência  muitas vezes decorre de um impulso em direção a um esforço coletivo. Em um filme do subgênero flasher, Bolsonaro estaria fadado à morte.
+Outro elemento igualmente universalizador é o modo como, em momentos de perigo ou medo extremo, a cor da pele, o gênero ou a nacionalidade de um determinado personagem muitas vezes se apagam. No momento mais intenso do horror nos vemos diante de um ser humano simples, que está fazendo o que todos nós fazemos todos os dias de nossas vidas: lutando para viver, para persistir, para superar.
+Em “O Babadook” (2014), uma mãe viúva é perseguida por um monstro amorfo, de chapéu negro, que encarna a dor pela perda de seu marido. O monstro —seu trauma terrível, que está sugando sua vida— ameaça acabar com seu filho e destruir o que resta de sua vida.
+Mais tarde no filme, a mãe, exausta e ensanguentada, enfrenta o Babadook, gritando: “Se você tocar meu filho de novo, vou lhe matar”. O monstro é amansado. É um ato de bravura ensandecida que pode exemplificar qualquer mãe em qualquer lugar: amor corajoso em face da desordem absoluta.
+O horror nos acompanha desde que os humanos começaram a narrar histórias. Ele manifesta os medos do animal humano e, mesmo hoje em dia, ecoa a suspeita espiritual esquiva de que a realidade não é o que aparenta ser. Nosso mundo pode ser posto de ponta-cabeça a qualquer momento, e o horror é o que expressa isso melhor.
+O gênero pode prosperar hoje porque nosso momento cultural é estranho e febril. Parece que cada civilização sempre pensou que estava à beira de transformações cataclísmicas; essa ideia encerra uma atração narcísica estranha.
+Mas hoje se vê em todo lugar uma impressão forte de que os cavalos do desastre estão prestes a mergulhar no atoleiro profundo. Robert Louis Stevenson disse que “cedo ou tarde, todo o mundo se senta à mesa de um banquete de consequências”. O horror, como gênero, está sempre puxando uma cadeira e lambendo os beiços diante do banquete que está por vir.
+Respirando nosso ar agitado, o terror de hoje, como a teologia que lhe deu seu abrigo anterior, é animado pelo espectro pleno da psicologia humana. Ele é movido por nosso desejo de parar as máquinas, encolhermo-nos dentro de uma bolha do que é familiar e conhecido, rejeitar tudo que venha de fora.
+Igualmente, o horror de hoje é perpassado pela consciência profunda de que, se não conseguirmos nos adaptar, morreremos. Suas narrativas nos aconselham a não nos aferrarmos a consolos superados, a reconhecer que, ao final, todos enfrentamos os mesmos monstros.
+Se o gênero do horror possui uma virtude suprema, uma única qualidade humana que exalta constantemente, é uma antiga: a coragem. Para onde quer que estejamos rumando, com certeza precisaremos dela.
+M.M. Owen é escritor e doutor em literatura pela Universidade Columbia.
+Ilustrações de Alexandre Teles , artista plástico, autor de "Caligari!" (editora Veneta); a imagens são baseadas em cenas do filme "Begotten" (1990) e "Irreversível" (2002).
+Tradução de Clara Allain .
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "982477186029de7ed6493a3ccdd3e269e15f599ae335720868add7023de51b78",
+    "mention_text": "Ray Bradbury",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d92b35618409b91b978aa792eba3d2b9cb299afa36f499f3dfeb67eff7d8660",
+    "mention_text": "Guanajuato",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01fb0c5c342949d8982061314cd4f2fd0ec9960e2378b7aaa4fe2412350c3899",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f524f805f27b5bfdba3060def7c1f68e83eecef442d9a36ba65eeeab55dcaa7c",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7512d2f45e8f0339c834ee1cb48d6a3a7d12ba2b279668705be33d982805dd45",
+    "mention_text": "Homero",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "742c5637086e9793acf6011d8650bcbb07006e26794b14e0a32f8bb8635d2fe6",
+    "mention_text": "Odisseu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec72b7940038ec2c922674020690d848260910444204c7b5f21dc07004b660d4",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "945ff5440d00ae70ce843f8e8964a1dbf3e1a617dac665d65b9cbb150eed8198",
+    "mention_text": "Stephen King",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c933b698375cb97c4340f54f3b3a9206686aeae48c023cef0bde8762064a3f4e",
+    "mention_text": "H.P. Lovecraft",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bf291b9f35cf94fb53c12d379a9dd1b259d82d28771a00a11a8edb47f52d0ff",
+    "mention_text": "Joe Hill",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b17a5ca8e03f9eab98fe2921009ff584ecce7059f8b4b617f03690c560ef15a0",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb760571f19010df2cdbda139a2692e2ae74e26e3ee7cf9c3529d090c636b98c",
+    "mention_text": "Ramsey Campbell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad5ec77a5383f80f5fe324554a0fa4690c38dfec5fd57a69d275b1a13626efb9",
+    "mention_text": "Lovecraft",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3282ec69287d1235727452f93e07712ede4d9ae08ca6497a91ff7dbe8c90986a",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf966a61295dfe2a40c7ac279294a7fe828f8978a571b0d3e48431db98b5426c",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eafb57b2a69c947b04f2714079e29f90f60d11c0a7c39a339d0e78b2866009a1",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be0cc6f3ba98a21a6ea5beeb27663795630ea2859ae39a7eb58f00c413d16dcd",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46eb761ba242e4df54872ff25126eba7975aeb09459f58a9b02757635fd3fe94",
+    "mention_text": "Nathan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff9b08edcbb1da3291a52a9586f73c3ed44bbbb04c2773b67315eb74d2b1d792",
+    "mention_text": "Jeff VanderMeer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "664675ca48a28ecd54bc95e9f5ed701b4ddf15162e72852da76a4fbf587955c9",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d98f93c42ee9b69a21389b1327ac6f60498f0ce4dde79c90cbef2527cde7bc2f",
+    "mention_text": "M.R. Carey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9066f6e9968d16728a293cafac48e4b5969f0ba5626c6bdccaeb59414dffc0ca",
+    "mention_text": "Leslie Klinger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc288807ac626b64caae993b8eb12867d2693544e8d6907e941e3255f108b7c4",
+    "mention_text": "Bram Stoker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5209ca159d0fc42a1830d41b304a1541df0588148f01306b5afff865373e90a",
+    "mention_text": "Londres vitoriana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "caf837985be9d958bbba820aacdeb06ebfa4f4f25aa454f85e7e56bb4944f1d4",
+    "mention_text": "Transilvânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e5ac5b8d0f7edcbc02792e7c60c8016b0f681daeec8779f4529a529abddafde",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dcda40c25e7d728f4e42dd88bfbafb83ad0dfa270337749f58b343d5f90caad3",
+    "mention_text": "quilombolas brasileiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2d81118269bcc74a78946690c6fe7830c0d2ee4051b15efe561c8c5b8867f153",
+    "mention_text": "Michael Marshall Smith",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25aaa697f8d1f014543f70c12a5c4dd26fe00ff1c8566a3c6411eb3a7d1da0fb",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84e31c8317ff5dd12b710d2174c7a5acd329e70fe430e4c59868cc5f85925668",
+    "mention_text": "Robert Louis Stevenson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0ce47bfabaf15ff4e3cc8ee155e29bb0016b05f429ba60e0a25c78a3471da95",
+    "mention_text": "M.M. Owen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87d364eeea70edcac7e46e67e7039a4742122199c6e51b10a182c017942e5bae",
+    "mention_text": "Universidade Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32942b551cfe71d06a045fbf20ecf51b76a2e0b44b93eca50074fc42e945a407",
+    "mention_text": "Alexandre Teles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74a221ef37094c93ceba93d61c1aca17ec3e46c2f5c11f1b1d0f7990992fd0ce",
+    "mention_text": "editora Veneta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5738e42f34604d2d41edbcd5ffa8fa0a4f9d6577288b2ace4008c22b8ec3f68",
+    "mention_text": "Clara Allain",
+    "categoria": "PESSOA"
+  }
+]

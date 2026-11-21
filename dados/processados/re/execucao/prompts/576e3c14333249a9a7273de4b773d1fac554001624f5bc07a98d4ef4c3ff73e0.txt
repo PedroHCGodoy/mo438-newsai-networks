@@ -1,0 +1,405 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f3a051d794b7516d981c944c68f8608efe110109815facb572ff113e809fee33
+
+TEXTO:
+Facebook ainda não está preparado para enfrentar fake news, diz Zuckerberg
+
+O CEO do Facebook , Mark Zuckerberg, disse que a rede social não tinha mecanismos para lidar com as notícias falsas durante a eleição americana em 2016 e revelou que só no fim de 2019 a plataforma estará completamente pronta para enfrentar a disseminação de boatos e as novas ameaças de segurança.
+“Acho que levará cerca de três anos para adaptar tudo no Facebook para estarmos prontos para todos os problemas de conteúdo e segurança. Mas a boa notícia é que já estamos a cerca de um ano e meio [fazendo isso]” afirmou ele em entrevista divulgada nesta quarta-feira (18).
+“Acredito que até o final deste ano teremos ultrapassado significativamente muitos desses problemas. Não seremos tão bons quanto gostaríamos no próximo ano, mas acho que estaremos próximos”, disse.
+A fala do executivo foi dada em entrevista para a jornalista americana Kara Swisher, do site de tecnologia Recode, divulgada nesta quarta (18). Em mais de 1h20 de conversa, Zuckerberg criticou a possibilidade de regulação do setor de tecnologia , reclamou da política de imigração de Donald Trump e deu mais detalhes da ação russa na eleição presidencial americana.
+Mais
+Moscou é acusada pelas agências de segurança dos EUA de ter tentado influenciado a votação a favor de Trump tanto roubando dados de políticos democratas quanto através da distribuição de notícias falsas. O governo de Vladimir Putin nega participação no caso.
+Zuckerberg disse que o Facebook conseguiu identificar antes da votação e alertar o FBI (a polícia federal americana) sobre a atuação de grupos hackers da Rússia que estavam tentando invadir contas e perfis de americanos, mas que disseminação de notícias falsas não era algo que estava no radar da empresa.
+“Nós apenas não estávamos procurando por esse tipo de operação de informação... estávamos focados nos tipos tradicionais de hackers”, afirmou ele. “Não há dúvida de que fomos lentos demais para identificar esse novo tipo de ataque, que era uma operação coordenada de disseminação de informações online”.
+“Isso foi uma coisa nova. Acho que entendemos que fomos lentos para perceber e precisamos fazer um trabalho melhor neste tipo específico de ameaça, defendendo-se contra Estados-nações, o que antes não era realmente uma questão prioritária”.
+“Pode apostar que agora este é um grande foco do esforço de segurança que temos aqui”, afirmou ele, que apontou que a prioridade é impedir que a disseminação de fake news se repita em eleições importantes do mundo, citando o Brasil e a Índia como próximos desafios. ”Sabemos que precisamos acertar desta vez”.
+Zuckerberg disse que para isso a empresa investiu principalmente em inteligência artificial e na contratação de novos profissionais para analisar conteúdo, além da parceria com agências de checagem de fatos.
+Ele confirmou também a informação divulgada na quarta pelo próprio Facebook de que a rede social vai começar a apagar conteúdo falso que possa levar a casos de violência no mundo real , como tem ocorrido em alguns países da Ásia, como a Índia e Mianmar —que teve a repressão contra a minoria rohingya citada especificamente por Zuckerberg,
+“É clara a responsabilidade de todos os participantes envolvidos lá. O governo, a sociedade civil, as diversas pessoas, e creio que tivemos um importante papel também”, disse ele. “Deixe-me dar um exemplo de quando nós poderemos apagar [postagens]: em Mianmar ou no Sri Lanka, onde há uma história de violência sectária, semelhante à tradição nos EUA, onde você não pode entrar em um cinema e gritar ‘fogo’, porque isso cria um perigo iminente”, disse ele.
+Já perfis que distribuam notícias falsas e teorias da conspiração que não causem violência poderão continuar na plataforma, embora com alcance reduzido. Zuckerberg, que é judeu, mencionou sites que negam o Holocausto como exemplo do que poderá continuar sendo feito na rede social, embora ele tenha deixado claro que discorda pessoalmente deste tipo de discurso.
+O executivo também assumiu sua culpa pelo caso da Cambridge Analytica , empresa britânica que teve acesso aos dados de milhões de usuários do Facebook . Parte dessas informações teria sido usado consultoria para ajudar a eleição de Trump em 2016.
+Mais
+“Eu criei a plataforma, então se alguém deveria ser demitido por isso, deveria ser eu”, disse ele ao ser questionado por Kara Swisher. Apesar disso, ele voltou a defender a resposta da empresa no caso e disse que agora todos os aplicativos que tiveram acesso aos dados dos usuários estão sendo auditados pelo Facebook.
+Para Zuckerberg, o escândalo de vazamento de dados da Cambridge Analytica combinado com a disseminação das notícias falsas e a interferência russa na eleição americana fizeram o público mudar a forma como vê a rede social.
+“Acho que as pessoas têm sido muito positivas e focadas em tudo de bom que vem com a tecnologia por um longo período de tempo. Ter um período em que as pessoas se concentrem em alguns dos usos negativos , e devemos ter certeza de que entendemos bem isso, acho que é completamente razoável”, afirmou.
+O executivo disse aceitar uma nova regulação sobre a circulação de conteúdo na internet, mas negou acusações de que o Facebook tenha virado um monopólio e criticou a possibilidade de dividir a empresa.
+Segundo ele, caso companhias americanas como a própria rede social e a Amazon tenham que vender parte dos ativos, isso abriria espaço para o crescimento de empresas de outros países, em especial chinesas.
+“E eles não compartilham os valores que temos. Pode apostar que se o governo [dos EUA] souber que há uma interferência eleitoral ou terrorismo, não acho que as empresas chinesas vão querer cooperar tanto e tentar ajudar o interesse nacional”.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ce6d38938d28d8c17f4fea43a9ea6b1f9a4cdb28fd7693b8e901e541bc487467",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e93fa6ebb75b2d0d04c119a52e60ddcdc5a363c257fea195b710175306c38f87",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad9cc35bc07aab211be646f815d5665ff01767d6a444c5b8be6602a59e536e68",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbca1e8eac5e610ff18e6542e25971272a679cab4df1b8123b1de03d0ff21b67",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "176a93fd386b1e457dfae27eaeac67071c27718b7fe032c0a25e968ea965b8f5",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5cf8aabb424e3eccfe1e6e7d15cc85c3f1cee0ce6d7b4be94e2651b631b748d",
+    "mention_text": "Kara Swisher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db4bd2a5ccc04cb3c9a3fb1b7386a1f468241d4eb193cc76f07def403b1af462",
+    "mention_text": "Recode",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f5d96a0b73a96a904d57e8c310e87b6c8d4eb7fe8fed7bc29e2c8456547abb0",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d91a4abd87a93bf967bd4766f652f74d54b739957c482aecd14c3c03c58c78cf",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "daa958bef87dbfa218b5f0156d9bffaee54299c26ec166df84940ec1af25c834",
+    "mention_text": "Moscou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "49b62c6737832feb2e503c42e5cb2fb8776c93acc8dbf48c9470cd15306bc0ca",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5d9945329a79d2c40d7192b00559188b114d40ac6ab320801f455f1c55d9d255",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "403a82fc592192c62f178eb2fc734ebc88da623c1643ae83d9a04e2d4379ea72",
+    "mention_text": "Vladimir Putin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "283add64bd397d6b96204aa7ab01e3dd9e3bb81c687a345b816c3fc23606c4de",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7d1b514f7609a4c08cad76d7ead307c94e709f12c9f3974d7a601530b747269",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57b7a374b8fc853dd066e64666d88fa8e1ee09809c961ac7b4f98f2b6e234c17",
+    "mention_text": "FBI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6fad9a861c45169d5f6e19537c97c6c3f65f568f09e3bcf57d6e679e4ce9048",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "606eb9555a5a424c9ec671cd4f9e2a728611378974fac75c2355255556f1e5c0",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "496244b80cc7dff44d113a56a836e281ca0e9e447b2fa31c445a848276d61113",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bb6d6caac1a6a589a19d21c85d1c25a0ef26d8939a49e15f1ee70a23ad7805c",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c0df76319d8b1912df789f4ebfae6e49cbb9d42d737ea31ac0dfbf92728b2f67",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "904c3fdaf8589aa7cb73cd6657978dac19480690513e60005e6c513e032b46c4",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ebb2abddda77521568b5f07c3a8a81cd6d8d6d01fee6505144cf585b7946eb9b",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be814d04251b46fe72ec85cae0249ea8b446dd09792e6a4a28b03bbc5ff74320",
+    "mention_text": "Mianmar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "26714f1fea3d904d619fcf392e1d3eabb0e2f817117414e08fd0cc855e3d015a",
+    "mention_text": "rohingya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f8f224c626a531c1faa4c94d2170cb713af5eb93a8701f422017cc2863d73df",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a31d41b8d3a26dde89cea2d298a5b5ee7d6f95da9ef3e4114a9e0c1b4f092258",
+    "mention_text": "Mianmar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e08534d841c3b3147d78f7d7dd42356f9f4374a7305f2c274bd7a06157fd1f35",
+    "mention_text": "Sri Lanka",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec7dfa82b1adcc18775ae3c8511a4d31c0dd2cf9eeb1e7e5c459fbbcc8bd1f79",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96c24d04c042040c5f73423bb2404beda6ac992b05c1aed625e5d8090ab96a2d",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a0324f6cda0b133592dc8da221a4503b9330e058b1b6ceca392f4f8ae62bf29",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc14e198e721cd84928aef8b6326b3c84c9bcbb56f3154c1219fe1f2cdee21ee",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62f0642219abccbae5a46fdb77734440eb5be4f21e47e16fbab64079386efcbc",
+    "mention_text": "Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e75e2832ba061301f4159bea56d95901321c24e8216f841424b3de4de8f26017",
+    "mention_text": "Kara Swisher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71c8d007862c98531c0c1b02ecf61d350c35e3680fbf07a4d08de13de007f4a3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61e909d1e0c284ba6f71446eba188c93651fbaccbbe32be8c6f6318866f17b63",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a16034de4bed94267d6441f705028bf360493a42c88a459b6d980b36fa4b349d",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4d91f8f8ee384dd77a0135ebbefc86e16b6f77e731ac5548d5f91762ea84841",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "374ee0f2f0c536c01f52f1c6eae40961d0d68907713ecb216f121dd046bc57d4",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0780c94d5054fe41d3680c3888d4534762f9fd5d01d8b2a8a44cc5869a63f6d1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  }
+]

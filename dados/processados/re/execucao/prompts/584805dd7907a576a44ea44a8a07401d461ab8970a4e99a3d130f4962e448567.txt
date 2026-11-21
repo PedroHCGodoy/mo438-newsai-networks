@@ -1,0 +1,390 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d27714cfc3aa44721fdc1792655678885ed6fd08ebfb23ed61125d0d48738490
+
+TEXTO:
+Criador de algoritmo do Facebook edita o que 1 bilhão de pessoas leem
+
+Com apenas 26 anos, pode até não parecer, mas Greg Marra, engenheiro do Facebook, é capaz de decidir o que um bilhão de pessoas leem diariamente no mundo inteiro.
+Marra é o "nerd" responsável pelo algoritmo que a rede social utiliza para decidir que conteúdos terão prioridade no "feed de notícias" dos usuários, que compõem cerca de 20% da população mundial.
+Segundo Emily Bell, diretora do Tow Center for Digital Journalism da Universidade de Columbia, o automatismo coordenado por Marra o tornou "o executivo de mídia mais poderoso do mundo".
+Cerca de 30% de todo o consumo de notícias nos Estados Unidos passa pelo Facebook. Nas áreas urbanas do Brasil, o número chega a 67%, de acordo com um relatório de 2014 do Instituto Reuters da Universidade de Oxford.
+Das 950 milhões de visualizações de vídeos que o site BuzzFeed alcança mensalmente, apenas 5% são originadas pelo próprio site. A maior parte, com protagonismo do Facebook, vem de outras plataformas digitais.
+No fim de 2013, quando o Facebook mudou a formulação de seu algoritmo para mostrar um conteúdo noticioso mais sério, vários sites virais como o Buzzfeed sofreram forte queda no número de acessos.
+"Nem todo mundo sabe que por trás do que é lido no Facebook, ou mostrado no Google, há um algoritmo que decide tudo. Por isso, é necessário que as pessoas saibam que há um viés", explicou à agência Efe Karrie Karahalios, professora de ciência da computação da Universidade de Illinois.
+Marra, um especialista em robótica que às vezes se apresenta nos escritórios do Facebook vestido como Super Mario e diz não se preocupar com o lado editorial de seu trabalho, se autodefine como uma pessoa apaixonada por "criar coisas que ganham vida por si mesmas".
+INFLUENTE
+A carreira de Marra não está focada em jornalismo ou estudos da comunicação de massa, mas seu poder é tanto que se mudasse a configuração do sigiloso algoritmo do Facebook, algo que a empresa já experimentou, poderia afetar o comportamento na vida de cada pessoa.
+Segundo a revista "Mother Jones", nas eleições presidenciais americanas de 2012, o Facebook modificou o "feed de notícias" de dois milhões de usuários, o que gerou maior participação eleitoral.
+Em outros testes, a empresa tentou provar se é possível "contagiar emocionalmente" os usuários com otimismo usando notícias positivas.
+Marra chamou a atenção do Vale do Silício em 2008, ao criar uma rede de robôs capaz de convencer de maneira autônoma usuários do Twitter de carne e osso. As máquinas conseguiam interagir com as pessoas e persuadi-los a serem seus seguidores.
+O talento e o perfil de Marra são o expoente mais claro de uma tendência que vem se tornando norma: empresas de tecnologia decidem o consumo de notícias e robôs desempenham o papel de editores, uma profissão cada vez mais desvalorizada.
+"A maneira como o algoritmo do Facebook funciona não é totalmente transparente", explicou Karahalios. Ele reconhece que a estrutura do sistema de blindagem da rede social só é conhecido por alto.
+Segundo ele, isso é muito delicado pela cada vez maior vontade da empresa de se tornar uma plataforma de propaganda.
+Karahalios considera que, além do algoritmo, que analisa milhares de variáveis, o poder do Facebook reside na enorme quantidade de dados que podem ser processados e submetidos a técnicas de "machine learning", a lógica de programação por trás da inteligência artificial.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "bf48451cc0097214db3fec3ce84638ee71ea9eeacf6a46055aa7dc991da34d30",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75e275fdb75699f5ff8c727e419adc77983b91196ed618b51ae61e35589a6741",
+    "mention_text": "Greg Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd88d56909274ca22523b86f17addf6ad53c666b19175bfe45deafeaa4e0840c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3c03c6dd1dc4583cf7fcbdd0f750fa5af0417145ec6ba57b438cc2ec23b3798",
+    "mention_text": "mundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ddec48d48948093f84110547c02e1f31d9a7c6343a57263fc998686c77ca7432",
+    "mention_text": "Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2f2dd30da4edbc70541cd2199ba634a9209a75ff30001214712bbc643903590",
+    "mention_text": "Emily Bell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7495a3783fc3ac0cf560e9bc0f970428092ca8fa250e45d5b0f5e4ad41be8441",
+    "mention_text": "Tow Center for Digital Journalism",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8e4f462607d31f0c9c39fa51e26aaf0f2296e9cc1694360c9c71c3362009f5f",
+    "mention_text": "Universidade de Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6f80d11fb24328fed9f4c51bca036f1471e2cb514d68dcaa2448fc1da5f5109",
+    "mention_text": "Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf59791eeeca982a4668071f2cae89815526e0fbe00a5d32439edd1cad4e03de",
+    "mention_text": "mundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a9ef10bfce81248d097a611759319852ee6c5d5c2fcaa22d07e1fe1f7ba5402a",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae974e73fe0c6471fe03e9e64c1f7c802b81a905bd9edd537efc6916ad48ff93",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8ab45949e09d4b273fc4c156ef5615de2e579df0fac94ddfa46fa0ec365bf62",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2213b3d712a3daea6e16f98b7d62f0a8bd9534f0a04c6a7ed5662c5b12b73c9d",
+    "mention_text": "Instituto Reuters",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08a678aea6dd8e80b33a8225e8958349425b030f979e07c3cf70c0d5cc351692",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d43d8585231dcdb0ca4d84a92167385852ec4310991fa85ba61b2ebebc4e2957",
+    "mention_text": "BuzzFeed",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2392ea30053182a7ec37995b6ec14f43fa927c17a561f083663689dbfefcc16",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7ce833db4087531df2cc35b31fa52137fdbfc8c32c65e69f63cb41dfd77422f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "361f2e2f69000f145a67b007d4383e4eea2daccaa70abcde146136f7e21cfd8a",
+    "mention_text": "Buzzfeed",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ba4e55dc73c1bb284c53ed73ee004d6e719999faf33f6eb0d28665fce63831b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97ac0802869f00c1ed2ff7b2610c2c32642f9cf881f8b5966d4d02ec6b7af821",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80a484a04e3220d52e1d43c03b3041290d379aefc81742f11be89f34866d9810",
+    "mention_text": "Efe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97733cdaf3ece1931e83421f1d091f14787f4c42245b2bf7562d244f4d12bd35",
+    "mention_text": "Karrie Karahalios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b2f435ab845784090eb2981a5b5a1339b387d4d151c7eedccfd5d31c8adb75e",
+    "mention_text": "Universidade de Illinois",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fcf4c0344567e8f9bd8ade2731b507022325af86033ec3934eecd6497ed82ec",
+    "mention_text": "Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1dfb5dca83f2fb55e4a76c019854b3f40eb8c5eb8c5785582e2a9db7023dabcc",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9155e6d3a440aaf9d79e5ed2a1063636a7ea9a977984b15e9110a6da8b0cc164",
+    "mention_text": "Super Mario",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c4c29d80e398b9de064b5b90bc4dbff060892944538103dc078e3aedfc81b65",
+    "mention_text": "Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5b1ab88a3461f064012f808efa00e8d5baf1c9b4c7d99ba0af838ef249f3512",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48060ecd7f89ef09b8488537f75ea7cfd31b30b89c6901c7a72c0accf23d3b8b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9fb95d5ae792dc68744c015d53e77571332e2eb7a4ac72cf558f2791edddb4fd",
+    "mention_text": "Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1356dd41075535f8d26319d5714c998943aa405e48fc7c550d13cb3550c839ce",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a9158301e52eb3b7723351baf5f836f08f5f5dc3f74356c10de00598c773ca7",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdae6f57741f43d7370df3091d4110b4cef7f14abaa3837049dc009d2c1f693c",
+    "mention_text": "Marra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "741b65360bb0f0fe8cfba45e9a4908065e75b5741de33fe2b8e64f5d67324fd6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ef51da2c3bbfcabe8cb23a9a03b7a9110fa97974d9fe6b047df98eb4c24eb84",
+    "mention_text": "Karahalios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccc2841fed996ea955d9f10ece16dcd515a755be141627d4a6ca500826ba5585",
+    "mention_text": "Karahalios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c5b3140f3aca2f519a7a7a1b9f28cd36958529739b7d16855f384c136b5551b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  }
+]

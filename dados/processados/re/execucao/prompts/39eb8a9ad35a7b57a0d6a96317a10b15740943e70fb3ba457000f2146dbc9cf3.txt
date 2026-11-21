@@ -1,0 +1,364 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 18a58906895ad74647673d07973576011cca41de3ff6cb4aa7782864fb2a65e4
+
+TEXTO:
+Instituições e empresas oferecem programas de apoio para quem pensa em montar um negócio
+
+EDUARDO MOURA
+De longe, até daria para dizer que ele é brasileiro. Mas é só Stanislav Efimov abrir a boca que o sotaque russo o denuncia -embora ele fale bem o português.
+O moscovita veio para o São Paulo em abril do ano passado para trabalhar como videomaker e acabou ficando por aqui.
+Da Rússia , sentiu falta da família e de borsch, a típica sopa local de beterraba , mas também de um serviço ágil e fácil de manutenção de smartphones. Daí, surgiu a ideia para a sua empresa -um "delivery" de consertos de celular.
+A ideia era boa, mas colocá-la em prática não foi nada trivial. Por sugestão de um amigo, inscreveu-se numa edição do Startup Weekend , programa que dura um fim de semana em que os participantes discutem, testam, colocam em prática e validam ideias de negócios. Funciona em forma de competição.
+Na era das startups, o mercado é uma selva. Para sobreviver, essa é uma das várias opções -muitas delas gratuitas- que o paulistano tem para buscar apoio e capacitação.
+Há também outros tipos de eventos, como o informal Silicon Drinkabout, um happy hour aberto para qualquer pessoa que esteja a fim de trocar uma ideia com empresários mais experientes e fazer contatos de negócios.
+Para quem está em estágio um pouco mais avançado -e tem condições e tempo de se dedicar quase integralmente ao negócio-, o canal é se inscrever em programas de aceleração. São períodos de imersão, que podem durar de poucas semanas a meses, em que o empreendedor participa de uma série de atividades voltadas a validar seu modelo de negócios, planejar estratégias de crescimento e fazer contato com investidores em potencial.
+O Brasil pode não ser exatamente um paraíso para abrir um empresa, mas as oportunidades para buscar auxílio são muitas, principalmente em São Paulo. Stanislav que o diga.
+"Cada vez mais, vejo espaços de compartilhamento de novas ideias por aqui", diz. "Ao mesmo tempo, é muito burocrático e lento para abrir um novo negócio", explica o russo que já se acostumou ao arroz com feijão.
+*
+Startup Weekend (eventos focados em temas como saúde, mulheres e finanças) Foco: testar ideias ou aprender sobre empreendedorismo. Edições temáticas ou gerais Preço: sob consulta; costumam variar entre R$ 100 e R$ 200 Próximos: Startup Weekend Ad+Tech (propaganda), Startup Weekend São Paulo Health, Startup Weekend Women São Paulo
+Quintessa Foco: Negócios de impacto; empresas focadas em solucionar um problema social ou ambiental Modalidades: Validação de modelo de negócio (4 meses); estruturação de gestão e crescimento (12 meses); expansão do negócio (6 meses) Quando: seleção ao longo de todo o ano Preço: sob consulta; inscrição gratuita R. Dr. Virgílio de Carvalho Pinto, 445, Pinheiros; tel. 2371-1888
+ACE Foco: startups de base tecnológica e que já tenham pelo menos um produto ou protótipo rodando Duração: 9 meses Módulos: validação e crescimento Quando: seleção ao longo de todo o ano; próxima turma em setembro Preço: o programa e a inscrição são gratuitos. Há a possibilidade de investimento de R$ 150 mil em troca de 10% de equity (participação na empresa) Av. Paulista, 171, 4º andar, Bela Vista; 3251-1372
+B2Mamy Foco: para mães empreendedoras Modalidades: Start (evento de um dia com mentoria e validação de negócio); Pulse (quatro meses de aceleração) Quando: seleção ao longo de todo o ano; próxima rodada acontece de agosto a setembro Preço: R$ 5.000 R. Coronel Oscar Porto, 70, Paraíso
+BioStartup Lab - Interfarma Foco: pesquisadores, empreendedores e profissionais de saúde ou áreas relacionadas. Mentorias com especialistas e conexão com grandes empresas farmacêuticas. Para se inscrever, basta ter uma ideia, projeto ou startup na área de saúde e ter uma equipe com no mínimo duas pessoas Quando: inscrições a partir de março de 2019 Preço: gratuito e livre de equity (31) 3665 8450
+Programa de Aceleração Visa Foco: empresas que atuam em áreas como transações, gestão financeira, automação comercial, gestão de vendas, empréstimos, investimentos, financiamentos, seguros, bitcoin, crédito Perfis: "Start", empresas ainda em estágio embrionário; e "Growth", aquelas que já estão estabelecidas no mercado, com CNPJ ativo, por exemplo. As startups selecionadas para a categoria "Growth" cumprem ainda um mês do programa no Vale do Silício, na Califórnia (EUA), na aceleradora GSVLabs Quando: inscrições abrem no início de 2019 Preço: gratuito Coworking Habitat. Av. Angélica, 2.529, Bela Vista
+Startup Farm Foco: empresas em fase de validação do negócio ou que ainda não captaram investimento Duração: 6 meses Preço: Inscrições gratuitas. Para participar do programa, a empresa cede 5% de equity. Há a possibilidade de até R$ 150 mil de investimento da Startup Farm Quando: próxima rodada em outubro hello@startup.farm
+Startup SP (Sebrae) Foco: startups digitais de qualquer setor, com ou sem CNPJ, com soluções já validadas Duração: 4 meses Preço: gratuito Quando: inscrições abrem em janeiro de 2019 leandrosq@sebraesp.com.br
+Launchpad Accelerator São Paulo (Google) Foco: startups que estejam em estágio avançado de crescimento, focadas em produtos como Inteligência Artificial, Machine Learning, Cloud, Android e/ou Web Duração: 3 meses Quando: quatro rodadas por ano; inscrições de três em três meses Preço: gratuito
+Programa de Residentes do Campus São Paulo (Google) Foco: equipes com até dez pessoas que tenham produto lançado e clientes (pagantes ou não), construindo soluções inovadoras Duração: 6 meses Quando: inscrições abrem em setembro Preço: gratuito R. Coronel Oscar Porto, 70, Paraíso
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "740c34a8faecc8316305c654f9f37208e73191d3fa6e7cf9a116c5e26efbb32d",
+    "mention_text": "EDUARDO MOURA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ee5fc317154b094f7845095882368ce78e55bb167dec67ccc6f23c2ce4cd4d7",
+    "mention_text": "Stanislav Efimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08cb43bc51107937524f1cbc57ce8da0314949855c7f7c252cbb767b2cb1739d",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "593a70846f358de1bde0913ea83a747ba37b32a21752b8156e41ccdd8ad202c8",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1db0415bd9345dad1f0b4b5ac44955924dc7b64e5c1f898522ca2e731e00783b",
+    "mention_text": "Startup Weekend",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f7e8769a9f9d90706298da49a6d48af88e1532bc850fe336aa32143f83b58d3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e356be82292eee7cd3b2dac8a1fd4e4ee4aef707d5bc1665078ec0c64670c9b0",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "958477f11eb7a6360a137b8829a405fe5ebb817c382e4897c9a42f3a3a827da6",
+    "mention_text": "Stanislav",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a1a48cef23ed3bfc6daefe1ee2dcd5e56ced197018dd475baa0d06011f23bc4",
+    "mention_text": "Startup Weekend",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23e28cb6707db838d033bf477a0e2c22cda0472824024e64a8845629ff26c695",
+    "mention_text": "Quintessa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fc9c00e8bb88c9b1ca816d3a53de49c41dd38e4b89c00b8cf150f6ac54f92b7",
+    "mention_text": "R. Dr. Virgílio de Carvalho Pinto, 445, Pinheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2c1b283539224b6e53cc35b114de5da6fc6671a764c2ef615aff8cdcbb2e0f0b",
+    "mention_text": "ACE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bbfd5978340ead6d16a913862ef82143143c28d537281fd543e5ce017711afea",
+    "mention_text": "Av. Paulista, 171, 4º andar, Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ad67d1d969e91dbadaef5e535accd1f359147f3a3cc794d38c9485b8948a0abe",
+    "mention_text": "B2Mamy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0ea173745701bc66f905f30313fece05a638a906496cecef8f26521b9670695",
+    "mention_text": "R. Coronel Oscar Porto, 70, Paraíso",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd0007e36ad2cfcf34375e20e30a7f3d880e9231c31f41aa55e05f492fae06f9",
+    "mention_text": "BioStartup Lab - Interfarma",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d3e4f69918691ed5dfb5f9497dc22fe2bee47578a006fa443e02d6affc90cd0",
+    "mention_text": "Programa de Aceleração Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d31df316dda7cf48cd06e9eff0d7412fa26aa9bd5c48dc02731e89edf6b835d",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "48b2fbfa6ff5d3af2110682d0a50a409a655c7e014920f3414c34e2346193dcf",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a58f38f5a6d3e5a88b81879497bc734da3083d49061ccd3eb3db8b8926717da2",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4f3519805fe55f9836400531daf5f576a434c4de71f4d3debfbcb4b271e3082",
+    "mention_text": "GSVLabs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0aab01267f669e05cd8036c42fca31f2fea534281708202c5fecaa8a7f9cd45",
+    "mention_text": "Coworking Habitat",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "611517578f1301a092884faba463bca27a0ebb6b233dc1f67a6ef3a643461a42",
+    "mention_text": "Av. Angélica, 2.529, Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "537d76c6ee45462f0ead3de221654a632334f23df37d67d10f2a8e12fbed9051",
+    "mention_text": "Startup Farm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d409935e1b9cdc934891edf5f76ca9a25ab07997f74fbffda2f527bef56efb51",
+    "mention_text": "Startup Farm",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12a9c540ab18bfd7619079872a1044a1b66d981d9b629cec6491b5bed3ac9934",
+    "mention_text": "Startup SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21774427216df74ad5ac0e95727b62603656d5b6e21ea4f2a5fc3a99853b14fe",
+    "mention_text": "Sebrae",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4827e2a65d919bb317a161c47b3f958a6caf6a0d125bf5459ca3f1ed79b6b18d",
+    "mention_text": "Launchpad Accelerator São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af3952abd110f9d6ae346aab4f933c6e63827186c32e7ba6b816c44357a2ba58",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f205e9fe6c0ae99f49044c887e876e665f8e95b9d148a4fe15b2b0b22f81fe6",
+    "mention_text": "Programa de Residentes do Campus São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "983d81ad4ce7ac3807adcb0928d8c3de13144890035e5e900367d9eaab99528c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "189c58d2d756a6806e6d47ac1a0ab905a750530e51cc550211f13876f45a31ad",
+    "mention_text": "R. Coronel Oscar Porto, 70, Paraíso",
+    "categoria": "LOCAL"
+  }
+]

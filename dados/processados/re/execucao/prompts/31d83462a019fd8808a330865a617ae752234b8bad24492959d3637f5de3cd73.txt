@@ -1,0 +1,415 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 3d644b43bec9b769841edd3a94f6f7ddb5f27c0376ddda5086c2f45c8dee7fd2
+
+TEXTO:
+Conexão Pop: A nova música
+
+CONEXÃO POP
+A nova música
+Com remixes, Database melhora faixas de artistas gringos; e a delicada habilidade de Stephanie Toth
+THIAGO NEY
+DA REPORTAGEM LOCAL
+A CULTURA do remix ganhou 
+forte impulso com a proliferação de softwares de edição 
+de áudio. Ficou fácil não apenas fazer música, mas mexer nas músicas 
+dos outros. Fácil, mas difícil encontrar qualidade como na produção da 
+dupla paulistana Database.
+Caras como The Twelves, Roots 
+Rock Revolution e Lucio Morais e 
+Yuri Chix (o duo que forma o Database), são crias da união música-tecnologia: daqui do Brasil, se apropriam de faixas de artistas como 
+Black Kids e The Kills e dão um novo 
+sentido a elas.
+No
+www.myspace.com/databasetrax
+dá para encontrar os excelentes remixes que o Database arquitetou para "Galaxy of the Lost", 
+música do Lightspeed Champion 
+(ótima banda do geniozinho Dev 
+Hynes), e para "Drugs in My 
+Body", do Thieves Like Us.
+Eles também mexeram (melhoraram é a palavra certa) "URA Fever", da dupla The Kills -que gostou tanto do resultado que deve 
+lançar comercialmente o remix. 
+Como outros de sua geração, o 
+Database faz música que não se 
+preocupa se será chamada de electro, house, rock, disco-punk. Não 
+importa o nome, é música que funciona bem na pista ou fora dela.
+Ela canta, toca violão, tem 16 anos, 
+por isso Stephanie Toth é comparada a Mallu Magalhães (as duas já 
+dividiram reportagem na Ilustrada). Stephanie (www.myspace. 
+com/stephanietothmusic) mostra delicada habilidade com o violão e com as palavras, em canções 
+como "The Size of a Buick". Ela faz 
+show em São Paulo no próximo dia 
+27, na festa Folk This Town!, no 
+Santa Augusta Bar (r. Augusta, 
+976). Há um monte de "jovens cantoras" no Brasil. Stephanie, Mallu e 
+Tiê (
+www.myspace.com/tiemusica
+), que se apresenta hoje no 
+Studio SP (r. Inácio Pereira da Rocha, 170; 22h30), são das poucas 
+que não nos remetem a Elis Regina, Clara Nunes, Marisa Monte; 
+das poucas realmente... jovens.
+"Halo 3" arrecadou mais de US$ 
+300 milhões desde o ano passado. 
+Personagens de "Star Wars: The 
+Force Unleashed" serão equipados 
+com "inteligência artificial".
+Os games estão entre as principais engrenagens do entretenimento. Nesta semana, veio mais 
+uma notícia: lançado em 2000, o 
+jogo The Sims já vendeu mais de 
+100 milhões de cópias, em 22 línguas, em 60 países. Sozinho, movimentou US$ 4 bilhões. 
+Comercialmente, está na mesma 
+posição de "American Idol," da saga "Guerra nas Estrelas" e da série 
+"Harry Potter" -em comparação 
+do "New York Times".
+Por falar em "American Idol", eu 
+que estou muito empolgado ou a 
+edição atual é a melhor da história 
+do programa? David Cook? Brooke 
+White? David ARCHULETTA?
+thiago@folhasp.com.br
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4dfae5f9d104d139c3638ee74b9b6dfdea731dfa66fa055991d2bf6d8dced3ea",
+    "mention_text": "Database",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf72a7244440ae06b8f7e3def70328b717ff6fe57c5b928942d42729137d3324",
+    "mention_text": "Stephanie Toth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1135b1dcafe5e65aa55133fe86ff732a8d75d8fd6978d84fe74fa9f1f8b01c42",
+    "mention_text": "THIAGO NEY",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1892b189df3f14532eb43c0781f5e03e91ffeed9eb42a26b831ecc295798bd63",
+    "mention_text": "Database",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "207df7f34fbc61aa167d949ac909bed54a3cafab427f05f672c458454221b5ac",
+    "mention_text": "The Twelves",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f4cd1dfbd2413df632187523bd4485deac529caff8f4d71cd67945e34537864",
+    "mention_text": "Lucio Morais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a2057fb9049d7ddb78fed9ebab951e24b19ebc1c1dc6ebbde66873aded74645",
+    "mention_text": "Yuri Chix",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25248a268e56f0b1518c44912e4aa374e140a44a3ca8df1df5bb0184aabaa68c",
+    "mention_text": "Database",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fde6c39ea2a17253705e447ddad5abd858cead6c6701c3c080f5cef8dca34cb9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38bf09c74c103e11ebe00da4cffcc297913cb6b5f4195f172429e08ad7bbaefa",
+    "mention_text": "Black Kids",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42f622691a694d98c2c3710bbf27039b8f4f8a9a464d064448d4ea913581a255",
+    "mention_text": "The Kills",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2485cd5da88b209e09ab2a8294bcf34379282b71717eacb78518c976ca494e41",
+    "mention_text": "Database",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "465f9cf31a0f545ca6577269f557b8aa665201b7256466396d1cc7a6625fa3a3",
+    "mention_text": "Lightspeed Champion",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c1e347d9002f52d0ccb1613ccf7a690075d7d70fbf3f6559fd2b14b5cb222c6",
+    "mention_text": "Thieves Like Us",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0dd8835776ea8c5b5f426f36c248f54da91bd5ee9a9c4b827e4ee7c46703fd69",
+    "mention_text": "The Kills",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f348e7e4698303512a881da1720be3a03f5d44d6b52ee82ae17ca70134be2f0",
+    "mention_text": "Database",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1aa877a621bcb22372555875ec7b7fd3f37e1bd6bb2bcabc221b198e99c530c6",
+    "mention_text": "Stephanie Toth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5569d21a5fbba60ab93dfc583d6c8cf4f0eed57a9d00b04f58936707b92e990f",
+    "mention_text": "Mallu Magalhães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10c120fc01ed25b9aa2431105aad145ea3d14171a6ca47f4f0faaa3ab017b516",
+    "mention_text": "Stephanie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "056fac06d0fcc7ab1c527e0572d6a2e2840ed280ef3668ddcf891ca0b7501aa7",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7218e2b420a08022adb22223ab64dc9380db6195c1b3fef664ded679ad3c7c13",
+    "mention_text": "Santa Augusta Bar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44e24191dc681559a3865c3414fffdc8ed2495ea45efa8b2e7298c88feb8f836",
+    "mention_text": "Augusta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "629adca0e7882e1985130f2bf2c1bf310dc738bf1754f1d83a4cb863337a03c8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a4b9033b8fea5b7360cd094ab9bbc56def74a33cbdffaaf446d1dd46c90ab2d",
+    "mention_text": "Stephanie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25dcd77d796f41740195304537786bdfdba5d3871f7de2bc7102c3d3e30f5cbd",
+    "mention_text": "Mallu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57deea694d516625156acfc7aef31850e353c22ec85cb9cf381091d9ea3b3f45",
+    "mention_text": "Tiê",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31b49140731898cee3572ebb4b9af1db24f39b256c4afea9b7f4192ede0d2821",
+    "mention_text": "Studio SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "befeaa8e555b6175ac3dfe2031db83032d20a903ace56d013922f8457115a386",
+    "mention_text": "Inácio Pereira da Rocha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe3ad483e088937f4c3a7a89089a2a856d911fce888e51e550a013a467321eca",
+    "mention_text": "Elis Regina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83f0452e5524b90d8becc2dbc1e234285f682f0724189599e3bfb29fa7dbb75b",
+    "mention_text": "Clara Nunes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eded70a1714cab1f8a8df905cd6befa8470379a78a3679a53dd82ed66729f12b",
+    "mention_text": "Marisa Monte",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5d5e62f56a7317bee6ffdf8b3e61252e576f37cb6acb3936199ac2b92eded401",
+    "mention_text": "New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5dc645b02db9aba1f593518d339b96ea9f4eac1aad5016d23917c541a4bd7290",
+    "mention_text": "David Cook",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aae08974268dfcb5525d5a8228319d32c157f32825472157e40e0f3b10ffab90",
+    "mention_text": "David ARCHULETTA",
+    "categoria": "PESSOA"
+  }
+]

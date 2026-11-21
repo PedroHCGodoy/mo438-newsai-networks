@@ -1,0 +1,564 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a2c8a24a23f0b048712a0fd8441ea88fa345324957c49266afd112886f1353ad
+
+TEXTO:
+A química do espírito
+
+MARC RAGON
+DO "LIBÉRATION"
+Russell, Moore, Wittgenstein, mas também Ryle, Austin, Ayer: desde o início do século, Cambridge e Oxford foram os pontos de partida de uma galáxia filosófica que ganhou forma e expandiu-se ao longo das décadas, desenhando múltiplas ramificações. Essa galáxia assumiu o nome de "filosofia analítica", e até os anos 80 a Europa continental contentou-se em registrar sua existência, sem na verdade procurar compreender sua teoria, limitando-se a constatar o fato de que tal filosofia arrogava-se o direito de ser precisamente "análise".
+Ela veio ao mundo pelas mãos da linguística: o denominador comum das escolas analíticas é o estudo da linguagem, definida como suporte de uma análise do espírito. A linguagem é uma noção que não abrange apenas a prática de uma língua, o sentido de uma frase, o significado de uma palavra, a expressão de um enunciado, a verdade de uma afirmação, mas também tanto a linguagem comum (centro dos interesses de Austin) quanto uma lógica dos signos: a filosofia analítica fará nascer o estudo do pensamento por intermédio da linguagem do computador, e este servirá de metáfora do funcionamento do cérebro, o qual, por sua vez, se tornará a realidade material do pensamento. No interior desse círculo, surgiram inúmeras definições possíveis e por vezes imprudentes do espírito.
+John Roger Searle, 65, professor de "filosofia do espírito e da linguagem" em Berkeley (Califórnia), lança um olhar crítico sobre tais resultados numa de suas últimas obras, "A Redescoberta da Mente" (recém-lançado no Brasil pela Ed. Martins Fontes).
+Searle nasceu em Denver (Colorado) e estudou em Oxford, onde foi aluno de Austin e defendeu sua tese de doutorado. Isso foi em 1959, quando tinha 27 anos, e seu tema era "On Sense and Reference" (Sentido e Referência). Em seguida mudou-se para a Califórnia, onde leciona desde então em Berkeley. Foi professor visitante em diversas universidades (Noruega, Brasil e outros países da Europa), proferiu conferências no Collège de France, em Paris, e realizou várias palestras em Roma.
+Em "A Redescoberta da Mente", Searle não se despoja do estilo claro e coloquial que sempre o distinguiu dos outros filósofos analíticos e que confere a algumas de suas propostas a impressão de uma jovial insolência, acentuada pelo hábito irreprimível de interpelar seus colegas contemporâneos para denunciar-lhes os sofismas e as contradições. A tal impressão de insolência corresponde uma crítica cuja audácia, esta sim, é bastante real: segundo Searle, as correntes filosóficas americanas atualmente em moda, que gravitam ao redor da tradição analítica e se pretendem categoricamente emancipadas da filosofia clássica e européia, não passariam na verdade de herdeiras da filosofia cartesiana.
+"Como explicar a grande variedade a que nos convida nossa vida mental -dores, desejos, prazeres, pensamentos, experiências visuais, crenças, gostos, odores, ansiedade, medo, amor, ódio, depressão e alegria?" As diversas disciplinas de renome no mundo da filosofia inglesa não teriam sido capazes de encontrar uma ontologia satisfatória do espírito, suscetível de fornecer uma resposta a esse tipo de questões.
+Tais disciplinas revelam uma visão radicalmente dualista e reproduzem o mesmo preconceito de Descartes -ou seja, a impossibilidade de se conhecer os fenômenos da consciência-, dissimulado sob diversas roupagens: o "materialismo eliminacionista", que supõe "a inexistência dos estados mentais"; a teoria segundo a qual "a psicologia popular é falsa"; a idéia de que "os pretensos estados mentais não possuem nada de especificamente mental"; o princípio que estabelece uma estrita equivalência entre o computador e o pensamento; o ponto de vista segundo o qual "o vocabulário mental não passa de uma maneira de falar"; enfim, a concepção que supõe "a inexistência absoluta" da consciência.
+Essa enumeração abarca todo o campo da filosofia anglo-saxã, incluindo os cognitivistas, a linguística de Chomsky, a epistemologia de Feyerabend e Rorty, os pesquisadores da inteligência artificial como Daniel Dennet, os "filósofos do espírito" (Churchland, Gardner, Minsky ou Fodor) e demais filósofos analíticos de renome, como Thomas Nagel, Hilary Putnam ou Stich.
+Além de afirmar a impossibilidade de se conhecer a consciência, numerosas correntes da filosofia analítica desenvolveram uma concepção "materialista", assimilando a consciência tanto ao computador quanto ao funcionamento dos neurônios, o que resulta na negação de sua existência: em vez de se perguntarem em que aspecto um fenômeno consciente não constitui uma realidade não-consciente, tais correntes investigam como é possível saber se os sistemas inteligentes podem ser compostos de matéria não-inteligente.
+Searle replica: "Para mim, minha dor, em seu estado presente, é uma característica de meu cérebro, de nível superior". A consciência da dor é uma realidade necessariamente subjetiva e não objetiva ("minha" dor); é uma consciência temporal ("em seu estado presente") e portanto não uma entidade fixa, pertencente a um mundo imóvel; é, enfim, uma característica de meu cérebro, isto é, uma propriedade causada por ele, mas que não se reduz a ele ("de nível superior").
+As opiniões de Searle abrem brechas na torre de marfim da filosofia anglo-saxã, na qual os fundadores da filosofia não são os gregos da Antiguidade, mas um trio contemporâneo do começo do século -Frege, Russell e Wittgenstein: a filosofia analítica seria uma "ciência" cujo acesso está condicionado à aceitação de que não existe outra filosofia digna desse nome, seja ela batizada de fenomenologia, existencialismo, estruturalismo, hermenêutica etc.; ela seria definida, além do mais, como a única fonte de um saber autêntico sobre a língua e a linguagem, relegando a linguística a uma posição ancilar; ela obedeceria, enfim, a procedimentos essencialmente técnicos que isolam a língua e sua prática de qualquer "impureza" de ordem psicológica, sociológica, etnológica ou mesmo política e ideológica.
+A entrevista que segue mostra, no entanto, que John Searle não está "no ventre do monstro para poder assim matá-lo com mais facilidade". Para ele, pelo contrário, a filosofia analítica tem um belo futuro pela frente: se a seus olhos ela merece uma crítica ferrenha, isso ocorre porque nela ele reconhece o único caminho possível para uma filosofia que seja autenticamente "atual" e "universal" -desde que ela saiba tirar lições dos progressos da ciência e de seus próprios vícios históricos relacionados à sua natureza e a seu objeto.
+*
+Pergunta - A filosofia analítica dá uma definição de espírito muito mecanicista, contra a qual o sr. se mostra particularmente hostil.
+John Searle - Sim, na minha opinião deve haver um fosso entre as causas da ação e a escolha propriamente dita. De outro modo, jamais poderíamos dar um sentido a nossas vidas. Isso se torna claro com um exemplo dos mais banais: você entra num restaurante, olha o cardápio e vê que há contra-filé e rim de vitela. Você tem de escolher. É impossível dizer: "Sou movido por uma lógica prévia, portanto posso esperar e ver o que escolherei". É preciso escolher e para isso se deve agir.
+Pergunta - O exemplo que acaba de dar é de fato banal, e esta é uma prática difundida entre os filósofos analíticos. Ora, as questões de que se ocupam os filósofos não devem ser mais "importantes", de ordem moral ou filosófica?
+Searle - De minha parte, considero que a filosofia deve explicar a vida cotidiana. Não é necessário falar sempre do "homem pós-industrial na situação do capitalismo tardio". Devemos ser capazes de descrever situações tais como "tomar uma cerveja" ou "andar a pé". Do meu ponto de vista, o campo da filosofia abrange tudo, mas deve começar pela vida cotidiana, a de qualquer pessoa.
+Pergunta - Mas o que distingue então a filosofia da ciência?
+Searle - Eu não faço essa distinção. Para mim, existe apenas o conhecimento. A maioria das questões que me interessam corresponde ao que os diretores da universidade afirmam ser filosóficas, mas fazer uma distinção entre filosofia e ciência é o trabalho dos burocratas, e isso não me diz respeito. Mas, no fundo, as questões que me interessam -como o livre-arbítrio, o conceito de espírito, a relação entre o espírito e o cérebro- são questões que se consideram tradicionalmente como filosóficas.
+Pergunta - Em "A Redescoberta da Mente", o sr. analisa entretanto a relação entre o cérebro e o espírito em termos bastante clássicos e familiares ao espírito europeu, uma vez que a referência básica é Descartes.
+Searle - Meu objetivo é abandonar as categorias tradicionais da alma e do corpo. Procuro ver a consciência como um fenômeno biológico natural. E isso significa justamente esquecer e superar Descartes e toda a tradição histórica que veicula a idéia de que existe algo exterior ao mundo natural. Toda explicação psicológica e da intencionalidade está baseada na consciência.
+A consciência concebida como um fenômeno biológico é a melhor maneira de se estudar o espírito. Ela serve como uma base que me permite criticar os modelos contemporâneos da ciência cognitiva. A ciência cognitiva contemporânea considera que a explicação básica da consciência repousa sobre elementos inconscientes. O modelo básico de explicação é a existência de processos inconscientes que não são acessíveis nem à consciência nem à neurobiologia.
+O conjunto dos modelos de explicação que encontramos em Chomsky ou em qualquer modelo da ciência cognitiva parece-me incoerente, pois postula um nível de inconsciência que é por princípio inacessível à consciência. Demonstro nesse livro a incoerência dessas teorias pelo fato de a referência básica ser tanto o cérebro quanto a consciência -que afinal é uma propriedade do cérebro. Não me refiro ao inconsciente freudiano, pois no caso da psicanálise o inconsciente é acessível à consciência. Mas, no caso de Chomsky e de outros, trata-se de uma inconsciência situada entre o nível da consciência e o do cérebro: entre os dois, em suma, existe um grande zoológico no qual há modelos mentais, uma gramática universal, a linguagem do pensamento etc.
+Meu argumento é que isso não existe, que não há jardim zoológico algum entre o cérebro e a consciência. Proponho, pelo contrário, uma descrição da consciência que está mais próxima da teoria de Darwin: o cérebro desenvolve-se em Searle às necessidades da intencionalidade, sem postular necessariamente um mecanismo inconsciente no cérebro.
+Pergunta - O sr. atribui a origem desse dualismo entre o cérebro e o espírito a Descartes. Mas como o sr. definiria tal relação?
+Searle - A relação entre o espírito e o cérebro é causal. Quando me belisco, são transmissões químicas que chegam a meu cérebro e fazem com que tenha a sensação de dor. Mas do começo ao fim há uma relação causal, e é isso o que oponho à concepção cartesiana. Tenho dois slogans: o cérebro é a causa do espírito, e o espírito é uma característica do cérebro.
+Pergunta - Mas o conhecimento atual do cérebro é provisório e, portanto, o conhecimento de um espírito inteiramente determinado pelo cérebro parece discutível.
+Searle - É verdade. Encontramo-nos sempre dentro de uma dada situação histórica. Na situação em que me encontro, o único funcionamento que pode servir-me como modelo de explicação é o dos neurônios e das sinapses. Mas teremos revoluções na neurobiologia. O modelo das sinapses e dos neurônios talvez seja substituído por um modelo que se concentre em elementos menores da anatomia do cérebro, mas é possível também que o modelo em questão abranja um sistema maior, que dê conta do conjunto das células. Estou muito interessado nessas questões. Mas quero ressaltar que se busca um modelo de explicação causal. O cérebro causa os estados da consciência. E isso mesmo se, atualmente, ainda estivermos muito longe de saber exatamente como o cérebro funciona.
+Pergunta - Esse novo conhecimento do espírito contribui para retirar o poder das descobertas da psicologia. Não se arrisca com isso eliminar a própria idéia de que um espírito possa encontrar-se "doente" e desenvolver o conhecimento de um homem abstrato, já que situado em condições sistematicamente "normais"?
+Searle - Acredito que não. Quanto mais aprendermos sobre o fundamento do cérebro, melhor será nossa capacidade de explicar as diferentes formas de patologia mental. A esquizofrenia é um bom exemplo: ela era tomada como um fenômeno puramente mental, mas sabemos agora que corresponde a uma disfunção neurobiológica. Todo o conhecimento freudiano do espírito está fadado a ser superado por um conhecimento mais profundo do funcionamento e das disfunções do cérebro. Dispomos hoje em dia de uma farmacologia relativamente rica que nos permite tratar de doenças como a neurastenia etc.
+Pergunta - Como o sr. vê a relação do filósofo com a vida social e política?
+Searle - Acredito que o filósofo é uma pessoa mais informada do que os outros cidadãos, mas, se observarmos a história da participação política dos filósofos, veremos que não se trata de uma história feita apenas de alegrias. Houve certamente episódios positivos, como a luta contra a guerra do Vietnã nas universidades americanas. Como indivíduos educados, os intelectuais têm a obrigação de informar as pessoas. É portanto uma das tarefas do intelectual agir como crítico social, como informador das realidades que não são necessariamente visíveis na superfície das coisas. Existe uma responsabilidade intelectual, mas é somente a responsabilidade de um cidadão beneficiado por uma instrução superior à média.
+Pergunta - O sr. termina seu livro "Do Cérebro Ao Saber" com uma evocação do livre-arbítrio. É um tema que parece introduzir a noção da subjetividade, mas depois disso o sr. não voltou a tocar no assunto.
+Searle - De fato, mas deverei retomar esse conceito no livro que estou escrevendo sobre a racionalidade. Parece-me necessário que nosso conceito de racionalidade inclua o de liberdade. Sem a noção de liberdade, é impossível que nos compreendamos como seres racionais. De outro modo, a racionalidade não seria capaz de estabelecer diferenças. A diferença supõe a liberdade de escolha. A adequação da racionalidade e do livre-arbítrio é uma questão difícil, mas indispensável para superar a visão mecanicista do espírito, que predomina até hoje na filosofia analítica.
+Tradução de José Marcos Macedo.
+Livros no Brasil:
+"A Redescoberta da Mente" (Ed. Martins Fontes)
+"Expressão e Significado" (Ed. Martins Fontes)
+"Intencionalidade" (Ed. Martins Fontes)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "acd51aaa4a594bb15e1d5427960c0316ea32a354676c630c40a133be9fb0940b",
+    "mention_text": "MARC RAGON",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1ecccbfe0bb67f7b04a81eb27bf711efca8219ccf533cd2a7ad88d1ba6940bb",
+    "mention_text": "Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "89f0874e70a44b8fae166aa52f005252b175d91c7a97269bcc3fa43f1be6dbe5",
+    "mention_text": "Moore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5927592921da6999e526094b8f7be6d1674ad08b788ce9e60bee35746c8ef024",
+    "mention_text": "Wittgenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60618ea2f907d18d7d50e0ea810887bd848e7bbe64a0216bc251f898c12eb3d0",
+    "mention_text": "Ryle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3be500d62f432bea3364d689959d4fd640bb36b19b53dd5f1130af81354b46ff",
+    "mention_text": "Austin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "236378ef7ba45d11b760d5e3a9c36771306fee7b499734bba89f2bcc4dbe24ec",
+    "mention_text": "Ayer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4edf6d77676d2a8967c8e8542c35b92d2e33fb2b1aad2cc37409a292d62a1e90",
+    "mention_text": "Cambridge",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1013ea4d83dfc135b715717572c71c0ee28da7ecd7b783e10e390def538a205e",
+    "mention_text": "Oxford",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9a8450cdb967d0b1dca633e0317f4b142ccdd100756690b28aaf12791471a0fb",
+    "mention_text": "Europa continental",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d41b15c1591fe28abb9a4e9264b69086eeac07b0bd26b51b2bc8201f3d310069",
+    "mention_text": "Austin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c567102f3350c44099eb2ecba1ae75216761e3e359ffad1b5e889d79a90ddc8a",
+    "mention_text": "John Roger Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5637c06825520262beda6c951e7f6f29ba49a661d4eaf0b8e5f9e4189573a79e",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "42c219be22286c4d796c28190daef4a409d73578811dbc1dbfc114862492ba3b",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9bb3715d0ebe896eb13f7a6a48b9a15aa49fd4aba278c516c1dc3b8846c8698",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc66d9f3c3535cd7af96e17242c5bd040011fefd3ae4bff15df32d311d2b484a",
+    "mention_text": "Ed. Martins Fontes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68459b1bacef833231bc7ce5848919d9fe53db091859c850f9d10fede5598a68",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79bda5675e5de959374e800061a288128b25ec59e6951c88beea5bf826480ac5",
+    "mention_text": "Denver",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "149e43515059c650bf4772b3a207557e47b62530fc97b636394078b65ebafce8",
+    "mention_text": "Colorado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2765565de067ebcf796b99f21de73e813ed19445e237407c1d78bea5f868dd2",
+    "mention_text": "Oxford",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3bd5cb443bdd0b1b86075fcac4159dd6de60bd655300c5b303638e2f0eefffbf",
+    "mention_text": "Austin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c85ae5a6881539be552fd68bc8a72275fffa1d8db097d581d3275f90447dcb1c",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "25511b4740eae337e6842b081b17e87054e9fb80b65c7633e60f3154e7f64efc",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8231ad7c6000758689d4f1629a070b94f8afa794d5ed07491a9fc13e0d780b9a",
+    "mention_text": "Noruega",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "261cdfeec0ef2876eac49c04441d0f1c18acd58f3a256bd687e8cd3a53a80c6a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd67249d2474dce2cb1fd06ffce0e944f1be407593ed04bbe214c0359104643c",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "028050871cfc515e17f818e352c8519ff12c49bd9e9c365683ecb3936802b837",
+    "mention_text": "Collège de France",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc3543ead33c575f87e627cd10bde7d03a470c3ba475b3d2645bfe3850f36b9d",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e0081f7ea3936909c5580bc1cec40d63850ffa05c202a16bded74c44097f28ae",
+    "mention_text": "Roma",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "800cd1a1ef20a0ff2c972c79bf4fa52a9c9d03d066c2d531a1ae7a24ea55e108",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9f323c3fe901c3d0dd10e9bb35a43edb6e608b23b355dd90fc8e6d5a1d899b6",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3211e8d06a4763b41eb1a04abdb58a973129f50e0f648cc318e1f0ac68bdaf50",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8177b952ccaec0143c469ec528be82b851a15d8840209a8dcd6342a77ac1a35b",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f848a104d086a3237597f67c77467bbe80f3f41d0840d9089bbee5b0fc8535a",
+    "mention_text": "Feyerabend",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c05a88cff05cc592235a69f869ce7bb3c5072ffbce5a595ee24b4787485d67e4",
+    "mention_text": "Rorty",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d58bb5982894476bc4a018f0932a6ee5133f796156c08bcf5879dba76588fa45",
+    "mention_text": "Daniel Dennet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75772e05a7dc5b448bab511414f18a5d26be9af0cbdd0763d84ed81daa6957ac",
+    "mention_text": "Churchland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b4c14741971bc49032b97167498bc807e5ed17f2d5e0c8e47c4a07b6c00f88e",
+    "mention_text": "Gardner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63b45ba09a445cfac8d924d976c460ce5f47eeb50ec5e49c5faa3edff6265d8e",
+    "mention_text": "Minsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de300785ad749f3ad933dacd68195d3f6a0c8c90258d943e341e1f54de564d97",
+    "mention_text": "Fodor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63c4b2b129d4a79daaafd46bbdb3fb9a77ba6b19a460908449aff3faed600078",
+    "mention_text": "Thomas Nagel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd2ae336486c42dd927580b9dd3e569138187c4a8d341778ac444a047afa47dc",
+    "mention_text": "Hilary Putnam",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b36e3b50863da621de3751cb7f6ec23619a1713ad88cbb778ba17a1e5ba1479",
+    "mention_text": "Stich",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39fe47d760e0d050dc0a52fff074260fd665d28e2bde25067542d6f7dcbdcab5",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5d69d78ad07460f59d1a2f2f2e341db586215ae279390a3b8b7e6ac43a696cc3",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5e5d29594f2cad1210ed7ff300484673c09a4efff0fc0d1194326810ca0061c",
+    "mention_text": "Frege",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33e7cc02bce25dbd6f87687e603ab5c3a9b5e595ee76af50fc0ebc018c2a898e",
+    "mention_text": "Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6f70ac068825a6e4d11a060cafef416ae29fb7a7eee4ab773f3fce164c611b4",
+    "mention_text": "Wittgenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2027c1667ac9806f0346a423c0cb4614e5f40bb84adf59e77b3b8373a5832b6c",
+    "mention_text": "John Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc3f50c9dc6f8d2a16b20cbb917f273112925964eba5b0b8072679b266c0e011",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b70bb9f66232b02c889221c4209b94a8dc613f59febe2354f60372497bcd7e1",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57979df8b214b1f9824f207a70f41f8dac0890fc518e541c8a0c937653221878",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34b375c7832b835af8ec29bd99eb5a1b7d8ff1729d5cdf8476e5273944dbbaf3",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44a4501601d61a1509523c5d3a695803932b5a3ea7e50a4675e8658a942637f1",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f5407c2f24c7b04388d8a98f2a5260f434245801367d8fd9237149d32c24b37",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff98b685f75acfaeda8b904722e0186752e3edd8e03dc8f4d29175fb40b3a633",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c156844ba0f68f8257d393fb76ea52158c3a849aa2996dbedae056e487c0f2db",
+    "mention_text": "freud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d87cf4a9c56289747860358972d153fadd8b6e20966cb18303628ac530b9b28",
+    "mention_text": "Chomsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22a11f30dcc30d12e0a821ecf4d0eef25d50116d98b21903f90c36e1d1ba0005",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6e92e2c5f13b99a9180567c36b8e77a08afe2a5381c63c528d384924ba60c46",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da7a31900f0804263274dc20a1affba301b39671086124f92216d282fc66fc83",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87eb30e0dcb6ca54dab3f0dbc29b6a0426559459b43cc64dce4df7b02a8f686e",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b8202d48568ac189dbc7181e5df92990a8a29053f6b94fe4dae3da4e99872ae",
+    "mention_text": "Searle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce39e7538a479e897797a86331ee11c7eeadc4595e42a91458f32fb7f9ae08d2",
+    "mention_text": "Vietnã",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74ff740384a23d1532ec356f7b0d0332c2c0e1fd23238afc80f4de369ba3acec",
+    "mention_text": "José Marcos Macedo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0a00db0b786fd80654c44ff66d6e118106348af1ab6d4b248c6a6def477c108",
+    "mention_text": "Ed. Martins Fontes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d55cb2a87c94538be7634a2f5a0ef6b93548af8ea793e8d2354d79ae9625b1c",
+    "mention_text": "Ed. Martins Fontes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d3304fb857657e85c4c9ebe7a6e4e1eb123b33150289d350207292d4d1f59d2",
+    "mention_text": "Ed. Martins Fontes",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,579 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 81111e2cda9c774dd78f7d4c1ac0ac23a5ef66bd5d5b195b282e6d1c081285fa
+
+TEXTO:
+Não há por que gastar tanta verba pública com eleição, diz leitor
+
+FINANCIAMENTO ELEITORAL
+Não existe justificativa para um gasto deste nível com os partidos políticos e o sistema eleitoral (" Câmara aumentará verbas públicas para campanhas , "Poder", 2/4). À nossa revelia, teremos que pagar por tudo o que os partidos se acostumaram a roubar. Política se faz com ideias e propostas. Esse dinheiro todo só desvirtua a política. Servirá para, das mais diversas maneiras, comprar voto -e voto não se compra, se conquista.
+GENILDO BORBA (Aracaju, SE)
+*
+Após a adoção do teto no Orçamento da União, é inadmissível que se utilizem recursos públicos na propaganda política visando as eleições. O correto seria criar um fundo partidário para as despesas de campanha, cuja recomposição ficaria a cargo dos candidatos eleitos, por um sistema de rateio.
+GIOVANI COMPAGNO (Ribeirão Preto, SP)
+-
+VOTO EM LISTA FECHADA
+Concordo com a visão do senador Randolfe Rodrigues (" Voto em lista fechada seria solução para crise política brasileira? Não , "Tendências/Debates", 1º/4). A lista fechada vai auxiliar os caciques dos partidos e quem eles listarem. Isso não permitirá ao eleitor fazer sua escolha e só ajudará a reeleger deputados. Não teremos chance de mudar o Congresso.
+MARIA HELENA BEAUCHAMP (São Paulo, SP)
+*
+A adoção do sistema de lista fechada para as eleições legislativas seria bem aceita por grande parte da sociedade se ficasse determinado que os políticos que exercem mandatos atualmente (ou já exerceram em outras oportunidades) fossem para o final da referida lista, caso desejassem concorrer novamente.
+ROBERTO FISSMER (Porto Alegre, RS)
+-
+TRIBUNAIS DE CONTAS
+É lamentável vermos os tribunais de contas de todo o país envolvidos em escândalos (" Delator diz que propina ao TCE do Rio foi discutida em jantar com Pezão , "Poder", 31/3). Todos possuem corpo técnico da melhor qualidade, apuram corretamente desvios de conduta e até roubos praticados pelas administrações públicas. Infelizmente, são dirigidos por ex-políticos indicados por governadores e/ou prefeitos e suas análises dependem de câmaras e assembleias legislativas. É urgente que se aprove um projeto que faça com que tenham autonomia.
+IRIA DE SÁ DODDE (Rio de Janeiro, RJ)
+-
+PRISÃO DOMICILIAR
+Em artigo, Alberto Zacharias Toron defende o encaminhamento à prisão domiciliar de Adriana Ancelmo, mulher do ex-governador do Rio Sérgio Cabral (" Linchamento popular e julgamento judicial , "Tendências/Debates", 2/4). Ressalta que os juízes envolvidos no processo merecem respeito a suas decisões. Apenas gostaria de salientar que, apenas no Rio, existem mais de 300 mulheres nas mesmas condições que Adriana: na prisão e com filhos menores de idade. A população anseia por coerência.
+ARMANDO FRANCISCO MARENGO (São Paulo, SP)
+-
+DORIA
+A carta de João Doria publicada ontem confirma o conteúdo de minha coluna publicada anteontem ( "Aventura , "Opinião", 1º/4). O referido prefeito não tem substância democrática para postular a Presidência da República. A não ser em contexto autoritário.
+ANDRÉ SINGER , cientista político (São Paulo, SP)
+*
+A forma como Doria se dirigiu a Singer só foi publicada porque se trata do prefeito. Leitores comuns não teriam cartas como essa publicadas. Começou bem o novo projeto editorial.
+LUIZ GORNSTEIN (São Paulo, SP)
+*
+O prefeito João Doria deveria convidar todos os políticos de nosso país para palestras sobre gestão profissional, planejamento e responsabilidade com dinheiro público. Poderia, inclusive, estimulá-los a irem às ruas para conhecer e conversar com a população.
+CARLOS GASPAR (São Paulo, SP)
+*
+Uma crítica política deve ser respondida com argumentos políticos. Se o prefeito não possui essa capacidade, que se mantenha calado, sob pena de destruir todo o esforço de seus marqueteiros em erguer a imagem de um homem capaz e confiável.
+MARTHA TANIZAKI (São Paulo, SP)
+-
+ILUSTRÍSSIMA
+Poucas vezes li tantas besteiras por frase quanto no artigo " Inteligência artificial pode trazer desemprego e fim da privacidade ("Ilustríssima", 2/4). Se realmente o cenário apocalíptico se concretizar, em vez de escrever livros futuristas mirabolantes ou criar mais agências reguladoras às custas dos contribuintes, basta fazer o que sempre funciona: a simplicidade. É só cortar o fornecimento de energia das tais supermáquinas.
+GILBERTO BARACAT JÚNIOR (Araçatuba, SP)
+-
+COLUNISTAS
+Espetacular a coluna de Clóvis Rossi em "Mundo" (" O Brasil apodreceu , 2/4). O articulista resume de forma espetacular o Brasil de hoje. Tomara que outros sigam a mesma linha e consigamos criar um embrião de reivindicações de verdadeiras mudanças.
+FRANCISCO ERNESTO DA SILVA (São Paulo, SP)
+*
+Lamentável que, após a apresentação do novo Projeto Editorial da Folha, tenhamos de aturar o radical Janio de Freitas com suas opiniões sobre o governo Temer e nada dizendo, como sempre, sobre a roubalheira do PT em 13 anos.
+RUI VERSIANI (São Paulo, SP)
+*
+Ruy Castro nos brinda com mais uma deliciosa crônica (" Além do saiote , "Opinião", 1º/4), na qual desfila as contribuições escocesas à humanidade. Não fossem elas suficientes para justificar a leitura, ele nos informa que as retirou de um "Almanaque Capivarol", provavelmente uma relíquia dos tempos da Guerra Fria que ele conserva.
+ANTONIO PEDRO DA SILVA NETO (São Paulo, SP)
+-
+PARTICIPAÇÃO
+Os leitores podem colaborar com o conteúdo da Folha enviando notícias, fotos e vídeos (de acontecimentos ou comentários) que sejam relevantes no Brasil e no mundo. Para isso, basta acessar Envie sua Notícia ou enviar mensagem para leitor@grupofolha.com.br
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "18bcc763b5fec34e6de504948107943cdfa8a6b32925b91ee7c3cb77ccc4c9b7",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67e2d26d6a8839b160d48858265dedbdf19267d6d872246c0dba171028c036a5",
+    "mention_text": "GENILDO BORBA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c415474f546235ebe68bc083dd384b479089d2f9231539f409d4d6896a39f9bf",
+    "mention_text": "Aracaju",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b5e67ed18803b31e473457b0578a8b37c54364ef2675f424f2e330bbb61b236",
+    "mention_text": "SE",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5ba767890736c4df34f24bac674354fc901ba40684240f6989b03ae947e603bf",
+    "mention_text": "União",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd1ddbf4cd024acf1e20e9e8168ae7a63247fd0028be1de34de7a4605bb20ac4",
+    "mention_text": "GIOVANI COMPAGNO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b24a8f18c6809453951cde9d5251dd1cb1ffdeab4809f6c0bb3eed2b6338b03",
+    "mention_text": "Ribeirão Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02e6148fafbb674e4a1024e251f7cf8b7d2346b75b05bf9ce957dcaa71030f35",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54a65a4ed9ab473cac8993ccb6d7fcf9f2c0a85c00e2aeccaecd1df81bebb711",
+    "mention_text": "Randolfe Rodrigues",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ac5a23e12438a6d2e61d4bdf3bdfd63c4c0ba837ea4928542fb551177fd99ab",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8283792e77d578726970431725ab2503b7fa176257d518cfc2fe4d8ec1e64180",
+    "mention_text": "MARIA HELENA BEAUCHAMP",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38dd8cca50fd91a33340e0e6724e24bfeda66c0a79e59ff1552168533f36044a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bfc5042dbd0d6e4a7b11a5cd3cf9d48d56e2364af8de007ad3baa6f41d7146dc",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9afefb5c8d6b3448aa9e28d01268bb69bbdb62b156e320a28579813e6c369a06",
+    "mention_text": "ROBERTO FISSMER",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90ff3e018d1550764a7a07a634ec1efdddb3bbb19a7ac59e2750ad3b6dc9d41a",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3220c2cdfaff2edf06d384e5902967d6e449092140f5c7e76269ece819495a4f",
+    "mention_text": "RS",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3fdb1618a35227ae26a2f18580b628973e4347a8f625b8ad9ee46fbe4261a853",
+    "mention_text": "TCE do Rio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0a503949ccb83f9d163d678a39669e40e98fc7077affe0f4958143c958fb40a",
+    "mention_text": "Pezão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b23831d38c021764b53eb1cc47289744cd386890e4621c2ed90d7f4ea9493ce3",
+    "mention_text": "IRIA DE SÁ DODDE",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5eb93b00a9b8fdb8a022bbd216091d599520a976558f2659a6389a3a225e9dca",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c81d34e1cb085d56e53f3e96f22448cb400d55fc853234802f38ee130d360816",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "936f58b31278212f28881f8d1ff1cf760a5c2ea1a602d1454f32f83685698b16",
+    "mention_text": "RJ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62e5726546a33038a1ec3ba7631f146b7d9a60c1fdfed2fb443317b2e074560e",
+    "mention_text": "Alberto Zacharias Toron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66e112f428c443619745d21eb8537f978009efac8b2df5ce93515c0521e63fb7",
+    "mention_text": "Adriana Ancelmo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc752030d2252465a0bb292992f67d7a6495e8182ca6feeadaa09a0973499c93",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8948fcd4660bb1c79749fbf4ccd7cada1f5c9b27f039392db2ae142db262446d",
+    "mention_text": "Sérgio Cabral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8335f59576109aa5c689b4c22373b232aad3c8e84425e08b1b5352ee35ba9725",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "333bd53286750a4e4ac5f43b9576b52ec21773a079fcb211831bc69969dc98bf",
+    "mention_text": "Adriana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0370cc0dee1392660efa44f004baba95d50e60094da7ef3d89848e8130a9a311",
+    "mention_text": "ARMANDO FRANCISCO MARENGO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcc70ce04d1fc871a238e6247cdeb2f1d4cad0fe9a1c0029feede4171fca8adb",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bf6d21a71da5540b8936b6de4da6b353cbb6f70b6bb3377953bfab39a7f47fd",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a32678ddf527c149f50d5364a456af55321e08d7d42e4877eb250f719d451ce8",
+    "mention_text": "João Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6118fb040174f37f58b9624f077a7eb2a095f419b8bac922d05b8bfc93a60dcd",
+    "mention_text": "Presidência da República",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "414ac6440e2287c58966855b07070e993e35823c3a92ac2ae32cf25d2083031a",
+    "mention_text": "ANDRÉ SINGER",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6df56ad342cf5da2136742095d5121521dfa2a40ddc5f461a9ead6e5d74e49e",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bf82dc51a87af48b663727cf09d639ae6e316fb4cbe70e94cd6d4823b61c1dc",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a146929f7d7ba81a29693ee2b61461b48cfd6fdccbc294b05d35862cc8d52646",
+    "mention_text": "Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61399f264c4a69eb8e4c8699720faeab49075db558c6b77bf1a1f03a48524fda",
+    "mention_text": "Singer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ec2c20e71e66d6a6dc47856de9691fa9e53495a48a76874a54528ef6949a48a",
+    "mention_text": "LUIZ GORNSTEIN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c87dcb08cc2b31cde79c2c7f1e2c1823c2f759aed3d4482adf3759d15c9053c5",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8c0d7dc202e0acebda46e0d739b6376bda4e6426ee65ba88339d7669d4b6a69",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ab4e703bae5dd52ec1fcc125fea9f0248f0cd6f692a66a3be8e943e8999683b9",
+    "mention_text": "João Doria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e28ab5f1c426b2b1cadb1156717db8ea3b7e7f6225957d1c1c807133b042c26d",
+    "mention_text": "CARLOS GASPAR",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6c245191dc9f06f69e9c4e3d936f5fec1fe7f802f8eb77b239a90b67c575a8c",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65afffde445e649cffd63fc8a2fc8e980c0cffa7cea5894477f98d7a54c89681",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77a162c018826ab3a0ce26ae4ac5bfa9c75f055cadf43c77bfb342fd561f6abb",
+    "mention_text": "MARTHA TANIZAKI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c8e9c979b2b457625bc9de9c2597931a88f27766c654122d0d953f2dda0eb7d",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f529a5cc897e6b7385bb585c8abd3a091d6414d2d9e488e4bca256e632c35726",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04aff97d76604147b82e77561bd94bfad1785dcc4d5b504182f88b9a05b52ec6",
+    "mention_text": "GILBERTO BARACAT JÚNIOR",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6eadb490343a22ea364309902e45862e85af155cbc8c2ec799bc4f419f8f8fbb",
+    "mention_text": "Araçatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "511727e0f72ed23745aed1900211cc96b81f33cb41e6f05914fcc6a458741cf4",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4b6d031324112deee44f2f65b11f17c677c12e7e0106f0ad8b3d0ca542a3c28",
+    "mention_text": "Clóvis Rossi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ed22cf85d1bf9ea7f307ab30d37f4f37ffd93ea582e1fa2580b69e7fb63f04c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47480c93111d340842c9d94a1d88601b46ea5cd6ccd3a45561cd71bd2b07ced7",
+    "mention_text": "FRANCISCO ERNESTO DA SILVA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbcb452952c1a21f42cbae48f017bd6fddb5161b5f2f2c722011d03be81ab949",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d751fe427c0004ca717a7d4998e4d6d10f68295ec989f98e3c93c739e48683e",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e681070e2072dd46f39b8372f7a5954f4749b5d6fab32e632fdd5c8b9d0feb9c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "666898a80b08b8fcc6a7436ba7b305ee2b9947930379e086641d96da6b6a557a",
+    "mention_text": "Janio de Freitas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0e0d79df5b86cf94dd7f08e86eb79f66d809535266cdec1e407b9fc5811231a",
+    "mention_text": "Temer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34002cb7d046c1bdd89ddac884f95ecce7b68276d2cf7ec892f4ab3ac0f4307a",
+    "mention_text": "PT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7e15f8876fb794457c7f761e5737e529219e164919859cad829347190752dda",
+    "mention_text": "RUI VERSIANI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95954f7b01bc8f69bebb57abad283755a2349059badcf70e16ed7a4b61377b6a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36d91cf3a6ce2b2e6bad08ee90752d35c31d8eb2d4ea6b7f0a03d6c9946c1454",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44a221405fa4b68983ab9a5fc9d1481a7f9d64e1f0c2242b76a19ac2bccdf107",
+    "mention_text": "Ruy Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e161fff69d60bd27265a94cac770524d0acb747c4b24118460bd07408b8ed09a",
+    "mention_text": "ANTONIO PEDRO DA SILVA NETO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d9046565d666f39866a2f8d88e8c27e76f89411f1170b4185bc064f201bf059",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f605295f24063c3018156eece61e730cb12b8f1c9feaba4f0da00d4e7c4f1039",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "72c5a612d71a69fb251689461eb5bfced933fe38a35560683e47c33eec69d3da",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2622ab491d39685311708633e6d71cf2d415bd21983281e2a093d3b5cb52f9a9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

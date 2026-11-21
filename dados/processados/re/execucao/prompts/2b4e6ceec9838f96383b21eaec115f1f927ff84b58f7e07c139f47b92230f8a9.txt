@@ -1,0 +1,394 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: fd35de5bf152ba3aa18220b0c927fe8db716e12adf33bd78849287ab0b6b7002
+
+TEXTO:
+Sociólogo banca o físico e ilude cientistas
+
+Sociólogo banca o físico e ilude cientistas
+Ao ler questões respondidas por cientista social e por físico "real", pesquisadores não conseguem distinguir um do outro
+"Impostura" de pesquisador 
+britânico sugere que leigos 
+podem adquirir conceitos da 
+ciência com profundidade 
+similar à de especialistas
+REINALDO JOSÉ LOPES
+DA REPORTAGEM LOCAL
+Harry Collins jamais conseguiria resolver as equações da 
+teoria da relatividade, e deixar 
+nas mãos dele um detector de 
+grávitons seria receita para o 
+desastre. Mas o sociólogo conseguiu confundir a cabeça de 
+um time de nove físicos. Desses, sete acharam que ele também era do seu ramo e descartaram como impostor um físico 
+de verdade, ao comparar as respostas dadas por ambos a uma 
+série de questões cabeludas sobre ondas gravitacionais.
+Em retrospecto, a missão de 
+Collins, pesquisador da Universidade de Cardiff (País de Gales, Reino Unido), não parece 
+tão impossível assim. Afinal, 
+ele é sociólogo da ciência e há 
+30 anos estuda a comunidade 
+de físicos de ondas gravitacionais. Mas, com sua divertida 
+impostura, Collins considera 
+ter demonstrado que não é preciso saber matemática avançada ou ter prática de laboratório 
+para entender a fundo os conceitos de um ramo da ciência 
+-coisa que muitos cientistas de 
+verdade ainda negam.
+Essa possibilidade foi um dos 
+pomos da discórdia das chamadas "guerras da ciência", um 
+debate que opôs cientistas a 
+pesquisadores da área das humanidades na década passada. 
+Os cientistas, na época, diziam 
+que as críticas à maneira como 
+a ciência funcionava feitas por 
+filósofos e sociólogos eram disparatadas, em parte porque os 
+estudiosos de humanidades 
+não sabiam realizar experimentos nem tinham conhecimento matemático -e, portanto, não tinham como entender 
+de fato a ciência.
+Interativo
+A tese de Collins era simples: 
+um estranho no ninho da física 
+de ondas gravitacionais, mesmo que não soubesse fazer as 
+contas complicadas que a disciplina exige, seria capaz de adquirir a chamada "especialização interativa" -ou seja, o domínio dos conceitos por trás 
+daquele ramo de pesquisa e a 
+capacidade de interagir com 
+pesquisadores e até dar sugestões ou fazer comentários.
+Collins e seus colegas, o também britânico Rob Evans e o 
+brasileiro Rodrigo Ribeiro, testaram a idéia pedindo a um físico de ondas gravitacionais que 
+criasse um questionário com 
+sete perguntas (veja quadro à 
+esq.). As perguntas seriam 
+mandadas para Collins e para 
+um físico de verdade. Depois, as 
+respostas da dupla foram passadas para outros especialistas 
+da área, que teriam de adivinhar quem era a fraude.
+Não funcionou: embora houvesse grande grau de incerteza 
+nas respostas, a maioria dos físicos não conseguiu distinguir 
+um do outro. "Os físicos não ficaram chateados com o resultado -pelo contrário, mostraram-se muito interessados", 
+contou Collins à
+Folha
+.
+"Qualquer ciência grande, no 
+fundo, depende dessa especialização interativa", argumenta 
+ele. "A física é dividida em muitas pequenas especialidades, 
+então os físicos lidam o tempo 
+todo com colegas que não têm 
+conhecimento técnico detalhado de sua área, apenas uma 
+compreensão conceitual."
+O trabalho pode ter implicações, por exemplo, para a avaliação de artigos científicos para publicação (a chamada revisão por pares), ou mesmo para 
+a alocação de verbas. Afinal, 
+pesquisadores de áreas diferentes podem ser tão competentes para julgar o mérito de 
+um estudo ou projeto quando 
+especialistas no ramo.
+Alan Sokal, físico da Universidade de Nova York e um dos 
+protagonistas das "guerras da 
+ciência", não parece ter se convencido com o experimento de 
+Collins. Sokal ficou famoso ao 
+forjar um artigo "científico" e 
+enganar os editores do periódico de humanidades "Social 
+Text", que o publicaram -na 
+verdade, o texto era uma paródia dos artigos estapafúrdios 
+escritos por filósofos, usando 
+conceitos da física quântica 
+sem o menor nexo.
+Ouvido pela revista científica 
+"Nature", que revelou o caso de 
+Collins, Sokal se disse impressionado, mas ressaltou que o 
+conhecimento do sociólogo 
+não é suficiente para entender 
+a fundo como fatores externos 
+influenciam a ciência. "Se esse 
+é o seu objetivo, você precisa de 
+um conhecimento da área que 
+seja virtualmente, se não totalmente, do mesmo nível que o 
+de um pesquisador", afirmou.
+"A posição de Sokal é ridícula. É perfeita para produzir 
+aqueles relatos auto-elogiosos 
+que os generais vitoriosos adoram", rebate Collins. As guerras, pelo visto, continuam.
+Próximo Texto:
+Saiba mais: Inteligência artificial deu base a pesquisa
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7199786da43cc3cf2eb06f8769e52015851cf356c506fe47c70dd0f160731998",
+    "mention_text": "REINALDO JOSÉ LOPES",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "090f26a4857b4dc05e6e2910db7c11dd40d915a12554281f268fc2e22d94d64c",
+    "mention_text": "DA REPORTAGEM LOCAL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e997912b9b14ed690fca24121bd518756ad144d3af5c545b7650842bb5a899b",
+    "mention_text": "Harry Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c3924892a7ba5a8442ce79d4c2e78e278706cebff40cd164e7d68afe8dd32fd",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83e552a67419bb0fdcb82903aa34c91d1210776e074f755c68a51be1b8b33b71",
+    "mention_text": "Universidade de Cardiff",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c12f0992be51edd2d1093f97fdd9dcee897c6a41a05001224ee0f3e5c40f0413",
+    "mention_text": "País de Gales",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a82621abb2001781777cddfe7fc0791531aa17305e981622b9cc891959795ba",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac08cc25ac9020f07728f5d9616c476348bf3c5372bf01008fb9538cea39c23c",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06d96b4f391360daaae72e936404e0dc100fb454e264cb5d1a674c91874da6cc",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df8f34147b1692301cf6430ed17dd772e40c5d1c324c4be97bea699bfdf69fb0",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82351097260a38916f2e90cf35980f1844d8d7d6dfeff21c2d8ee22b9328895b",
+    "mention_text": "Rob Evans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "439ca1e0d0d9d80dae6a511ddb9e8617fc5c5bdf712b019411a126602c090685",
+    "mention_text": "Rodrigo Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4e072cc6dcfc366dc4817a0afc05f3539392fdbedd1a28e83eb05f63ec9173a",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed9110aa6206fe000b79b6b3737bd1bb2a35ed6a30d6bbe13b7d2b5078870490",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eec99b99033fc561cc7e4c89ff37959d11c61e155270f535f91d9e1391bca4b5",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad20c7a220fa6d4a89b2b5d6c915cd9659d7aa87ad003f22b8a30116544f2db2",
+    "mention_text": "Alan Sokal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed02fb3527622daf461b223331fca9359c59fc653df7252586c47c758e064d3a",
+    "mention_text": "Universidade de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a792e17cc63c773cc4bd88857d1d12cb4e758ce18948ae07d137020df463339",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73bc33ba1adfa56fd8cd92f5ff7966415b637f21c1a34eb8c8e2cdac5e65f53c",
+    "mention_text": "Sokal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3efc6e1120f7cf19e65c93d447377f8c5646846054539947507533ef96fa6c3",
+    "mention_text": "Collins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7dd7a489b56b330b0c946df28d13a601d2233183f8f20ed2141efc5edd1ebcba",
+    "mention_text": "Sokal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44eeed24ecf14c79e14ce084bd419f4033d1effbd69596122c64133b15dea202",
+    "mention_text": "Sokal",
+    "categoria": "PESSOA"
+  }
+]

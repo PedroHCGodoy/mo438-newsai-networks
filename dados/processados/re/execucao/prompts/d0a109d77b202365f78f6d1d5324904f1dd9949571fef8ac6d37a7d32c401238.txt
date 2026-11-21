@@ -1,0 +1,358 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b631d5adc9a72082b81f4de6ab6f7e7ef5e6f9ae364ec78e5b786acc6c26e2e4
+
+TEXTO:
+Avião comercial vai voar sem piloto em 2050, estima banco
+
+Você voaria em um avião sem piloto? A pergunta vem martelando cabeças em departamentos de pesquisa e desenvolvimento da indústria aeronáutica, cientes de que do ponto de vista tecnológico a pergunta não é "se", mas "quando" aeronaves do tipo estarão disponíveis.
+O banco suíço UBS fez uma extensa pesquisa de mercado sobre o tema em agosto, e perguntou a 8.000 consumidores nos EUA, na Europa e na Austrália se eles entrariam em um avião-robô.
+Sem surpresa, 54% descartaram a ideia e 17% topariam a experiência, levando os analistas a estimar 2040 ou 2050 como horizonte para o negócio prosperar.
+O UBS identificou uma economia possível de US$ 35 bilhões anuais nos mercados americano, europeu e asiático, puxada pelo custo a ser cortado com pilotos de aviões comerciais (US$ 26 bilhões).
+Outros itens aparecem na lista. De forma algo contraintuitiva em relação aos temores dos clientes, haveria economia com o aumento da segurança (US$ 4 bilhões em seguros). Isso porque, segundo a Agência Federal de Aviação dos EUA, 80% dos acidentes são causados por fatores humanos, talvez 20% por fadiga.
+Nunca foi tão seguro voar, naturalmente se você não integrar as estatísticas de acidentes: 2016 teve o menor índice de incidentes por milhão de voos registrado. A operação já é muito automatizada, e os pilotos basicamente só decolam e pousam aviões.
+"Mas o ser humano é o 'back-up' final", lembra o diretor de Segurança e Operações de Voo da Associação Brasileira de Empresas Aéreas, Ronaldo Jenkins.
+Ele concorda, contudo, que o avanço tecnológico é inexorável. "A questão é cultural. Primeiro as pessoas terão de se acostumar a carros sem motorista, por exemplo. Aí poderemos ter aviões só com um piloto, como antigamente tínhamos aviões com três e, hoje, são só dois. No futuro, talvez nenhum."
+Na simulação do UBS, se a maior empresa aérea do mundo, a American Airlines, eliminasse hoje um ocupante da cabine de comando, economizaria 37% do gasto com pilotos por ano. Cortando os dois, 74%.
+A situação intermediária, com um piloto na cabine, é mais provável, como diz Jenkins. Para o UBS, isso pode acontecer nos anos 2020.
+Enquanto isso, as fabricantes vão tocando a parte que lhes cabe. Aviões-robôs, ou drones, são lugares-comuns na aviação militar e oferecem a tecnologia básica e o caminho da autonomia por meio da inteligência artificial —como estudam Marinha e Força Aérea dos EUA.
+A Airbus voou neste ano seu primeiro drone de teste, o Saggita. A Boeing anunciou em julho que iniciará testes semelhantes em 2018.
+A brasileira Embraer não quis revelar seus planos. No estudo do UBS, é a única grande fabricante que teria a perder hoje com menos pilotos, pois seus aviões são adequados às regras sindicais do mercado americano, que impedem aparelhos maiores em rotas regionais para forçar o emprego de mais pessoal.
+CARGA MILITAR DARÁ INÍCIO A AUTONOMIA
+Para o pai do avião russo sem piloto, Nikolai Doljenkov, o próximo passo da automação de aeronaves ocorrerá no transporte de cargas militares.
+"Os drones são o futuro. Primeiro serão os cargueiros militares. Depois, o transporte de carga civil e, quem sabe, lá na frente, a aviação de passageiros", afirmou, em conversa com a Folha, em Moscou, em junho.
+Aos 61 anos, Doljenkov é considerado o maior especialista em aviação autônoma da Rússia. Em 1982, a partir da experiência com os pioneiros modelos israelenses durante guerra no Líbano, os soviéticos perceberam que precisavam investir no campo.
+Procuraram no Instituto de Aviação de Moscou o melhor teórico do assunto e acharam um rapaz de 26 anos com uma tese de mestrado sobre drones —a União Soviética só operava o equivalente a foguetes guiados com câmeras de reconhecimento. Ao longo de oito anos, ele desenvolveu o drone Ptchela (abelha, em russo), que voa até hoje.
+Virou chefe de design da afamada fábrica Iakovlev. "Você pedia e o dinheiro vinha no dia seguinte. Só fomos ter preocupações capitalistas em 1994, quando a empresa foi vendida."
+No pós-comunismo, desenvolveu então o treinador Iak-130, um sucesso de vendas que só decolou porque foi bancado pelos mesmos italianos que ajudaram a fazer o AMX da Embraer. Hoje, Doljenkov trabalha com drones militares e civis no escritório de design russo Kronstadt.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "95d96f039a08b0ff6fd5da6fa6120136679f24a52231d89301b960779a0a2c45",
+    "mention_text": "UBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1ae3100c30a026334b2f51560237f1490fd1a3f9ed9d7a275995f9e93041d01",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ebf4fd2ccaafa345862b5510886804edcb49ad9e29fb453de184e422a857202",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5697f16a425a569407f9240781f55b834b9121eb27c4219a7f36e6c5ab1af3ba",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b7dbb19559bac86663550c46ab8312eede6e9b30fe91af40f3db7ad7bcebd56",
+    "mention_text": "UBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5560c5966696e044a363dd642732a066c4b60c6ec084edef0f37bd85bd1ee395",
+    "mention_text": "Agência Federal de Aviação dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d7048b340ebba17f18a8bf08b48b7f81dc29b46e09078b1e48033df3b624432",
+    "mention_text": "Associação Brasileira de Empresas Aéreas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21d4ba0168f09187c8b6ea9531c3f5994cd4753698e82e4efe557cd96d9ae0b6",
+    "mention_text": "Ronaldo Jenkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3ce256f003a92712027fce47f4ce4ddec9330d32d7ba043f8b45d2d7e1e870d",
+    "mention_text": "UBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "feaabbf807a98323b4c7f4ea7624519dd1a87f276f7e08dff123cbdcc638ae45",
+    "mention_text": "American Airlines",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f19fd0ed9d76e92671bd82a729c5a66e50f1f72ec20777c429884d2508f4c195",
+    "mention_text": "Jenkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "792424fe7c6e83fd7cf37ffbc5257d9e364e7ef85676ee67d59d8ced5895e191",
+    "mention_text": "UBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bc391bedfe158d4ae34d3e6238d0b91eb3dabf46a21fa14edecf45f8e4d16cb",
+    "mention_text": "Marinha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e491090d540d0a6c75c31b033d588daa2601ae21e4f1371652b55df7d9c52297",
+    "mention_text": "Força Aérea dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f61a2a828d3681c5bf503165b0391dbbdc5d430c3f6243e91eb9d9c7d95b230c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ba79a67f88fbda2bec22684e3830586f33199d185084c7f3194fb355b6c5559d",
+    "mention_text": "Airbus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3ae0a22904e6c2fb2fc50b5983cb77adf077cdf378364c80b20d65eca4bef72",
+    "mention_text": "Boeing",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45bbc965357c76e3609ba33e931910809bc6b57e636192d0256bebdd2b89f807",
+    "mention_text": "Embraer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c4ee18ee3513072261ba3c752ae9893b2a86b7a61f47d65d29ad91180d47a5d1",
+    "mention_text": "UBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0169a566ea9a46e82b03bcfa34630028ba34990df0c10e6eb45bdb83b087e9db",
+    "mention_text": "Nikolai Doljenkov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be9f30d407e41c13afd04139d3b0fc0b1b94c9d440427790e72b21f267bd06b2",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf0f8cbc9c6a656299b09ce93329ab38d46d8a9f8accece4537a1e75607151cf",
+    "mention_text": "Moscou",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ecd3477cc3aa0aa340cb1a95fcd1c150c58fcb8e94dc4a5b34742c1dcedeecf6",
+    "mention_text": "Doljenkov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e213ad36d086720f3398e792ae7adf71f5e80f91073e5213eb90ef39531a0784",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93e42b08811b56e13930b6c0817399657c22c1a691aa1528a72a2372a117a66f",
+    "mention_text": "Líbano",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53e665ffb2379df861fad7f3a794545c916e2208b5413ba4a9042de9067517d3",
+    "mention_text": "Instituto de Aviação de Moscou",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "705d474953f345d277734a56af75d5d33f4f1a2cecc0c78118216aa6680b6ee4",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b4d2d94a2605f3bbd9f77b75ebdec335d5ee012dbac8f0bd6c370f10714876ac",
+    "mention_text": "Iakovlev",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "924d37c1ad02f8e534e9b7c2056ed92604756c79c19d6b8162808eccfee80631",
+    "mention_text": "Embraer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6a50b61e16725092ff8fe574c07e8573acfd3617c5fce3499e08be1ef459894",
+    "mention_text": "Doljenkov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b17a8b78b8cf0b04cdb4af71a93f067d5f0453686beba40f40b84f385fdadd22",
+    "mention_text": "Kronstadt",
+    "categoria": "ORGANIZACAO"
+  }
+]

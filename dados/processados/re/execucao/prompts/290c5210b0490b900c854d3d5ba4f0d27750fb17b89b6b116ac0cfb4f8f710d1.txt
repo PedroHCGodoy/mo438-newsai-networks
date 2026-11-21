@@ -1,0 +1,484 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 7cecd868d783962e052d019cce4b727f123d5cc2b90d5a54fc159aad135d8ac3
+
+TEXTO:
+Artistas vêm pressionando o Instagram para liberar os mamilos femininos
+
+Os fotógrafos apreenderam a ser inventivos para contornar as restrições do Instagram à exibição de mamilos femininos. Usam tinta, glitter, cabelos e pétalas de flores para obscurecê-los. Cobrem-nos com folhas, amido de milho, uma espátula, bolsas, copos de bebida, filetes de goma de mascar ou areia.
+Alguns inserem em suas fotos um retângulo preto para denotar a censura . Outros usam ferramentas de edição digital para esconder os mamilos ou sobrepor uma área com a cor da pele da modelo à área, criando a impressão de que ela não tem mamilos.
+Esse malabarismo artístico resulta das normas de uso do Instagram , que permitem mostrar mamilos femininos em quadros e esculturas mas usualmente não em fotografias. E se relaciona a uma campanha —#freethenipple [liberte o mamilo]— que vem sendo travada por artistas, ativistas e celebridades, e que acontece na plataforma de mídia social mesma.
+Há usuários do Instagram que estão forçando os limites com fotos manipuladas, ou que postam fotos sem modificações para testar até que ponto a plataforma está disposta a ir para censurar sua arte.
+É um jogo de gato e rato que o gato em geral vence, porque tem acesso a inteligência artificial e a um quadro de 15 mil pessoas trabalhando em todo o mundo para revisar posts e procurar material proibido.
+“Censurar a fotografia é invalidá-la como forma de arte”, disse Joanne Leah, uma fotógrafa radicada em Nova York que estima ter cerca de um post removido a cada mês. “Sempre que algo começa a ser censurado, é como um soco no estômago”.
+Desde que o Instagram se tornou uma plataforma de mídia social bem-sucedida, centrada em imagens, o efeito prático desse sucesso foi fazer de seus usuários fotógrafos publicados. Isso permitiu que artistas, no passado dependentes de galerias, promovessem seu trabalho de forma independente, desde que eles respeitem certas regras.
+O site permite imagens bastante ousadas. Fotos de mulheres com tops transparentes —que revelam a forma de seus mamilos— muitas vezes não são excluídas, bem como algumas nas quais os mamilos são encobertos ou alterados de forma habilidosa. Mas mamilos nus continuam proibidos, em fotos de mulheres, ainda que o Instagram diga que abre exceções para usuários que deixam claro que a exibição de nudez é uma forma de protesto ou de conscientização quanto a uma causa. É por isso que fotos de cicatrizes deixadas por mastectomias e de mães amamentando são permitidas (O Instagram começou a permitir fotos de amamentação em 2014, depois de sofrer pressão de ativistas).
+As mesmas regras se aplicam no Facebook , que é dono do Instagram. Ao defender suas normas, a companhia enfatiza seu vasto alcance mundial: 2,4 bilhões de usuários no Facebook e mais de um bilhão no Instagram, ambos em cem idiomas.
+Em um email., Karina Newton, vice-presidente de políticas públicas do Instagram, disse que o site não estava tentando “impor seu julgamento de valores sobre como os mamilos deveriam ser encarados pela sociedade”.
+“Estamos tentando refletir em nossas normas as sensibilidades de uma ampla e diversificada variedade de culturas e países em todo o mundo”, disse Newton.
+O raciocínio do Instagram para estabelecer uma distinção entre fotografia e outras formas de arte é que os mamilos em fotos tipicamente pertencem a pessoas vivas, e o site não tem como saber ao certo se essas pessoas autorizaram a exposição de sua imagem. Já publicar uma foto de uma estátua de mármore de Afrodite não apresenta o mesmo problema.
+Imagens de órgãos genitais e “imagens em close de nádegas completamente nuas” também são proibidas pelas regras, mas é a exclusão explícita do mamilo feminino que atraiu as mais ferozes objeções.
+Rihanna, Miley Cyrus e Chrissy Teigen, cada qual com dezenas de milhões de seguidores, testaram os censores do Instagram expondo seus mamilos em posts que foram rapidamente removidos pelo site.
+Mas a vanguarda do movimento de protesto é formada por artistas que pressionam o Instagram persistentemente pelo afrouxamento de suas restrições, de uma maneira que, alguns deles reconhecem, poderia contrariar os costumes sociais.
+O movimento Liberte o Mamilo é uma causa há muitos anos, e esse hashtag já acumula mais de quatro milhões de mensagens no Instagram. Leah, 41, vem se comunicando diretamente com representantes do Facebook há cerca de um ano e meio sobre suas preocupações quanto ao efeito das normas sobre artistas como ela. Por isso, a empresa decidiu que era hora de realizar uma reunião.
+Mais
+No mês passado, o Facebook recebeu duas dúzias de artistas e ativistas anticensura em seus escritórios em Nova York para uma discussão de cinco horas de duração sobre como o Instagram policia nudez em suas obras. Os representantes da companhia ouviram mas não deram sinal de que cederiam, de acordo com diversos dos presentes. A companhia informou aos participantes que estava respeitando os limites de comportamento social: se você caminhar pelas ruas de Nova York, disse um de seus representantes, não verá mamilos expostos em fotos de publicidade.
+Micol Hebron, 47, uma artista multidisciplinar de Los Angeles que compareceu à reunião (o Instagram pagou sua viagem), tirou um selfie sem blusa, do lado de fora do edifício, e tentou publicá-lo no Instagram depois da reunião. Sua conta no Instagram, foi fechada quase imediatamente.
+Anos atrás, depois que o Facebook removeu uma foto topless de Hebron de uma exposição de arte de conscientização sobre o câncer de mama, ela criou um recorte de mamilo masculino —uma imagem circular de um mamilo masculino que uma mulher pode colar sobre seu mamilo.
+Como Hebron apontou de modo inteligente com seu recorte, a proibição do Instagram não se aplica aos mamilos dos homens. No mundo real, os seios femininos conseguiram algumas vitórias na luta pelos direitos iguais.
+Em fevereiro, um tribunal federal de recursos em Denver decidiu contra a prefeitura de Fort Collins, no Colorado, que tentava manter uma lei municipal que proibia mulheres de fazerem topless em público. Em Nova York, uma decisão do tribunal estadual de recursos em 1992 estabeleceu o direito das mulheres de terem os seios nus em público para propósito não comerciais. Mas outras decisões permitiram que leis semelhantes continuassem em vigor, porque, ao contrário do peito masculino, os seios femininos são considerados como uma “zona erógena”.
+Quando o assunto é o mamilo, existem “critérios” para ajudar os avaliadores humanos e tecnológicos a identificar um mamilo como masculino ou feminino, disse Newton, do Instagram. Os critérios incluem indicadores do gênero da pessoa, disse uma porta-voz do Instagram. Mas o Instagram enfatiza que seu sistema é imperfeito. “Há momentos em que não somos capazes de distinguir —e erros podem ser cometidos”, disse Newton.
+Mais
+Em julho, o Instagram introduziu uma opção de apelo para os usuários que tenham tido suas contas excluídas, mas não existe apelo pela remoção de posts individuais.
+Como grande democratizador da fotografia, o Instagram abriu um novo capítulo na história da arte. De imagens de uma Madona amamentando na Itália do século 14 à de uma mulher francesa deitada e nua em quadros do século 16, seios nus sempre foram um interesse dos artistas, escreveu Marilyn Yalom, pesquisadora que estuda gêneros, em “A History of the Breast” [uma história do seio], livro de 1997.
+“Embora os seios ainda carreguem uma sobrecarga de expectativas culturais e sexuais, muitas mulheres ainda esperam ver o dia em que seus peitos não precisem mais arcar com esse peso”, escreveu Yalom.
+O que é diferente sobre a era atual da arte nua é que são as mulheres que controlam as câmeras ou pincéis, em muitos casos.
+A fotógrafa Mona Kuhn, 49, nascida no Brasil, cujo trabalho tem por foco a forma humana e que frequentemente registra nus, teve trabalhos exibidos no Louvre e no Museu J. Paul Getty em Los Angeles. Mas no Instagram, ela disse que precisa restringir a publicação de algumas de suas obras mais importantes.
+“Não posso promover meu trabalho da mesma forma que uma pessoa que fotografa paisagens”, ela disse.
+Outros artistas aceitaram a realidade de que não têm liberdade completa em uma plataforma tão ampla e tão popular. “Ninguém nos força a usar o Instagram”, disse John Yuyi, 28, que usa seu próprio corpo, com os mamilos obscurecidos, a fim de publicar imagens muito populares no Instagram sobre a interação humana com a tecnologia. “Eles sempre podem dizer que, se você não gosta de nossas regras, procure outro serviço de mídia social”.
+Na reunião promovida pelo Facebook, alguns dos artistas presentes pressionaram o pessoal da rede social sobre a questão de imagens topless publicadas por usuários transgênero e não binários. O mamilo continua a ser feminino se a pessoa não se identifica mais como mulher? E se os mamilos da pessoa um dia tiverem sido masculinos do ponto de vista anatômico, mas essa pessoa tiver feito a transição para se tornar mulher?
+No ano passado, Rain Dove, modelo não conformista em termos de gênero que tem mais de 360 mil seguidores no Instagram e se designa por meio de pronomes neutros, se envolveu em uma batalha com os censores da plataforma depois de postar imagens topless, com os seios expostos. Em um vídeo, Rain Dove estava jogando basquete. Em outro, estava bebendo leite e usava apenas cuecas.
+Rain Dove, 30, disse em entrevista que, depois que o Instagram removeu duas de suas imagens topless, voltou a publicá-las repetidamente. Na legenda, escreveu que, por não se considerar mulher, seus mamilos tampouco eram femininos. Rain Dove ameaçou recorrer à Justiça se o Instagram continuasse a remover suas imagens, e por fim a companhia permitiu que as imagens ficassem no site.
+“Nenhuma cabeça explodiu”, disse Rain Dove. “Todos vamos ficar bem”.
+Newton disse que se os censores do Instagram dispuserem de contexto que sinalize que um usuário se identifica como homem ou como não binário (por exemplo, se ele declarar uma preferência pronominal), a exposição e mamilos era permitida. E se uma mulher transgênero publica uma imagem com mamilos expostos, o Instagram a remove.
+Mas a empresa não demonstra sinais de que pretenda relaxar a censura aos mamilos femininos em geral.
+Por isso, artistas começaram a levar esse fator em conta em seus trabalhos, e o movimento #freethenipple continua.
+Amanda Charchian, fotógrafa comercial e artística que trabalha com nus, muitas vezes obscurece os mamilos femininos com pontos coloridos, ou distorce a imagem. Charchian, 31, está trabalhando agora em uma série que envolve a aplicação de tinta a fotos de mulheres nuas e arquitetura, e disse sentir que as normas do Instagram começam a prejudicar seu processo artístico.
+“Quando aparece um mamilo, me apanha pensando se devo ou não cobri-lo”, ela disse. “Isso é uma infiltração da censura do Instagram em minha mente e em meu processo criativo”.
+Tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a0dc7801dbef49d973553588c00c0a31338813810238876b9ed5d399537f0575",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a460e51eada37a4562efa5fa9cca2f7b96f23ba8a6e3819550f082854df90c2c",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc5a8ef0ad796e74ffd7d48f2d1d7f55da69d8dc4dc34ca43289135adaaf555a",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a21068da2ebfa92ba08c83fb31eae46b043b8ec16e9f28ad7f3c0c9d7f53f1ac",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc2f2b153fb4f0ed04ca4a235629621b7e54f20dc15e326c8527a88a2364dbf4",
+    "mention_text": "Joanne Leah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ffd8aded0281e3a8a4d596a4817becea051d8798b6ae507758c8b03b82750ea7",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ecbf1aae51bf88e195f5ab14c8e99a551fc03ffa7ddfaa8aaf1564f21c801414",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "208382387688ccad1e98405573e0e97cdbda14849102937e7a77cbbe403898c5",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1175dabffca4532c03661731616322f463c52df0532404b4c821661b32506146",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7cddd2171519d8447ba5381059176cbac304ef3bc9abc46b6731f0830290b5fb",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59bf658710de280f369670bbf93687bd56366a46f2ad8f491889a9e34a03ddd1",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a8f2ea8ae13b5482a7ad7e9afce3ab6b702c75f8418a3f63a201c3176dbc9ae",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33e552103a31932be8d3dc69f9c7539d18086c40d6d3a506fed3e519fbd1abc7",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1fd3ce62a3dd5617c111f422381ce12d3947cb7107281377dab3e5e4000e788",
+    "mention_text": "Karina Newton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebf1467cfb4eccebf357afe03474ff4f5e12188be09f0c1707b76c15abe9cf1b",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36faa074988656f8f04d034259ab4f87ff595ff603e2005dc62f76df17789d53",
+    "mention_text": "Newton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94b0f2b239f36596b1d543440c3ef4ad5658c2cf61f6848e6593f43307fe5b18",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1beec3d21211e947d6fd35e31c4cf9caa785fd9b76f22dd936bf68d5c87479c1",
+    "mention_text": "Afrodite",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a03f1ed01b0e543f4626671259fe034e9b954b7e8a1f27c87937588b6eae6ce5",
+    "mention_text": "Rihanna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e04bb2dc443ee2faf9d01b9d6117e780dcc5e7ea9fbd1393780427aed7cfbd50",
+    "mention_text": "Miley Cyrus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7e77b047baa7405b4f0cdbdfc2e22eaa8677b718d3f6ac201a301c44162360b",
+    "mention_text": "Chrissy Teigen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4056d669f32fc4e0332365c586b640937633d3305e5054f80c34a89c68658014",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d1b5c9f75c20cd30d8b874623a97fe6af9b05fd143d485d1abf4c3048a7ffd2",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b15d572eb80a6b834c9a31fdd08c1c5cf7ac20bdb0788586a7ea23b0b604c44",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbfb00dfa96b3c4b44bdfbff16d48059502b1c276a0320dbeffa60c2a696628a",
+    "mention_text": "Leah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94d26a9cb91826873baaceefbefde5b03d29171d7075959e460f5c189dfb655a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e26692ee800a09f33723260bd6c975d2fe388e62503fe5d84301e103513fdd6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50ad94607fa62ea3765e0b5be215f53bf6bc3903d77d6c7243ea29352b0a9886",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "447eb635dd2caccc9633c9f4e8f988a3fc02a60819f1b72d080f4b4112b4d356",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fc0df2190a2550df62a6762dbb9eec8ca6bedff11a4eebe76fcf64636183ddd",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "14c9c1c7f71f4219ffa7877781c20ae1c06a6a4a2b5047bee37a839922bef6ec",
+    "mention_text": "Micol Hebron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a9fd78f58a457b4f9707355cba5956174344a51b19c182fa8d0b301bcfbc488",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8deeed01f1c8a069dd4c426f03eb649dbaaebe6fb7f64394502811e90fbc0f3f",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a770632079ea7149c381a69629db3e1536b890cbea63fffe971f6fbf59a12cce",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f94cf46c3c8564905ef8cdc1ae96db26cda41e6e5960bf051352db832d5697ea",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33f03d869593145aa76a7e7cb51f1456a02ef7eac040fa556aca13b37843734a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1ca141925fcf92ee1c6f77fc3a753cd5ef747363551dcbd54ba6498693e4548",
+    "mention_text": "Hebron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38a6f00b53e3a9c710e05225b5501cb12d54694829afec71c67e3fec7a196e94",
+    "mention_text": "Hebron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6201352ffc752b1421524a066b20a34ca6155f3387defe3aedcbd085f3a59df6",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc5dcc40949707f5164c692998a28b5aad08e2082703bb80f8f2abb11408d2ee",
+    "mention_text": "Denver",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1895fbc6ab29cc25b8a26fc09036c35a70dced645ecf1363ec42674506c4712d",
+    "mention_text": "Fort Collins",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79e6be26512f4b38d3b66ed4bda498f9cb6269a1acc6a5bd8240841edbbcf0a7",
+    "mention_text": "Colorado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "636f34b181b9ec053e92142a7a5a163dcc11ed22e6259661f9bcce0cc8891bbc",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2561ca0c6e4dddd0219567ce29ea4964fed7885abec26eaf181570793b87679a",
+    "mention_text": "Newton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b6f5e630d22448f9694f04cdf7e7068c0dcc810853bffefac77a00e66ddc79d",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db1053eff3f766b9da400c01f049e0df40fce84a06ce17c8ba1940f976bec46b",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62f6829d552c9669eaefd0eb96d121f47db861edda7639d5b704bb124d0a100f",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e4cf1668ce2310ebc50d6baceb022442eb1f1a9fb8da844c783a1f8e236f9a5",
+    "mention_text": "Newton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34926f14cfbb3a8b92fac2eeca55eb423a95584276714734684098a865fbfaf8",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6c2720341422662e32eb2be1777d64494771d09d8769827fd64036e2a42a15c",
+    "mention_text": "Madona",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "824550964d402fd57a6c9d8559c91da0af305b4d30540e5bf3e61528b7c0f0de",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5b00d2ef0f2aeb616bc6632f459a82bc41573782da99c120de16e9edd550beb",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,914 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 15096e7af231a4ca08fb85102e9ccb077b2c610996d65227fb43cf3443dc2f9a
+
+TEXTO:
+Boris Groys: Deuses escravizados
+
+Deuses escravizados
+A guinada metafísica de Hollywood
+por
+Boris Groys
+Não há como ignorar: enquanto o filme europeu se preocupa de hábito com o humano, 
+demasiado humano, os filmes do "mainstream" hollywoodiano, quem diria, ficam cada vez mais metafísicos. Tratam de deuses, demônios, 
+alienígenas e máquinas pensantes. E seus heróis são 
+movidos sobretudo pela questão de quem ou do que 
+possa estar oculto por trás da ilusão do mundo visível. 
+Assim, Hollywood passa abertamente a fazer da tão 
+propalada crítica à indústria cinematográfica um tema 
+próprio -e ao mesmo tempo a radicalizá-lo. Essa crítica adverte, come se sabe, que a indústria cinematográfica é uma ilusão sedutora gerada para nós -uma bela 
+encenação do mundo que tem por tarefa escamotear a 
+feia realidade, encobri-la, negá-la.
+Ora, não é outra coisa o que afirmam muitos filmes 
+recentes de Hollywood. Mas não é tanto a "bela ilusão" 
+produzida cinematograficamente que se exibe como 
+uma única e grande encenação, e sim todo o mundo 
+"real" dos fatos cotidianos. Essa dita realidade é apresentada em filmes como "Truman Show" (1998) ou, de 
+forma ainda mais coerente, "Matrix" (1999), como um 
+"reality show" em curso, produzido com meios semicinematográficos num estúdio oculto sob a superfície do 
+mundo. O herói de tais filmes é um iluminista, um crítico da mídia e ao mesmo tempo um detetive particular 
+que quer desmascarar não só a cultura em que vive, mas 
+também todo o seu mundo cotidiano como uma ilusão 
+artificialmente produzida.
+Hollywood, pois, reage à suspeita de manipulação estética que lhe é dirigida reativando uma suspeita metafísica ainda mais antiga e profunda -a suspeita de que 
+todo o mundo perceptível poderia ser um filme rodado 
+numa metahollywood remota. Nesse caso, os filmes 
+hollywoodianos seriam "mais verdadeiros" que a realidade, pois ela não nos mostra geralmente nem o caráter 
+artificial que lhe é próprio nem o que lhe está além. O 
+novo filme hollywoodiano, ao contrário, elabora, ao refletir sobre seus procedimentos próprios, uma nova 
+metafísica que interpreta o ato de criação como uma 
+produção de estúdio. E assim o filme hollywoodiano 
+adianta-se em muito ao grosso da atual cultura de massa. Pois saber se o filme hollywoodiano está ou não com 
+a razão em seu esboço de metafísica é menos relevante 
+do que o fato de, com isso, o além do mundo ser reposto 
+na ordem do dia. A metafísica, por sua vez, como todos 
+sabem, não desfruta atualmente de boa reputação nos 
+meios culturais que antes a tinham por competência. 
+Aliás nesses meios é quase algo espontâneo falar da 
+"destruição" da metafísica -enquanto toda a esperança de um saber sobre os atributos do mundo é projetada 
+sobre o conhecimento das ciências naturais.
+O herói só é talhado para destruir de cima a baixo, no mais 
+breve intervalo, o que o poder das trevas acumulou ao longo 
+de anos de trabalho; então de todas as magníficas criações desse poder não restam mais que ruínas
+Mas, afinal, o que é a metafísica? É um espaço discursivo no qual se pode formular a suspeita de que o mundo em que vivemos não seja possivelmente um mundo 
+"natural", mas sim produzido, elaborado -um mundo 
+artificial. E, sendo correta essa suspeita, então não bastam as ciência naturais para transmitir o que é este nosso mundo, pois as ciências naturais se ocupam apenas 
+da natureza, e não da arte. Se, portanto, a própria natureza pode ser pensada como obra de arte, as ciências naturais (físicas) esbarram em sua fronteira "meta-física". 
+Discutir o que possa estar por trás dessa fronteira e saber se lá operam deuses, demônios, super-homens, o 
+proletariado ou máquinas escapa, como é sabido, à prova científica. Mas tampouco esse discurso se permite refutar ou de(scon)struir, pois todo o ato de uma tal refutação ou des(cons)tru(i)ção é ele próprio metafísico. 
+Pode-se indagar tão-somente dos fundamentos psicológicos da atmosfera antimetafísica reinante, pois fundamentos racionais, fundamentos demonstráveis, para 
+tanto não há.
+À primeira vista essa atmosfera parece extremamente 
+enigmática, pois contradiz em cheio nossa experiência 
+diária. É que hoje em dia lidamos no mais das vezes com 
+coisas feitas, artificiais -e assim parece natural pensar 
+que também o mundo, em seu conjunto, possa ser artificial. Além disso, as ciências naturais são hoje, confessadamente, dependentes da técnica e, portanto, "construtivistas". Ou seja, as ciências naturais acreditam cada 
+vez menos na natureza e cada vez mais na artificialidade 
+de suas teorias. A crença na natureza, na "physis", no 
+ser, tem hoje seu lugar cativo nas ciências humanas ou 
+culturais, que a cultura compreende mais e mais como 
+"segunda natureza" -o que não é por acaso, numa 
+época em que as ciências naturais ganharam consciência de seu artificialismo.
+Assim, as ciências culturais de(scon)stroem tudo 
+quanto as ciências naturais construíram. Fala-se, como 
+Derrida, sobre a escrita para além do escrever. Ou sobre 
+o jogo de significantes para além do ato da significação. 
+Ou sobre a técnica que o mundo nos abre, sem indagar 
+como essa técnica se tornou realidade pelo trabalho industrial em geral etc. Desse modo, fica evidente de que 
+perspectiva falam hoje as ciências da cultura: da perspectiva não do produtor, mas da do consumidor.
+O consumidor é aquele que necessariamente entende 
+(mal) a arte como (segunda) natureza. O consumidor 
+vê o mundo inteiro como oferta a que tem de adaptar 
+sua demanda -com o que esse processo é sentido ao 
+mesmo tempo como agradável e doloroso. A oferta é a 
+clareira para onde o consumidor dirige seu olhar -se 
+bem que não sem o presságio de uma posterior desilusão. E em relação ao mundo, que é entendido como 
+oferta, parece ser irrelevante saber se essa oferta é produzida artificialmente ou surge naturalmente. A decisão de consumir ou não consumir não diferencia o artificial do natural: ela se refere igualmente a tudo quanto 
+é presente sem estar oculto. Antes uma tal perspectiva 
+do consumidor, assim pura, era uma perspectiva obviamente exclusiva, aristocrática, privilegiada.
+Ora, esses tempos são parte do passado. Na época do 
+consumo de massas, a diferença entre natureza e arte 
+perdeu o interesse para a esmagadora maioria. A massa 
+de hoje é uma massa consumidora, já não mais uma 
+massa trabalhadora.
+Antes a produção era socializada, e o consumo, individual. Hoje o trabalho é extremamente especializado, 
+individualizado: ele nos separa das massa, sendo que o 
+consumo a ela nos une. Assim foi que, de lá para cá, a 
+perspectiva do consumo se transferiu ao próprio trabalho: o trabalhador de hoje se vê como empregador, ou 
+seja, como consumidor de trabalho que se contenta 
+quando há trabalho o bastante e se entristece quando o 
+trabalho rareia. Não é à toa que hoje em dia a pessoa é 
+sempre confrontada com uma insólita pergunta: seu 
+trabalho lhe dá prazer? Ora, o trabalho só pode obviamente dar prazer se não mais for trabalho, se for um 
+bem de consumo entre muitos outros. Por isso as atuais 
+ciências humanas e culturais partem da perspectiva do 
+consumidor de modo quase automático. Não diferenciam mais a arte da natureza, antes vêem a cultura como segunda natureza, que lhes oferece -e ao mesmo 
+tempo impinge- seus frutos, tal como computadores, 
+aviões ou celulares. Já antes da Segunda Guerra Mundial Ortega y Gasset (1883-1955), em sua obra "A Rebelião das Massas" (Martins Fontes), diagnosticara esse 
+desenvolvimento da consciência das massas para a 
+compreensão da cultura como uma segunda natureza. 
+Hoje tal compreensão domina não somente nossa 
+consciência diária, mas também nossa teoria da cultura.
+Os representantes dessa perspectiva do consumo pregam a serenidade, a harmonia -entre extasiada e desiludida- com a presente oferta e o desdém em relação a 
+todas as questões metafísicas.
+Ascese do autor
+Apesar dos pesares, a pacífica serenidade engana. Não se dissipa a suspeita de que a segunda natureza possa ser arte e não meramente "cultura" -entendida como simples extensão agrotécnica do 
+tradicional conceito de natureza. Ou seja, o espectro do 
+trabalho não se deixa dissipar, pois tudo o que é artificial é produzido pelo trabalho, seja criação divina ou 
+trabalho mecânico, proletário.
+Aqui não se trata mais, porém, de um trabalho entendido como outro bem de consumo escasso, mas do trabalho metafísico na produção do mundo -o trabalho 
+que é necessariamente ignorado da perspectiva do consumidor. Esse conceito radical de trabalho foi magnificamente tematizado por Hegel em sua dialética do senhor e do escravo -para seu comentador Alexandre 
+Kojève, a relação entre senhor e escravo constitui o próprio cerne de toda a dialética hegeliana.
+A dialética dessa relação consiste em que o senhor, 
+que arrisca triunfalmente sua vida na luta pelo reconhecimento, escraviza aquele que prefere viver na derrota 
+em vez de morrer lutando. A função do escravo consiste 
+em satisfazer os desejos do senhor, isto é, criar-lhe um 
+mundo em que este possa consumir com calma.
+Ora, o escravo se revela em condições de manipular a 
+tal ponto os desejos do senhor e seu mundo que o senhor é condenado à vida artificial ("künstlich") na obra 
+de arte ("Kunstwerk") que o escravo lhe constrói e por 
+isso é também perfeitamente dominado. O senhor vira 
+escravo de seu escravo. E assim também a massa de senhores-consumidores, que é a massa moderna por excelência, não pode deixar de sentir e de odiar a dominação do trabalho oculto, que agora porém é realizada por 
+indivíduos. As relações estatísticas inverteram-se desde 
+Hegel: a maioria é hoje constituída pelo consumo, e a 
+minoria, pelo trabalho. Mas o antigo ódio permanece 
+-o ódio do consumidor pelo trabalho que secretamente o manipula, que se faz sentir nitidamente por 
+trás da serenidade superficial.
+Os velhos deuses não estão mortos. Foram, sim, escravizados na luta heróica do Iluminismo. E foram escravizados precisamente porque -graças à sua imortalidade- não podem perder a vida em batalha, mas estão condenados a sobreviver na derrota. A tentativa de 
+Nietzsche de emprestar a Deus, aceitando sua mortalidade como hipótese, uma dignidade aristocrática é 
+equivocada. Os deuses, ao contrário dos homens, desconhecem o conceito de dignidade, pois são incapazes 
+de pôr a vida em jogo. Aliás, tampouco o autor, que 
+conta com a sobrevida de sua obra, possui uma dignidade -ainda que viva no mundo como homem. É por 
+isso também que o anúncio da morte do autor por Foucault é para o autor muito lisonjeiro -e precipitado.
+Assim é que os deuses e demais autores, mesmo após 
+o triunfo do Iluminismo, persistem em sua existência 
+indigna. Mas essa existência indigna, servil e simultaneamente vampiresca é tão monstruosa, tão intolerável 
+aos olhos e ouvidos do consumidor triunfante, e assim 
+tão radicalmente metafísica, que se prefere -segundo a 
+famosa tirada de Wittgenstein- calar a respeito. A 
+questão do criador, do trabalhador, do autor é por isso 
+proibida hoje em dia nos círculos distintos -ou antes é 
+reprimida, é recalcada. A ideologia filosoficamente correta hoje imperante exige de nós pensar a oferta sem o 
+ofertante, a técnica sem o técnico, a arte sem o artista.
+Mesmo as célebres figuras de autores-sucedâneos, esboçadas pela filosofia moderna, como a natureza, o ser, 
+o destino ou o acaso, ainda parecem ao pensador atual 
+excessivamente autorais. Estamos às voltas com uma 
+verdadeira ascese, que exige de um consumidor distinto, filosoficamente escolado, não falar sobre os deuses 
+escravizados que têm de oferecer o mundo a esse consumidor para que lhe seja permitido ter seus desejos satisfeitos. Nessa ascese ainda se manifesta, é claro, um 
+certo respeito pelos deuses. Mas nela são também perceptíveis ecos do velho medo de ainda viver como escravo dos deuses escravizados. O triunfo do Iluminismo, nesse meio tempo, virou história -e assim uma 
+simples narrativa, uma lenda, um boato.
+Assim é que nasce o medo de que esse triunfo talvez 
+não tenha ocorrido ou haja sido insignificante, e que os 
+deuses-escravos pós-iluministas, pós-seculares, de 
+acordo com a dialética hegeliana, reinem em segredo, 
+como antes, pela simulação e manipulação -e por isso 
+sejam muito mais difíceis de combater que outrora.
+Ora, esse medo que o filósofo aprendeu com sucesso a 
+reprimir se exprime com tanto mais clareza na atual 
+cultura de massas. Sobretudo no filme hollywoodiano 
+sempre é encenada a luta entre um herói que representa 
+o Iluminismo triunfante e um poder manipulador das 
+trevas, invisível, escravizador. Esse poder, por via de regra, é extremamente criativo e tecnicamente versado. 
+Em trabalho infatigável, cria esse poder hierarquias 
+complexas, armas maravilhosas, complicados sistemas 
+de comunicação e sobretudo métodos de ilusão incrivelmente refinados. O herói, ao contrário, é quase sempre benevolente e dotado de inteligência apenas mediana, embora fisicamente apto. Esse herói é um iluminista 
+e consumidor paradigmático. Mas é sobretudo alguém 
+disposto a arriscar sua vida na luta: ele tem dignidade.
+Porém é totalmente incapaz de um trabalho sistemático. O herói só é talhado para destruir de cima a baixo, 
+no mais breve intervalo, o que o poder das trevas acumulou gradualmente ao longo de anos e anos de trabalho. Após a intervenção do herói, de todas as magníficas 
+criações desse poder das trevas não restam mais que 
+ruínas. Trata-se, portanto, de uma variante heróica do 
+consumo como tal. A relação entre produtor e consumidor é caracterizada em geral por uma certa assimetria das condições temporais sob as quais se dão a produção e o consumo. O consumidor é capaz de consumir 
+-ou ao menos comprar- instantaneamente tudo o 
+que o produtor criou por obra de um trabalho que se 
+alonga no tempo. O atual herói cinematográfico é, pois, 
+um consumidor radical que realiza seu consumo sob 
+risco de vida no "mortal combat" com o produtor.
+Nessa luta de vida ou morte, manifesta-se o consumo 
+como aquilo que ele é em sua essência, ou seja, como 
+uma destruição cabal de tudo o que é produzido e assim 
+como um desapoderar do poder secreto do produtor.
+Não há aparição mais triste do que a aparição do autor em meio ao mundo por ele criado; ele sempre parece exausto, doentio, desleixado, deselegante, pouco atlético, fisicamente monstruoso, ridículo em suma -ou seja, francamente desumano
+No "mortal combat" entre o poder das trevas criativo, 
+manipulador, simulador, "autoral" e o consumidor radiante que o filme atual não se cansa de encenar, os deuses são sempre derrotados -sob o eterno risco de vida 
+do herói. Assim é que a atual massa consumidora celebra um novo herói, que em nome dela põe a nu deuses, 
+demônios, tiranos e trabalhadores e sempre os escraviza -ao que a arte, entendida como segunda natureza, 
+sempre se deixa consumir e desfrutar insuspeita.
+O produtor pode ser representado por uma organização, tal como nos filmes de James Bond, ou por hábeis 
+alienígenas, muito mais avançados em seu saber, tal como em diversos filmes de ficção científica. Num caso 
+como no outro, ele nunca tem boa aparência. É que o 
+produtor tem de trabalhar muito, tem de investir muito 
+tempo e muito saber para desenvolver e levar a cabo 
+seus mais sinistros planos de criação e dominação secreta do mundo. Não há aparição mais triste do que a 
+aparição do autor em meio ao mundo por ele criado. Ele 
+sempre parece exausto, doentio, desleixado, deselegante, pouco atlético, fisicamente monstruoso, ridículo em 
+suma -ou seja, francamente desumano. Ao contrário, 
+o consumidor paradigmático, ou seja, o ser humano paradigmático, parece em geral saudável e costuma ser 
+boa-pinta -é bem tratado, fisicamente apto, de maneiras desenvoltas, sempre na moda e cheio de humor.
+Isso, por sinal, não é coisa tão nova: os antigos deuses 
+não eram lá muito atraentes -até que, graças às academias de ginástica da Antiguidade grega, adotaram uma 
+forma humana, ou seja, atlética. Mas por volta da mesma época e pela mesma razão foram postos no olho da 
+rua. Nos filmes recentes, um autor, seja ele representado como vampiro, alienígena ou simplesmente como 
+criminoso, só tem boa aparência quando se esconde 
+atrás da simpática, mas enganosa, máscara de um consumidor triunfante, por ele igualmente produzida com 
+artifício para ocultar sua verdadeira natureza.
+Mas cedo ou tarde essa máscara lhe é arrancada -e 
+enfim o mundo pode atentar no rosto repulsivo, monstruoso, enfermo, degenerado do autor. Esse é um rosto 
+que jamais sentiu o cheiro de um creme Nivea ou Shiseido. E, se Spielberg, no "E.T.", e Lucas, em "Guerra 
+nas Estrelas", tentaram ainda, por razões mais que óbvias, nos reconciliar com a aparência do autor metafísico, não foram mais do que uma grande exceção: a história do filme nos mostra que o cinema, nesse particular, é 
+em geral inclemente. Ele cala simbolicamente a posição 
+do consumidor, isto é, do espectador, nesse caso, e se 
+mostra profundamente estarrecido com sua própria figura. Vamos a dois exemplos que se sobressaem.
+Metropolis e o segredo sujo
+O primeiro filme no 
+qual o rosto metafísico do trabalho foi mostrado de modo coerente e convincente e que serve de modelo para a 
+maioria dos filmes hollywoodianos ulteriores é sabidamente "Metropolis" (1927), de Fritz Lang. De início, em 
+"Metropolis", apresentam-se as massas escravizadas de 
+trabalhadores que produzem o mundo dos senhores 
+em trabalho monótono, mas que desse mundo permanecem excluídos. Trata-se de escravos de primeira ordem que produzem o mundo dos senhores, sem manipulá-lo. Esses escravos do trabalho, é verdade, são mostrados com compaixão, mas sem simpatia.
+O olhar deles inspira medo, e sente-se logo que primeiro têm de ser libertados do trabalho para depois poderem ingressar no mundo dos senhores consumidores 
+como pessoas de valor. Assim, tal qual são, ou seja, como trabalhadores, eles não são adequados ao mundo e 
+têm de permanecer de fora. Em nossa cultura, o trabalho não só é tradicionalmente odiado, mas é associado 
+além disso ao pecado, à maldição bíblica como castigo 
+para a curiosidade criminosa. Ser distinto em nossa cultura significa não ser desnecessariamente curioso e, 
+portanto, não ter trabalho a mais.
+O verdadeiro sonho da cultura européia é o surgimento das coisas para além do trabalho -pela eficácia 
+imediata e não cansativa da natureza. Todos os conceitos-chave de nossa tradição cultural atestam isso: a inspiração, a auto-realização -todos eles sugerem a criação para além do trabalho, de modo que o cheiro de suor do trabalho não seja sentido no produto final. Para um verdadeiro artista, a maior ofensa consiste na afirmação de que o seu trabalho cheira a suor e que sua 
+criação deixa transparecer o grande volume de trabalho 
+que ele investiu na obra. Nesse sentido, a arte de hoje é 
+em muitos sentidos a culminação desse desenvolvimento. A estética do "ready-made", o conceptualismo 
+etc. são tentativas da parte dos artistas de se tornarem 
+definitivamente distintos, ou seja, de se tornarem consumidores que não trabalham, mas somente escolhem 
+ou deixam de lado. O trabalho, pois, permanece até hoje 
+o verdadeiro segredo sujo de nossa cultura -muito 
+mais sujo que, por exemplo, a sexualidade, que há muito ganhou os salões e flameja em todas as telas de TV. 
+Assim é que o filme "Metropolis" já motiva uma quebra 
+de tabu -que até hoje se faz sentir como tal- pelo fato 
+de mostrar o trabalho, mesmo que o assombro do diretor à vista do trabalho ainda seja perceptível. Isso porque o trabalho, tal como é mostrado em "Metropolis", 
+positivamente não dá prazer aos trabalhadores. Trata-se de um trabalho absolutamente submisso ao arbítrio 
+"natural" do senhor e, por isso, experimentado como 
+pura opressão.
+A essa opressão respondem os trabalhadores no filme 
+com a tentativa de uma revolução proletária. Ora, essa 
+revolução fracassa com a descoberta do trabalho de segunda ordem -o trabalho oculto, manipulador, diabólico da simulação e manipulação que ameaça e domina senhores e escravos sem distinção. A "falsa Maria" 
+que, no estilo de Rosa Luxemburgo, desencadeia a luta 
+de classes e guia os trabalhadores revolucionários se revela um "ser-máquina". Ela é a máquina de segunda geração -que, tal como as máquinas de primeira geração, foi criada pelo inventor Rotwang. E ela corporifica 
+ao mesmo tempo a máquina da dialética hegeliana, que 
+transitou da realização do desejo para a manipulação 
+do desejo -é uma máquina da sedução, do anseio, da 
+vontade de desapoderar secretamente o senhor que 
+usufrui. É uma máquina da segunda revolução industrial, uma máquina cibernética, dotada de "inteligência 
+artificial" e que quer destruir as máquinas não-dialéticas de primeira geração para estabelecer definitivamente o domínio das máquinas. Na verdade a falsa Maria 
+anuncia a civilização em que vivemos, na qual o trabalho de segunda ordem, ou seja, o trabalho da simulação 
+e da manipulação, reina unânime.
+Ora, Fritz Lang -ao menos à primeira vista- resiste 
+ao domínio das novas máquinas. E envia assim o filho 
+do senhor supremo, isto é, do consumidor supremo, 
+como salvador e redentor no "mortal combat" contra a 
+máquina da manipulação e seu inventor Rotwang. O jovem herói arrisca sua vida na luta direta e renova assim 
+a pretensão do consumidor ao domínio.
+A máquina da manipulação é aniquilada. A bela, a sedutora, a feminil ilusão do ser-máquina é desmascarada. Atrás de sua máscara se revela uma construção de 
+aço bastante disforme. O genial inventor Rotwang tampouco parece dos mais atraentes -tem as feições cansadas, pouco simpáticas, é um velho desastrado, histérico, alienado, que claramente não chegaria aos pés do 
+herói bem treinado no plano esportivo. E, assim, o espectador alegra-se quando esse feio autor é morto em 
+nome do belo consumidor.
+Nisso se revela nitidamente como se dá a morte do autor, de que fala Foucault como de um evento inevitável 
+da história do espírito. O autor não morre simplesmente. É morto pelo consumidor em combate direto -pelo 
+consumidor que, por nunca ter trabalhado, teve mais 
+tempo e oportunidade de treinar sua força muscular e 
+se preparar para a batalha decisiva. Em razão desse 
+triunfo do consumidor surge a situação que é descrita 
+no discurso sobre a morte do sujeito: uma técnica sem 
+técnico, uma arte sem artista, uma invenção sem inventor etc. A ameaça representada pelo inventor, pelo trabalhador, pelo sujeito da simulação e da manipulação, 
+está banida. Restam somente as máquinas não-dialéticas da primeira geração -máquinas da segunda geração, devido à morte do autor, não podem mais surgir.
+Com isso os trabalhadores que se valem das máquinas 
+da primeira geração se tornam empregadores, ou seja, 
+consumidores de trabalho no horizonte de um acordo 
+trabalhista que se fecha num piscar de olhos. Esses empregadores distinguem-se então dos senhores somente 
+pelo modo e pelo grau de seu consumo. Assim, a sombria dimensão metafísica do trabalho é eliminada. Trata-se agora finalmente de um trabalho que pode e deve 
+dar prazer. E de fato: de nossa perspectiva atual, as cenas de "Metropolis" nas quais as massas trabalhadoras 
+são mostradas oferecem a imagem de uma enorme e 
+agitada festa tecno.
+Contudo, mesmo após o triunfo sobre o inventor no 
+filme, perdura ao menos uma máquina da manipulação. Essa máquina é o próprio filme. E também o inventor dessa máquina perdura: o próprio Fritz Lang. Fritz 
+Lang e seu filme revelam-se, portanto -comparados a 
+Rotwang e sua falsa Maria-, um par bem mais eficiente e mais apto à sobrevivência. A razão para tanto é que 
+Fritz Lang e seu filme não aspiram a um reconhecimento explícito de seu poder -eles não têm a dignidade 
+que Rotwang e Maria ainda possuem.
+Em vez disso, o filme realiza o ostensivo gesto de submissão ao domínio do consumidor e assim preserva seu 
+poder factual, manipulador. A indústria cinematográfica declara-se pronta para viver numa escravidão radical, mais além -e já não mostrar seu semblante metafísico. Quando os funcionários da indústria cinematográfica se mostram favoráveis a este ou aquele fim propagandístico, vestem a máscara do consumidor exemplar. Em "Metropolis", a indústria cinematográfica declara-se a única máquina efetiva da sedução -que em 
+nosso mundo midiático haverá de permanecer sem 
+concorrência. Ora, hoje a consolidada indústria cinematográfica começa outra vez a mostrar suas feições escravas e a tematizar novamente a figura do autor.
+A estratégia de Matrix
+Muitos filmes da atualidade evidenciam essa repulsiva e indigna figura do autor 
+que sobreviveu à morte e tem de perpetuar indefinidamente sua feia existência. Claro que todo autor é um 
+vampiro que, mesmo após a sua morte, isto é, mesmo 
+após sua derrota definitiva na luta pela vida, se sustenta 
+do sangue vivo dos leitores, espectadores e comentaristas -do tempo de vida deles, de sua atenção, de sua 
+imaginação, que o autor manipula habilmente. Mas são 
+sobretudo os filmes de tais vampiros que bebem sem 
+cessar o sangue de quem frequenta os cinemas.
+Os filmes lhes sugam as forças vitais, as paixões, para 
+continuarem a cintilar -ainda quando os espectadores 
+cujo sangue foi sugado de há muito já morreram. Assim 
+é que a máquina da indústria cinematográfica mantém-se em funcionamento pelo fato de sugar e consumir a 
+força vital dos espectadores. Eis por que essa máquina é 
+tão imortal e indigna quanto qualquer outra máquina.
+As máquinas são como deuses: são indignas porque 
+imortais. Uma máquina pode quebrar, mas não morrer, pois, por mais quebrada que esteja uma máquina, 
+pode ser consertada ou, no pior dos casos, substituída 
+por uma máquina idêntica. De longe em longe a indústria cinematográfica tenta conferir nova dignidade às 
+máquinas, isto é, a si mesma, ao encenar, por exemplo, 
+em "Exterminador do Futuro" (1984) e "Exterminador 
+do Futuro 2" (1991), um "mortal combat" entre homem 
+e máquina ou entre (uma) máquina (boa) e (uma) máquina (má). Porém uma máquina que pode morrer não 
+é mais uma máquina, senão uma pessoa. O grande mérito do filme "Matrix" consiste em mostrar a indignidade divina da máquina, que não se deixa envolver em nenhuma luta direta.
+Em várias matérias sobre "Matrix" pôde-se ler que o 
+filme mostra um mundo no qual as máquinas escravizaram as máquinas. Na verdade é o contrário: o filme 
+mostra um mundo em que as máquinas se tornaram 
+definitivamente os senhores. As pessoas não trabalham 
+mais, só desfrutam, ao assistirem continuamente a um 
+filme perfeito que as máquinas lhes produziram. Toda a 
+realidade cotidiana é entendida então como "ready-made" -como obra de arte que pode e deve ser considerada e fruída como tal. As pessoas, pois, viraram exclusivamente espectadores de cinema (o que decerto é o 
+sonho da indústria cinematográfica): sentam-se confortavelmente em suas poltronas bem estofadas, são 
+atendidas de todos os lados e servidas em todas as suas 
+funções vitais pelo trabalho das máquinas -a visão de 
+um robô utópico, perfeito. É claro que as pessoas são 
+também totalmente controladas pelas máquinas -mas 
+não se trata do poder do senhor sobre o escravo, e sim 
+do poder dialético do escravo sobre o senhor. As máquinas manipulam as pessoas e lhes sugam as energias 
+de seus anseios, de que as máquinas necessitam para 
+funcionar. Mas esse domínio das máquinas é um domínio de escravos, não um domínio de senhores.
+Por isso a rebelião de um punhado de pessoas contra 
+as máquinas, que o filme "Matrix" retrata, é uma rebelião dos senhores contra os escravos -a rebelião dos 
+consumidores contra o domínio do trabalho e contra o 
+trabalho como tal. O senhor rebela-se aqui para, sob risco da própria vida, reivindicar sua dignidade e portanto 
+seus verdadeiros desejos, para descobrir o verdadeiro 
+mundo -o mundo além da ilusão que nasce com o trabalho, da ilusão artificialmente produzida.
+É claro que os rebelados não têm por objetivo substituir as máquinas em sua posição de detentoras do poder, ou seja, executarem eles próprios o trabalho duro 
+antes executado pelas máquinas. Nem Neo nem os demais protagonistas da rebelião estão sob suspeita de 
+pleitear o direito de serem novamente trabalhadores 
+como recompensa pelo seu eventual triunfo.
+O bando rebelde tem simplesmente uma aparência 
+muito in, muito "cool", muito bem treinada e bem vestida para podermos imaginá-lo como a coletividade 
+operária do futuro que assumirá o papel das máquinas. 
+A única coisa que querem os rebeldes é manifestamente 
+neutralizar a dialética hegeliana e erigir novamente o 
+domínio não-dialético do senhor sobre o escravo. Neo e 
+seus camaradas querem ver realizados seus desejos 
+"naturais" -sem o embuste da parte dos escravos, sem 
+o perigo da manipulação e simulação.
+Mas, de lá para cá, o trabalho da dialética avançou 
+muito, e o triunfo do senhor sobre o escravo dialético, 
+que em "Metropolis" ainda se tinha por algo possível, se 
+revela, em "Matrix", como mais outra ilusão.
+A rebelião fracassa porque a luta permanece indecisa 
+-as máquinas da atual indústria cinematográfica não 
+estão mais prontas para se lançar ao "mortal combat". 
+O escravo de hoje internalizou perfeitamente a perda da 
+dignidade e da honra. Não se sente mais ofendido. Tornou-se metafísico demais para exigir um desagravo 
+-uma afronta puramente mundana não atinge mais 
+os deuses-máquinas. O escravo moderno, dialético, esquiva-se da luta com o senhor em revolta. E de fato: como podem as máquinas partir para a luta franca em posição tão desvantajosa -como uma lagartixa debaixo 
+d'água? As máquinas de "Matrix" são autores após a 
+morte do autor como pessoa -indignas e disformes figuras de escravos que, dentro de um mundo criado por 
+elas próprias, não se deixam ver para não assustarem 
+desnecessariamente o espectador.
+Em vez disso, as máquinas enviam para a guerra os 
+produtos de seu trabalho: máscaras, duplos, ilusões. As 
+máquinas, agindo como deuses escravizados que trabalham, seduzem e desestabilizam o herói -e deixam-no 
+se perder no escuro e insondável âmago metafísico de 
+seu domínio escravo. No fundo é somente o traidor da 
+rebelião que mostra aos outros o caminho certo: não é 
+preciso acreditar na realidade, na "naturalidade" do 
+mundo -e tampouco é preciso, pois, revolta contra essa crença.
+Em vez disso, a pessoa desfruta o mundo como obra de arte, como "ready-made" inserida num 
+contexto maior, metafísico, que age como um museu 
+no qual os objetos "naturais" de nossa civilização, 
+quando lá expostos como "ready-made", revelam sua 
+artificialidade.
+Ao encenar a indústria cinematográfica, o "mortal 
+combat" entre o herói que representa a massa consumidora dos espectadores e as máquinas que essa própria 
+indústria cinematográfica representa, a indústria cinematográfica quer desvirtuar a suspeita de manipulação 
+que o espectador dirige contra ela -e isso pelo fato de 
+confirmar essa suspeita. Em consequência, não se trata 
+mais, em "Matrix", de uma destruição fictícia do domínio do escravo manipulador, tal como ainda era o caso 
+em "Metropolis", mas de uma derrota abertamente admitida da rebelião -ou ao menos de um desfecho incerto, que equivale a uma derrota.
+A revolta esclarecida contra a metafísica finda com 
+uma derrota porque essa própria derrota é metafísica. É 
+que a revolta contra o domínio das máquinas da indústria cinematográfica se realiza também no interior do 
+filme, do sonho, do sono impotente -o nome do líder 
+insurreto, "Morfeu", indica que se trata de uma rebelião 
+de sonâmbulos. O próprio sonho metafísico vira uma 
+máquina -em verdade uma máquina que é um ultimato, que produz sempre novos monstros para saciar 
+nossa ânsia pelo além. A verdadeira revolta contra o filme só é possível no sono e como sono -mas apenas na 
+medida em que o sono substitui o filme.
+O filme "Matrix", pois, só se mostra tão convincente 
+pelo fato de corroborar e radicalizar a suspeita crítica, 
+de fundo cultural, que todo espectador acalenta quase 
+instintivamente contra o filme como tal. Essa é a nova 
+estratégia da atual mídia de massas: autopropaganda, 
+auto-abandono, auto-recriminação -tal como no caso 
+do célebre programa de TV "Big Brother", que jamais 
+poderia ter tido tamanho sucesso se não tivesse confirmado, já pelo título, os piores receios que geralmente se 
+nutrem contra a TV como tal. Ao desmascarar-se radicalmente e depreciar-se explicitamente à opinião pública, a indústria cinematográfica e televisiva produz confiança e um sentimento de cumplicidade no espectador.
+Quando não se acredita mais na bela ilusão é que tanto mais se acredita em seu desmascaramento. Mostrando-nos que o mundo "por dentro" é ainda pior do que 
+nos faria supor o pior dos pesadelos, o filme "Matrix" 
+nos induz a uma identificação com sua visão de mundo 
+ainda mais forte do que o era capaz o clássico, o "belo" 
+filme hollywoodiano. Uma tal crítica cultural que rende 
+preito a si própria poderia ser interpretada em termos 
+correntes como "adoção" da tradição crítica. Ora, não 
+se deve esquecer, porém, que a crítica cultural desde o 
+princípio foi dotada de alto teor de diversão -e esteve 
+profundamente relacionada com notórias figuras do 
+ramo de entretenimento.
+O iluminista, afinal, não passa de um detetive particular, que considera o mundo inteiro como cenário de um 
+possível crime. E isso significa sobretudo que, como iluminista, a pessoa não busca na verdade a feia realidade 
+que se oculta atrás da bela ilusão produzida artificialmente; busca sim a arte feia, o trabalho sujo, a subjetividade suspeita que se ocultam atrás da bela ilusão da realidade. Em suma, o verdadeiro iluminista não busca a 
+realidade por trás do filme, e sim o estúdio do filme por 
+trás da realidade.
+Mostrando-nos que o mundo "por dentro" é pior do que nos 
+faria supor o pior dos pesadelos, "Matrix" nos induz a uma identificação com sua visão de mundo ainda mais forte 
+do que o era capaz o clássico filme hollywoodiano
+Rebelião no parque temático
+A guinada metafísica no filme hollywoodiano, de que eu falava no início, 
+é portanto sobretudo o sintoma infalível de que o filme 
+ingressou em sua era de auto-reflexão. Várias outras artes, mais velhas, já passaram por essa fase, e outras, mais 
+jovens, ainda a tem diante de si. A literatura e a pintura, 
+por exemplo, viveram sua época de intensa auto-reflexão, ou seja, a época da vanguarda, já no princípio do 
+século 20. No caso do filme, essa fase da auto-reflexão 
+começou há pouco. São várias as razões para tanto. A 
+maior delas esteja talvez no fato de que só recentemente, graças à técnica de vídeo, se alcançou a possibilidade 
+de organizar coleções privadas de filmes com que se 
+possa lidar de uma forma bastante individual, tal como 
+antes com bibliotecas e pinacotecas. Essas novas técnicas são cada vez mais refletidas no próprio filme, -o exemplo atual mais impressionante é "Beleza Americana" (1999). Mas essas novas técnicas de produção e 
+apropriação individual de filmes conduziram sobretudo a que as condições gerais de produção e distribuição 
+do filme fossem refletidas pelo próprio filme.
+Ora, perguntará alguém: por que o espectador levará 
+a sério esse tipo de auto-reflexão? Afinal, esses monstros, vampiros, alienígenas e máquinas pensantes parecem mais produtos de uma imaginação totalmente 
+pueril, que não cabe tomar a sério. Esses produtos da 
+fantasia não fornecem, à primeira vista, uma explicação 
+de como a indústria cinematográfica é e funciona "na 
+realidade". Para sabê-lo, muito mais úteis parecem ser a 
+sociologia, a análise econômica, a análise de poder etc. 
+Sem prejuízo do que todas essas veneráveis ciências são 
+capazes, incorrem elas num erro fundamental. Não 
+consideram a possibilidade de que a própria realidade, 
+inclusive toda a sociologia, a ciência econômica etc., 
+possa ser um filme mal produzido.
+Por isso filmes como "Matrix", que sugerem essa possibilidade, estão muito acima de todas as teorias que 
+têm a pretensão de descrever a própria realidade, inclusive a realidade da produção cinematográfica. Seja como for, esses filmes ratificam a suspeita de que todo o 
+mundo possa ser artificial -e assim, em sua pretensão 
+crítica, vão muito além de todas as teorias que querem 
+pensar o mundo como real, como natural- até mesmo 
+no sentido da técnica, entendida como segunda natureza. O filme representa assim o "locus" em que não só o 
+próprio filme, mas todo o mundo atual, impregnado 
+pela mídia, alcança uma auto-reflexão radical. No filme 
+se dá a auto-reflexão de toda a mídia que opera com 
+imagens animadas. Por isso só se pode interpretar o 
+mundo presente da mídia comentando a auto-interpretação desse mundo -tal como essa auto-interpretação 
+se manifesta no filme.
+Assim o filme é sucessor dessas outras artes, mais antigas, que concluíram em tempo anterior a fase da auto-reflexão. Pois essas artes não refletiram somente sua 
+própria práxis, mas também seu método como um todo. Na literatura moderna, não somente o texto literário 
+foi submetido à primazia da auto-reflexão, mas todo e 
+qualquer texto. E, na pintura moderna, não somente a 
+imagem pictórica, mas toda e qualquer imagem. Pode-se definir em geral a práxis da arte moderna como auto-reflexão de seus métodos. Por isso passou a ser um tanto ingênuo na modernidade refletir teoricamente sobre 
+métodos de outra forma que não seja comentar a auto-reflexão por meio da arte. Perguntas do tipo: "O que é 
+uma imagem?" ou "Qual o sentido de um texto?" etc. 
+não podem, em se tratando de quadros e textos modernos, ser formuladas e discutidas de uma perspectiva 
+metaartística.
+Isso porque, de seu lado, toda teoria é sobretudo um 
+texto -e portanto uma fração da literatura. Ao mesmo 
+tempo todo texto, como já constatara Platão, é também 
+imagem -isso foi muito bem evidenciado, em nossa 
+época, pela arte conceitual. Assim o teórico, seja lá sobre 
+o que escreva, jamais pode esquecer que a auto-reflexão 
+da escrita por meio da arte, sendo incontornável, implica também o seu próprio ato de escrever. Quando, portanto, o teórico se declara em condições de adotar uma 
+posição externa em relação à arte, apenas manifesta 
+com isso sua incapacidade de refletir a dimensão artística da própria produção de seu texto.
+Por isso todos os teóricos que querem descrever a práxis artística como um acontecimento puramente mundano são tão insatisfatórios -ainda que, aqui e acolá, 
+ofereçam ao leitor insights interessantes. Isso pode ser 
+dito tanto da sociologia artística de Bourdieu quanto da 
+teoria dos sistemas -para citar apenas dois casos de 
+discurso teórico programático, antimetafísico e sociológico que viraram moda. É que esses dois discursos 
+descrevem a arte como (sub)sistema de um sistema social maior ou como uma práxis de grupo bem definida, 
+puramente sociológica. Obras de arte são aí entendidas 
+como coisas reais que são produzidas e distribuídas no 
+mundo real.
+Ao contrário, os mundos que a própria arte delineia 
+são ignorados como puramente imaginários e artificiais. Mas com isso se ignora que o mundo em que essas 
+descrições sociológicas têm lugar é por sua vez um 
+mundo absolutamente artificial -trata-se, afinal, do 
+mundo da literatura. A analogia com as artes plásticas 
+elucida a questão. O significado das obras das artes plásticas depende antes de tudo do lugar ocupado por tais 
+obras no espaço de um museu: é possível, como se sabe, 
+fazer de todo e qualquer objeto uma obra de arte ao inseri-lo num museu. Ora, o espaço do museu, por seu 
+turno, não é real, mas um espaço artificial, criado por 
+uma arte determinada, a arquitetura. O mundo em que 
+os escritos teóricos têm lugar é igualmente um mundo 
+artificial, criado pela narrativa histórica. E da posição 
+ocupada nesse mundo artificial dependem o significado, a relevância e a eficácia das posições teóricas isoladas. Ao construir diversamente o espaço da história e situar diversamente as posições isoladas nesse espaço, altera-se também o significado dessas posições.
+Mesmo quando ergue a pretensão de descrever e interpretar a realidade, a teoria permanece literatura, situada num espaço artificial, literário. Ora, se as posições 
+teóricas se situam desse modo no espaço literário, a figura do teórico permanece exterior ao texto. Dá-se assim, no espaço da literatura, a tão comentada morte do 
+autor. E de fato: quem é o autor? De onde retira força e 
+autoridade para escrever? Será uma encarnação de 
+Deus, que quer transmitir novas percepções à humanidade? Estará de acordo com que os leitores sejam manipulados de má-fé? Será uma máquina de escrita que não 
+sabe ela própria o que escreve? Ou será apenas uma pessoa -ou seja, um simples vigarista? A própria literatura 
+não fornece respostas claras a essas perguntas -para 
+tanto é necessária a auto-reflexão do autor no filme.
+O filme transforma o espaço literário num parque temático metafísico, habitado por vários discursos e seus 
+autores. Nas paisagens desse parque temático é possível 
+encontrar os mais diversos avatares do autor: monstro, 
+vampiro, extraterrestres benévolos ou malevolentes, 
+deuses, demônios, máquinas e simples pessoas, mas 
+que em regra logo deixam de ser autores para, com seus 
+amados, levar uma vida humana normal. Todos esses 
+diversos avatares, porém, realizam o mesmo trabalho 
+da modernidade -o trabalho escravo da simulação e 
+manipulação.
+Vez por outra ensaiam os senhores consumidores um 
+levante contra esse domínio escravo e desencadeiam 
+uma luta contra os deuses. Mas os deuses são imortais. 
+E assim os autores do levante são logo remetidos a seu 
+próprio lugar no mesmo parque temático. Apesar de 
+todas as tentativas nesse sentido, não se consegue exterminar ou ao menos desconstruir o autor -ou seja, reduzi-lo a uma figura do texto. O espaço metafísico não 
+se deixa esvaziar definitivamente. Quem morre na vida 
+continua a viver no filme.
+Boris Groys
+é crítico de arte, professor de filosofia na Universidade 
+de Karlsruhe (Alemanha) e reitor da Academia de Belas-Artes de Viena 
+(Áustria). É autor, entre outros, de "The Total Art of Stalinism" (Princeton University Press). O texto acima foi publicado originalmente na revista alemã "Lettre".
+Tradução
+de
+José Marcos Macedo
+.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "795bd3bfa974bb447645c1b0d88b06551119ed419e36d64b1d56021ba03de5c2",
+    "mention_text": "Boris Groys",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ecd674474897ad310cb3fff41a01fbd59de80dd8da280c77baebbe36837b071",
+    "mention_text": "Boris Groys",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "804ca2444d3918bfd6463343b157b3a2b0588cd04ee5dda0f7f03cd488aa4fe2",
+    "mention_text": "Derrida",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "027c5f64972b74eb94a679f1a76cbcdf81a06814515965d5ce4def62aecd970a",
+    "mention_text": "Ortega y Gasset",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50b476fd8731fdc7a47b805d34c377b9cd5b55e45db31b297704a9001b05cb21",
+    "mention_text": "Martins Fontes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49d5cdd3701f059971b70815c88edb6fe53d632ee54be4927d7de44bb5bfe10d",
+    "mention_text": "Hegel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83aa1c64284b9df863a97e686cc0ed957e511177f9681988d93393c23e3b89d1",
+    "mention_text": "Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6134cd4246627d5dc4e8e7cb9a302a8b7d08bc1884f60a561dd4f6beff9b9083",
+    "mention_text": "Foucault",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "46ca2b9b1cdd63b6e19190aacb76bfa953927da23f671ef6988509f2f4071ade",
+    "mention_text": "Wittgenstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87b0bf3e84add0d10562087fa94016c381d9bd18ba81b717d6a3dd33746c44e2",
+    "mention_text": "James Bond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d5812b9bfe932f51a8b620e7064624aa5c30efca210c16d030f5f4b0005a18a",
+    "mention_text": "Nivea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e83477732c5b4cab990d6226929239013d819674444a0edc438d6f011630675b",
+    "mention_text": "Shiseido",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49aff5b6d68ccafab34c48a93f87e954e30ddf0d71ce83257dd1a8510583fac5",
+    "mention_text": "Spielberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "096146f83939d5409b03dbb288b8315a4180c304c255746447ab3a8a358189c8",
+    "mention_text": "Lucas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b635481c9bce29e3e9fdf956261b37628d986b58132967de86589cc14a94ecc",
+    "mention_text": "Fritz Lang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63890a0d01c73041d0e4b179c5544e15a53d96804c654d7ac9e153b545821c2e",
+    "mention_text": "falsa Maria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f18ae8d09addade235fb56fe5e62b1791b520f7365cf33e4a16db14c3aa17745",
+    "mention_text": "Rosa Luxemburgo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8cd0a0563ba4068afd58ed0ee61d0d18411a28280e802658f314abbb60ececb6",
+    "mention_text": "Rotwang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99bb3853e56dfe0ce9f3c45df64b974f7ea594a971c13c92401547eef92fa7fc",
+    "mention_text": "Maria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c6550741d00fa811388b91e726b0316f521a3d571836c26200ef08637d68aed",
+    "mention_text": "Fritz Lang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff360369c51f3d32374690229a7975718940c3f6fcc35ae000c44ae51c639ef1",
+    "mention_text": "Rotwang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "beebdb00db53bcc9d8d187556b2c2f53771cc7c9fd370852b85e3c0ecc5e2805",
+    "mention_text": "Rotwang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "387704f82171a166d08f668e3210ff1d61dd18a414accdf427d1c40a76fa4b23",
+    "mention_text": "Foucault",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1be485a4b1874924e6c8a2c06ec5c95e06d38a7ea7a984af83f617e37c0789ae",
+    "mention_text": "Fritz Lang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f31298872ca06e4430c1e6d8ad5f26591239b758de2f8535091d7e1405461b86",
+    "mention_text": "Rotwang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60eadd8f1ed5edc7d2251e35e79fd9c3b2ede0a87635e20a1a136a031ea64b16",
+    "mention_text": "Fritz Lang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7221e07f7a1f2d9151ad075bc0423cfe37e161fbc38ee5813c1b71e5e9a619ce",
+    "mention_text": "Rotwang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "006d2cfaa18620168cb25fe89ab2744ee45f544084f4a3bea5002bf3ab605244",
+    "mention_text": "Neo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56b210e318e3ba7dc7c36583a157a3dea6a2df45ebb8f5132474f89eeab474e8",
+    "mention_text": "Neo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c05e0169a3b781f81b7dbd3cf71ee6687285fffaa148540f472aa3e2cf574f2a",
+    "mention_text": "Morfeu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45fb9c57accadf551dad76ad9e3a42bf6c190504f9ad06543aaceaedd991707a",
+    "mention_text": "Platão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3e48fb85bbe77c0113317b69f317e2da7a10ea5ba9f350b00edc8ff4b37163e",
+    "mention_text": "Bourdieu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ffd13c89bf475c90ec0e96238d42e6a050c5d69ac858b93e36a0823053c35dca",
+    "mention_text": "Boris Groys",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf737b61eee665fec233a99a7ae0421ebaec725a4fff01a1ea3f6dbe07e0e053",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "21855db031aae3c105bc2e4f02807fb13b9d5c9a983c5d131ccef0dad3e0cc96",
+    "mention_text": "Academia de Belas-Artes de Viena",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d3843ce6220c820c16f1c90bfd415d20a79442cf29108f9cbcf130bc6051390",
+    "mention_text": "Áustria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7cdf4b3f543bb7f318fd146a29b192fda43f99ea14913f70876ce5f85b531f05",
+    "mention_text": "Princeton University Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80cd9105ec72a85f92ab039373cb707c2949a87b488497af3af803326872c056",
+    "mention_text": "Lettre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99eb151eaa20231d72e5f577e65f716842cbad40bb15676d16a61d03c6312e4d",
+    "mention_text": "José Marcos Macedo",
+    "categoria": "PESSOA"
+  }
+]

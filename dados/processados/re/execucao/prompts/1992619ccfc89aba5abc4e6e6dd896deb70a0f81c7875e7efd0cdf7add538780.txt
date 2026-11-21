@@ -1,0 +1,434 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 2feba47148d9a42f28968789c2a892ad9f9c22b1986373d92050c3b1522cd092
+
+TEXTO:
+Principais empresas de tecnologia compraram 93 start-ups no último ano
+
+Na semana passada, a Microsoft anunciou a compra da Mojang, produtora responsável pelo popular jogo "Minecraft", por US$ 2,5 bilhões. O negócio completou um ano movimentado para os gigantes da tecnologia.
+Amazon, Apple, Facebook, Google, Microsoft e Yahoo! não foram apenas mais as compras de empresas emergentes, como voltaram para casa com os nomes mais falados e promissores de diversos segmentos tecnológicos.
+Cada uma das seis gigantes tem pelo menos um nome de peso em sua lista de aquisições de empresas.
+A Amazon levou por quase US$ 1 bilhão o Twitch, serviço de streaming de vídeos especializado na transmissão de games. A Apple papou por US$ 3 bilhões a Beats, famosa pelos fones de ouvido e responsável por um serviço de streaming de música.
+Por US$ 3,2 bilhões, o Google comprou a Nest Labs, nome de ponta no segmento de automação residencial. A companhia foi fundada por Tony Fadell, conhecido como um dos pais do iPod na Apple. Mais modesto, o Yahoo! adquiriu a Flurry, importante na área publicitária.
+A maior compra do ano, porém, foi do Facebook: a aquisição do aplicativo WhatsApp custou US$ 19 bilhões.
+A compra de empresas emergentes (conhecidas como start-ups) por gigantes da tecnologia é uma prática recorrente. O que é incomum é o fato de todos as gigantes do setor investirem em nomes importantes em tão curto espaço de tempo.
+Entre outubro de 2012 e setembro de 2013, as principais aquisições foram menos empolgantes: Goodreads (Amazon), HopStop (Apple), Monoidics (Facebook) e Waze (Google). A Microsoft levou a combalida Nokia. A exceção do período foi o Yahoo!, que papou o Tumblr.
+Além da importância dos negócios, o número deles também aumentou. Entre outubro de 2013 e setembro de 2014, Apple, Facebook e Google fizeram mais compras em relação ao mesmo período do ano anterior. Amazon e Microsoft tiveram o mesmo número de aquisições.
+Só o Yahoo! teve queda (de 22 para 20), mas, ainda assim, foi o segundo maior comprador. O Google, além de aparecer em primeiro no ranking, teve um grande aumento, de 11 para 39 aquisições.
+DIREÇÃO
+A compra de emergentes aponta para onde os principais nomes da tecnologia estão olhando. "A aquisição de uma start-up é uma maneira de uma empresa ganhar tempo no desenvolvimento de tecnologias", explica Guilherme Junqueira, gestor de projetos da Associação Brasileira de Start-ups.
+Nesse sentido, o Google parece determinado a criar um mundo futurista, quase de filme. Um terço das 39 aquisições estão ligados a robótica, inteligência artificial, automação residencial e drones –segmentos quase sempre conectados entre si.
+Enquanto isso, o Facebook tenta manter sua posição em todos os ambientes com características sociais. Além do WhatsApp, comprou o app Moves, que produz dados de exercícios associados à geolocalização, e a Oculus VR, empresa que desenvolve um óculos de realidade virtual.
+A Microsoft fez compras para manter seu sucesso com clientes corporativos (seis dos oito negócios). Apple para aprimorar seus serviços e dispositivos –metade de suas compras está associada a recomendação e streaming de conteúdo e fabricantes de componentes de hardware.
+Entre as empresas que faturam com publicidade, houve investimento aprimorar os ganhos, principalmente aqueles originados nos dados de usuários. Facebook, Google e Yahoo! levaram juntas 12 start-ups de publicidade.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1269ddd567176b588e28c76a54ec4b8d62f1e7fe44fb606529027d6823903fbd",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77395dc737f58be44ce575eb7e961dd396b804bc4077a05ab1ed0ae3c46cf575",
+    "mention_text": "Mojang",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1af790bce3c8852a6dfccd892f6655ddbd2fe14cf942f54aeabf3bc01262c371",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce1ea84df89f659ca6fb0fbf6acdfd023af96211566dc42bb6ccbed19fdb82e3",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9514b532e0c365328fa17cbc7d42c572a5452a2801f18a99d406965037f21d9",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15ac517b54771a6166cee429a4982da9ac104239ae5444070b969f69607e232f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6b0c8a58a8adf1c429abe2296138b9db0649449367dd920c119bce2a097c110",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31aa07d8574bd9038a089bc8716bd26926d0d9129fd2a6338f4d299a82c37234",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "307018fdcf20a2bb90f5fd7574af9c48cf292e71caadfb2fad5aa2e6c894a320",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4dc8900449244c02bbacb8b4d707f7e07a236dbad150298e6de35599ff83dfc6",
+    "mention_text": "Twitch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0689c95a5c3c094cb05e1e151068115af073e8cf377206f35714a045e6692cbb",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "879db217564f49ecb828fff74841d25b96313c8aa709b94d98d1553c384f7a0b",
+    "mention_text": "Beats",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "016b5c94896f223334e0c455b79ad119153399f3f8eefe8a7e06093075263666",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3e49d7c2e3d647fa0a1d1a0a63f8482a1af130f9fbab40477862c613d52e5c6",
+    "mention_text": "Nest Labs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c687fac0c3c625a522dab99e1ad2dea863613d61fa81c61410a9816ce2ad8e0",
+    "mention_text": "Tony Fadell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82a3e76c7f932403d144ae4caae713cbcb866e9c3f8ee38c160e9c3f6ded0c24",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a983e6a4ff7c22c5f1ca3fa8971c498c56fcf736a5e5da41175bfc38fb27691",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d1b9fd9bd72b637d5cadd686b10df3e1a5e1eae7c128a81122ef665b4e71d57",
+    "mention_text": "Flurry",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d83a1976fa04f6801fd9d758c825053084aa372e0031acb6bdbd5cde1b0a8995",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ffdd9203f2efb0651091a3748f58015c0490973633a0ce1f2eeab79542241f6",
+    "mention_text": "Goodreads",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5b699ee5565ce7632dd8ad78e9eb459122b6ae013d2ad83e8fcc929a59877b5",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "30df909d398dd4733f8ee4a4daa15ecea273473861dcd22ea7c5dc0b7a9f5973",
+    "mention_text": "HopStop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2ac03e277bcab86e1c039916beea0e5a6b4362ce4902b45d997a098ba71735a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d1493dff4ca59caad5581fd06f2ab7ebe0ad99757b6dc4a5f031a0d18ace6c7",
+    "mention_text": "Monoidics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1834b9305fce2acba21fb4ec1cc88c6f7acf3138070d35852a57d7645e85a9bd",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "039f60154f38fcb2bb323cde146b0972570ee649f1fab20656ee6c9f5b0acb4d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "149848d67844fcf2ccb9ff283652029e04856cd7639a45b1f08f1f8dd6c4f204",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc2e082d28cc2861897e91ba7bc11be579068d608c6ee4e07790da642f74ca5a",
+    "mention_text": "Nokia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "069cbb9cba923ef9802b4da217696514875349d1e91b3ebba98c73525e37c3c6",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf4f151d51735459b164feac9ecdd5ec3a2bf9b0826103bc873ebf002a16ef2a",
+    "mention_text": "Tumblr",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d926bc1f32eebedb9b25b4b747dd81fc0b73fa1254e73c607ac9b21985e4f5a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4356010e842230582e9d8274b276390157a30cc358df7a5397c7198794c1f109",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee119114011147cb972066dd36917870444c7b2469753fa0cb4573c245b3f3d0",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "782ce9c5f797bc311bad49857ac064d35033740860485fab79278984e0c45ab1",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2eb05735ed3a06146e920971f9d927dcc83277fb83ac437d28bc27255fea3a8",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d0ac75ad662677c9da10cb7b7e95ed7b04def5fd0137870d3452f33e0077677",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c99ec31041e47f33dca4bf4ee7994eed227a414986b10cb6dc4d277e1c417068",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0406ce1684dde65f7bb2d5be32f315225b544b2cb4fd04fe8af29b91c2db48e",
+    "mention_text": "Guilherme Junqueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e037a0095b50f3f8fa5f1d9530ffb3706c1a815fe07ab5aea01e4c9fa67a0d17",
+    "mention_text": "Associação Brasileira de Start-ups",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9caa5463fc5f4c5851029e85c39f9f536d916516a0fe05cff7504431c3903884",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "669276a13f8bfba2742df7d63956729edc921776bdc3aab2467a3e5168600cb4",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71c4f35753a86c42215d4c93c7dbcb7f573096de7ffcb8fecf91350ac1ea6577",
+    "mention_text": "Oculus VR",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a77e0d5717f243417197c5b093905a214535e8db27f1cd28e11873bcdcd42e0",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "544bb8326c5d9656d041b1f6025c38b2d577532a1fea02878395ab80099736df",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3a8a452356d3279c20b3d3ecae1a7fbb19d8383dcd240edd887fb2b8c694b94",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f4ac9cfde397e0f080759353a9f9656407a6acebbc6feba991cc3aa24c27921",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e99d3c1f2dff87ee2a475dfeb6883caae4eefc9692f2cff936d180dec21667b5",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  }
+]

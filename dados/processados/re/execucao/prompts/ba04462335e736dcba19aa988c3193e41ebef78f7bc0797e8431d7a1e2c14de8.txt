@@ -1,0 +1,371 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1f66a19e365c0b704223717c9ddc38d58af402664fb17002aa2f966addf07de0
+
+TEXTO:
+Pioneiros previram a tecnologia de hoje
+
+BILL GATES
+Os laptops de hoje são aperfeiçoamentos de uma tecnologia que já se evidenciava havia duas décadas
+Pergunta - Muitas vezes desejei poder viajar para trás no tempo com um dos computadores de hoje só para ver a expressão do rosto de um pioneiro da computação quando ele visse minha máquina moderníssima. Se uma pessoa de 1995 tivesse "visitado" você 20 anos atrás, no início da Microsoft, com um laptop moderno debaixo do braço, qual teria sido sua reação?
+(Steve Davenport, Steve-Davenport@ tvo.org)
+Resposta - Eu teria ficado espantado com a viagem no tempo e superinteressado no laptop. Quem não ficaria intrigado ao ver um objeto do futuro?
+Mas duvido que muitos pioneiros da microcomputação ficassem tão espantados assim ao saber dos poderosos laptops dos anos 90. O que aconteceu não foi tão terrivelmente surpreendente.
+Os laptops de hoje são aperfeiçoamentos de uma tecnologia que, em sua maioria, já tinha se evidenciado há duas décadas.
+De lá para cá, os computadores ficaram mais velozes e diminuíram de tamanho, enquanto a capacidade das memórias aumentou.
+É um fenômeno de escala. Não houve nada de realmente revolucionário. Os computadores de hoje são muito mais fáceis de usar, em parte devido à invenção da interface gráfica, pela Xerox.
+Mas mostrar desenhos em uma tela também era uma idéia óbvia. Durante vários anos, os computadores pessoais não tinham potência para mostrar desenhos de maneira eficiente, de modo que a indústria quebrou o galho com uma solução provisória, que consistia em mostrar apenas caracteres na tela, desse modo reduzindo a necessidade de velocidade de processamento e memória do computador.
+Foi uma boa solução temporária, mas ela só foi necessária enquanto os computadores tinham baixa potência. Os computadores de hoje são muito mais potentes, mas não de uma maneira que pudesse surpreender os pioneiros da computação, os quais enxergavam longe.
+Já em 1968 Alan Kaye escreveu sobre sua visão de um chamado "DynaBook" -essencialmente, um laptop.
+Há 50 anos, Vannevar Bush, um dos fundadores da National Science Foundation, escreveu sobre sua visão de uma máquina para ler, folhear e chamar quantidades enormes de informação. Chamou a máquina que imaginou de "memex".
+Na edição de julho de 1945 da revista "The Atlantic Monthly", Bush escreveu: "Profissionalmente, os métodos que utilizamos para transmitir e rever os resultados de pesquisas já estão superados há gerações, e hoje são totalmente inadequados em relação a seus fins. Um "memex" é um aparelho no qual uma pessoa pode armazenar todos os seus livros, arquivos e comunicações, e que é mecanizado para ser consultado com rapidez e flexibilidade. É um suplemento íntimo e ampliado de sua memória".
+Bush errou quanto aos detalhes da tecnologia. Ele previu que o "memex" seria uma escrivaninha com uma tela embutida para mostrar e gravar microfilmes. Mas ele acertou na mosca em relação a muitos conceitos, como o de hipertexto e outras formas de indexação automatizada.
+"É claro que ainda resta a possibilidade de consultar os arquivos pelo esquema normal de índices", escreveu Bush. "Se o usuário quiser consultar determinado livro, ele digita seu código no teclado e a página-título do livro em questão aparece à sua frente, projetada em uma de suas posições de olhar".
+Bush morreu em 1974. Será que ele teria ficado espantado com os laptops atuais? Duvido.
+Pergunta - Quando o sr. vai escrever um livro?
+(Bill Standwill, Nova York; Rod Aquino, Austrália; Thye Tark Soon, Malásia, Sergei Prokhorov, Rússia, e outros)
+Resposta - Já escrevi. Seu título em inglês é "The Road Ahead" ("A Estrada do Futuro") e ele está sendo editado pela Viking, nos EUA, pela Penguin, na Grã-Bretanha, e por várias outras editoras em diversos países.
+O livro descreve minha visão do futuro e os motivos pelos quais sou otimista. Eu o escrevi para expressar entusiasmo pelo que aconteceu até agora no campo da informática e minha visão de que tudo isso é apenas uma pequena parte do que é possível.
+Ninguém sabe ao certo para onde a tecnologia nos está levando, mas existem coisas que o passado nos ensina -e tenho algumas idéias bem exatas, acredito, em relação ao futuro.
+Tentei fazer de "The Road Ahead" um livro que possa ser compreendido com facilidade por todos, não apenas pelos fãs dos computadores. É importantíssimo que todos os segmentos da sociedade compreendam a discussão sobre nosso futuro coletivo e participem dela.
+O ensino, por exemplo, é um campo sobre o qual a informática está destinada a exercer um impacto enorme. Todos nós deveríamos discutir esse assunto. É preciso muito dinheiro para treinar professores e conseguir equipamentos e conexões certos. É por isso que decidi doar meus lucros com o livro a entidades de caridade que atuam no campo da educação.
+Originalmente, previ que levaria três a quatro meses para escrever o livro, mas isso foi antes de saber quanto trabalho ele ia me dar. Quando esse prazo terminou, meu co-autor e eu jogamos fora praticamente tudo que havíamos feito e começamos tudo de novo, dessa vez com menos pressa.
+Agora que escrevi um livro, passei a admirar ainda mais as pessoas que os escrevem.
+Escrever um livro de não-ficção o obriga a refletir sobre as questões de maneira disciplinada e o desafia a ordenar seus pensamentos. Você encontra falhas e discrepâncias escondidas, e isso te leva a pensar ainda mais.
+Às vezes, as pessoas me perguntam por que escrevi o livro. Pode soar engraçado, mas uma das razões foi para que alguns amigos meus pudessem compreender minha visão do futuro. Parece que nunca arrumo tempo para explicar tudo que tenho vontade. Agora só preciso dar um exemplar de "The Road Ahead" a eles.
+Mas a verdadeira razão foi para expor algumas de minhas idéias e ajudar a elevar o nível da discussão. A partir de agora, quando eu falar com um jornalista ou fizer um discurso, falarei com base na plataforma erigida pelo livro, em lugar de repetir a mesma mensagem infinitas vezes a diferentes platéias.
+Pergunta - Quais são as coisas que você adora? (Naohiro Hamada, Japão)
+Resposta - Inteligência artificial, ótimos gráficos, ferramentas de construção de software que permitam que as pessoas criem coisas legais e trabalhar com pessoas inteligentes. Fora do trabalho, adoro certos livros. E sempre vou ao cinema.
+Cartas para Bill Gates, datilografadas em inglês, devem ser enviadas à Folha, caderno Informática -al. Barão de Limeira, 425, 4º andar, CEP 01202-900, São Paulo, SP- ou pelo fax (011) 223-1644. A correspondência pode ser enviada a Bill Gates no endereço eletrônico askbill microsoft.com.
+Tradução de CLARA ALLAIN
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e1ea902ababf8ec1aec192d1c94d976d504408b635f4f4d1e076cf574202625c",
+    "mention_text": "BILL GATES",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd3433735d916bbb4e3e25f66809be4956c80f3d3a8254ef302a31fda9337413",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de33d3f308bd601d0a08e5bc04b03c6acb3ffef24128ce48421cb6e37ea7c91b",
+    "mention_text": "Steve Davenport",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28cab906692742533e10561d648cef6e50c92c4b443cd98cbb013c881f1f1ecd",
+    "mention_text": "Xerox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b22653765e2a626c5560c91b1bb725e5d7b555f2fb52fd0d54e70809c483020",
+    "mention_text": "Alan Kaye",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4a38376266f0508207db98f542ad7fe85efb1e7d8088d2b6d319276068f420f1",
+    "mention_text": "Vannevar Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3864ad3db9898ac124aea0b50c1a3b030f53bb8ceaa2c1826f1b50a966d6ab2",
+    "mention_text": "National Science Foundation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77e4ed1bd79e9528a2a82e53efc9c244c28e9903cf29fe97ea4cf01825e0b47b",
+    "mention_text": "Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e22822a4b95cd0c771ea5ef73fce78b855dfdf36d54d771b33092ca8c11dd8b0",
+    "mention_text": "Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2250b42a18363fe3402bf7ec4269be8c19b51e293e421f0bc7da39b6b1658a37",
+    "mention_text": "Bush",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c726765d8ba1779f06e36125a67c2e70b626a8b46bed7d05cb666ed534468ec",
+    "mention_text": "Bill Standwill",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6df0dd96dc72487f4e10f7a1143b4157c961177edd1eef163feb60dd69c5b7db",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fcdacf1348981b0063c34d3d158f4ef088272b0b7d7a48373449809ff9f6e668",
+    "mention_text": "Rod Aquino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e70ca2460b61d5d6c4ef18073f860e39a888c55008424c99478b353255fe44f9",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f8d867e7904da8587f08e52c6f704f7efaed967033e3f5f9fad41fb32467285",
+    "mention_text": "Thye Tark Soon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31822b95e9cfa38f5d34c0223c6b46bb07d3a73ddee3f230e5c5c0e78c374d0d",
+    "mention_text": "Malásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d95ffe40e08024d3abba20b73a932328d75edef246a24e78f1830e69371a7355",
+    "mention_text": "Sergei Prokhorov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c97a921b83ce26ab00b09d937e474a5fc04866c57fa871a3eab12c9335922b6",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8100ccdc37f3b6ddb917ec73e51689a33edc99986771ee38d2fce46bb8b0ce96",
+    "mention_text": "Viking",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a156e248d7179d4dc6ec93183f97aadf2c58d069076466652930c9ee7f3181b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "81202704223512211e46f66b6f89b1dab4a1643306a3785ae0464ad5af0fa1a0",
+    "mention_text": "Penguin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6576e28be38067813fd0f5b634e4a0b41cf3cc62819783576b93f4672df672fd",
+    "mention_text": "Grã-Bretanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28f5059eff527a8bace3c56c642fca41f5a9ed125683f454e7a49934e00d3ece",
+    "mention_text": "Naohiro Hamada",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66c671526d72c745fc2315aee46f988b45cd73ef7b4665c2745503ebd36057f0",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "981d09a5908a4d59afd2bbd0193de0ffeb73fc11429bf17d4c0f26407a0150ed",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38a3011cf9a0a5bf9cfa95c08f903f12b19753afc60baad7fc6afa05cdd012b3",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b044000c4ea31d061fb3779ee0b1e458238ebd47d17e7f872e513c6a0423c8ac",
+    "mention_text": "al. Barão de Limeira, 425, 4º andar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "24116af954f8ddc9a8567dca87396e23065be50d45908653a80d55e7e3138ace",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74bf3b94f320c7d3cb7d3d2c3769aa668fcd20b85ba6ac9afda6da623a661dd4",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3713db4096b7ce36f4cdd314be729001cf137675ae97e1b8c9edf59f78ffdce1",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85bbda0aae271c2721ca0196d94c41bdd8d278db16a4ec4482ec975425b6d1d6",
+    "mention_text": "CLARA ALLAIN",
+    "categoria": "PESSOA"
+  }
+]

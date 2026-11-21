@@ -1,0 +1,1070 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 941c06dd2b66d0b48c240851000f56e6fc456e45f140208cc7bc2110c48cbe58
+
+TEXTO:
+Peça ´Hotel Mariana´ e show de Linn da Quebrada são destaques grátis da semana
+
+Festival Bixanagô O festival de música, política e artes dedicado à comunidade negra, periférica e LGBT tem shows de Indy Naíse, Rosa Luz, Aretha Sadick e Mc Dellacroix, na sexta (22), e MonnnaBrutal, Joy Sales, Danna Lisboa e Linn da Quebrada no sábado (23). Lab Mundo Pensante - R. Treze de Maio, 733, Bela Vista, região central, tel. 5082-2657. Sex. (22): 18h. É necessário fazer inscrição p/ linktr.ee/bixanagofestival. GRÁTIS Mundo Pensante - R. Treze de Maio, 830, Bela Vista, região central, tel. 5082-2657. Sáb. (23): 15h. Shows (após as 23h30): R$ 20. É necessário fazer inscrição p/ linktr.ee/bixanagofestival. GRÁTIS
+Mais
+Aniversário do CCJ O centro de cultura celebra 13 anos de existência com shows da cantora baiana Xenia França, que deve passar por canções de seu disco “Xenia” (2017) no sábado (23), e de Zezé Motta no domingo (24). Ela apresenta o show Atendendo a Pedidos, no qual solta a voz com músicas de Dolores Duran e Caetano Veloso. Centro Cultural da Juventude - Av. Dep. Emílio Carlos, 3.641, Limão, tel. 3343-8999. 400 pessoas. Sáb. (23): 20h. Dom. (24): 18h. 16 anos. Retirar ingresso com antecedência de uma hora. GRÁTIS
+Duofel Com quatro décadas de trajetória, a dupla de violonistas Fernando Melo e Luiz Bueno se unem a Carlos Malta e Robertinho Silva no lançamento do disco “Duo+Dois”, que passa por interpretações originais composições nacionais, como “Cais”, de Milton Nascimento e Ronaldo Bastos. Sesc Consolação - teatro Anchieta - R. Dr. Vila Nova, 245, Vila Buarque, tel. 3234-3000. 280 lugares. Seg. (25): 19h. 120 min. Livre. Retirar ingresso com antecedência de uma hora. GRÁTIS 10 anos Atelier de La Musique A escola de música celebra dez anos com um festival que recebe bandas como Trio Corrente, Nicholas Saliby Trio, Lupa Santiago Quarteto, Fábio Peron Trio, Choro do Beco e Bob Wyatt. Atelier de La Musique - R. Bartira, 568, Perdizes. Sáb. (23): 12h. Livre. GRÁTIS
+Série Música de Câmara Destaque na República Tcheca, o violonista faz apresentação gratuita que passa por obras de Bach, Tom Jobim, Leo Janáek e Nikita Koshkin, entre outros. Theatro São Pedro - R. Dr. Albuquerque Lins, 207, Santa Cecília, região central, tel. 3661-6600. 636 lugares. Sáb.: 11h. 60 min. Livre. Retirar ingresso com antecedência de 90 min. GRÁTIS
+Réquiem para o Desejo Inspirado em “Um Bonde Chamado Desejo”, de Tennessee Williams, a peça escrita por Alexandre Dal Farra usa técnicas de cinema, instalação performance para abordar a violência contra a mulher e pessoas negras. Itaú Cultural - Av. Paulista, 149, Bela Vista, região central, tel. 2168-1777. 224 lugares. Sex. e sáb.: 20h. Dom.: 19h. Até 24/3. Retirar ingr. uma hora antes. GRÁTIS
+Mais
+Deriva da Luz Vermelha O espetáculo itinerante desenvolvido pela Companhia Pessoal do Faroeste consiste em cinco andanças noturnas pelo centro paulistano, sem trajeto ou duração predefinidas. Com a ajuda de uma lanterna vermelha, os artistas Brunner e Mel Laurent localizam palcos históricos da violência estatal, a maioria relacionada à ditadura um dos percursos acaba, por exemplo, no prédio do Memorial da Resistência, antes um Dops. Teatro Cia. Pessoal do Faroeste - R. do Triunfo, 305, Santa Efigênia, região central, tel. 3331-8943. 40 lugares. Qui.: 21h. Até qui. (28). GRÁTIS Holzwege ou Caminhos da Floresta O espetáculo mergulha na vida e na obra do controverso filósofo alemão Martin Heidegger, que completaria 130 anos este ano. A trama, que toma seu título emprestado de uma obra do pensador, desdobra um de seus principais conceitos, Ser e Tempo, até os dias atuais. Funarte São Paulo - Al. Nothmann, 1.058, Campos Elíseos, região central, tel. 3662-5177. 40 lugares. Ter. e qui.: 20h30. Até ter. (26). Retirar ingr. uma hora antes. GRÁTIS Ilhada em Mim — Sylvia Plath A peça resgata a obra da escritora americana Sylvia Plath, que se suicidou aos 30 anos. O cenário, concebido pelo diretor, é composto por objetos congelados que aos poucos submergem. Biblioteca Mário de Andrade - R. da Consolação, 94, Consolação, tel. 3775-0002. 170 lugares. Seg.: 19h. Até 1/4. Retirar ingr. uma hora antes. GRÁTIS Pornoteobrasil Uma catástrofe que recai sobre o cenário da peça serve como metáfora para a recente turbulência no contexto político brasileiro no espetáculo do Grupo Tablado de Arruar. A partir do acontecimento, cinco personagens debatem sobre as causas que levaram à situação. Oficina Cultural Oswald de Andrade - R. Três Rios, 363, Bom Retiro, região central, tel. 3222-9574. 50 lugares. Qui. a sáb.: 20h. Até 6/4. Retirar ingr. uma hora antes. GRÁTIS Hotel Mariana Relatos de sobreviventes do rompimento da barragem de Mariana, em 2015, guiam o texto do espetáculo, indicado ao prêmio Shell. Em cena, atores recitam as falas dos moradores locais ao mesmo tempo em que os escutam em seus fones de ouvido. Centro Cultural da Penha - Lgo. do Rosário, 20, Penha de França, região leste, tel. 2295-0401. Sáb.: 20h. Dom.: 19h. Até 24/3. Retirar ingr. uma hora antes. GRÁTIS
+Mais
+MITsp Protocolo Elefante O ritual de afastamento e isolamento dos elefantes que acontece na iminência de sua morte serve de metáfora de separação e exílio nesta coreografia. Centro Cultural Fiesp - Av. Paulista, 1.313, térreo, Bela Vista, tel. 3146-7439. 456 lugares. Sáb (23).: 20h. Dom. (24): 19h. É necessário inscrição p/ sesisp.org.br. GRÁTIS (ver[ ]ter) à deriva O espetáculo parte dos trabalhos do artista britânico Banksy para propôr um conjunto de intervenções cênicas em espaços externos e públicos. Congregando grafite, videoarte, performance, teatro, dança e artes plásticas, a ação tem trilha sonora ao vivo do quarteto de jazz À Deriva. Av. Paulista, 1700 - Av. Paulista, 1.700, Bela Vista. Sex. (22) e sáb. (23): 15h. GRÁTIS
+Dança
+Duplos Direção: Talita Florêncio e Thiago Salas. Com: Danielli Mendes, Jorge Garcia e outros. 60 min. Livre. Em sua sétima edição, o espetáculo se organiza em pequenas sessões de improvisação e criação de estratégias composicionais, refletindo sobre conceitos como o acaso, o provisório e o indeterminado. Sesc Pompeia - área de convivência - R. Clélia, 93, Água Branca, região oeste, tel. 3871-7700. Sex. (22): 20h. GRÁTIS
+Marc Ferrez: Território e Imagem Um dos nomes de peso do acervo do Instituto Moreira Salles, Marc Ferrez ganha, a partir da próxima terça (26), sua segunda retrospectiva no museu. “Marc Ferrez: Território e Imagem” propõe, de acordo com o curador Sergio Burgi, uma visão mais aprofundada da obra do fotógrafo, um dos mais importantes do século 19 no Brasil. IMS Paulista - Av. Paulista, 2.424, Bela Vista, região central, tel. 2842-9120. Ter., qua. e sex. a dom.: 10h às 20h. Qui.: 10h às 22h. Abertura terça (26), às 18h. Até 21/7. Livre. GRÁTIS
+Mais
+Artur Lescher: Suspensão A retrospectiva de 30 anos da produção do escultor paulistano busca mapear os elementos centrais da poética do artista por meio de cerca de 120 trabalhos. Pina Estação - Lgo. Gen. Osório, 66, Santa Efigênia, tel. 3335-4990. Seg. e qua. a sáb.: 10h às 17h30. Abertura sáb. (23), 11h. Até 24/6. Livre. GRÁTIS Boccioni: Continuidade no Espaço A mostra homenageia o futurista italiano Umberto Boccioni discutindo o processo de criação da escultura “Formas Únicas da Continuidade do Espaço”, que integra o acervo do museu. Por meio de documentos, as curadoras Ana Magalhães e Rosalind McKever exploram aspectos históricos, estéticos e técnicos da obra. Mac-USP - Av. Pedro Álvares Cabral, 1.301, Parque Ibirapuera, região sul, tel. 2648-0254. Ter. a dom.: 10h às 21h. Até 24/3. Livre. GRÁTIS
+S ão Francisco de Assis na Arte de Mestres Italianos Santo católico conhecido como patrono dos animais, São Francisco de Assis é protagonista desta mostra, que reúne uma série de retratos do personagem produzidos por artistas italianos como Tiziano Vecellio e Pietro Perugino. A curadoria é de Giovanni Morello e Stefano Papetti. MAB-Faap - R. Alagoas, 903, Higienópolis, região central, tel. 3662-7198. Seg. e qua. a sex.: 10h às 18h. Sáb. e dom.: 10h às 17h. Até 12/4. Livre. GRÁTIS Claudia Andujar: a Luta Yanomami A mostra apresenta uma retrospectiva da carreira da fotógrafa Cláudia Andujar. O recorte curatorial privilegia a luta da artista pela proteção dos índios ianomâmi, com os quais estabeleceu contato pela primeira vez nos anos 1970. IMS Paulista - Av. Paulista, 2.424, Bela Vista, região central, tel. 2842-9120. 145 lugares. Ter., qua. e sex. a dom.: 10h às 20h. Qui.: 10h às 22h. Até 7/4. Livre. GRÁTIS
+Mais
+Consciência Cibernética [?] Horizonte Quântico A coletiva, sequência de “Consciência Cibernética [?]”, de 2017,  discute inteligência artificial e computação quântica a partir de nove instalações e softwares que exploram características do processamento de dados. Itaú Cultural - Av. Paulista, 149, Bela Vista, região central, tel. 2168-1777. Ter. a sex.: 9h às 20h. Sáb. e dom.: 11h às 20h. Abertura qua. (27), às 20h. Até 19/5. Livre. GRÁTIS Maria, José e Menino A individual de Marina Schiesari, que inaugura o programa Nova Fotografia 2019, explora as complexidades de um núcleo familiar que, apesar de povoado por opiniões divergentes, busca manter a convivência. MIS - Av. Europa, 158, Jardim Europa, região oeste, tel. 2117-4777. Ter. a sáb.: 10h às 21h. Dom.: 9h às 19h. Abertura qui. (28), às 19h. Até 12/5. Livre. GRÁTIS Matrix Colonial Na mostra audiovisual curada pelo Coletivo Dudús, nove obras de artistas brasileiros e estrangeiros problematizam a tecnologia, usada ao mesmo tempo para perpetuar ou para lutar contra o racismo. Cartel 011 - R. Artur de Azevedo, 517, Cerqueira César, região oeste, tel. 3081-4171. Ter. a dom.: 11h às 20h. Até 14/4. Livre. GRÁTIS Tensão Relações Cordiais A coletiva, que inaugura a Galeria do Parque (leia mais na página 63), exibe um recorte da coleção de Regina Pinho de Almeida elaborado pelo crítico Tadeu Chiarelli. Com obras de 42 artistas, a mostra enfoca os atritos e conexões inesperadas que trabalhos a princípio sem relação entre si produzem uns nos outros. A Casa do Parque - Av. Prof. Fonseca Rodrigues, 1.300, Alto de Pinheiros, região oeste, tel. 3365-4789. Ter. a sex.: 11h às 19h. Sáb. e dom.: 10h às 18h. Abertura sáb. (23). Até 30/6. GRÁTIS Antoni Tàpies O pintor catalão, morto em 2012 e considerado um dos mais importantes do século 20, tem sua primeira mostra no país depois de um hiato de 15 anos. A exposição reúne em torno de dez obras produzidas por Tapiès, conhecido por incorporar materiais como areia, resina e restos de objetos às suas telas. Galeria Bergamin & Gomide - R. Oscar Freire, 379, lj. 1, Cerqueira César, região oeste, tel. 3853-5800. Seg. a sex.: 10h às 19h. Sáb.: 10h às 15h. Até 27/4. Livre. GRÁTIS
+Mais
+Bacante Nesta individual, Regina Parra dá sequência à sua pesquisa sobre o feminino a partir da figura das bacantes, sacerdotisas do culto a Dioniso na Grécia Antiga associadas ao erotismo e à liberdade. Compõem a exposição três novas séries de pinturas, neons e um trabalho em vídeo. Anexo  Millan - R. Fradique Coutinho, 1.416, Pinheiros, região oeste, tel. 3031-6007. Ter. a sex.: 10h às 19h. Sáb.: 11h às 18h. Até 20/4. Livre. br. GRÁTIS
+Dívidas, Divisores e Dividendos Em sua sétima exposição na galeria, Marcelo Cidade parte do conceito de arquitetura hostil, que propõe a existência de uma violência implícita nos projetos arquitetônicos e urbanistas, para apresentar dois conjuntos de trabalhos inéditos. Galeria Vermelho - R. Minas Gerais, 350, Higienópolis, região central, tel. 3138-1520. Ter. a sex.: 10h às 19h. Sáb.: 11h às 17h. Até 13/4. Livre. GRÁTIS
+Formas/Suportes A mostra apresenta uma seleção de mais de 30 trabalhos do pernambucano Macaparana em suportes múltiplos, como madeira, acrílico, cerâmica e outros. Dan Galeria - R. Estados Unidos, 1.638, Jardim América, região oeste, tel. 3083-4600. Seg. a sex.: 10h às 19h. Sáb.: 10h às 13h. Abertura seg. (25). Até 30/4. Livre. GRÁTIS
+Zica Bergami Composta por 50 desenhos em nanquim sobre papel, a exposição apresenta trabalhos raros da artista, associada à arte naïf. Jacques Ardies - R. Morgado de Mateus, 579, Vila Mariana, região sul, tel. 5539-7500. Ter. a sex.: 10h às 17h30. Sáb.: 10h às 16h. Abertura ter. (26), às 19h30. Até 20/4. Livre. GRÁTIS O Tempo Mata - Imagem em Movimento na Julia Stoschek Collection Com curadoria de Rodrigo Moura, a mostra exibe vídeos e filmes de 17 artistas pertencentes à Coleção Julia Stoschek, da Alemanha, especializada em videoarte. Sesc Avenida Paulista - Av. Paulista, 119, Bela Vista, região central, tel. 3170-0800. Ter. a sáb.: 10h às 21h30. Dom.: 10h às 18h30. Até 16/6. Livre. GRÁTIS
+William Forsythe: Objetos Coreográficos Fundindo as linguagens da dança e das artes visuais, a individual reúne 11 trabalhos do bailarino norte-americano William Forsythe. Chamados de “objetos coreográficos”, eles estimulam os visitantes a movimentarem o corpo de acordo com instruções. Sesc Pompeia - R. Clélia, 93, Água Branca, tel. 3871-7700. Ter. a sex.: 10h às 21h30. Sáb. e dom.: 10h às 19h30. Abertura ter. (26), às 20h. Até 28/7. Livre. GRÁTIS
+Farnese de Andrade – Memórias Imaginadas Conhecido por assemblages que, exibidas em oratórios e gavetas, juntam cabeças de bonecas, fotografias e figuras de santos, Farnese de Andrade ganha uma nova retrospectiva na Almeida e Dale a partir deste sábado (23). A exposição, curada por Denise Mattar, apresenta 70 gravuras e esculturas do mineiro. Galeria Almeida e Dale - R. Caconde, 152, Jardim Paulista, tel. 3882-7120. Seg. a sex.: 10h às 19h. Abertura sáb. (23), 11h às 14h. Até 25/5. Livre. GRÁTIS
+PerifaCon No domingo (24), a Fábrica de Cultura do Capão Redondo, na zona sul, recebe a PerifaCon, a primeira Comic Con da favela, a partir das 10h. A ideia do evento, que tem entrada gratuita, é fomentar a cultura pop, nerd e geek nas periferias de São Paulo. R. de São Francisco, s/n - Conj. Hab. Jardim São Bento, região sul. Dom. (24): 10h às 19h. GRÁTIS Green Nation Utilizando recursos como realidade virtual, jogos e ambientações cenográficas, as atrações gratuitas colocam o público em contato com diferentes situações que levam a refletir.  O principal objetivo é fazer com que as pessoas se sensibilizem com problemas ambientais por meio de experiências interativas. Pq. Ibirapuera - pavilhão das Culturas Brasileiras - Av. Pedro Álvares Cabral, s/ nº, tel. 5575-5045. Seg., ter. e qui.: 9h às 15h. Qua.: 14h às 15h. Até 31/3. Livre. Abertura 25/3. GRÁTIS
+Mais
+Encontro com Boris Fausto A Folha realiza, em parceria com a Companhia das Letras, um encontro com o historiador Boris Fausto, que lança seu novo livro “O Crime da Galeria de Cristal”. Também participam do debate a antropóloga e historiadora Lilia Schwarcz e o jornalista da Marco Almeida, que fará a mediação. Ao final, haverá sessão de autógrafos. Livraria da Vila - Jardim Paulista - auditório - Al. Lorena, 1.731, Jardim Paulista, região oeste, tel. 3062-1063. Seg.: 19h às 21h30. Até 25/3. Livre. GRÁTIS Red Bull Basement Em oficinas gratuitas, apenas para mulheres, as participantes aprendem lógica e linguagens de programação com orientadoras do PyLadies —comunidade que surgiu nos EUA e hoje tem cerca de 40 grupos pelo mundo. São aulas de Python básico e avançado com vagas limitadas. É necessário levar o próprio notebook. Red Bull Station - Pça. da Bandeira, 137, Centro, região central, tel. 3107-5065. Sáb.: 11h às 19h. Até 30/3. 18 anos. É necessário fazer inscrição. GRÁTIS
+Museu do Videogame Itinerante Mais de 300 consoles estarão na exposição que resgata 46 anos de história do videogame. Os visitantes podem jogar em aparelhos como Atari, Odyssey e Super Nintendo.  O evento também traz tecnologias modernas, como consoles em totens multimídia e jogos de realidade virtual. Shopping ABC - Av. Pereira Barreto, 42, Paraíso, Santo André, tel. 3437-7222. Seg. a sex. e dom.: 14h às 22h. Sáb.: 10h às 22h. Até 31/3. Livre. GRÁTIS
+Feira Internacional de Artesanato Oito expositores do Japão, África do Sul, Peru e Índia, além de alguns brasileiros, trazem peças de decoração, roupas, acessórios e gastronomia típica de suas regiões. Shopping Metrô Tucuruvi - piso L3 - R. Paranabi, 218/224, Tucuruvi, tel. 3198-0451. Seg. a sáb.: 10h às 22h. Dom.: 12h às 20h. Até 30/3. Livre. GRÁTIS Feira de Produtos Orgânicos Entre os produtos orgânicos à venda estão legumes, grãos, verduras e outros alimentos cultivados somente por produtoras mulheres. Também está programado um show do grupo Samba de Dandara com a participação da cantora Roberta Oliveira, cantando ritmos afro-brasileiros. A entrada é gratuita. Sesc Avenida Paulista - praça - Av. Paulista, 119, Bela Vista, região central, tel. 3170-0800. Dom.: 10h30 às 16h30. Até 24/3. Livre. GRÁTIS
+Cultura Kariri-Xocó O público poderá conhecer alguns cantos e danças deste povo, além de participar de um bate-papo com os integrantes do grupo. Após a conversa, serão expostos diversos objetos de artesanato confeccionados por pessoas da comunidade kariri-xocó que podem ser adquiridos. A atividade faz parte do projeto Abril Indígena, em que várias unidades do Sesc trazem uma programação voltada à cultura dos povos tradicionais. Sesc 24 de Maio - térreo - R. Vinte e Quatro de Maio, 109, República, região central, tel. 3350-6300. Sáb. e dom.: 12h às 14h. Até 24/3. 120 min. Livre. GRÁTIS
+Gibiteca Monteiro Lobato Dona do maior acervo infanto-juvenil da cidade, a biblioteca Monteiro Lobato conta com uma gibiteca. Cerca de 3.500 exemplares, entre gibis, álbuns, mangás, fanzines e RPG, compõem a nova coleção. O espaço também promove encontros e oficinas. Biblioteca Infantojuvenil Monteiro Lobato - R. Gen. Jardim, 485, Vila Buarque, região central, tel. 3256-4122. 15 lugares. Seg. a sex.: 8h às 18h. Sáb.: 10h às 17h. Dom.: 10h às 14h. GRÁTIS Centro de Esportes Radicais O parque é o primeiro do país a abrigar um complexo com três pistas de “pump track”, com rampas para praticantes que estão começando e também para os veteranos. Por ser asfaltado, o circuito atende skate, bike, patins e patinete. Além disso, há ciclovias, pistas de caminhada e 650 m² para exercitar as corridas, saltos e escaladas do parkour. Av. Pres. Castelo Branco, 5.700, Bom Retiro, região central, tel. 3224-9159. Seg. a dom.: 7h às 22h. Estac. (grátis). GRÁTIS
+A Casa do Parque Idealizado pela colecionadora Regina Pinho de Almeida, o espaço inaugura com uma programação cultural de cursos, oficinas, ciclos de debate e exposições de arte (leia mais na pág. 59).  A coordenação da programação cultural fica sob o comando do editor Paulo Werneck. A casa também vai produzir eventos externos ao longo do ano. Av. Prof. Fonseca Rodrigues, 1.300, Alto de Pinheiros, região oeste, tel. 3365-4789. Ter. a sex.: 11h às 19h. Sáb. e dom.: 10h às 18h. Até 28/3. GRÁTIS
+Festival Ouvidor63 Resiste! A ocupação artística realiza um festival para financiar a reforma da estrutura de sua sede, que corre risco de desapropriação. A programação conta com shows, oficinas e exposições. O músico e compositor Chico César se apresenta na sexta (22) às 20h. Centro Cultural Ocupa Ouvidor 63 - R. do Ouvidor, 63, Sé, região central, s/ tel. Seg. a dom.: 15h. Até 31/3. 18 anos. GRÁTIS Festival da Frente Nacional de Mulheres no Hip Hop MCs, DJs e grafiteiras se reúnem nesse evento de cultura hip hop. Além das atrações artísticas, que incluem batalhas de rap e sessão de fotos, estão programados debates políticos. Casa das Caldeiras - Av. Francisco Matarazzo, 2.000, Água Branca, região oeste, tel. 3873-6696. Dom.: 15h às 21h. Até 24/3. 18 anos. GRÁTIS Oficina de bordado HQ Duas educadoras ensinam aos participantes a fazer bordados em talagarça, com inspiração em personagens das histórias em quadrinhos. A ideia é que o público aprenda o processo completo e borde seu personagem favorito. MIS - Av. Europa, 158, Jardim Europa, região oeste, tel. 2117-4777. Sáb.: 14h às 18h. Até 23/3. min. 14 anos. GRÁTIS Carnivoria Depois de reunir mais de 12 mil pessoas em sua última edição, o encontro de churrasqueiros traz 13 estandes gastronômicos comandados por chefs especializados em carnes nobres. Haverá pratos especiais para vegetarianos, cardápio de doces e espaço para crianças. Shopping Granja Vianna - Rod. Raposo Tavares, s/ nº, km. 23,5, Granja Viana, Cotia, tel. 4613-9000. Sáb.: 12h às 22h. Dom.: 12h às 20h. Até 24/3. GRÁTIS Just Dance Uma pista de dança com iluminação na praça do Mooca Plaza Shopping é o palco para você mostrar suas habilidades no Just Dance. O jogo consiste em imitar a coreografia dos bailarinos que aparecem na tela e acumular pontos quando a execução dos movimentos é feita corretamente. Mooca Plaza Shopping - pça. de eventos - R. Cap. Pacheco e Chaves, 313, Vila Prudente, região leste, s/ tel. Seg. a sáb.: 10h às 22h. Dom.: 14h às 20h. Até 8/4. Livre. GRÁTIS
+FestA! - Festival do Aprender do Sesc
+Video Mapping Os participantes entram em contato com algumas das ferramentas mais utilizadas do universo da projeção de vídeo, com membros do Coletivo Coletores. Ao fim do curso, o resultado será projetado nas árvores do quintal do Sesc Ipiranga. Sesc Ipiranga - quintal - R. Bom Pastor, 822, Ipiranga, região sul, tel. 3340-2000. 200 lugares. Sáb.: 16h às 19h. Até 23/3. 12 anos. Inscrições p/ festa.sescsp.org.br/festa/video-mapping. GRÁTIS
+‘Xá Comigo!’ Quando descobriram a paixão por marcenaria, Leticia Piagentini (à esq.) e Fernanda Sanino fundaram a Lumberjills. No último módulo de cursos rápidos para utilizar ferramentas, elas querem ensinar os participantes a usar a furadeira. Sesc 24 de Maio - oficinas 2 - 6º andar - R. Vinte e Quatro de Maio, 109, República, região central, tel. 3350-6300. Sex.: 18h30. Até 22/3. 120 min. 16 anos. Retirar ingr. c/ 30 min. de antecedência. GRÁTIS
+Música Cósmica Com base na órbita dos planetas do sistema Trappist-1, os astrofísicos canadenses do System Sounds, compõem música. Na palestra, um dos membros comenta o projeto e a matemática por trás da canção. A atividade terá tradução simultânea. Sesc Belenzinho - área de convivência - R. Pe. Adelino, 1.000, Quarta Parada, região leste, tel. 2076-9700. Sáb.: 20h. Até 23/3. 60 min. Livre. GRÁTIS
+Printa-feira A terceira edição da feira apresenta matrizes e impressões de xilogravura, principalmente em madeira. Os expositores, que vêm de dez estados brasileiros, contam ao público sobre processos criativos, técnicas de impressão e escolhas editoriais. Sesc 24 de Maio - área de convivência - R. Vinte e Quatro de Maio, 109, República, região central, tel. 3350-6300. Sáb. e dom.: 11h às 18h. Até 24/3. Livre. GRÁTIS
+Balões Nessa intervenção de dança, bailarinos com balões amarrados ao corpo reagem à interação do público. As apresentações acontecem aos domingos. Itaú Cultural - piso térreo - Av. Paulista, 149, Bela Vista, região central, tel. 2168-1777. Dom.: 14h às 14h40 e 16h30 às 17h10. Até 31/3. 40 min. Livre. GRÁTIS Oficina de Bonecos Bololofos As crianças recebem um boneco em branco, com formato indefinido. Um dos lados é pequeno e o outro grande, o que permite diferentes estruturas de acordo com a criatividade. Cada turma da oficina tem 20 vagas. Shopping Vila Olímpia - 3º piso - R. Olimpíadas, 360, Vila Olímpia, região sul, tel. 3047-6002. 20 vagas p/ período. Sáb. e dom.: 13h às 13h50, 14h às 14h50, 15h às 15h50, 16h às 16h50, 17h às 17h50 e 18h às 18h50. Até 7/4. 50 min. Até 14 anos. Inscrições p/ sympla.com. GRÁTIS Receitas de Verão para Pequeninos As crianças aprendem receitas fáceis de preparar e que ajudam a manter a hidratação nos dias de calor. Os pais também podem participar das aulas com nutricionistas, que acontecem sempre às sextas-feiras. Sesc Avenida Paulista - área de convivência - Av. Paulista, 119, Bela Vista, região central, tel. 3170-0800. Sex.: 15h. Até 29/3. 60 min. Livre. Retirar ingresso com antecedência de 30 min. GRÁTIS Circo Contêiner Mungunzá Em um espaço montado com contêineres, a companhia traz uma programação com 11 espetáculos de circo e palhaçaria. Teatro de Contêiner Mungunzá - área externa - R. dos Gusmões, 43, Santa Efigênia tel. 97632-7852. Ter.: 14h. Sáb.: 16h. Até 25/6. 50 min. Livre. GRÁTIS
+Histórias na Kombi com a Cia Passarinho A bordo de uma Kombi, com pandeiro e sanfona, a Cia Passarinho leva as crianças para viajar pelo mundo das histórias. Largo Dona Ana Rosa - Lgo. Da. Ana Rosa, s/ nº, Vila Mariana, região sul, tel. 5080-3000. Ter. a qui.: 16h. Até 29/3. 120 min. Livre. GRÁTIS
+Livro Conta: As Vozes Femininas da América Latina A Cia. As Clês, formada apenas por mulheres, aborda as trajetórias de personalidades femininas marcantes na história. Sesc Itaquera - área de convivência - Av. Fernando do Espírito Sto. Alves de Mattos, 1.000, Parque do Carmo, região leste, tel. 2523-9200. Sáb.: 13h às 14h. Até 30/3. 60 min. Livre. GRÁTIS
+Teatrando O projeto traz o palhaço Fonso, que usa mágica e ventriloquia para interagir com o público, e apresentação de “A Dama e o Vagabundo” no fim de semana. Shopping Ibirapuera - piso Moema - Av. Ibirapuera, 3.103, Indianópolis, região sul, tel. 5095-2300. Sáb. e dom.: 15h. Até 21/4. 50 min. Livre. GRÁTIS
+Fera Neném Formado por baixo, bateria, guitarra e quatro vozes, o Fera Neném se define como um quarteto de baby rock. O trabalho autoral da banda tem influências que vão do rock ao baião, para apresentar canções como “Rio de Cocô” e “Monstro Banguela”. Os integrantes se fantasiam de bichos e vestem roupas coloridas para animar a plateia de nanicos. Espaço Colletivo + Casa Manual - Av. Roque Petroni Jr., 1.089, Jardim das Acácias, região sul, s/ tel. Dom.: 15h. Até 24/3. 90 min. Livre. GRÁTIS O Dia em que a Minha Vida Mudou por Causa de um Chocolate Comprado nas Ilhas Maldivas Adaptada do livro homônimo da autora Keka Reis, a peça conta a história de uma menina de 11 anos que fica preocupada com a possibilidade de seu melhor amigo estar apaixonado por ela. Sesc Pinheiros - auditório - 3º andar - R. Pais Leme, 195, Pinheiros tel. 3095-9400. 100 lugares. Dom.: 15h e 17h. Até 14/4. Não aceita cartões. Ingr.: R$ 5 a R$ 17. Menores de 12 anos: GRÁTIS
+Escondida Usando uma boneca de pano como elemento central, o espetáculo aborda a questão do abuso infantil de forma sensível. Contos de fadas e mitologias estão entre as referências. A trilha sonora é original. Sesc Ipiranga - teatro - R. Bom Pastor, 822, Ipiranga tel. 3340-2000. 200 lugares. Dom.: 11h. Até 21/4. 60 min. Livre. Sessão extra 27/3, 10h30 e 14h30. Ingr.: R$ 5 a R$ 17. Menores de 12 anos: GRÁTIS
+Príncipe Crioulo A peça conta a história de Rafinha, que após não poder fazer o papel do príncipe no teatro da escola, entra em conflito com sua identidade racial. SP Escola de Teatro - Sede Roosevelt - Pça. Franklin Roosevelt, 210, Consolação, tel. 3775-8600. Sáb.: 14h e 16h. Até 23/3. GRÁTIS
+Quando Eu Morrer, Vou Contar Tudo a Deus A peça debate a questão dos refugiados africanos ao contar a história real de um garoto marfinense chamado Abou. Sesc Belenzinho - teatro - R. Pe. Adelino, 1.000, Quarta Parada, tel. 2076-9700. Sáb. e dom.: 12h. Até 14/4. 60 min. Ingr.: R$ 6 a R$ 20. Menores de 12 anos: GRÁTIS
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9e978376c33801d153dddc4f834358f2da507395f79fff441349115b6136a55d",
+    "mention_text": "Linn da Quebrada",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9063d69125da759fbcfa928240113ea2e38a89e340abbde75fe9b6cedb9b803",
+    "mention_text": "Indy Naíse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3feae584de8fa3423b7a4ccf8901db5be1579f9c030f9ce47842d1e43d144150",
+    "mention_text": "Rosa Luz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34c10e2fd2050d6130c82424aecba5dcd7752ee915762224ae07fad9c5c1ac9a",
+    "mention_text": "Aretha Sadick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d02dfc3b87b2880f27848a257d053a55c6c4a080a8e5504a006634427d6bb583",
+    "mention_text": "Mc Dellacroix",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e57ad6f6bbb35d569f9f2f6690d2fb6a020defc80b0c15e02ab0ae82690f5461",
+    "mention_text": "MonnnaBrutal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9ce3798e0f16f5391c2f261726975a7090e16d54942435b3c4cbbddadf75c66",
+    "mention_text": "Joy Sales",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "219c8814d43adf1d5dea4b40f0e7d3eadac0bce4d852314e1ac625feaac515ff",
+    "mention_text": "Danna Lisboa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "380eb6d509b225d13aba96f903fab6dc23cb768add7a4eaf01d3ccd52f14ce03",
+    "mention_text": "Linn da Quebrada",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3436d11cdfb17f4edb1d2363d45c1324f79b930a20ff86a7dbcec74ee8c0d97",
+    "mention_text": "Lab Mundo Pensante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64e5cac17a863ad047e047de67c9b68f02c2a956a76821967a273f5e909f5303",
+    "mention_text": "R. Treze de Maio, 733, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6654063a2ebd349e2511be394c42af17ceab41da060961e807eb751e7871c42b",
+    "mention_text": "Mundo Pensante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f33727c30c023968e9df1876099754a7d8750b6ad500caa2f568ed2b6f8fe14",
+    "mention_text": "R. Treze de Maio, 830, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d695c3e37ead73bb89ae705ce5b1d3c524547d410e7ac05d3e90bc4ea91ffe11",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dbb2f70dfd1dae72f3482879d789c108429f53eb6d2f445aff85a020b611bf8e",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86c22f4fd19267ec6adca5b0735e3ca5b7a0d61b733689420ff50e04c187d52d",
+    "mention_text": "CCJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8d92eb6098eeae7f59b7af5aeca561b7f060a2ac6ac78fb6b37243069dcf30f",
+    "mention_text": "Caetano Veloso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "03f3b44cddfcc413ec7b6f5368761bd587ffbb412632558556979fe9e34af07c",
+    "mention_text": "Centro Cultural da Juventude",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89c1cc1e9832fbf92e935f08c79eeec752378deb69b2ddbe596f25659e1b21d2",
+    "mention_text": "Limão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e8c1dd621ca34609db34b435dfe1a5dba519222ddf7cd90b840d6656bf43847",
+    "mention_text": "Duofel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4586dede2742e0d5c485a8d11bbe01a198d263a3f84a63afcb6f8c744916444",
+    "mention_text": "Fernando Melo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "26d250a7224e2de167d960bd5d8b000bcef8f9d7f6a2b82b7f1e8e2774aea588",
+    "mention_text": "Carlos Malta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44090bd47ffb2c538391c60fa864a046147f536ee954dcecea8deca0f8325b9e",
+    "mention_text": "Robertinho Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb0d96effb8c19dfa16fa4da28b3d85ef4dfd5cccfce0846e4fdd9d4601d249f",
+    "mention_text": "Milton Nascimento",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f0f940bb2a40ae6be3eeae7ba298c54cde10381318484d5ecd531d3884389e0",
+    "mention_text": "Ronaldo Bastos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da518906e3c244904dfbced96f91ef79c4ad7f9a0d85838a2823480831a4a2e1",
+    "mention_text": "Consolação",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "45352ab0d24461e3c9210609985ef1b158a6b1e42e32fc3edd8ede9cdd5b741a",
+    "mention_text": "teatro Anchieta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98042ada01d742e1e15da0c7b5a689409675279c3b0581c7eca680a63206c664",
+    "mention_text": "R. Dr. Vila Nova, 245, Vila Buarque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e6b6471a94a2c6e25c64472bf3a48f32c56fd26855a710efc2f671f08572731",
+    "mention_text": "Trio Corrente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af01d0df773840cad1eae1080162cb2b0a8cf2e3c6e4ec5e6c0549e499581527",
+    "mention_text": "Lupa Santiago Quarteto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae0dcf7cc91cd6032f9af2a852b09835686f15005eb9c70a55f6e346eb039ba9",
+    "mention_text": "Choro do Beco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "895d5b7dd6cadf35378d429d71bc03d18d54fb6a3cfd37db4032c4f97cb540ea",
+    "mention_text": "Perdizes",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98eb6ee5e95ccc52df6dbb06282180fd2a7c17cc049313a5fc96f5164d834c71",
+    "mention_text": "República Tcheca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7c0aa79cf1ecf7c3169a8004e798dc590ea7bfbe17001508266da4c6bed1dbc4",
+    "mention_text": "Bach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f85ae9d946e1bc8e144350720c18ae866cf5a8c51601f3afadd9be46f61cb2d3",
+    "mention_text": "Tom Jobim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f80f2f75fd1e5c5402410b3ab2a4b0607d894d3a772ebf1114beb93371a8d79a",
+    "mention_text": "Leo Janáek",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29c15bf3af64adb12179430ccc51c7746e572570379b694b23894d5b89916bbc",
+    "mention_text": "Nikita Koshkin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20e019e4e186aeb882120bb12f8a2713221dac58affd39c46ed724f7b20ddff6",
+    "mention_text": "Theatro São Pedro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15df30c837e02d18a8641adbe5577478af537fad334cc3d8d3f7a15e20b98d63",
+    "mention_text": "R. Dr. Albuquerque Lins, 207, Santa Cecília, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3a5d72e0e620737d11da34a223f06f3dc42582e81f6ebaf08de618f4cc7170a6",
+    "mention_text": "Santa Cecília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7cff3527be694b6a251928ac60bccf08e8264f4b9bb247879f4712ccfce7ba74",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae5b7fe75cf76c85dccc7c182da2b498314943f29510b2e6beb2f70909c5b649",
+    "mention_text": "Tennessee Williams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb0d3f0f8615f4ff88df28cb1bfcca631e280022492d943634a18670991cfd47",
+    "mention_text": "Alexandre Dal Farra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4c726642335e749a91f44f8dc2e961ddf0f6ac92d1764262d8e646c37a73a60",
+    "mention_text": "Itaú Cultural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "671b91682978475609e83d73b27f34500e268b84dd9cf1fed5046f730cb272d1",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e615a3433bafca7e95335a7522ce4ba6b2e196d58703c3195f59f8f1f006f29",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5de24fad85ae31b82aa211d542b635e35d4f72d2fb046dda7bce886fb96823ec",
+    "mention_text": "Companhia Pessoal do Faroeste",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb5305a4f8ed501b123349af747ebb76fcad0a11402881854fa2c4979f3c3235",
+    "mention_text": "centro paulistano",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "17cbebaddd889e8c4ea1617d032cb94ba1167e0874a566bd4ff11eb053ee95cf",
+    "mention_text": "Brunner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "342743aa7aabea7613f7c49009cc40f026be30ee89e952e9cbabc6bfa9f6472b",
+    "mention_text": "Memorial da Resistência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2fb7568175627a1fc0dd5052ec21704f5457f8df0efe85c517bf259837fe335",
+    "mention_text": "Dops",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79049a40ff34c1c9e36002527b4370676cb8762eb06cf14108747969f0c42352",
+    "mention_text": "Teatro Cia. Pessoal do Faroeste",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d6276bcd4bc1567eb4dd87305fe97945cf7cb41430b4e88807ae64ec738d3d3",
+    "mention_text": "R. do Triunfo, 305, Santa Efigênia, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9937fdd2e092912961a99cebf753cd52ede830b279d6c66ee822e719348eaac",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30e416ea6adf50ae92e035dd28df3db063358f80430627d47ddd81cd1ef2a992",
+    "mention_text": "Funarte São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab610c75e5b096ba455eb2298811beb9fa38bedc2da59e66318d46a2774c26cd",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "615dffc5478670e8874dbd121830fb4866cd212f518e7976abdbfd43145d927c",
+    "mention_text": "Biblioteca Mário de Andrade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f07491017a630080ce3f78286192ecbe93c34a82d37889d16775aa2780fbc8c",
+    "mention_text": "R. da Consolação, 94, Consolação",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8e186a34dce4aae42882d728047b11702016ef6e649be9546ed2bf658fd5ec2",
+    "mention_text": "Grupo Tablado de Arruar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2113753653b40510bd77aa626d3c69d0ed574af4da1c1dd625672c8b2d75a210",
+    "mention_text": "R. Três Rios, 363, Bom Retiro, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c02b7937075c93f128d86e3472cb99bc7e320872fa177fbd6df90bb45fd938ac",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d6a9a357309479144af99f7e9fe88de65ec0a89a3f06003366c211957039ce8",
+    "mention_text": "Mariana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c6517da11b9c79f458be5c2cf0e10b962aff6fdcba0570b9dc8b69a26f9bb85",
+    "mention_text": "Shell",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc40015ebac8952874908d324cf3a2a6f23ecc8fbea0f75d14de91ab46ffdc3e",
+    "mention_text": "Centro Cultural da Penha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e57ccfc5052c9ea4ada9cb662293cea5957b116eac1ada6c9ee037117f809ea2",
+    "mention_text": "Lgo. do Rosário, 20, Penha de França, região leste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "560b14c84c18dac43c5b6383fea5098a9ab8d6b740e21e994d08a6e0493f007e",
+    "mention_text": "Penha de França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89684109df52e5e9b6ef99d7a18aea0fc4dc5877267e585261694fa0a19649d5",
+    "mention_text": "Centro Cultural Fiesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "455b1a7b8caef6e558694c6d0a385acc475f312159efdb356af56a248f3eb98d",
+    "mention_text": "Av. Paulista, 1.313, térreo, Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f9665407ac9b2b756d8f23eb9e44b74c90bda2ed121108ddbe412f90f35a5558",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aba30b46ab47a2dcee1ca62380f7d01cc741123ba2fd0ea01dbe6cb596821358",
+    "mention_text": "Banksy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "863f671bf998b0a2cc17854793f3d682b629c647b2babbf9ef2c3a1b63677ee5",
+    "mention_text": "À Deriva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "124d8e729f28f738a402eb82cc9203dfdf68cf0e52422f6fbda75acf4338137e",
+    "mention_text": "Av. Paulista, 1700",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "963993c9749b5886c46f9bcc8f0076568f59c99f7bbb372a1c1b65d14ceca6cf",
+    "mention_text": "Av. Paulista, 1.700, Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f6c4138f3a0065cf6d3eb9413428a5ddabf564d96e855fcb3afd59ae63ec4b7",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8e2504eaa21ba50e80ce4e06f70c2bb04b6fc5ee399846c9d7dede97b297ac5c",
+    "mention_text": "Talita Florêncio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e24da9f21d6a9794c717e73ecde624c96de40144e4250e5edfd028ab2eac3b5",
+    "mention_text": "Thiago Salas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fba21b62b6043727c4b52875a64145c781ea90a01b5826d9248caf2079d6e01a",
+    "mention_text": "Danielli Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2954affb808ef4f0a3e0922f2c460f1e607ce951b33a9ff74359f59056d8027",
+    "mention_text": "Jorge Garcia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec370074c13a2712eba1a234a7c673ff1b015ca38c66fe6d5a5d37c203a224f7",
+    "mention_text": "Sesc Pompeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1287775dfe8714ed44d47eadee67c775cb25be947900d1a044e00729b877aeda",
+    "mention_text": "R. Clélia, 93, Água Branca, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc970e20d613d8e8c20f3dc456cda3bf0637d3d88c83db629d0646e2e167521f",
+    "mention_text": "Instituto Moreira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70c83e761aafcd7d7a5e7b1c893c16bc2fa33c8c5c28754a27cd7545d23f5c07",
+    "mention_text": "Marc Ferrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43d12ca6cd958a0fca1b11d2aa0278ab664135cdd8c42e14ea05d2b2c1d969ee",
+    "mention_text": "Sergio Burgi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d65f3724ed144f10c604e3443481125545cf594f93f9160d34fce1588ccc9214",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62a5aa6d6fc5b9f42302d07a850da2a532a7476dc3d20c6fec432673f1a84c89",
+    "mention_text": "IMS Paulista",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b8f07c56014c7b34782dff54fac11c43831fcc2de6c6da4a13d0ce55728388a0",
+    "mention_text": "Av. Paulista, 2.424, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1bc381d211c909f0e768fcd756350986969f2560054a0716fdb32fe74cc5f0dc",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7de2fe9f4f60a80036f083f6dc748dc4ee4f7c5e36e8f84606631b3ab3af0f0f",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2cc61c5fb4dedd7d4c7ebbf4563418eb21ba5072b94f395a8c4988f0803340d",
+    "mention_text": "Artur Lescher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7b331a0dd5e51c8d8a244ce1f652786e406ec7cb9ef9c094164ee6f9b4ca683",
+    "mention_text": "Pina Estação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "360e50d4f163e86461553a1086d52900e28fe68d9c6404471127f80b147bcba7",
+    "mention_text": "Lgo. Gen. Osório, 66, Santa Efigênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cdc88f0b5d67da9da7cd865ec50ddfa1f02819a804bd454451eaa584d280599b",
+    "mention_text": "Santa Efigênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e34c00ed60c574f1bf2c7ad1cc466567a4fd4b6b6d2818b85fe69e7c242d09f",
+    "mention_text": "Umberto Boccioni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6786bd09166f87656fa207feb8a57cefa987ddcbb38205c6af497ef6f2380f72",
+    "mention_text": "Ana Magalhães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3455e0f15890e3c426e1595c34ffa8fb3cf2ef726644fe252fb5fe7eaf4463e",
+    "mention_text": "Rosalind McKever",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd4f4fe1592ac5d7f9e2a00b5fd1414cc48b5a585211a50ff8d5c3225b74afb5",
+    "mention_text": "Mac-USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8225c471810a368e77d206bf1a27f1822b37ca915f1f1aceda2c94f44b733b4e",
+    "mention_text": "Av. Pedro Álvares Cabral, 1.301, Parque Ibirapuera, região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31de9c13ecca83df1f01e2d877b01c989ddad45bfc6a48e070173f644a831e63",
+    "mention_text": "Parque Ibirapuera",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "22d7ced568786c8e90ba87420e1bbb71a959f8f50c30579b54f5bf3fef4b40e8",
+    "mention_text": "São Francisco de Assis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8966e090eba84f3ec783805bf5559eb1ef8c4aef30de73f7c398d4f1134b0248",
+    "mention_text": "Tiziano Vecellio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "457a7cda7f44ac2bc2ecca1bcaec9dc3bf8e8797705c2c49e9629a0ef8aba93d",
+    "mention_text": "Pietro Perugino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "41ed9868a15face4fcacdd6866495d03c7fdd1cada9c63a13e46fd3dc2629bd5",
+    "mention_text": "Giovanni Morello",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af6766699ff264889ca8d48d90233b7272c3f8967f55e25e2f547eb3e9afc8b1",
+    "mention_text": "Stefano Papetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17e7de7705e19c887002a95bcd54315bd068f8a50a74c08a5a6cb3dbd9b1cb54",
+    "mention_text": "MAB-Faap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65b4f9bd4db9796fb3c3ed337e57184d2e0f18c1e69f466a9cef4c10af003854",
+    "mention_text": "R. Alagoas, 903, Higienópolis, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bfc3f84286afc1922ece88c500cbcdbe9ea3fb319a8a1d7ce8b5a6ed4a0f7af8",
+    "mention_text": "Higienópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b3c022745ddedb28b686700982eba268cf4c449bd56d36a5a8bf8b2ff04ad803",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa7fda952937d674e227ad28726c52d6fd892660bdabb3416e1a15d3ec93fb2f",
+    "mention_text": "Cláudia Andujar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "74c9bfbf26cf3f8a0057e08ccd96d5eee4500ea2f177f0043fe9c375de1b6603",
+    "mention_text": "IMS Paulista",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02a75f261c17972654fbe3aa8aa9538e46b00bd151b17fc12d88736bc3dd5cb8",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8fdeaec5b33a20369e3999a2eb1c4721f74c2b2caaa990a72373d7bf6222a2c",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8506623e3f1b2d440c729454773cb9ff28a0fe51e5be86d49e1048d0f59630d3",
+    "mention_text": "Itaú Cultural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a435fe460ebef5eda4ccb4c8d2bbb953d1422abf106a8ef1b76247007728235",
+    "mention_text": "Av. Paulista, 149, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f8a1fe3498dbdb70ad078344ba27e53ce58ea373626c3d30a3475de570819ad",
+    "mention_text": "Marina Schiesari",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bfdd49cada5f476f66ed0542326b9a45fd18e6c9ef9a7e1a76be8dce1ecaa8c",
+    "mention_text": "MIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "428b0f77303baf313e0dc2bbed2c3a4dbd7c5217c60a88258c288880f16491e0",
+    "mention_text": "Jardim Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "691f2319b3710cf4cae7a73dba38cae2f7769fc00ea9128303c99872909db063",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34b58ab33dfb70855a2a32b11eef728cd78fcd53f434386360f684f1597b3027",
+    "mention_text": "Coletivo Dudús",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f5e0125154d28d8d185ce5e4ccb4bf72c427099e7ecbbd7f35c7863f630aaf8",
+    "mention_text": "Cartel 011",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d5c3e7a82c20769cc5135e2df581d0ceb4bed0cce59eea3464cc2b87406271c",
+    "mention_text": "R. Artur de Azevedo, 517, Cerqueira César, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d6ee20bae9c36c4ff4b5a56ed4a33e0c1fad86426b17864af26ff5b481e25e0",
+    "mention_text": "Cerqueira César",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5d472fced8713ec3a4fda643eb7476cdad0fb42fbb1ce54050c887517e9a0b84",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "147669f2bb1155b198c3256ac433d29917c92859bd57c314e5a99b268cdd4716",
+    "mention_text": "Galeria do Parque",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d7be55dbcd7d500f4db4b2be50e4b4b06a4b4954a1f193b7073bc67f0fc7fb4",
+    "mention_text": "Regina Pinho de Almeida",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2d8e2d293d3676d604a2f855e6e737297dda0deaf0f3f12d4b26d93ba89d81d",
+    "mention_text": "Tadeu Chiarelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d583b2efc7dfec0d5cb5e57d8905914cdae759f209baef708b19f7d026953011",
+    "mention_text": "A Casa do Parque",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10393766cacd8ea0a7ddba5eaab74daf4306d0be792f6614d0a849f9558ea7fa",
+    "mention_text": "Alto de Pinheiros",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "810c268f1f03965a05c509589ce2054829898a9a8ed7c1f86eb921bf7530f2c5",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "300c3588ec5fecf059a52bd330421e0257618d770c7ec91d1e8a25f3968b4435",
+    "mention_text": "Antoni Tàpies",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "effe6fb4887be1dd5a49744b5ccbbea8a3779c5b42f45eccedec642cbee91453",
+    "mention_text": "Tapiès",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ee6fd831223e0c261280985900a2e835718171b436db75de2bc38f08935df79",
+    "mention_text": "Galeria Bergamin & Gomide",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e688c6a6b97364ed4d0dc1cc46d7d1452ceb0a54c1f19e46bef48fe3b855827",
+    "mention_text": "R. Oscar Freire, 379, lj. 1, Cerqueira César, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e47c6f13f66b6fcaab8cd409016844773c97d3b5d51aad452c2b40cf74937f04",
+    "mention_text": "Cerqueira César",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8baf76d4533128d7fb4d4907a98bb5f79642621fbc3e9920f21a2eecb9a0fd8",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3162beb3760634b9b441a8d9114f909e7d7c34f48b15785fab05b5076b41c617",
+    "mention_text": "Regina Parra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "624c6c05a286eb0ffc488fc69459bafc97941b5bc60c8d4e3717c6eb3d55c66b",
+    "mention_text": "Dioniso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "041140edbb6ee2d1fc5bc29ad2be6e03be46e0176d6487b9f4e3b20e5b07bfbb",
+    "mention_text": "R. Fradique Coutinho, 1.416, Pinheiros, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f85667efa41e2f61cad02a9c652ff730b443e77bb8231753c1c0aeb09ec9af3",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5eae2b2fd22eb239fafba31d1f1c0e1e5392e7c7d8eea91c78247c34035cd287",
+    "mention_text": "Marcelo Cidade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0acc279ec395466a325e465dd4cdf75cdd1691127fd205c3ce6e0895c3cc79c9",
+    "mention_text": "Galeria Vermelho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a99246355436499ecf90ccbcf34cd3ae9ca3e3de72adf215890e2688d07e4747",
+    "mention_text": "R. Minas Gerais, 350, Higienópolis, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c2a66de4ebd016e654d13b5de7b9aa46a513f080b56c48c4b9a879da66edee9",
+    "mention_text": "Higienópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "13852254a29b9c01c7b43b15576c715e10f4573641a67c5e6f42c47e3872539c",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "de90ed9e537a128c90f742ed0a24b047798b349905413b0459f7577c23f75ed1",
+    "mention_text": "Macaparana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d4d8135971dfb6f5bbdbadec8642fd05ad9624510636451a2cf9208e61a89b7",
+    "mention_text": "Dan Galeria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a63856e88cbbe816caaf7af3991dafbd8ed26c4053e10f57fecfe2d8e9202cb8",
+    "mention_text": "R. Estados Unidos, 1.638, Jardim América, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be6ea70bc7cb085991c517c997360d9ab9f845eb61b7e303c2dc6dbf825e98b8",
+    "mention_text": "Jardim América",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb752bfc1108f43cac6a55a5c9277f7f43f30274f22a0ccf9c3b22aa420cf339",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10a04d736f270cbf2c007ba1bfa25a85dd1d82ed297f32a425fbd5af862107b5",
+    "mention_text": "Zica Bergami",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58852e0ad3942add7a55c694d79f5b2de0d54156e82be71e34a5cafb696c0524",
+    "mention_text": "Jacques Ardies",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c942004df15df85f935e56a0109ffd218fcc3970b1dc878a086eb6f26f40bbe8",
+    "mention_text": "R. Morgado de Mateus, 579, Vila Mariana, região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e68aaf54d90ef7f40c966cbcf0c634bd49b187c1c6f145d96cdf5fcec594a30b",
+    "mention_text": "região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77a07d8de27cc9e470a382e1a1627c4a3a15c28137e51e28464b28ea43c0f390",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d891232ceab5d87a738fbd1168a4ec833fe62b3c29cd9f72d11c771c52def841",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "551ba43c4550c442cba211ac42797c0441f97e84841661661d7abbdce5c45339",
+    "mention_text": "Água Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2fcde410279702ca9b080124ae9884e7eaadcccaf36e84a2e4d6eb9c40672061",
+    "mention_text": "região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07ecfbe0599742f90ec80e2aed5b3f086ec15aa27266feed4dc002266d51f146",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a6bd09dce5b75ff35ff7b2ce63e28e6ba231a69d757d92c78b8ede215d328a51",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e004bec1ef7501a796a8a75f04562b4b8371aadbb30980cc1f9e1c6f19744856",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa8ccc091509b23e75939535f86f8db0601500465672751d87a0b0c5a8e1d756",
+    "mention_text": "Vila Buarque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af033194eb2eef7d8e0e2ac11230f72867c4c11eb00510e04d18f3ddb1890fce",
+    "mention_text": "Bom Retiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5798be04ba2c4e2ec4b479297085a8f27b73501c84d9cb55702739ad892db9c5",
+    "mention_text": "Av. Prof. Fonseca Rodrigues, 1.300, Alto de Pinheiros, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "26545ef1268103d524cf10b68c29eb4090f11d62535837dcab7435c2d10cfd27",
+    "mention_text": "Av. Europa, 158, Jardim Europa, região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f41c554760659ba544680b0dd61c5732a6bae20da587b26afe4262970108be9e",
+    "mention_text": "região leste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36c20fc704b94d42e6f37d17bc2278450dd48e977d1c439171f0374127cf308e",
+    "mention_text": "Av. Paulista, 149, Bela Vista, região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c832a88707e34b3b0a91eeadf2b3f343ed5560da26db6fdf464209c77f9fd000",
+    "mention_text": "Santa Efigênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8eb4cfd377b9393d7d7884825840c0ee512d95fb3b656817578794e190e1cbc4",
+    "mention_text": "Vila Mariana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0edf4977d1259e609333377176ef64d6e55f81ec18db092054bd4588727090f6",
+    "mention_text": "Pinheiros",
+    "categoria": "LOCAL"
+  }
+]

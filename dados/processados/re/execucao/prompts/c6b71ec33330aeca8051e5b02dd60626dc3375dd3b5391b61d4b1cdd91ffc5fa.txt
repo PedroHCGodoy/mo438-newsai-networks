@@ -1,0 +1,449 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: eb8bf232109c53fdb77533c79148a007a151aab3d9dcdccb1214125866de6cba
+
+TEXTO:
+Empresas adotam inteligência artificial para ganhos de produção
+
+Atividades que antes eram feitas unicamente por humanos, como decidir qual será o tratamento de um paciente, escrever uma petição, atender clientes ou escolher profissionais em um processo seletivo, começam a ser aprendidas por sistemas de inteligência artificial.
+Programas do tipo vêm sendo testados no mercado brasileiro, com a promessa de aumentar a produtividade e melhorar a tomada de decisões nas companhias.
+Oncologistas do Hospital do Câncer Mãe de Deus, em Porto Alegre, não dependerão apenas de seus conhecimentos para atender pacientes a partir desta semana.
+Um grupo de 25 médicos do hospital terá ajuda do Watson, sistema de inteligência artificial da IBM, para definir qual tratamento será usado para pacientes que possuem sete tipos de tumores.
+Carlos Barrios, oncologista e diretor do hospital gaúcho, explica que a tecnologia irá permitir aos médicos ter acesso instantâneo a milhões de artigos científicos sobre câncer, indicações de tratamentos possíveis em cada caso por ordem de confiabilidade.
+Para isso, os profissionais informarão ao sistema dados sobre o paciente que estão atendendo e, em alguns segundos, receberão as sugestões do serviço.
+"A quantidade de informações médicas vem se multiplicando a cada poucos meses. O volume não é manejável. Uma pessoa só não tem condições de se manter atualizada", diz Barrios.
+Ele afirma que o sistema não irá decidir o que o médico fará, mas dará informações organizadas para que ele converse com o paciente e tome decisões embasadas.
+De acordo com Ricardo Chisman, diretor-executivo da consultoria Accenture, entre as principais funções da inteligência artificial está justamente ajudar na análise de grandes volumes de informações.
+Ele diz que essa tecnologia vem ganhando espaço devido ao aumento da capacidade dos computadores para realizar essas operações e com um custo cada vez menor.
+SELEÇÃO ARTIFICIAL
+A inteligência das máquinas deve automatizar processos repetitivos e as tomadas de decisões baseadas em muitas variáveis.
+O processo de seleção de trainees da Kraft Heinz recebe anualmente cerca de 10 mil candidatos. Até 2015, o currículo de cada um deles era avaliado até que os 700 mais promissores fossem convocados para entrevistas.
+Agora, um software da start-up Gupy analisa currículos de todos os inscritos e os questionários de áreas como lógica, inglês e comportamento respondidos pelos candidatos –os profissionais de melhor desempenho da empresa também respondem testes semelhantes.
+Com as informações geradas no processo, o software computacional compara os resultados dos dois grupos para entender quais os fatores que aumentam as chances de sucesso dentro da empresa e identifica os melhores candidatos para ela.
+Com a seleção feita a partir da inteligência artificial, foi possível reduzir o número de candidatos chamados para entrevistas de 700 para cerca de 250, diz Raphael Bozza, gerente de gente e performance da Kraft Heinz.
+Segundo ele, o processo agora ficou mais simples, ágil e organizado.
+TEMPO PARA PENSAR
+No escritório de advocacia Veirano, que tem há dois anos projetos com a start-up Linte para usar inteligência artificial, já é possível que um profissional confeccione documentos como petições e contratos só respondendo a questões em formulário simples.
+O sistema analisa as respostas que foram dadas pelo advogado e as compara com uma base de documentos produzida pelo escritório para decidir a melhor forma de fazer a tarefa, diz Guilherme Potenza, associado do Veirano.
+De acordo com ele, a ideia é automatizar atividades trabalhosas que tomam muito tempo e exigem pouco conhecimento e reflexão.
+"Não queremos os advogados fazendo cópia e cola. Queremos eles pensando, falando com clientes, criando novas teses."
+Potenza diz que, apesar de o sistema estar sendo usado apenas em tarefas simples, o plano do escritório é aumentar a sofisticação do sistema, o que exige grande trabalho para refiná-lo. Porém ele não revela detalhes do que vem sendo desenvolvido.
+FIM DE TAREFAS REPETIDAS
+Empresas que desenvolvem e aplicam a inteligência artificial em seu cotidiano afirmam que o avanço da tecnologia no mercado não tornará o trabalho humano obsoleto, mas irá acabar com muitas atividades repetitivas e que não exijam qualidades como empatia e criatividade.
+Guilherme Novaes, líder de Watson (plataforma de inteligência artificial) na IBM Brasil, diz que a tecnologia não irá substituir o trabalho humano, mas será uma ajudante para tornar as atividades mais produtivas.
+"A inteligência artificial visa aumentar o conhecimento do ser humano. Tarefas repetitivas ou que tomam muito tempo de pesquisa podem ser feitas por sistemas cognitivos, com a vantagem de ter uma capacidade de leitura e memória muito melhor do que a nossa."
+Carlos Barrios, diretor do Hospital do Câncer Mãe de Deus, parceira da IBM na adoção do Watson em tratamentos, afirma que robôs podem armazenar conhecimento, mas não possuem qualidades humanas essenciais.
+"O Watson não tem empatia, não entende o que o paciente precisa no momento, não pega na mão dele. Ele te dá conhecimento. É importantíssimo, mas não é tudo o que o médico precisa."
+Raphael Bozza, gerente da Kraft Heinz (que usa inteligência artificial na seleção de trainees), afirma que o contato humano não deve ser deixado de lado no momento do recrutamento.
+"Posso estar sendo mais antigo, mas acredito que o brilho no olho, a comunicação frente à frente são imprescindíveis no processo de seleção."
+O advogado do futuro também será menos dependente de memória e fará menos tarefas repetitivas, afirma Gabriel Senra, cofundador da Linte, empresa que desenvolve inteligência artificial para o setor jurídico.
+Ricardo Chisman, diretor da Accenture, diz que transformações tecnológicas sempre tornam empregos obsoletos, mas têm o potencial de criar novas atividades, como profissionais que possam treinar os sistemas baseados em inteligência artificial.
+*
+Tecnologia ganha espaço em empresas e assume funções variadas
+Advogado
+As empresas Linte e Tikal desenvolvem softwares que ajudam profissionais a criar rapidamente documentos que possuem preenchimento padronizado e repetitivo
+O escritório Veirano possui projeto de adoção da tecnologia há dois anos, por enquanto para a elaboração de contratos e petições
+Recrutador
+A Gupy desenvolveu sistema que analisa o perfil dos melhores profissionais de uma empresa e lista novos candidatos de acordo com as chances de eles terem sucesso
+A Kraft Heinz faz processos para a primeira fase de seleção de trainees, reduzindo o tempo de triagem de currículos em 70%
+Treinador
+A Hondana criou o aplicativo Indica, que usa formato de chat para dar instruções a profissionais, personalizando o conteúdo de acordo com as interações do funcionário
+A ISA Cteep (Companhia de Transmissão de Energia Elétrica Paulista) vem usando o app para reforçar treinamentos de liderança desde maio
+Atendente
+Conhecidos como "chatbots", robôs que conversam a partir de textos com clientes para tirar dúvidas e resolver problemas vêm se disseminando pelo mercado
+O Poupatempo fez em maio cerca de 150 mil agendamentos dos 1,1 milhão de atendimentos do mês usando chatbot feito pela start-up Nama
+Planejador
+A empresa Tevec possui sistema que combina variáveis como desempenho da economia, clima, efeitos sazonais e histórico de vendas para ajudar a estimar a demanda de produtos
+A Kopenhagen adotou o sistema no final de 2015 para dar sugestões a franqueados de quanto devem comprar de cada item
+Médico
+A IBM, a partir de sua plataforma de inteligência Watson, tem serviço que analisa informações de pacientes e faz recomendações a partir da consulta a milhões de artigos científicos
+O Hospital do Câncer Mãe de Deus, em Porto Alegre, vai usar a tecnologia para auxiliar no tratamento de sete tipos de câncer
+Perícia
+A IDwall checa a autenticidade de documentos e informações fornecidas por clientes a partir de sistema que automatiza a conferência de dados e checagem de histórico da pessoa
+Segundo a 99, a adoção da tecnologia há quatro meses permitiu tornar o processo de aprovação de motoristas mais rápido e rigoroso
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "841071b916b564be59a7d4ecd7a5166753be1f4f1b92486e35ca05b6b6eacef1",
+    "mention_text": "Hospital do Câncer Mãe de Deus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10e9f2286ffaccba5aa522e828e41a21b2b088e25c57ad848ca0ff13b39402f7",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1919ffb80e8c6dc549032daa0a46d85a3b0a7638737ce197418a0c4dfba443bc",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d109af0e9c0e5ed8f29354bdd62542809ab834f23a5136543c57b47ca54f59d",
+    "mention_text": "Carlos Barrios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a5fef4cc857ba7183f8d739a4ce8d177f80c197934b1f66fa5271413486b154",
+    "mention_text": "Barrios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5d748fb5a01b7a4bf1b769b30a3a08206758c36983ba3decd11112d41367e44",
+    "mention_text": "Ricardo Chisman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40e0d2d963ca990a846c148f25991e103b06558831724cfab4e300f2f35ab3b3",
+    "mention_text": "Accenture",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7187dc4a3a5c558a11533099b2f57673b31654dea52a5cd0a6d02f998bdce6b",
+    "mention_text": "Kraft Heinz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "374b3c4b296fe9c0ca8cfe2e270a8c1eedc916d67a6a50b557688184ec32e156",
+    "mention_text": "Gupy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53f2fb82d0c8ea982ea55b9fd73052cd3fdf3523dbccd2dce25b318459d61d65",
+    "mention_text": "Raphael Bozza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c8d28516465d374a2609b50c9828fb919616e807e3a56da5bb0e1395da9c91b",
+    "mention_text": "Kraft Heinz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "907039aa19b4b482d2ee5db579440c67f67bc9f28a0d0540255edea540b5e4f7",
+    "mention_text": "Veirano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e287a4f3a706abf00c7f6139491aba1dce614b18f435041ac3f9ad71393fa3bc",
+    "mention_text": "Linte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "63ec415508fd38836ada232fd5398f68e3a846519c2a8ea0aa89068f36d50745",
+    "mention_text": "Guilherme Potenza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f0d563c4a2415003e8a30c72808cca15dd5c796f6ff9abcebe28ed1a6177d31",
+    "mention_text": "Veirano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf7ffa4f5b59bbc63be5a7f64d5dddcd78c7c9ccba312cbee7009df1e9304bb4",
+    "mention_text": "Potenza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82f7ba13844c3cce40f28cca75f411a98094af4971f2ac44b89ea375e3286e95",
+    "mention_text": "Guilherme Novaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bc2012a111a02e4b1e62eaf24e5c5bf843298141cd64a3853f7d9089e3d2706",
+    "mention_text": "IBM Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c09e60e2bf1208b6246cdcefb131406a21859581282cf23823fcc290fe48646",
+    "mention_text": "Carlos Barrios",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d739af19fe0cdfd0e9dbf066c384761780535ded97f2cf527a33370364bb2b94",
+    "mention_text": "Hospital do Câncer Mãe de Deus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90e1f1a681cf1fb3391de830e745e7f1ceb17d4eae8c67611c0d87dbe0c670ea",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e04f9593bfcdb4ecd3684c87c95c877ed3bdfafd3892964f4ad0b92e3ac4113",
+    "mention_text": "Raphael Bozza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92b2681bf01f01819c247dfa166740c02230c439117fea39617fc2486cb8f510",
+    "mention_text": "Kraft Heinz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "39ad9c54320587d1676ab624e148bc52143ee497c0d317be96890a5b830162d6",
+    "mention_text": "Gabriel Senra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a1d78b143f1a9edef36e67e49f0e370888ffa7dc57d88e99b0cfdfb7b2c6e24",
+    "mention_text": "Linte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "991d266e50dc3611beeb35f64603703e0316abefdfb93b705dca9d9baf1858ee",
+    "mention_text": "Ricardo Chisman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d835c95c2b409e299572d43a9533e854438def04e3e310960363ef8f37876ea3",
+    "mention_text": "Accenture",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4feb400cd293c846e91e664fb093707cdd33b9ee5df1c23c4c06ee56a67242f",
+    "mention_text": "Linte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edf55c99bf3866f0fcaec8e56ee1c85adae6d397d1825a27ed411d3b5640b071",
+    "mention_text": "Tikal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a8d73c20a5d0461263dd02d74a22c9c6cdd8db99056816c57efb180d0710ed0",
+    "mention_text": "Veirano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22450dfc9b15cd496ad822b577117a9519a771889a1e0761d1693f56f9671ed0",
+    "mention_text": "Gupy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3c01116581c5aca19630ef6322d996a5ef0444901d8593974d52813b054e262",
+    "mention_text": "Kraft Heinz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a28071f23725201825bec407435c6708e5e465c6ebe56cd47e5489431029354",
+    "mention_text": "Hondana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d45668c41590b20f5e6249f9c6a7e078383293b94fe742e976c97016680ee945",
+    "mention_text": "ISA Cteep",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42d8a6232573629f3105191adb9ee275fbea033693754a4eb499df4f8b7a519e",
+    "mention_text": "Poupatempo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17a84d646e6740a61041df0c3d2b6724aca2a92620159fc0ac8b2026913256ad",
+    "mention_text": "Nama",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ca75a87c0bedde5e17e47495b94ece4c45241150164976f855e1a9b44188238",
+    "mention_text": "Tevec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce7cda1aed6c94d6c70c88303869e6e8b19875eaec56c7a2d7a3c72684b17023",
+    "mention_text": "Kopenhagen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57610fdad1da1fae9b41aeb0259b48a43e07adf282d43e3b472c5b7be54ff642",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a31766561dd396f3911ce7ac2396ff9c11f5ff935c22c231a9fe4ed758ba1e13",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "218ba64ba52a0bfbd363e4b786ddf62f2db502511ce52fc41abc0453b5919183",
+    "mention_text": "IDwall",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b4d79c405db154ae417b591642f7d73b470400c6a40d34326f90247c98fb6836",
+    "mention_text": "99",
+    "categoria": "ORGANIZACAO"
+  }
+]

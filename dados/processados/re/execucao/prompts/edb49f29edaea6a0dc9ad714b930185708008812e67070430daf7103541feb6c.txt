@@ -1,0 +1,515 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1d680f609d26c0ab7b106af6d495cdb2a555aa76b8158a436b91d78d63ac61ce
+
+TEXTO:
+Como será o trabalho no mundo 'volátil, incerto, complexo e ambíguo'
+
+Edson Aran SÃO PAULO
+Em 1987, o U.S. Army War College, escola militar americana da Pensilvânia, usou pela primeira vez o acrônimo V.U.C.A. para descrever a confusa geopolítica pós-Guerra Fria.
+Segundo eles, o mundo havia se tornado um lugar "volátil", "incerto", "complexo" e "ambíguo", razão pela qual o termo V.U.C.A. de vez em quando vira V.I.C.A., sua versão bem menos sexy em português.
+No início do século 21, a expressão deixou a área militar e migrou para o mundo das corporações. A chamada "revolução digital" produziu um ambiente novo onde as certezas não mais existem e as empresas precisam se transformar radicalmente ou correm o risco de desaparecer. E esse é só o começo do problema.
+Quando o avanço tecnológico torna um segmento do mercado obsoleto, milhares de postos de trabalho são fechados e, por isso, o capitalismo enfrenta hoje um terrível dilema: como o sistema pode sobreviver se ele elimina empregos mais rapidamente do que consegue criar? Para onde essa muvuca de V.U.C.A. vai levar o mundo? Não existe resposta fácil, mas há certas pistas e também algumas apostas.
+Para Antônio Brasiliano, presidente da Interisk, que atua há mais de 30 anos em gestão de riscos corporativos, nada disso é exatamente novidade, o ritmo da mudança é que se acelerou.
+"O mundo sempre foi volátil, incerto, complexo e ambíguo. É que agora os ciclos são menores", diz ele. "A Kodak, por exemplo, inventou a câmera digital em 1975, mas continuou insistindo na venda de filmes por mais 30 anos. Isso não vai acontecer mais. Um erro de avaliação como esse vai cobrar seu preço muito mais rapidamente."
+Brasiliano relembra o caso da Nokia, emblemático nesses tempos V.U.C.A.
+Em 2008, a fabricante de celulares finlandesa comprou por oito bilhões de dólares a empresa americana Naviteq, que havia desenvolvido um sistema de GPS capaz de substituir os antiquados guias em papel. No mesmo ano surgiu o aplicativo Waze e a Naviteq virou pó, assim como os oito bilhões investidos nela.
+Daniela Yoko Taminato, que tem formação em marketing e Relações Públicas, mas que hoje trabalha com inovação e desenvolvimento de negócios na área jurídica, explica que o "processo de disrupção é sempre igual": "Primeiro, a estrutura de um segmento começa a se dissolver, a concentração de poder termina e, se tudo não for repensado rapidamente, ele acaba".
+Antônio Brasiliano acrescenta: "Um novo produto digital começa sempre com uma venda pequena, mas o crescimento dele é exponencial até que se torna disruptivo, ou seja, ele desmaterializa o produto original."
+Disruptivo. Essa é outra palavra que sempre vem associada ao V.U.C.A. E não tenha dúvida: cada vez que ela é escrita, um setor da economia deixou de existir e milhares de pessoas perderam o emprego em algum canto do mundo. Nem todos, porém, enxergam as inevitáveis mudanças com olhos pessimistas. Ainda bem.
+"Na verdade, V.U.C.A. é apenas um mundo de relações mais humanizadas. O homem sempre foi ambíguo, incerto etc.", afirma Alexandre Pellaes, da Ex-Boss, empresa dedicada ao desenvolvimento de profissionais e à pesquisa do futuro do trabalho.
+"O mundo corporativo é que precisa se humanizar, deixar de ter regras tão rígidas e ter mais tolerância ao risco, para que possa se adaptar mais facilmente às transformações .
+Nesse mundo globalizado e interdependente, com a tecnologia avançando em ritmo cada vez mais acelerado, as variáveis são inúmeras e a imprevisibilidade é total. Tudo afeta o todo, e a Teoria do Caos é a única regra possível.
+Na prática, isso se traduz em planos operacionais de curtíssimo prazo e em organizações horizontalizadas que não tenham medo de errar ao lançar um produto ou serviço. Mas tudo isso fica muito bonito quando é escrito num página de jornal. No mundo real, frases elaboradas não salvam empresas e os solavancos são inevitáveis, tanto para os empregadores quando para os empregados.
+O seu trabalho vai mudar. E vai mudar muito.
+"Não vai ter mais CLT, todo mundo vai trabalhar em casa e ser PJ [pessoa jurídica]. As empresas vão criar células para projetos específicos e os contratos serão temporários", prevê Antônio Brasiliano. Ele acrescenta: "E isso não é o futuro, é o presente. O futuro já chegou".
+Daniela Taminato afirma que, em uma economia de ciclos mais curtos, os produtos também precisam ir para a rua antes mesmo de ficarem totalmente prontos.
+"Testa o protótipo, coloca para rodar e vai se adaptando às mudanças. Mas, para isso, é preciso ter liberdade de errar. O risco precisa ser calculado, mas o erro deixa de ser um tabu."
+A ideia é que as empresas funcionem com a mesma lógica de um aplicativo, um videogame ou uma rede social: nem todas as funcionalidades estão operacionais, mas é melhor lançar logo o produto para não ser atropelado pela concorrência. O problema é ajustar isso ao esquema rígido de uma grande corporação, que tem metas, linhas de montagem e planejamentos escritos em pedra.
+"Se meu plano operacional tem métrica muito quadrada e me obriga a vender 100 milhões, e eu não posso me furtar a cumprir o objetivo, eu vou tomar decisões burras", explica Alexandre Pellaes. "Métricas financeiras são um direcionamento de propósito, mas não o gatilho principal. É como vender um software ruim em vez de consertá-lo. Isso acaba com uma empresa".
+Segundo Pellaes, a receita para que o esquema não dê tilt é que as corporações tenham lideranças "consistentes, diretas e transparentes", capazes de motivar e engajar uma equipe conectada e alerta para dar respostas muito rápidas nesse ambiente incerto.
+"Para que tudo isso funcione, eu preciso de recursos que eu não tinha antes, eu preciso de um estoque de talentos", conclui Alexandre Pellaes.
+O talento, como se vê, continua sendo um ativo importante no mercado, o que pega é o tal "gap" educacional entre o mundo desenvolvido e o subdesenvolvido. Atualmente, já existe uma grande distância entre a formação e preparação da mão de obra em países periféricos, como o Brasil, e os ricos. E essa lacuna pode se transformar num abismo em curtíssimo tempo.
+"O grande problema que enfrentamos é que essa parte do mundo acabe ficando para trás nessa transformação", adverte Antônio Brasiliano, da Interisk. " Quem não tiver qualificação, não vai ter emprego . E isso vai aumentar a mobilidade no mundo, vai ter uma migração muito grande para os países desenvolvidos. Isso vai provocar conflitos, ciberataques e também o terrorismo".
+Nem todo mundo concorda com esse cenário catastrófico desenhado por Brasiliano. Daniela Taminato, por exemplo, enxerga mais oportunidades do que dificuldades.
+"Sou otimista, não gosto da visão apocalíptica", afirma ela, "mas entendo que realocar essa massa de trabalhadores que será desempregada é um grande problema."
+Já existem hoje o que chamamos de 'profissionais nômades', pessoas que trabalham para o mundo inteiro, independentemente de onde estão. "As oportunidades são enormes, mas os desafios também, pois além de qualificar o profissional, ainda temos a questão da inteligência artificial, que também vai tirar empregos", afirma ela.
+A inteligência artificial não é coisa de ficção científica no mundo V.U.C.A. O primeiro computador cognitivo, ou seja, capaz de aprender a partir das informações recebidas, já está entre nós desde 2011. É o sistema Watson, criado pela IBM.
+Mas não se preocupe. Marcelo Spaziani, vice-presidente da IBM na América Latina, explica que o computador não vai produzir robôs exterminadores para destruir a humanidade. Já a eliminação de postos de trabalho... Bem, isso não vai ter jeito.
+"O impacto vai ser enorme", conta Spaziani. "Veja o mundo do direito, por exemplo. Digamos que uma empresa esteja sofrendo uma ação trabalhista. A inteligência artificial consegue analisar a jurisprudência, a ação, o perfil do juiz que a julgará e fornecer imediatamente o percentual de ganho ou perda segundo o histórico dos processos. O advogado não vai mais perder tempo fazendo pesquisas e pode se concentrar no que realmente interessa, o trabalho intelectual".
+A boa notícia é que o mundo não vai mais precisar de tantos advogados. A má notícia é que, além de aguentar piadas ruins sobre a sua categoria, os advogados irão para a fila de desempregados. Para disputar vagas com você.
+"Estamos diante de uma grande transformação", diz Spaziani. "Na indústria de tecnologia é algo como nunca vimos, e a IBM tem mais de cem anos de mercado. Todos os aplicativos que existem hoje não existiam há quatro anos".
+Mas embora reconheça o impacto da inteligência artificial no mercado de trabalho, Marcelo Spaziani continua otimista.
+"Veja o Uber, por exemplo. O aplicativo tem impacto na atividade dos taxistas, mas gera empregabilidade para muita gente", defende. "Ou o Airbnb, que aluga imóveis que estavam parados. Ele não acabou com os hotéis, ao contrário, viabilizou trabalho para as empresas de limpeza, por exemplo, que têm de cuidar desses imóveis. A mão de obra vai se adaptando, o mundo se reinventa."
+O vice-presidente da IBM acrescenta um dado novo e bastante interessante. Na Revolução Industrial, conta ele, a diferença tecnológica entre os países desenvolvidos e os subdesenvolvidos era muito grande. Agora não.
+Os "motores" do Watson, por exemplo, são os mesmos no mundo inteiro, esteja você em Southampton ou em Sapopemba. O mundo continua "volátil", "incerto", "complexo" e "ambíguo", mas se os desafios são globais, talvez as soluções também sejam.
+No mundo V.U.C.A., tudo muda numa velocidade exponencial, mas o sistema educacional funciona do mesmo jeito desde a Antiga Grécia. E é bem possível que ele não responda mais às necessidades desse inevitável mundo novo.
+"A forma como estudamos, de maneira tradicional, será a ideal para o futuro?", pergunta Marcelo Spaziani, exemplificando com o fato de um programador, hoje, ser muito procurado no mercado independentemente de ele ter ou não uma formação superior.
+"A Coreia do Sul investiu 20 anos para mudar o ensino no país. As empresas têm um papel nisso também, é claro, mas o governo tem de ser o grande viabilizador de uma mudança estrutural como essa", defende.
+"Talvez precisemos não de uma educação formal", opina Daniela Taminato, "mas, sim, de cursos aplicados com competências específicas para criar 'makers'."
+"A população brasileira vai ter que exigir que o estado brasileiro mude sua postura", diz Antônio Brasiliano. "Precisa ter uma mudança cultural, uma disrupção a curto prazo, pois a mudança no mercado de trabalho vai acontecer de qualquer forma, ou pelo amor ou ou pela dor".
+"O trabalho tem um papel muito importante na vida do ser humano", comenta Alexandre Pellaes. "A gente trabalha por dinheiro, mas também para provocar impacto no organismo social, para que eu me sinta uma pessoa reconhecida. O que é um 'aposentado'? Uma pessoa que é levada aos 'aposentos', que é tirada do convívio social. É preciso valorizar esse aspecto psicológico do trabalho também."
+De novo, as palavras bonitas tentam disfarçar uma dura realidade: não vai ter emprego para todo mundo. E a coisa pode ser ainda pior em países "mal educados", como o Brasil.
+Antônio Spaziani, no entanto, acredita que a sociedade também vai passar por uma grande mudança comportamental capaz de ajustar os dilemas do mundo V.U.C.A.
+"Minha geração foi criada com a característica de 'ter' e o jovem hoje quer 'estar'", diz ele. "Ele não quer ter carro, ter apartamento, ele quer viver experiências. E talvez ele nem queira mais trabalhar oito horas por dia, talvez ele queira trabalhar apenas quatro. E se isso acontecer, a transformação será imensa."
+Alexandre Pellaes, por sua vez, vislumbra que em 200 anos talvez estejamos vivendo num mundo que funcione com um sistema de renda mínima, com as máquinas provendo todos os serviços e onde ninguém mais tenha de trabalhar para ganhar dinheiro.
+Mas, espera um pouco... isso aí não é socialismo?
+Será que o capitalismo turbinado do mundo V.U.C.A. vai nos levar ao comunismo, não por meio de uma revolução proletária, mas simplesmente porque não vai mais existir trabalho para todos? Nem trabalho e nem produção de riqueza, naturalmente. E assim o capitalismo acaba, não com uma explosão, mas com um gemido? Alexandre Pellaes acha que não.
+Segundo a visão dele, será um capitalismo consciente, porque nada estará garantido e tudo será uma conquista.
+"As pessoas terão de buscar isso juntas, como seres humanos maduros, para que o sistema funcione. É uma utopia, claro, mas a utopia é a linha do horizonte para onde devemos caminhar", conclui.
+A tentativa de construir sociedades utópicas só produziu catástrofes ao longo do século 20, mas talvez, quem sabe, a coisa dê certo no século 21. Nesse mundo volátil, incerto, complexo e ambíguo, tudo é possível. Até mesmo utopias.
+*
+GLOSSÁRIO
+US Army War College Fundada em 1901 para formar líderes militares, a escola tem como lema "Força e Sabedoria". Entre seus alunos ilustres estão George Patton (1885-1945), Dwight Eisenhower (1890-1969) e Colin Powell. A missão da academia é unir militares e inteligência, uma missão impossível segundo o comediante Groucho Marx (1890-1977).
+Disruptivo O modelo de disrupção é, de certa forma, a antítese da evolução. No processo evolutivo, uma ameba se arrasta da sopa primordial e acaba virando o Homo sapiens. No processo disruptivo, um alienígena chega ao planeta, elimina o homo sapiens e vira o dono da coisa toda.
+Teoria do Caos Postula que, em sistemas complexos e dinâmicos, mínimas variações podem causar catástrofes inimagináveis. Vem daí a popular ideia do "efeito borboleta", formulado pelo matemático Edward Lorenz. Uma borboleta bate as asas na Califórnia e um milhão de trabalhadores perdem o emprego no ABC. Ou algo assim.
+Direito A profissão de advogado é a segunda mais antiga do mundo. Desde 1.700 a.C., com a criação do Código do Hamurabi, o mais antigo sistema de leis, uma das funções do advogado é achar brechas na legislação. Agora o computador faz isso por ele.
+Revolução Industrial De meados do séc. 18 às primeiras décadas do 19, a produção de bens passou a se utilizar de máquinas, desempregando milhares de trabalhadores manuais. Ned Ludd, um tecelão inglês ultrajado, liderou um movimento pela destruição das máquinas, o "ludismo". No fim, as máquinas venceram.
+Maker Como o nome indica, é um "fazedor", mas é mais que isso. O Movimento Maker (sim, isso existe) defende que tecnologias, como a impressora 3D, transformarão o conceito do faça-você-mesmo, permitindo que todo mundo vire uma espécie de carpinteiro. É provável que muitas mesas desmontem antes mesmo de serem usadas.
+Utopia De origem grega, significa "lugar que não existe". Apesar disso, muita gente tentou criar sociedades utópicas à direita e à esquerda, sempre com resultados péssimos. O inglês Thomas More, chanceler de Henrique 8º, foi responsável pela popularização do termo ao batizar sua principal obra, de 1516, de "Utopia". Ele foi preso na Torre de Londres e depois executado –não por causa do livro, claro.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "32bb97b4d20cdc45367471ad5a8252f701a5321ab2a61293079ecfd0fd20cbe1",
+    "mention_text": "Edson Aran",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f16f092619de30be4f643f6e0b5197421c0fb7d492a129bb3fba04d70e002933",
+    "mention_text": "SÃO PAULO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f2f0df666681a7de14570574e622b4e497f011f49827a5288c02562df5b92e43",
+    "mention_text": "U.S. Army War College",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05f666a4b6855d0cb160df0fde3351ed736218a2960e7ee2d46207b4dae73fc1",
+    "mention_text": "Pensilvânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e729dd3410b97204465ecba5f1c45c501eea3b8b2876c99f552c7cc49288b442",
+    "mention_text": "Antônio Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1176307a8cd1e38d1d1a729e43fe2eca4b5834b5e920082d31cfba9dc3bf02d0",
+    "mention_text": "Interisk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "305e147294b0e65ea8c0f4f31c2600ef1b83b72d71ad14fb1f9398526f22f424",
+    "mention_text": "Kodak",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6319364dff07b539fffa1f4612aa1351fdec678b48d07aed829150350454c15",
+    "mention_text": "Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d404842894103363d4e2d7d5d617854d44cdb10e8b12d1ec70a29c87e5acd1d0",
+    "mention_text": "Nokia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c084ced4f721c5d7d39ae3a8dfc75ac059195889207ff015e6bdffb61d59459d",
+    "mention_text": "Naviteq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fa7bd655cdd4ea90555dbfa7130576d7a2b7f33c4473aa85ca421503d28cf7e",
+    "mention_text": "Waze",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b96f57872e669b6f5af8e26e00f8a43f3eaa634c8c3b3d468f88b523fa9db551",
+    "mention_text": "Naviteq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dcace7df9c8e4264233b892127aba28536e76dd3b785eaf24df5bad62c99c8ab",
+    "mention_text": "Daniela Yoko Taminato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d6597d9c188d137e72d545a25ef6524b2e33b3eab4fe4f344c80996a8591528",
+    "mention_text": "Antônio Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9caedcdbf36138d4c7a606ecf60e5ffe5f19fc3a9cb11220e5e24fdf09847afa",
+    "mention_text": "Alexandre Pellaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b9d25058a726ea1e5e514086db7e91745b0d8011faf2ca828bd92d8d71b30b1e",
+    "mention_text": "Ex-Boss",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52e6bc2df5b77aab1ee987895923ed54071140c6006c4cd8ae7801ca34dddf75",
+    "mention_text": "Antônio Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ae959c240daa49f7687a6c474aac4983786df538e3ccac23e5f07c2149704a4a",
+    "mention_text": "Daniela Taminato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78a0410c509401e973d4f68cb4c25135ea4cd26aebb468ac1355e68f1b7e5898",
+    "mention_text": "Alexandre Pellaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54f137ddca928f75a3508bd2af3c8c0f0f2b580b7c3ecb631096ec4161911073",
+    "mention_text": "Alexandre Pellaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75de64c76da4b1c992c861a828cba6332d61e37a5cd2ab0c5555044fc12b1e9d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6760fedf8b86bdd2464ec263113ba6037f94f98efb107812669db72ced89fd53",
+    "mention_text": "Antônio Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d3962d72a2726cdec14b3cc7ac02263d0ff54d8886283aac7856e38b9a0c238",
+    "mention_text": "Interisk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "819911e7dab1e3710c040aa5dc8206aa1944d2c3a00c91593e279f555f80fa2a",
+    "mention_text": "Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e45730c9677c056274b77e370e12608999f74ec57a6c3e20151ab715b4ed557",
+    "mention_text": "Daniela Taminato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff34e971b702675d6599a6f2be413ea16ec415edcdc77b50f75de15cb117637f",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "484509535a4d8e510f3fcb18955ef22be9b8b93b6ef156410ca7448ee4d29466",
+    "mention_text": "Marcelo Spaziani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d656f20028437af7a7b0f56c63ce5f0ed1a37e3a6f7702abde35c0474a2a765",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "051ace4c215b675271ca0a2ca7f8cedfe55baaf1c41db1d8acb3ace09676c1ee",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ad218ba241c8c0818661cd60975142cc8a9a3bd48081a477a9737861d62b2b0",
+    "mention_text": "Spaziani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b120d1581304fa2eb7547ca052398322fd463d0ab46df6fc9d0eecedd9413ba",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "672c1be7d682b7e4dc433a94d4fa2c852b10d7b665c976493f1edfc55675af46",
+    "mention_text": "Marcelo Spaziani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd515e2d73f832d0b7e4d79a8ebdc67e3cb6bca85a85db1d42b084567009341e",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abbbee1cd710dc51d76585482a791dc997c256ca08b257a3375f747181733f4e",
+    "mention_text": "Airbnb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae67efcc52203f33e150251f3e1a6c01e83cfa8f958329ba5ae531a7212380e4",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2e43f6d376ddedd40630de6c71503440b466421caff53a162b9343240642b5f",
+    "mention_text": "Southampton",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f3b476ffbf11a4479499c8ec26b44d6ccaa74db4d42af847f54ec26ea850485",
+    "mention_text": "Sapopemba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c03b74fa7a7cf4e2f44423040ad8157a744697191e9d9cbc4da6fc2a6c1b681",
+    "mention_text": "Antiga Grécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e00f3fba89b1a0f6403c8de41397fce9b96548769d6ad560bc7e54b03309b290",
+    "mention_text": "Marcelo Spaziani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "513d60769c8b805f7c9ebe7af30b42c77b77d56b2a082138e4f6e29421150519",
+    "mention_text": "Coreia do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8bc9c73315d359d32121bc314b4ce9dd25f301d52f928c13ac82f5af572d6d4",
+    "mention_text": "Daniela Taminato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2402ea884b21beb00c9016f5dad2a7873cfd69ff20e7e7e6b4304d7ec0e9c1b6",
+    "mention_text": "Antônio Brasiliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d94a018d9895a037394025e18085ae7d6cbaa5aeddf9d8f10992fef5b6392199",
+    "mention_text": "Alexandre Pellaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f06911f33c4861be20801a375bb6361c94a0efd6d41bcc77faef522c56c3d76",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f21f41ed89f9b02f20eb9c13d319cd6d45940bca8dfd9c9c2e62ce292fa656d2",
+    "mention_text": "Antônio Spaziani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff4f48050b3fe9c924a24a2f5b91a1f72a3cf0c6279e4284498ceb8ada70fef7",
+    "mention_text": "Alexandre Pellaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2feaab113613f6e149f4a4497ccd9650dd01674a64471e14ef095f2c0e7af7b2",
+    "mention_text": "US Army War College",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e86fab4a951569f8a0fc7e25508b7c36954e30b5c7f2b77e3097cf8612261d9",
+    "mention_text": "George Patton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d45d78705321c8e734269382fcdf81c1ed5d3aa6f667433d6ee304e151719cf",
+    "mention_text": "Dwight Eisenhower",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c22c36d771f8fc0a839b5705f52ed9a8df3f3d5f4b34350501c4c90256fb63aa",
+    "mention_text": "Colin Powell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "132cb840494d1f35707e9928ab093a75204965e55c177ab05a4d4fec6e83bc9f",
+    "mention_text": "Groucho Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b57f3eb85b1552e4b77e16661dcf6071dc47dd708330975286b8337b589f560",
+    "mention_text": "Edward Lorenz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a64c7322d8f774986062680016fd5c1f2122fb6d3974186a90f5d609fb949f4",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "169607ce2dfe6bb409f5e8485d0f5da2fe20ddd9b41c81817acd48cdcb73339d",
+    "mention_text": "ABC",
+    "categoria": "LOCAL"
+  }
+]

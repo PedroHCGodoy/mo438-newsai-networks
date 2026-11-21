@@ -1,0 +1,304 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 88670f32bf6058403fabe6638089e4cc9f381e2539a34cf87e4c020da37432c5
+
+TEXTO:
+Jorge A. Espanha: A quem interessa ajudar o Aedes aegypti?
+
+O mosquito Aedes aegypti causa hoje danos gigantescos ao Brasil. Leitores deste jornal são servidos, quase que diariamente, de farta informação sobre esse vetor de doenças, capaz de infectar 2 milhões de pessoas por ano e de levar a perdas econômicas de R$ 2,3 bilhões anuais no país, além de impor sofrimento humano imensurável.
+A luta contra esse danoso inseto transmissor de zika , dengue , chikungunya e também da febre amarela urbana tem ocorrido em muitas frentes, sendo uma delas a implementação de tecnologias inovadoras no controle do vetor.
+Nesse setor, destaca-se uma iniciativa da Oxitec: o mosquito geneticamente modificado desenvolvido pela empresa na Universidade de Oxford, na Inglaterra, que tem obtido resultados sem precedentes na supressão da população selvagem do Aedes aegypti.
+Presente há quase três anos em Piracicaba (SP), a tecnologia tem levado a reduções anuais da ordem de 80% na presença do mosquito selvagem nas áreas em que é usada.
+Esse resultado, do qual nenhuma outra estratégia semelhante se aproxima, é atestado por técnica de monitoramento recomendada pela OMS (Organização Mundial da Saúde), com números que são públicos.
+Desde abril de 2014, a CTNBio órgão federal responsável pela avaliação de organismos geneticamente modificados no país considera seguro o uso comercial da tecnologia. Prefeitos de várias cidades brasileiras já procuram a Oxitec para adoção do Aedes do Bem.
+Em Juiz de Fora (MG), o mosquito é utilizado para combater o Aedes aegypti desde novembro de 2017. Países como os EUA também demonstram interesse na tecnologia.
+Gestores públicos sabem que estratégias corretas de combate a doenças infecciosas trazem benefícios sociais e econômicos. Custos diretos e indiretos de zika, dengue e chikungunya subtraíram, no mínimo, R$ 800 milhões da economia do Brasil em 2016.
+E como mensurar o sofrimento das mais de 2.000 crianças vítimas de problemas neurológicos provocados por zika?
+O poder público há muito se dedica a combater o criadouro do mosquito. Infelizmente, essa importante medida, quando associada a métodos tradicionais de controle de vetor, não tem conseguido frear o crescimento das epidemias.
+Na década de 1990, o Brasil registrou 1,5 milhão de casos de arboviroses. Na década inacabada de 2010, eles já somam mais de 7 milhões.
+A expansão de uma tecnologia inovadora para controle de vetores é, então, não apenas desejável como inevitável. O surgimento de mosquitos resistentes a inseticidas químicos é um problema que desponta no horizonte da saúde pública.
+A quem interessa prejudicar o trabalho pioneiro da Oxitec em Piracicaba, município com política modelo de combate ao Aedes aegypti?
+Na última segunda-feira (5), jornalista da Folha fez uso de fonte anônima com argumentos técnicos equivocados para apontar supostas falhas no trabalho da empresa no município. O jornal publicou fato inverídico por ter sido induzido ao erro. Temos confiança de que vai reavaliar o texto em questão.
+O Brasil tem hoje chance única de mostrar ao mundo como ser pioneiro na redução efetiva do mosquito Aedes aegypti.
+Num mundo em transformação, onde tecnologias de ruptura como inteligência artificial e carros autônomos apontam para grandes mudanças econômicas e socioculturais, veículos de comunicação como esta Folha têm papel fundamental em desafiar também o atraso na adoção de políticas de saúde pública inovadoras.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "699524646a1c100b9ae561514f802be51a36ce288b53044e65ea4a881e52dd35",
+    "mention_text": "Jorge A. Espanha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "456f68d5ce57c522fbb2b1cb30c79808ba8d3c928754bf0fa656c3ccaa0cce34",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "73af496b7903b6fd016d2c1c2d4fb3988612a9dcd9328a6b57d23d26bce9e081",
+    "mention_text": "Oxitec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9284c87c223f2adce52b0795a7f53252ee5bd6a07c33fc09c6f20fa54b3fbc9",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14497048fcdda8a18ba9d6788b2a5609ca51cc301ef7eefff7b23256d058d844",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40f0de0049ce0b58ae7c324635a3695d1c291187d1dbda729e091a6c07d1129e",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fadc9d7f1ae05d6ab294ddd65b01d42c27a2712e4c97a74fe94d37fefd36e81d",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "527aaa4f8a111958bfe073016fb701d26ab66c11af5cb3a85c76e629647d3720",
+    "mention_text": "OMS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f928a63b078f5c852424c848f4d3a314b9c547d0aa8c9e773cefab5bfb7ce15",
+    "mention_text": "Organização Mundial da Saúde",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "55703ed6efcfab730da30719198b39107cce30276179f0624fbf4bd08d5de8df",
+    "mention_text": "CTNBio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b4006652d8c39cb35ff10869acbd719ae50a10142b95ad0afe18ecad23be5cb",
+    "mention_text": "Oxitec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74f8539f7485e73197076cf87fb42be3df45c83c3b7f602a7bbb4ef9c810bd3a",
+    "mention_text": "Juiz de Fora",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7ec9fdbd9e1baf5a18a2f6faa4278ff226d4482af7bba81c300ab64868b49ab7",
+    "mention_text": "MG",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5681ab89e1a46eca51e1779f7a02f1a89970e43593ee4b44d22560afffe4be99",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "488d3d1ec02686785816a483e24f784ebfd91bc125852b78a3b57b0a5dd4ce61",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "717eb66554f4e00021ebd51b7c4867ed7810f858777792353b73e25955f8b3aa",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1574b48473dd888cc5dc85f3c7bcfd702bc82ff758978706df1a63a404a26bf9",
+    "mention_text": "Oxitec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89e4e6ad52ee1144a93e826f143cbe8f6bb32601931b4c1255be6b6a89fb6d2a",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b90d2d8d779a853f5d58a29e08a18027474d086962eeb833a2911aaecc55101c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdec2fbb726fa5550e9a7c501887bd888885e832794d13ce04f190172f83b671",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "059b8cca5a2ccee5feb94cacc9282877f02abbbe63e7fbc23b44cfb44834cdb4",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  }
+]

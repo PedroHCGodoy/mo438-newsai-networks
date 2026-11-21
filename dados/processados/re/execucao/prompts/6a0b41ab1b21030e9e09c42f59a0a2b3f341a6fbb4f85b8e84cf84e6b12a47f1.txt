@@ -1,0 +1,279 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8a0d177b869562a94828570c35dcd364e527fd844ff2657553e7b7d7ab1e08f8
+
+TEXTO:
+Do que ter medo?
+
+Enquanto no Brasil as pessoas vão se preparando para o Carnaval e esquecendo dos medos até março, nos EUA, em pleno inverno gélido, sairá no dia 14 um livro sobre os medos dos cientistas e filósofos.
+O livro "Com o que devemos nos preocupar?" foi editado pelo agente literário John Brockman, que todos os anos põe uma pergunta aos membros do grupo de discussão Edge. (Veja em www.edge.org) As respostas são então publicadas em um livro. Eu costumo participar, mas desta vez não deu, já que estava escrevendo o meu próprio livro. Eis uma brevíssima seleção das 150 respostas que aparecem no livro.
+O linguista Steven Pinker, da Universidade de Harvard, identifica a maior ameaça de guerras futuras na mente de líderes instáveis ou de grupos que julgam ter valores acima de outros. Cita o slogan da Unesco: "Como guerras começam nas mentes dos homens, é na mente dos homens que as defesas da paz devem ser construídas". Para ele, guerras resultam mais de patologias e impulsos tribais do que da escassez de recursos ou de expansionismo econômico.
+Vernor Vinge, matemático e escritor de ficção-científica, teme que a automação do controle de armas nucleares torne-as vulneráveis à ataques de grupos terroristas. Martin Rees, astrônomo real do Reino Unido concorda, pintando ainda um cenário cataclísmico baseado no desequilíbrio econômico e social causado pelo aquecimento global, que pode forçar a migração de milhões de pessoas das regiões costeiras e a desintegração do sistema financeiro. Adiciona, também, o bioterrorismo, ciberterrorismo e nanoterrorismo como outras ameaças. O filósofo Daniel Dennett e o historiador da ciência George Dyson concordam especialmente com o ciberterrorismo, salientando que o mundo viria abaixo se alguém conseguisse sabotar a internet. Várias contribuições giram em torno desses temas.
+Um outro grupo de temores aparece organizado em torno da questão do consciente e da sua relação com as máquinas. Timo Hannay, co-criador das conferências Sci Foo, teme que nossa ignorância do que seja o consciente e de como se manifesta em outras espécies leve a uma incompreensão crescente das nossas emoções e relação com outros seres vivos. Max Tegmark, físico do MIT, teme que a inteligência artificial venha a suplantar nossa humanidade (algo que já tratamos aqui), tornando-nos supérfluos. Já outros desmentem que a chegada desse momento de dominação de mentes artificiais, a singularidade, seja viável ou esteja se aproximando. Por outro lado, algo que está crescendo é a eficiência de videogames com realidade virtual. Será que em duas gerações jovens não saberão mais distinguir entre realidade e realidade virtual?
+Dado que meu espaço está acabando, menciono um outro medo que devemos ter, o da incompreensão crescente entre dois grupos sociais, os engenheiros e druidas, como sugeriu Paul Saffo, da Universidade de Stanford. Os engenheiros acham que a ciência terá todas as respostas para os problemas do mundo: fome, doença, escassez de água e energia; os druidas acreditam no oposto, que o excesso de ciência levará à crises ainda maiores e que soluções não serão encontradas. A solução ideal, sugere Saffo, é encontrar um equilíbrio entre os dois, sem fanatismos tribais. Afinal, tudo começa em nossas mentes.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "261542248429703e86f9414cb646b9ed5176a4fb6592aa11185fbe755f1aa0aa",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e0ffac5134a56a070cd0bd86d16abb61466754d501e177a71ba3dd089f6acc2f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7666f84ec2f2256875ce3a204c51e22103dea7686e4b5c369a2f4961955d78c3",
+    "mention_text": "John Brockman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2b81278ef4edc27826ebcfe54e9729c235ae9db1899ff1759bb535b3ae29d86",
+    "mention_text": "Edge",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee7d50f587adbd4a461760fbcaa16dcbfabd52e6ddf1404fb92da18caa7e4cd5",
+    "mention_text": "Steven Pinker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "904342f79ecb0c36afaafc803d60cecd9e6ac2e2eadaa1ef746dd3c9a4df27e4",
+    "mention_text": "Universidade de Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3597033940310e40e041c870f2f2e22fea2a2a49fb26c4cc6b153d65d5bb729b",
+    "mention_text": "Unesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac4f01d968a52d85134e9f4eab051d9d3e58d155474c81bcce7542e0a80ee351",
+    "mention_text": "Vernor Vinge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2aae41ec0502de866826f7e129e8b7c39bb5af492df49bfc3c6ae50e8026976a",
+    "mention_text": "Martin Rees",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ff78fd01e59723f1e24a88c68ceac098e3a8e961d3ec280eef9228cabe6ccac",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "37482d6477101eecfbae6f5554f130006c71090d186d93d987a1d82e1f366405",
+    "mention_text": "Daniel Dennett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f70e5b658b248bcc31590208165bf3d975d8cc0dc52b9f9fdc6c2eaca8fe4eb6",
+    "mention_text": "George Dyson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5379e0ddad5c9a45cca929b399519ee447977a06c1c1576311713c4974a8b038",
+    "mention_text": "Timo Hannay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e14153e2be6e65889dd005fa64a0c22f50f107159d15a3d1f835b2a2fada086e",
+    "mention_text": "Max Tegmark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "399c69a585ca27b356ae2b692e35ef53f1d0eed221856288aba4e0f7022808e2",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d929c9d1eed85a5e2d05ca3a51363385e6073821d46ff6f8ffdb2ed4798814d2",
+    "mention_text": "Paul Saffo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47c490baa3618562a2339ed42baacee1596762dc46987bf16eef56519090b2ad",
+    "mention_text": "Universidade de Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41f9740eba7eb1fba1333d747ec3c080d3db7e24d0d1e18a38d82e02cd702850",
+    "mention_text": "Saffo",
+    "categoria": "PESSOA"
+  }
+]

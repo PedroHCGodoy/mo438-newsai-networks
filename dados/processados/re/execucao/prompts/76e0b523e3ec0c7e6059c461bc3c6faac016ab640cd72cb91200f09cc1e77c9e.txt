@@ -1,0 +1,628 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e254a6396f2813a0c5c5ace26ad3c175caa394b3707ffa1f4ef0d864b83e207c
+
+TEXTO:
+Com avanço tecnológico, fake news vão entrar em fase nova e preocupante
+
+RESUMO Avanço da tecnologia tornará cada vez mais fácil falsificar áudios e vídeos, levando as fake news a uma nova e mais preocupante fase. Autores debatem eficácia de iniciativas para combater esse tipo de manipulação. Sugerem ser necessário discutir o que deu errado com a internet e repensar o contrato social para a informação.
+O vídeo chama a atenção. Michelle Obama, ex-primeira dama dos Estados Unidos, veste uma blusa decotada, sorri e começa a se despir para a câmera. Parece real, mas não é; trata-se de exemplo de "deep fake" (falsificação profunda), produzida com auxílio de inteligência artificial.
+O leigo talvez demore a aceitar que aquelas imagens não são verdadeiras e não foram filmadas, mas sintetizadas digitalmente. Essa tecnologia, antes acessível somente para Hollywood, está cada vez mais à disposição.
+Pode-se aplicar o rosto de alguém em cenas de sexo ou em qualquer situação comprometedora. O mesmo vale para a voz. Com amostras da fala de uma pessoa, um software faz com que ela diga qualquer coisa, com timbre, cadência e entonação próximos da perfeição.
+Ou seja, a divulgação de textos com conteúdo de algum modo mentiroso representa apenas o começo do fenômeno das fake news. O próximo passo parece ser a era das deep fake news. Será cada vez mais difícil separar a realidade da manipulação digital —e há quem diga que estamos vivendo os últimos dias da própria ideia de realidade, como fazem Claire Wardle e Hossein Derakhshan em recente relatório do Conselho da Europa.
+Uma outra dupla de autores (Danielle Citron, da Universidade de Maryland, e Robert Chesney, da Universidade do Texas) publicou em fevereiro um artigo na revista Lawfare no qual discutem como as "deep fakes" tornam a manipulação ainda mais perniciosa.
+Diante de vídeos ou gravações que parecem reais, qual reputação resistiria a um ataque? Como saber que é falsa a cena em que um político diz coisas odiosas ou recebe propina?
+Essa não é uma ameaça apenas para indivíduos, mas para os próprios pilares do convívio democrático. Um vídeo falso pode ser usado para provocar convulsão social. Por exemplo, ao mostrar um policial atirando num civil inocente, ou um bandido assaltando transeuntes numa dada localidade.
+Antes de haver tempo para denunciar a falsificação profunda, as imagens talvez tenham suscitado reações bem reais, como o linchamento de um inocente.
+Dado o perigo crescente que as fake news representam, não surpreende que cada vez mais atores se mobilizem para combatê-las. O fenômeno em si, contudo, não é novo.
+Há registros de manipulação de informação com o objetivo de influenciar o processo político desde ao menos o Império Romano . Num passado menos distante, o jornal New York Sun fez sucesso em 1835 com a publicação de artigos alardeando a descoberta de vida na Lua. Mais recentemente, em 2006, uma rede pública de TV na Bélgica afirmou que o Parlamento flamengo havia declarado a independência da região.
+CLASSIFICAÇÕES
+Os fatores por trás da desinformação são diversos. Vão da simples negligência (como a disseminação de boatos ou matérias jornalísticas mal-apuradas) à busca de vantagens políticas ou financeiras, passando pela tentativa de destruir reputações.
+Levando em conta essas gradações, o Conselho da Europa classificou as fake news em três categorias dentro um quadro maior que chamou de desordem informacional, um conceito relevante por abranger diversas nuances da manipulação.
+Uma delas é a desinformação ("disinformation"), que consiste em notícias falsas deliberadamente criadas e espalhadas para prejudicar uma pessoa, um grupo social, uma organização ou um país.
+Outra é a notícia falsa propriamente dita ("misinformation"), compartilhada por uma pessoa desavisada que a princípio não tinha a intenção de prejudicar alguém. Como aqui o critério não é a má-fé, incluem-se até reportagens com erros causados por falhas na apuração.
+E, por fim, o que chamou de "mal-information" (malinformação), notícias que, embora tenham bases reais, são editadas e disseminadas com a finalidade de causar danos —por exemplo, revelando publicamente temas da esfera privada.
+Essas categorias poderiam descrever o fenômeno das fake news em qualquer período da história, mas dois elementos fundamentais são específicos da atualidade: a velocidade com que as notícias falsas se espalham e a capilaridade que elas têm.
+Hoje, plataformas como Facebook , Twitter, Google e YouTube, entre outras, possuem alcance global instantâneo (ao menos no Ocidente).
+A combinação dessa arquitetura com embates políticos nacionais, disputas geopolíticas globais e modelos de negócio baseados em publicidade comportamental criou as condições para que se aprofundasse o fenômeno da desordem informacional.
+Vários países vêm desenvolvendo estratégias para enfrentar esse desafio contemporâneo. As dificuldades são inúmeras: além da necessidade de delimitar o problema (como definir o que é falso?), é preciso lidar com as diferentes características da rede. Cada nação consegue agir somente em relação ao seu próprio território.
+Muitas soluções propostas conflitam diretamente com direitos fundamentais, como a liberdade de expressão e de informação ou o devido processo legal.
+Algumas postulam mecanismos de intervenção na rede que não raro resvalam na censura. Outras propõem tratar notícias falsas geradas em outros países como tema de segurança nacional, o que autorizaria retaliação militar. Mesmo medidas extremas, contudo, podem se revelar inócuas.
+É possível dividir as propostas em pelo menos dois grupos: as soluções de "hard power", com as quais governos miram os mecanismos de circulação da informação, e as de "soft power'", com estratégias de longo prazo capazes de vacinar a sociedade contra esse tipo de manipulação, em cooperação com diversos setores (universidades, governos, empresas privadas, sociedade civil etc.).
+Em qualquer das hipóteses, a batalha contra a desordem informacional será travada sobretudo em dois campos distintos: ciência e tecnologia de um lado, direito e regulação de outro.
+A ciência vem tendo papel importante. Estudos de Deb Roy (professor do Massachusetts Institute of Technology, o MIT) e colegas, publicados na revista Science, comprovam, por exemplo, que as notícias falsas circulam muito mais depressa e de maneira mais abrangente do que as verdadeiras.
+Eles também constataram que a mentira possui um estilo de redação distinto da verdade —a mentira usa linguagem simples e direta e apela para sentimentos básicos, como medo e raiva.
+Reações às notícias falsas tendem a expressar desgosto, temor e surpresa. Por sua vez, notícias verdadeiras costumam gerar comentários de apreensão, tristeza, alegria ou confiança.
+A partir desses padrões, o grupo do MIT criou um algoritmo capaz de detectar com 75% de acerto se um rumor no Twitter é verdadeiro ou falso. Para isso, são examinados apenas o estilo linguístico do tuíte e a característica das reações a ele, bem como sua dinâmica de propagação —não há análise do conteúdo da mensagem.
+Esse tipo de pesquisa abre caminhos novos e promissores para as atividades de checagem de fatos ("fact-checking"). Uma das grandes dificuldades nessa área é o volume imenso de informação a ser verificada. Se os algoritmos puderem auxiliar nesse trabalho, baseando-se inclusive na ciência dos dados, esse fardo pode se tornar mais leve, com efeitos positivos.
+Mas por que as notícias falsas e outras formas de desinformação se disseminam tão rapidamente ? Em outras palavras, por que a mentira circula mais e mais depressa que a verdade?
+Dois componentes são centrais: de um lado, as pessoas que fazem parte do ciclo de criação e difusão da informação; de outro, as características das plataformas que atuam por meio de algoritmos e processos automáticos de decisão.
+O papel das pessoas é referenciado no mesmo estudo de Roy. O grupo do MIT analisou histórias verdadeiras e falsas que circularam pelo Twitter desde o seu início, em 2006, até 2017. Foram analisadas 126 mil sequências de tuítes com mensagens em inglês, espalhadas mais de 4,5 milhões de vezes por 3 milhões de pessoas.
+Em todos os temas observados (política, negócios, entretenimento, ciência, desastres naturais etc.), verificou-se que notícias falsas se espalham mais depressa, chegam mais longe e atingem mais pessoas do que as verdadeiras.
+A probabilidade de notícias falsas serem retransmitidas é 70% maior do que a das verdadeiras; para temas políticos , essa percentagem aumenta.
+Por ora, o estudo desmente a hipótese de que as pessoas que espalham notícias falsas sejam mais conectadas em redes sociais (com mais seguidores) ou usem melhor as funções das plataformas.
+Após testes estatísticos, os pesquisadores demonstraram que o fator novidade é o elemento mais característico na diferença da disseminação de verdades ou mentiras.
+Usando métodos computacionais e análises lexicográficas para inferir o contexto emocional nas comunicações, os pesquisadores descobriram que notícias falsas criam um senso de urgência e novidade. Isso atrai a atenção e incentiva o compartilhamento.
+Muitas notícias falsas são resultantes de um design minucioso, feito para inocular esse senso de urgência e novidade e, assim, incentivar sua disseminação. Com os novos estudos, começa a ficar claro que esse procedimento pode deixar uma impressão digital, o que facilitaria identificar e combater a desinformação.
+Há ainda o fator da polarização política da mensagem. Em artigo recente no jornal The New York Times, a professora Zeynep Tufekci, da Universidade da Carolina do Norte, descreveu como se dá essa dinâmica no YouTube.
+A ligação entre inteligência artificial e o modelo de negócio do Google/YouTube leva à busca permanente e incessante da atenção dos usuários —quanto mais tempo as pessoas permanecem na plataforma, maior o potencial de receita publicitária. Daí por que os algoritmos sugerem novos vídeos e os exibem automaticamente.
+Tufekci descreve vários testes que podem ser repetidos por qualquer pessoa. Por exemplo, em buscas por conteúdo informativo normal, plataformas como o YouTube sugerem nas barras laterais vídeos cada vez mais radicalizados e conspiratórios. Ou seja, o usuário termina exposto a esse tipo de produto mesmo que não esteja procurando por ele.
+O YouTube vem sendo questionado também em relação à ação voltada para crianças. Há alguns meses, o ensaio "Something is wrong on the internet" (algo está errado na internet), de James Bridle, teve grande repercussão ao descrever uma série de situações em que vídeos infantis são acompanhados de recomendações de conteúdo impróprio para menores.
+Grupos que se interessam pela promoção da desordem informacional já perceberam essas propriedades dos algoritmos nas plataformas. Também perceberam que é possível direcionar conteúdo para públicos específicos. A coleta de dados de usuários da internet permite determinar com precisão as suscetibilidades a vários tipos de mensagem.
+Tome-se o exemplo da empresa Cambridge Analytica, cujas práticas foram descortinadas pelo jornal britânico The Guardian.
+Valendo-se de um estudo de psicometria feito pelo pesquisador Michal Kosinski, da Universidade de Cambridge (que nada tem a ver com o caso e desde o início não quis que seu trabalho fosse utilizado para fins privados), a empresa criou um psicográfico em que classifica eleitores em vários perfis, que vão de extrovertido a neurótico.
+A campanha eleitoral torna-se, assim, menos uma troca de ideias do que uma operação de manipulação psicológica.
+Como esse tipo de iniciativa depende de informações pessoais de boa qualidade e em abundância, o controle efetivo desses dados por parte do usuário é fundamental no combate às fake news.
+Ao que tudo indica, nas recentes eleições da França, da Alemanha e da Itália, a desordem informacional foi quantitativamente menor e menos eficaz porque esses países contam com regras que dificultam a coleta de dados pessoais.
+Medidas restritivas nesse campo passarão a valer em toda a União Europeia a partir de maio, quando entrará em vigor o seu Regulamento Geral de Proteção de Dados. No Brasil, debate-se há anos a promulgação de uma Lei Geral sobre Proteção de Dados Pessoais; os projetos 1 estão na Câmara e no Senado.
+Conforme notou James Ball em artigo sobre o Facebook no jornal britânico The Guardian, se dados pessoais são o novo petróleo, os seus poços estão cada vez mais concentrados. É crucial criar um modelo de negócio viável baseado na privacidade.
+Outro aspecto importante a ser levado em conta é a descentralização da difusão de conteúdos na internet. Quando alguém repassa uma notícia, está atuando não só como destinatário mas também como meio para sua propagação.
+Trabalho recente de um grupo de pesquisa da UFMG 2 mostrou a relação direta entre polarização política e desinformação. Usando tuítes referentes à disputa eleitoral dos EUA, o estudo mostrou que, quanto mais extremista for o usuário, mais associado à disseminação de fake news ele estará.
+Esse fator ganha relevância devido à ascensão de ferramentas de comunicação pessoal como meio de divulgação de notícias falsas. Aplicativos como Telegram, Signal e WhatsApp, entre outros, não são mediados por algoritmos. Ou seja, nesses casos, prevalece a natureza humana, estimulada pelo design dessas plataformas e das redes que se formam por meio delas.
+Quando a distribuição de conteúdo ocorre por meio de algoritmos, é possível disputar os parâmetros das fórmulas matemáticas para restringir a circulação de conteúdos radicalizados ou conspiratórios, por exemplo. No entanto, como fazer o mesmo em relação a plataformas de comunicação pessoal?
+Há ainda outro elemento complicador. São os chamados bots (robôs), contas automáticas que imitam o comportamento humano.
+Em muitas situações, eles são projetados para passar a impressão de que determinada postagem chamou a atenção de um número grande de usuários, o que leva os algoritmos das plataformas a reforçar a distribuição daquele conteúdo. Com isso, os bots ampliam o alcance das fake news e exploram as vulnerabilidades psicológicas ou sociais dos cidadãos.
+Nesses casos, distorcem o debate público para atender a interesses políticos ou econômicos. Segundo artigo recente da Science, há de 29 milhões a 49 milhões de robôs no Twitter (de 9% a 15% das 330 milhões de contas ativas); no Facebook, são cerca de 60 milhões de bots controlando perfis (ou 3% dos mais de 2 bilhões de usuários).
+Vale lembrar que um robô não é bom ou mau por si só. Essa ferramenta vem sendo utilizada para atendimentos online e para fiscalizar gastos públicos, entre vários exemplos de atuação positiva.
+No entanto, todos esses robôs deixam claro que são robôs. Essa mesma atitude não existe em casos de manipulação política. Por isso, é urgente implementar regras para contas automatizadas, respeitando seis princípios: transparência, responsabilidade, inteligibilidade, acurácia, capacidade de auditar e equidade.
+O QUE FAZER
+A desordem informacional veio para ficar e vai se tornar cada vez mais complexa. Tecnologias de inteligência artificial usadas para criar bots, "deep fakes" e outras maneiras de mimetizar o comportamento humano estão ficando mais baratas, mais fáceis de usar e mais potentes.
+Para piorar, em entrevista à revista Nature, o professor Hany Farid, da Universidade de Dartmouth, especialista no desenvolvimento de técnicas para detectar vídeos falsos, afirma que o campo de perícia forense digital está atrasado em relação ao vídeo.
+Na tentativa de combater as fake news e outras formas de desinformação, nos últimos cinco anos surgiram inúmeras agências de verificação de fatos. Embora esses serviços tenham imensa relevância, não se sabe se as pessoas os utilizam em escala considerável ou se confiam neles.
+De qualquer forma, sozinhas, as agências de "fact-checking" não resolvem as questões que emergem em ambientes altamente polarizados, quando a credibilidade da informação é questionada sempre que não esteja alinhada a determinada crença ideológica.
+Por sua vez, soluções legislativas que procuram entregar para o Judiciário a tarefa de punir notícias falsas, arbitrando o que é falso ou verdadeiro, têm como consequência atacar diretamente a liberdade de expressão e de informação —e correm o risco de serem ineficazes.
+O caminho que nos parece mais promissor é a abordagem multidimensional que foi proposta em recente relatório de um grupo de especialistas apontados pela Comissão Europeia. Essa proposta enfatiza as seguintes linhas de atuação:
+i) obter maior transparência na divulgação de notícias online, inclusive em relação a como os dados pessoais são usados para direcionar informações aos leitores;
+ii) promover competências em educação para a mídia ("media literacy"), a fim de auxiliar usuários a navegar num mundo com superabundância de informação;
+iii) desenvolver instrumentos e ferramentas para que jornalistas, aliados a cidadãos, possam combater a desinformação;
+iv) impulsionar a diversidade e a sustentabilidade dos meios de comunicação;
+v) estimular estudos continuados sobre o impacto da desordem informacional, tratando deles com análises científicas.
+O fenômeno das fake news, em síntese, é uma oportunidade de discutir o que deu errado com a internet. Nos anos 1990 e 2000, a rede era vista como força de democratização e melhoria das condições planetárias, mas nesta década começa a prevalecer a percepção dos aspectos distópicos.
+Sem perceber, estamos neste momento discutindo um novo equilíbrio para o ecossistema da informação. Para isso, é necessário um debate público constante e a participação ativa e consequente de todos os atores da sociedade.
+A única forma de combater a pervasividade da desordem informacional será pela construção de um novo contrato social para a informação.
+1 Danilo Doneda participou da elaboração de uma dessas propostas. Quando trabalhou no Ministério da Justiça (2011-15), atuou como gestor de redação do PL 5.276/2016, de autoria do Executivo e em tramitação na Câmara. 2. Virgilio Almeida é coautor do estudo, publicado nos EUA: “Everything I Disagree With is #FakeNews”: Correlating Political Polarization and Spread of Misinformation” (tudo de que discordo é #fakenews: correlação entre polarização política e difusão de desinformação).
+Virgilio Almeida , 67, é professor associado da Universidade Harvard. Foi professor titular do Departamento de Ciência da Computação da UFMG.
+Danilo Doneda , 47, doutor em direito civil pela Uerj, é professor no Instituto de Direito Público (IDP) e especialista em privacidade e proteção de dados.
+Ronaldo Lemos , 42, é advogado, diretor do Instituto de Tecnologia e Sociedade do Rio (ITS Rio), professor da Universidade de Columbia e colunista da Folha .
+Zé Otavio , 34, é ilustrador.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "86b8c7eed9fa15bdeda536441d6decd7ddabc38a8a80c88f2cfcaaf5bcbbd12a",
+    "mention_text": "Michelle Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14d0d17761d97be70689e366fdb1bd14bf72aa6db1997fc3f01c0792649ab0ce",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cbf1b5af0277a9b47256acd5dd65a1f7a74811cc0e4ce3b8e10b29f81b847940",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "476ccde9a0da02d7731b4870b86e40293944dd777f9b11fe9233dc628bd8b63f",
+    "mention_text": "Claire Wardle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1633ae62bb83c5d624f6bb198b300fc8e5b9954da8fd9d289d50d7431ee01921",
+    "mention_text": "Hossein Derakhshan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab0e723d7eb8b0eded86dd2e24de892ce34118688802e54c9c39f12d45f988be",
+    "mention_text": "Conselho da Europa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a060ed7796bf81318bf73acfdafeb89512594e7f3b1217e167ac079421c53892",
+    "mention_text": "Danielle Citron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f85586981fff664f40d7624b367e39348b32002654a318f11b7e597e8635025a",
+    "mention_text": "Universidade de Maryland",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7bc38705d042ea922d3a026bbf8709e04131d96b909ebfda9612e9d6ba7245ad",
+    "mention_text": "Robert Chesney",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07c05f325c8f190e9d895ae30b9b5e2d2e1401681a0710bbf084ef6ab5b0a2cb",
+    "mention_text": "Universidade do Texas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e65bdc914bffc4df4668e078197d04d5f86a8f21b31bf14a42b29d202667ecd",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "535c870fcc2a714b1301546248e09fdeb24a52b10fc069214c332af566b2ebee",
+    "mention_text": "Bélgica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27cf921206841be68c623756105227b2c8158a1f57354b5e270f28eacb8680ca",
+    "mention_text": "Parlamento flamengo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a61bdeea4f1f55e7fb2853d8d525b4dd231edd3971ec0798da670e85efdb8aa8",
+    "mention_text": "Conselho da Europa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e69ed731069c61350edb92eb3f03279223c3a180ec4375454f0cbda0b3a0b3d",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0596490df306cac4d0b20fd2c26ae9a9bb7f85d0026dc370dd55a24af4b6fb0d",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19f9592aed2290a3b40095a88214aae8ba3a0b63c2ac72e5f87472d4d9fb6193",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7b903e79713972cf3714d69d5096e4968ba4fe43e5d2129a75b9af3ce1b2f54",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71ea9cdc48341e5433fc52be13fc116b425bcea8ca577ac3e2412790560f9838",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e20c036bed4e0c058bbb090c39791b0815e07f47f779f7a27879578a349082e",
+    "mention_text": "Deb Roy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1255b119bfce1051a934e90a63b9c1a5c89ac9985c180079b36ed86ceea71e06",
+    "mention_text": "Massachusetts Institute of Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2b87c8fa294293025f1dc6e3025c3373d3cbae5a47b0bc8158f430cf8755797",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bbea364172f30c3b3632bea489a69ecadf983690e3c982bfce4db8fbf986af7",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5137197a5c1dd795bca9d91d2e37ce02a61d80190ea2232dd588ac7c17e3a61",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ac428b68d17e1bb16d219171da7346f63c4fac992cb421f4be530f608566010",
+    "mention_text": "Roy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06c8eccef6ab2c1acc23daba2dbf778d5a9df0d5a0f05651dd25171aa42c9b67",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd2b256bc47f8e7eb7b72fd2466f02e9371f21b0c265eb46017ba46be0ce979f",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c9b869b654caba1fd98f045eaffcec88ef164ada9b897fca9d3e1d0a30f9956",
+    "mention_text": "Zeynep Tufekci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "726ed872eda11ab65a9ea1f5c672eec88a5c7f8d4b2b649c5e161afacf966545",
+    "mention_text": "Universidade da Carolina do Norte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "260f5e81f289c2ea7f71312508101317ffefdfcf8e6ae36288e2bce0704143ec",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12ac166c9d7eca69365ffe6c5ebafa55ef4510a8ee16d3e1aa25ebadd3f6f8d5",
+    "mention_text": "Google/YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3910aa81024a1e1f1e1372a7185d84a3f3585002c92df541d5c7d632d2ada879",
+    "mention_text": "Tufekci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6761de182027b12e9a4fdab3b760deae9fa0230b9e89ab7fdb7ef8f50b32a80f",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43a0e55a676c974aacac922c22471625bd663b910a160d4f7961248bfd5deb5c",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b1224038c4a6351015085c839e4ac225dbe391b73e3344b125b952f92d1bfcf",
+    "mention_text": "James Bridle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "722f48fa8869ba6ce639be624e3124cc0ced664965050923a9788188f2875c64",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b88df98225018470a7d1b8b75fb284dc4ee427a83643de12cfe68ddea968c462",
+    "mention_text": "Michal Kosinski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9767cf8090a637a300b8ce27409f0f67830209ad5ef6a3c944d3d2c1f9bc660a",
+    "mention_text": "Universidade de Cambridge",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3356aca1453303bfe47cf5baa498005a21ae55c916343581e856ba4947fc154d",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "077878f190f271f825263cd01d8fea214646c87d3b674370b01a5d3f79470d0f",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "279845b950976f73fdad0f13031fd46c4edc1960b0a45867682ed208bcd49df7",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8b4deb6694e32d5fab856342206c51f2d8a74f1581c016fb2fa816824565da29",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a91a9c686528555463271861906809a999f2b00e2ea273605750955d4d9b4da5",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "567f4d27bbb77e6589b91ff7631dc199ea37db81853adf078e14157c97dd3138",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48aa1cc8269b132f7d283790da92df1db659a6624837fb90966505ccaf050c36",
+    "mention_text": "Senado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e68e834a8e62e1c6590af8a547fa3ca6f733ec7e00df159cc44af732f6a48ac",
+    "mention_text": "James Ball",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2461fd290e5bc850cefc2aa9b3c3a86fea64af519aa94380ee438780c84375f3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78f33de37cff2d6ee6316de61f0a73c43a057126cd95a90f9f0967c0613de34f",
+    "mention_text": "UFMG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a274206b359b794d56edb844d6837837a8c7fecbe90c145ae46f4f4890740c2b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93b690c3ddf604af97cb61e9e0ee5b01a877db1d9ee98ce456deb52b90134818",
+    "mention_text": "Telegram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "70d4a8cfd4d73369c6314d7f7ebc689b95d5a7f4c532128df60c2201a5c2e59b",
+    "mention_text": "Signal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2223848f61b73b43f6b84162925d0d0b26557c5ba571ebd0efe89cbbe900a1bc",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45d3d290b4f85be2dd87eae1e874d4f953051e48fb04b623f4ca0ab9b2371c9d",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43574d17815c3635c32e3215be48d0a04675b00e4dcabf26aab1ca0d8ae82bed",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a2e3bf5b9988d93c9bb95741e2ee06675b945be2208e70fd8341eeebb2ec3e7",
+    "mention_text": "Hany Farid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e490b6b13f4ccf28d906142b47734b1036f6d004e69be7c0d63229935855443",
+    "mention_text": "Universidade de Dartmouth",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9733557b5f2272f55277f4183f0b7db000cc1bb4d980979e4ab7f556b8f74214",
+    "mention_text": "Comissão Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4abd046470e433c360c5300c4375497abb86479a568bbf90919006a554d3f2ad",
+    "mention_text": "Danilo Doneda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81eccb4c0e64a1ae84f3f9d06a773d288fbf88288c4da8415e05625f318e0869",
+    "mention_text": "Ministério da Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72f2b766a6143baadb54a6501e56f5a29353bbf344eb9f2bdd4e858b674d1a93",
+    "mention_text": "Executivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5be9c7c4aafb8365dabdbb22640af49170b6b949595482b0e62d509218af0048",
+    "mention_text": "Câmara",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "109773d75863282b30da7b1b2a6661d3e0aabb254874b3153a87bc1fbb9a7ee7",
+    "mention_text": "Virgilio Almeida",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9edd0fe5dac5f02dcc0d45a656002e8374e816f653069c6ecdd09c2257e4ee13",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3091d461e1c1f9191305e1271b5679fbde419d837b820cd2acd7a8e5e57f1acb",
+    "mention_text": "Virgilio Almeida",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "503dd770d1e502349fe0bbaf9cc6e4d99e36f50199f83e3cea62415d11d8b743",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17e19e278416c0a3e755730e2cde525d53e9469efab77528a8658777765b3eb9",
+    "mention_text": "Departamento de Ciência da Computação da UFMG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5705cc93a897b7d666e6976fcd0b128b8ee1638b14dc977ffa3edcc5c2b65a18",
+    "mention_text": "Danilo Doneda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd4b7b2a9a61bca95b53e9679b04662cd24ea81bcfd4008d0dd006a11b8dee71",
+    "mention_text": "Uerj",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2bd607d313eafabc39f42a00804704e05991077df9f1d2e92407e061492eb2c0",
+    "mention_text": "Instituto de Direito Público (IDP)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9840bff956daa806ce05f8fd73c3c896516e4b7d8d7b368bd5cbd93083cb414b",
+    "mention_text": "Ronaldo Lemos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84c4766cac89b27fe3636e2a6745a83d9469cdf40b3738637ddbb99d44411673",
+    "mention_text": "Instituto de Tecnologia e Sociedade do Rio (ITS Rio)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1d6867d4f8cf8c6e95c2512a11c624b48f4846759c568b6320d8693bd3ebb6a",
+    "mention_text": "Universidade de Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d27c99bba4c9121eaa014712a83528581eee1185ebff06168f3d266967ea879a",
+    "mention_text": "Zé Otavio",
+    "categoria": "PESSOA"
+  }
+]

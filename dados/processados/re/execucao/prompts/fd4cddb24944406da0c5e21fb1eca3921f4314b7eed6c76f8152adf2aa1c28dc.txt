@@ -1,0 +1,416 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6f2bf93b57e6539a3afa14aa59dec967adad638f725ce437fa3acac09d05391b
+
+TEXTO:
+ARTHUR CLARKE
+
+MICHAEL O'DELL
+DO "PLANET SYNDICATION"
+Arthur C. Clarke afirma que seu novo livro apresenta um cenário detalhado e cientificamente digno de crédito da vida humana daqui a 1004 anos.
+Desde que ele colocou o pingo no último "i" de seu livro, numa suíte de luxo do hotel Galle Face (seu favorito), em Sri Lanka, todos, desde cientistas internautas até motoristas de táxi de Colombo, capital de seu país adotivo, vêm comentando o assunto.
+"Vamos tirar férias na Lua", prevê o taxista que me leva à casa de Clarke, no elegante bairro de Barnes Place. "Quando uma mente grande como a dele resolve falar, nós a ouvimos. Esse homem conhece o futuro."
+O trabalho do brilhante e excêntrico britânico é lendário no Sri Lanka. Em Colombo, onde reside há 30 anos, apesar da guerra civil que marca o país e a cidade, o escritor de ficção científica, de 80 anos, é quase uma instituição.
+Hoje em dia, Clarke raramente fala em público, depois de sofrer os efeitos de uma pneumonia recente e de uma síndrome pós-poliomelite bastante rara.
+Mas as circunstâncias em que se deu nosso encontro dissiparam toda a mística do visionário recluso.
+"Estou muito doente, com pneumonia", disse-me Clarke pelo telefone, com a voz fraca. "Mas você precisa dar uma chegadinha até aqui. Não me importune com perguntas sobre o que vai acontecer em 3001, porque não vou lhe contar. Mas posso falar sobre o Sri Lanka, porque adoro este país."
+Vim vê-lo para tentar arrancar alguma informação sobre "3001", mas, antes mesmo de qualquer tentativa, Clarke já está no interfone, pedindo à sua secretária que traga um exemplar do livro.
+"'3001' é um livro otimista", diz ele, chiando e obviamente sentindo dor. "Meu negócio não é fazer previsões. Estou interessado em fazer extrapolações a partir do que já sabemos hoje.
+"A maior parte das coisas que sugiro estão firmemente embasadas na ciência, senão não fariam sentido, e isso seria enganar o leitor. Qualquer pessoa pode imaginar coisas fantásticas, mas é preciso poder fornecer uma base científica sólida.
+"Haverá mini-robôs, ou micrôs, para faxinar as casas. Haverá viagens a uma cidade espacial e um suprimento infinito de energia.
+"Tudo isso é muito legal para os laboratórios. Mas o que é deprimente é a falta de desenvolvimento humano. Os humanos em 3001 não terão se desenvolvido nem um pouco em termos espirituais, exceto aqueles que tiverem inteligência artificial implantada."
+Existe uma ironia estranha nas elocubrações mentais que Clarke faz em sua casa em Colombo. Ele navega a Internet, olha as estrelas com um telescópio montado sobre o telhado da casa, lê publicações científicas como se fossem gibis.
+Na parede de seu escritório, o papa João Paulo 2º o cumprimenta e aceita um exemplar autografado de "Ascent into Orbit". Em outra foto, quase se pode sentir a princesa de Gales desejando que tivesse prestado mais atenção às aulas de ciência na escola, enquanto o bom doutor lhe explica alguns detalhes da mecânica quântica.
+No entanto, a poucos metros de sua porta, vivem algumas das pessoas mais pobres do mundo. Se ele pudesse encontrar uma solução para esse problema...
+"O que é deprimente é que, essencialmente, os seres humanos continuam iguais. A ciência avançou tremendamente no decorrer de minha vida, mas, infelizmente, só o Ocidente parece ter se beneficiado com esses avanços."
+Mas Clarke ainda poderá enfrentar problemas por causa de suas perspectivas religiosas. "Posso acabar sendo o próximo Salman Rushdie", diz ele, dando uma risada travessa, enquanto anuncia que apresentou as grandes religiões do mundo em ordem descendente de repulsividade.
+Diplomaticamente, para quem vive num país em que 70% da população é budista, ele considera o budismo a menos perniciosa das filosofias.
+"Não é exatamente uma religião, porque os budistas não adoram deuses. É uma filosofia e um estilo de vida e é menos perniciosa do que pode parecer. Acho que o islamismo é a segunda menos nociva das religiões, e o cristianismo, a pior delas.
+"Basta olhar tudo o que foi feito em seu nome nos últimos dois milênios para perceber que o cristianismo poderia ter sido a melhor das religiões, mas nunca foi praticado direito. Porém, todas as religiões são ruins porque elas opõem obstáculos à busca por Deus."
+Um dos contemporâneos de Clarke foi L. Ron Hubbard, o escritor norte-americano de ficção científica que fundou a Igreja da Cientologia.
+Trata-se de um grupo religioso bastante popular entre as grandes estrelas de Hollywood, mas cujos seguidores foram proibidos de ocupar cargos públicos na Alemanha, gerando protestos.
+Eu me perguntava o que Clarke pensava de Hubbard, cientista que um dia parou de imaginar como seria o futuro para criar uma religião que afirma haver codificado o significado da vida no aqui e agora.
+Mais do que os poetas, os xamãs deste século têm sido seus cientistas. Quer se trate da bomba atômica, do microchip ou do sonho (pesadelo) da autoria genética, todos nós estamos nas mãos dos acadêmicos do laboratório.
+Clarke demonstra que aprecia ser considerado uma das grandes cabeças pensantes do século, mas a menção do nome de Hubbard traz à tona tudo que existe de errado na ciência.
+"Você precisa entender que L. Ron Hubbard era um psicopata maníaco. Basta ler o que seu filho escreveu a seu respeito e ver como os cientologistas perseguem os dissidentes nos tribunais.
+"Hubbard era um grande escritor popular na área da ficção científica. Nunca o conheci pessoalmente. Conheço muitas pessoas que já foram cientologistas, mas nunca ouvi ninguém falar algo de bom a seu respeito."
+Clarke trabalha dez horas por dia em seu "tecnobunker", que contém computadores, modems, impressoras e outros equipamentos.
+Mas ele possui sensibilidade, capaz de colocar a tecnologia em perspectiva. Por exemplo, foi totalmente contra a exploração do espaço para fins militares. E, em nível mais pessoal, rejeitou as intervenções tecnológicas que o poderiam fazer voltar à vida para ver o ano 3001 em carne e osso.
+Ele foi procurado por uma empresa norte-americana de criogenia, especializada em congelar cadáveres em nitrogênio, a 196° C negativos, na esperança de que possam ser reavivados dentro de cem ou, quem sabe, mil anos, quando a ciência tiver avançado o suficiente para poder curar males como o câncer e as doenças cardíacas.
+A empresa, que já tem clientes no Reino Unido, vai preservar o corpo inteiro ou apenas a cabeça decepada, já que a ciência molecular futura será capaz de reconstruir um organismo vivo a partir de um único filão de DNA (ou, pelo menos, é isso que se supõe).
+Os defensores da criogenia adorariam que um autor famoso de ficção científica, como Clarke, encomendasse seus serviços. Mas ele não se interessou.
+Não é que duvide da possibilidade de a "suspensão criogênica" funcionar -ele apenas não quer voltar a viver no futuro e ser obrigado a fazer novos amigos, menos ainda se forem verdes, com orelhas pontudas.
+"As pessoas não entendem por que rejeitei a proposta. Afinal, eu pareço aprovar a tecnologia do futuro. Mas tenho uma rejeição emocional básica à idéia de voltar a viver daqui a mil anos. Eu ficaria tão só, sem amigos! Muitas coisas propostas pela ciência fazem sentido no papel e na teoria, mas somos animais emocionais e, para mim, a criogenia não parece ser uma boa coisa."
+Clarke tem certeza de que vai sobreviver até o ano 2001 e se irrita ao lembrar que o número de 15 de janeiro da "Flight International" falou de sua suposta morte em dezembro passado. "Estou furioso!", diz ele. "Afinal, não recebi uma única coroa de flores!"
+Tradução Clara Allain
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f85faf7c39a5a4a2af45ffae024a050a07faeca4aaffa0d8fe25a6e4982115d5",
+    "mention_text": "ARTHUR CLARKE",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "89478162d4957a3840c9d0e4f2df3f0a543bc021785642555c8e2693fc4d7990",
+    "mention_text": "MICHAEL O'DELL",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d57bad6eee58c994541d64ed5115ad4e27516c83ad5cde5d09b28f3026db535",
+    "mention_text": "PLANET SYNDICATION",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "594fb2fbb712454f73519942234509957af8b4e6aa9e99b882c223d8d1cbb946",
+    "mention_text": "Arthur C. Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ae52ff3a073830958f455404546671238de76a085a597bdec2fe98c94c09c83",
+    "mention_text": "Galle Face",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "469b33f87d9bdb06fa2a4f022f546bc58a84f71f5cf7a85ff0af6d9481095451",
+    "mention_text": "Sri Lanka",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cfd0929420e27bab95390eb26d81dec15734a82c8cc17a15d080139e8bdad3ed",
+    "mention_text": "Colombo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b84eb8f2839298509cb3bfadf010f250103b5d7fa2583e13e926087892fb3515",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f12dae40713149b3d14bad3f66837c3328b1c0f6f90b1c3526ec637138308dd",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f7f6188265bf28d1847ed5a5d6379e7733a1fb7fc930a75fb62cf308a21951e",
+    "mention_text": "Barnes Place",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf6b8dfa8df5b42ca32e8f46561f580613c0fbff8791ac265db942867a434a4f",
+    "mention_text": "Sri Lanka",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "14ebdaa6cd206bfc4975634598775431bae567c54953c21686b8edf6a9c879ba",
+    "mention_text": "Colombo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3024c244e227aaac56203eec10e07717157a895fc85c752ebb5c1158ce7032c",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0822faf4e77814fa534feb22b54bbcfb1527fbbdbf70ea229e345ee65b808543",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71a90053dbb30c95d8201a69ea8a86e561c4454b0db27597d896f599efd6eecc",
+    "mention_text": "Sri Lanka",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "915f37be9835093fbdf668547e72a6b502bdca676175e2e51ff3277b6348ad58",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64dba39d579983ec26d7fafdb2b69aa182e3c0a6987d7e1c361d6763ccecb755",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0a2db1cd8f6a08775fba73bd028567ffaaed4c2eb3fc84c305441a767c4fea9",
+    "mention_text": "Colombo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "520c34c3a202fa6428819b7fcac8f899ad2d6fd0684c444c1f42b01cec4a919a",
+    "mention_text": "João Paulo 2º",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5a3d72f3e6fc5e64fabc853952465bc3c4e4f2adb7cea65c7566f56d2ce1f6c",
+    "mention_text": "princesa de Gales",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1ce9e28e5962caa40b75e43e3290e89d0004ffde07241a36f6e13b1f9a0d051c",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ad0466e07393966cf3b59aadf75fd5b4f5f3e9cb3780a8e18bf783caa41611ea",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "306dc8a0965397dff65463aaa9c9b8c39d3614c981652b0dd424bba3ec49496b",
+    "mention_text": "Salman Rushdie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e7c687e62bb415f12d8e512f80263c6559b1e538e5f9b0c86475bcb0209ddb9",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca436a65cd112eea7ecced0779bbd864723662fb02a3a547f1bc25b40db89086",
+    "mention_text": "L. Ron Hubbard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37f45537c6cc64e2608e0ddf123a47dfa74c041fdec3a9c6c76ec60bb838fa45",
+    "mention_text": "Igreja da Cientologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79d8b6577defb6a298310ca18d371c7a8234d1fea20ac3f96c2b0df3796837d9",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea2098f64711d2591178ecb34fa9c58fa28716bff966c1023b6cab9fdb3c8fd7",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f66b07de5c6704f4484e589085e1c9391527fa786db35925226d8749245c9b25",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f5d5a2308ec7ac6187b37d68539a4f73233aa2c30c4c43caa6592b3ae385f640",
+    "mention_text": "Hubbard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3428b311dac2e97ff661c314428673d0c07121b0c152fb67ad0483d3662de44b",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "257a3b2e1569c25206d6be9e2e111f91ba72c28b2481080a259cada83cdfd635",
+    "mention_text": "Hubbard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7ce737b0a209abfa3bdf921cac3bd9e7a229d40c6cdd224348ccac7b1fb5c4c",
+    "mention_text": "L. Ron Hubbard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7e5b88ab3efcf0a347a2ecd6465e6e92ec4a9cef518cb08c2dd38d58cb6a36f",
+    "mention_text": "Hubbard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b2c2c41c23a530cb905b2c6aca411364c64f43194530aff68d4b66f6e924f11",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9c448bdc6788d09431c7b54708895a716d0940b5cdc620e5d2f1b9afdd7e677",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "91a9f534216a49079207b425b8eb140f35e253037b306d3d3a9a355b770621e5",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97b9a4211c4d24dd906aa9dcf63c933b3a043a81facf62e5f33b4e1dc865c62b",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3265d6bf5092ce6a6ddb8d65346f1ac4a3340c93edb57a280b37fbdf09f4b4c3",
+    "mention_text": "Clara Allain",
+    "categoria": "PESSOA"
+  }
+]

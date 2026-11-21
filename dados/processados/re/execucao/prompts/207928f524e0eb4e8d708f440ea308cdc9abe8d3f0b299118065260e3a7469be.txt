@@ -1,0 +1,284 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 29d2d15e9bbabcc946f6ac4deda33ed7a1afd610bd3fd6d4043ce45826299f9a
+
+TEXTO:
+Redes de varejo apostam em big data para atrair consumidores
+
+Está em alta no Brasil o uso de big data analytics –coleta e análise de grandes volumes de dados por meio de inteligência artificial. Segundo estudo de 2017 da consultoria Frost & Sullivan, o país é líder na América Latina no uso de big data, com uma fatia de 46,8% do mercado. Entre os segmentos que mais investem nessa ferramenta está o varejo.
+No Brasil, um dos usuários de big data é o Grupo GPA, dono do Pão de Açúcar e do Extra. A rede utiliza hoje o grande volume de dados dos clientes dos seus dois programas de fidelidade, que somam 14 milhões de pessoas, para personalizar ofertas com base no perfil de compra do consumidor.
+Foram seis meses desenvolvendo um aplicativo gratuito, por meio do qual o cliente fidelizado visualiza ofertas, renovadas a cada quinzena. É só escolher no celular e se identificar no caixa que a promoção é ativada.
+Os descontos, por sua vez, são cadastrados e bancados pelos fornecedores das redes, que têm acesso aos perfis de consumo e, por meio do big data, planejam as ofertas direcionadas. "Temos a base de dados mais detalhada do varejo, além de ser um volume histórico. Só o programa de fidelidade do Pão de Açúcar está em operação há 18 anos", diz Renato Camargo, gerente de fidelidade do Grupo GPA.
+Na prática, os algoritmos interpretam o comportamento de consumo. Se a pessoa começa a comprar fraldas descartáveis, por exemplo, o sistema interpreta que há um recém-nascido na família. "Os fornecedores são informados e passam a oferecer para aquele cliente outros produtos desse universo, como papinhas e leites especiais", explica Camargo.
+Apenas os perfis de compra dos clientes são compartilhados, e não dados pessoais, diz ele. O programa foi lançado em junho de 2017 e no primeiro mês atingiu 1 milhão de downloads. De lá para cá, 4 milhões de usuários baixaram o aplicativo e a quantidade de vendas identificadas no caixa aumentou de 69% para 80% na rede Pão de Açúcar e de 37% para 44% no Extra.
+A renovação constante das ofertas aumenta também o fluxo de pessoas nas lojas: o cliente que ia ao mercado duas vezes ao mês passou a fazer visitas semanais.
+A rede de supermercados Pague Menos, que atua no interior de São Paulo, também vislumbrou o potencial dos programas de desconto com base em análise de big data. Em 2017, investiu R$ 3,9 milhões em tecnologia da informação, que incluiu o desenvolvimento de um programa de personalização de ofertas com base nas informações dos clientes fidelizados. Neste trimestre, deve ser lançado ainda um aplicativo para centralizar a comunicação com o cliente.
+US$ 1,16 BILHÃO é a receita gerada pelo mercado de big data no Brasil
+46,8% é a fatia brasileira no setor de big data na América Latina
+Fonte: Frost & Sullivan
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "bb75203abbe1b905622575efab076244ee5ed88d113102f3ed78ab4e1cee66bf",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff84dd0165ea897e05c5992326192fd224d2a1f4af8b173d284e7bf4b6b0a337",
+    "mention_text": "Frost & Sullivan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fa4978e150df1d7d2aec598b9bdd5d706323a5403ecaeb56c746446af1d10b4",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04a06816c1e902aaa6e816efc160d20e8c829c87cec41241dd6d3e834ab53e78",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "21aee66a6c5dbeaa10ecd96142f7e1fab1b962dcf7ff19f167717b3b557d9753",
+    "mention_text": "Grupo GPA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f76ed889e7d1bb5d30aa781d9328f89afd9ea879fc053ca3358b86e8a16af97",
+    "mention_text": "Pão de Açúcar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "544df113f203cac3adb32f4a4ba27ab519b492fdb9c157ce41b0a841ed7c3cee",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2d09b471d4e0bd13ed330a350c74d6445074d9a7cef4204cf4c70c3265afa53",
+    "mention_text": "Pão de Açúcar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebfe641782c2640aa924c46989ece2fbff6a8f3054decc55c0a1ab564e4153fb",
+    "mention_text": "Renato Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8da622a1a693ce08b313414f5cc3a7f3b46094c6565ba80aa498e53ecba69880",
+    "mention_text": "Grupo GPA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e4580f288acb27e6a911d7b3dc71c5fd80efbae3ff1ed1718749641fd49ce3c",
+    "mention_text": "Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ac661ea3a4fb35b92734524be69c722fa04e961d18fc864864367924a17ec6b",
+    "mention_text": "Pão de Açúcar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc0bfff8c64e8199432bdbb07678f54af77dbec4b149def072f77c7aa35d16bf",
+    "mention_text": "Extra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6c77c8ab0aaf10c202289c851efc840c727a5f7f11f50b0f882989bca600ec5",
+    "mention_text": "Pague Menos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3cdbe8c40a09f3b63760656979bc091834c314c365c9b0e3dfce953a1479c08d",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "105ccea06e40f82bf96b10739d44fdab11c63fa7b1e3dacf9b7faf190f1ea02c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a3c1fde9e83abf64ee7e2c2051675cef957bfa0d2ac3c6ac00d92cd5c89104c",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7c22a1714f9f638a87fd2c68bd4470073cd9af1db9cb8d01d9b59f9dadcbd29c",
+    "mention_text": "Frost & Sullivan",
+    "categoria": "ORGANIZACAO"
+  }
+]

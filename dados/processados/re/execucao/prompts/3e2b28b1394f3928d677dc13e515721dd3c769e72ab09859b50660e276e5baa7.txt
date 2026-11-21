@@ -1,0 +1,451 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9b28b41cb37c4cc391ca1ea31d47cb8ff6282eb9db85d22c2abecfa9d59f1dea
+
+TEXTO:
+110 sites selecionados
+
+GISELE RIBEIRO
+FREE-LANCE PARA A FOLHA
+Cinema, rádio e TV e profissões são os temas principais deste mês. Há sites para todos os gostos -dos dedicados a filmes trash até os que falam sobre clássicos como "Casablanca". Mas, se preferir, você pode começar a viagem pelo século passado, quando o físico francês Henri Chréthien criou o cinemascópio e os irmãos Lumiére inventaram o cinema (montion picture). Os clássicos das décadas de 30, 40 e 50 mereeram destaqu especial, assim como os principais estúdios de Holywood. Profissões traz endereços sobre arquitetura, agronomia, direito, economia, engenharia e jornalismo.
+Association Française de Recherche sur l'Histoire du Cinéma - traz história e links sobre filmes franceses: www.sosi.cnrs.fr/AFRHC/AFRHC.html A Movie Mania Page - traz novidades sobre filmes e um banco de dados: www.clicked.com/moviemania British Kinematograph Society - reúne amadores e profissionais do cinema para troca de idéias: www.zynet.com.uk/smiles/ bksts/
+Cinebooks Movie Guide Online - banco de dados com informações sobre vários filmes: www.tvguide.com/movies/database/
+Cinemabrazil - base de dados contendo informações sobre o cinema brasileiro, bate-papo e indicação para outros sites: www.cinemabrazil.com
+Cinemania - comentários sobre filmes, perfil de cineastas e atores e notícias sobre a indústria do cinema: cinemania.msn.com
+Cyber Cinema - mostra como computadores e inteligência artificial são usados nos filmes: 128.174.194.59/cybercinema
+Eu Vi Primeiro - revista on line brasileira sobre cinema: www.10minutos.com.br/viprimo/
+Film.com - discute e critica o cinema contemporâneo e divulga festivais: www.film.com
+Films - Research and Resources - conta a história do cinema, desde 1825: www.gen.umn.edu/facultystaff/yahnke/film/index.htm
+Glistening Flicks - dedicado à produção de filmes e multimídia para a Internet: membrane. com/video.html
+Hollywood Center Studios - guia da história de Hollywood, com informações divididas por década: www.hollywoodcenter. com/80.a.html
+Hollywood Online - traz centenas de fotos, trilhas sonoras e trailers de filmes, além de informações: www.hollywood.com Hollywood Reporter - fofocas sobre hollywood: www.hollywoodreporter.com/
+Movie Central - fonte de informações on line sobre cinema: www.cybermad.com/movies Movie Chat - site sobre cinema com sala de bate-papo: www. europa.com/jefflee/CHAT/ wwwchat.shtml
+Movies.com - fofocas e informações sobre filmes recentes e atores: www.movies.com
+MovieLink - traz informações sobre os lançamentos de cada temporada: www.movielink.com
+Movie Madness Website - base de dados sobre filmes já produzidos: www.moviemadness.com/cgi-bin/mmax/index.htlm
+Movie-Rama - críticas, opiniões, quebra-cabeças, trívias e conexão para outros sites de cinema: www.movierama.com
+MovieReel - traz informações sobre games baseados em filmes e um jogo on line para encontrar falhas de produção: www.softlinc.com/moviereel
+Movie Snapshot - traz sinopses e fotos de filmes, biografia, entrevista com celebridades e jogos: www.moviesnapshot.com
+Movieweb - traz notas de lançamento de vários filmes e outras informações: movieweb.com
+MovieWorld - traz conexão para sites de filmes e estrelas e informação sobre a indústria do cinema: www.movieworld.com
+Mr. Cranky - crítico de cinema dá prêmio para os filmes mais odiados da temporada e escolhe os melhores: internet-plaza.net/zone/mrcranky/
+Mr. Showbiz: Star Bios - traz fofocas sobre celebridades de Hollywood: www.mrshowbiz.com/ starbios Mudpuppy's Certified Links: www.coil.com/mudpuppy/hot.htm
+Oz Films - An Australian Cinema Site - traz estudo sobre o cinema australiano: kali.murdoch.edu.au/cntinuum/film/OzFilm.html
+Screen Source - guia de filmes para cinema e TV, com gráficos, endereços de celebridades e conexão para outros endereços na rede: www.amug.org/ scrnsrc/ Shades of Light - espécie de guia para quem trabalha com orçamento apertado: www.ern.estallen. com/shadesofligth/
+Temple of Terror - informações sobre filmes trash de terror, com filmografia, videografia básica e conexão para outros sites macabros: www.geocities. com/Hollywood/Hills/3454/
+The Internet Stars - traz informações sobre astros e estrelas: www.internet-stars.com/
+Windows on Italy - Cultural Tidbits - traz a história do cinema italiano: www.imi.cnr.it/WOI/tidbits/cinema.html
+CLÁSSICOS
+Alfred Hitchcock - The Master os Suspense - traz biografia, filmografia e outras histórias sobre o diretor: nextdch.mty.itesm.mx/plopezg/Kaplan/Hitchcock.html
+All Movie Guide - base de dados com informações completas sobre filmes de todas as nacionalidades: allmovie.com/amg/movieRoot.html/
+Charles Chaplin - traz filmografia de Chaplin: www.american.edu/academic.depts/soc/run.html Tribute to Humphrey Bogart: www.electriciti.com/mikerose/bogart/bogart.html
+Forgotten Actresses - traz informações sobre o que aconteceu com atrizes que marcaram época e hoje estão esquecidas: 129.187.121.1/eichenbe/actress.htm Greatest Films - um dos mais completos bancos de dados sobre o cinema, com destaque para os filmes clássicos, noir e mudos: www.filmsite.org
+Hard Boiled - All Things Film Noir - recria a atmosfera de mistério e fascínio dos filmes noir: www.voicenet.com/bmurray/ 2019: Off-World (Blade Runner Page) - traz muita informação sobre o cult "Blade Runner": kzsu.stanford.edu/uwi/br/ off-world.html
+The American Movie Classics (AMC) Studios Backlot - traz informações sobre filmes clássicos: www.amctv.com/amchome.html
+The Duke - traz biografia e filmografia de John Wayne, com cenas de filmes: www.i-cafe.net/donc
+The Film 100 - lista os cem melhores filmes do século, com destaque para os das décadas de 40 e 50: www.film100. com/xlist.shtml
+The Lizabeth Scott HomePage - além de informações sobre a atriz Lizabeth Scott, traz conexão para páginas dedicadas a outras divas do cinema na décadas de 40 e 50: users.deltanet.com/users/dstickne/homepage.htm
+The Marx Brother's Page - traz os filmes e a história dos irmãos Marx: users.aol.com/hackinbush/private/marx.html
+The Palace - "o site do cinema clássico": www.scruz.net/ mmills/palace
+The Ultimate Cary Grant Pages: www.wintermute.co.uk/users/pingu/cgrant.htm
+Turner Classic Movies Web Site - traz informações sobre filmes clássicos, com fotos e trechos do script: TCM.turner.com/tcmhome.shtml
+Screwball Comedy - apesar de poucas fotos, traz muita informação sobre a história das comédias feitas no período pós-depressão: www.moderntimes.com/screwball/
+ESTÚDIOS
+Disney - faz uma viagem pela produção de filmes e desenhos animados dos estúdios Disney: www.disney.com
+Elstree Studios - traz notícias sobre o que está sendo filmado no Reino Unido e informações para cineastas e curiosos: www.elstree.com.uk
+FX Factory - mostra como são criados os efeitos especiais, por meio de maquiagem, miniaturas e animações: members. gnn.com/lucifer/index.htm
+Industrial Magic & Light - traz informações sobre efeitos especiais: www.iml.com MaxPen Industry - estúdio independente de Miami que permite capturar trailers de filmes: www.cs.miami.edu/gef/ maxpen.html
+MGM Studios - traz informações sobre os filmes em páginas montadas com recursos de realidade virtual: www.mgmua.com
+October Films - dedicado à distribuição e à produção de filmes independentes, traz sala de bate-papo e serviço de notícias por e-mail: www.octoberfilms.com Paramount Studios - mostra os bastidores da produção de filmes e seriados de TV: www2.paramount.com
+Sony Pictures - mostra os estúdios da Sony e traz um guia de filmes: www.Spe.sony.com/Pictures/index.html SIR Film Studios - mostra como montar cenários: www.sirfilms.com
+Trimark Pictures - dividido em seis partes e abusando do bom humor, traz informações sobre as últimas produções cinematográficas e entrevistas com executivos de Hollywood: www.trimarkpictures.com
+Troma Studios - site interativo que faz uma sátira da própria Troma, produtora de filmes trash; internautas podem ajudar a escrever os roteiros: www.troma.com 20th Century Fox - traz detalhes dos filmes produzidos pelos estúdios Fox, com fotos e trailers: www. fox.com
+United International Pictures - mostra os filmes que serão lançados na Europa e no resto do mundo e traz conexão para outros sites: www.uip.com
+Universal Studios - traz as últimas notícias sobre filmes que estão sendo produzidos, com destaque para bastidores e videoclipes: www.mca.com
+Warner Movies - traz os bastidores das produções da Warner, uma seção de notícias e conexão para outros sites: www.movies.warnerbros. com
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "008023c8a8b332b9aee47306087ee1067c4dd74b2a00cd26df7bed9ba6813dc6",
+    "mention_text": "GISELE RIBEIRO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0bd7185076e22e97ccbc6e442ef16f6e17a1dc55549671695ea7fa8f4837018",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96583984a793c94db08e90c55a1bec21a5f6ec045691d00c9dce206e11965a4c",
+    "mention_text": "Henri Chréthien",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31d601617b5ac57e860bdfc96fc63f2c44d70fed5f4dc601f0bdb64c0c8ff64c",
+    "mention_text": "Lumiére",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b8d5111b113d71b36c94c595007fcb81050e462b146169792e9d063b0a1a320",
+    "mention_text": "Holywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c67fedfd497e6207ec007caa0fa4ff03af08656ea4561d30f4437cd3b77d0943",
+    "mention_text": "Association Française de Recherche sur l'Histoire du Cinéma",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5efe3f396b78693826f49ae9a073fcfcb617ba03e039b0098ae8fa337e3afa43",
+    "mention_text": "British Kinematograph Society",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f13ffd9f0edf1548ade0fbebf0d6ce6ab35b3075b59bf3c82f0fc8151074299",
+    "mention_text": "Hollywood Center Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ab9534053af292f629d62817031d317f44144b1dde62b747ecb360a37d63d022",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54d7514dcdc8e30ed2c157ef230055a5f50f27281fb6d6f771ec795b0514a5f7",
+    "mention_text": "hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0ddd86abd91fc480e4ca1e9db64177611c4b8059b2678214e8e10cb624c0fa07",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76e3d877378e4b6088154f4fca578893d3ce9629fcae40e90ad6195cf18c0da1",
+    "mention_text": "Alfred Hitchcock",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff52c9b8dfb98a95b897666d8c2e10ea62a6ea20828cf410a2dbdacbe8e8ac29",
+    "mention_text": "Charles Chaplin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "273a1558b633a85ecbe761754fd4c82f77c7bdc07678f66436ca4f38d1fdd99b",
+    "mention_text": "Chaplin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72c93dde580a36eeaa56fa3053e775d6a857ae48347dc4f0e7803e1fe0510373",
+    "mention_text": "Humphrey Bogart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f4da18b2cc91bcadc512eea1d971bceaedc09d4ae27ebcb19667b95f23bd0cd",
+    "mention_text": "John Wayne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9766111e9309147f2128f891c6d1bf89c0881eda4133c695c0a4a0535ec3a3f",
+    "mention_text": "Lizabeth Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "029314ebb87751d6f391a29819b8007ea4b95283d1690aec59f780650359f448",
+    "mention_text": "irmãos Marx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34c92d88cc958fe3299a925edd0c504abd13520eebefdc283cbc905dc3b04f00",
+    "mention_text": "TCM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "276a0235c39a1956a1d27483c14428ac58dc29410fc10c3f4d4c7e678bcf22b4",
+    "mention_text": "Disney",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebf21e0766ec5796991665a93662c639f8feb059f5c65bcaa7015ac3667c7ebd",
+    "mention_text": "Disney",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "12f090367d121250d78327fb5bb1e6b498a31a0b9aa32086cd199a0eab3542ab",
+    "mention_text": "Elstree Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56af4310b914b3c00631e6b88247b58a6ddebe97291842fe18ac0ea1f9cb4253",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5a0dd9877658804963d8e143fb4e0a6e1c2bf59932ab493c96c5460b1b476b6",
+    "mention_text": "Industrial Magic & Light",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb8e156e19fee18ffa4a893219f8dda10d83b70cf4ec6561d8dd41ab8ce3689e",
+    "mention_text": "MaxPen Industry",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aac28331c9ed0a98591a45d715c2cc4ba988bc5b6eaacf98f0920c023c52225c",
+    "mention_text": "Miami",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "209c258ba305e65e64e2daadf3cc190e31b16b26c790592733b020fc88ec43a1",
+    "mention_text": "MGM Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d07c9eb9c9cd95d8605a416865b4760ed5648d79d56132ac132545cfac3581d8",
+    "mention_text": "October Films",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a166821a3183169b088bf596962c66496e971c05caa61b06ada2f251fce435f",
+    "mention_text": "Paramount Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f55d5335691b0ed1ab65c9d1bc9a4d3cb34cf6778d701d12150022b477f8cd8c",
+    "mention_text": "Sony Pictures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7639a71f4430faf07aa60b1f0ddcba3c1c62bcd891d331706af6c83d226ec21e",
+    "mention_text": "Sony",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c291beb08c2a8a153836bfc960f3058b6d1dabbc77f3ae4de609ffd69423371",
+    "mention_text": "SIR Film Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5382af082f17ed7847deaa27444ffc0a937fcf1d1fb82d86d84ee345520830dc",
+    "mention_text": "Trimark Pictures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abf748a63a3bcd7610b847fc9fbe8b92197e4e59edeb343de5122bcfaa0a2fa5",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f8b169137b9de9fae5f77acfde73c86ce35884cc1d85ba32b644ee4cd763777",
+    "mention_text": "Troma Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eba606454acd13a72d697478a461955eaae3cc828c4f68b0ac46e2fc6ccf17e5",
+    "mention_text": "Troma",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "792520091dc9e78ad3003346d9bc44f281b24cca0afa17cf2f8a1ca798eebea9",
+    "mention_text": "20th Century Fox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8d64c573acc1685a27c1a33d156806bd8fa4f1c67dcc6d6182cfba9f1a79672",
+    "mention_text": "Fox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6a412a09b7a4c170d7daf3d995f1145fe31642fbac0ed0d549c0c03a2497f7f",
+    "mention_text": "United International Pictures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99478bbf2d39bc2c9d238c877b933651b2a83b8d79c721dcf98e50732a4b51ff",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9ab99c8f4a38bdeeceb2bfbb8d6e883b7e16232c275aaf45bd9c3718c408fa6",
+    "mention_text": "Universal Studios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5afc22489cd2bbc7ca2cb11fc5f79bf6de9c3706b6714f9739db06090b6e6984",
+    "mention_text": "Warner",
+    "categoria": "ORGANIZACAO"
+  }
+]

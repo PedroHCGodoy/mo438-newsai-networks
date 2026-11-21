@@ -1,0 +1,374 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b5d5da11e33ad065df7f68911be0ff18628b068a373f0c191d6851174f0c0774
+
+TEXTO:
+Recompensa da ciência não é rápida, mas é vital, afirma Nobel de física
+
+O grafeno, um material de carbono criado em 2004 como curiosidade meramente experimental, ganhou a cena da física cinco anos depois e rendeu um prêmio Nobel a seus descobridores.
+Um deles, o físico russo Konstantin Novoselov, 45, diz que ainda se surpreende com as propriedades que esse composto (essencialmente uma folha de carbono com um átomo de espessura) revela para a eletrônica e outras aplicações. No Brasil, o presidente Jair Bolsonaro (PSL) é um dos entusiastas do material .
+De passagem por São Paulo para uma palestra no Insper, o cientista falou sobre como sua trajetória ilustra a dinâmica da recompensa que o investimento em ciência traz.
+Novoselov, que aterrissou no país para falar a uma comunidade científica impactada pelos cortes de verbas no setor, diz que o esforço para financiamento da ciência é um trabalho que não pode parar.
+“Os cientistas precisam explicar às pessoas que a ciência não traz benefícios no curto prazo, mas no longo prazo ela é absolutamente vital”, diz. Recentemente, Novoselov trocou a Universidade de Manchester, instituição onde conquistou o Nobel, pela Universidade Nacional de Singapura, país de pouca tradição em ciência, mas que vem ampliando o orçamento na área.
+À Folha , ele falou das mudanças na carreira e das perspectivas para o grafeno, material já presente em produtos que vão desde raquetes de tênis a circuitos eletrônicos.
+O sr. aterrissou no Brasil em uma semana em que foram anunciados mais cortes de verbas para a ciência , num ano em que o orçamento do setor já estava curto. O que os cientistas podem fazer para lidar com uma situação de subfinanciamento ?
+Acredito ser dever de todos os cientistas educar o público sobre a importância da ciência e da tecnologia. É muito difícil entender o panorama complexo da relação entre ciência e tecnologia. Os cientistas precisam explicar às pessoas que muitas vezes a ciência não traz benefícios no curto prazo, mas no longo prazo ela é vital.
+E, acredite, não é só no Brasil que esse trabalho de educação dos políticos é necessário. No Reino Unido, nos EUA, na Rússia e em Singapura estamos sempre fazendo esse trabalho com os políticos, explicando que os investimentos em ciência são extremamente importantes. Esse é um problema global.
+Que aplicações do grafeno estão mais próximas de afetar a vida das pessoas?
+O grafeno é um material muito versátil. Uma coisa boa é que hoje não precisamos falar apenas de possíveis aplicações futuras. O grafeno gradualmente entra em produtos do dia a dia e aplicações comerciais. A cada ano vemos cada vez mais produtos usando grafeno, incluindo de grandes empresas.
+O futuro já é realidade. Sou um cientista e não tenho controle sobre essas coisas, mas é legal ver como propriedades físicas básicas estão sendo convertidas em aplicações. Há muitas aplicações em materiais compostos funcionais, para gerenciamento térmico, algumas empresas estão desenvolvendo aplicações de grafeno em eletrônica e optoeletrônica. Isso já é realidade.
+Qual aplicação mais tem se beneficiado do grafeno?
+O controle térmico. A Huawei usa grafeno com essa finalidade [dissipar calor] nos telefones celulares que produz, por exemplo. É uma aplicação com muito impacto, pois o grafeno é o único material com condutividade térmica acima de mil watts por metro kelvin [unidade de medida para transmissão de calor].
+Mas isso é o que vale para agora —a tecnologia que você pode comprar numa loja. Espero ver muitas outras aplicações impactadas no futuro.
+O sr. imaginava que esse material teria tantas aplicações quando o isolou pela primeira vez?
+Não. Quando começamos a trabalhar nos primeiros experimentos, já tínhamos grafeno presente em amostras de grafite fino, mas eu tinha certeza de que [obter] o grafeno em si era impossível.
+Então produzimos o grafeno, e eu também tinha certeza que ele nunca ganharia uma aplicação. Era um bom sistema para estudar ciência, só isso. É muito bom ver que provaram que eu estava errado e que o material está presente em produtos do dia a dia.
+O grafeno ainda custa a entrar em algumas aplicações comerciais por causa do custo. É o caso do uso desse material nos motores dos carros a hidrogênio —as células a combustível—  da síntese do hidrogênio molecular para alimentá-los. Há esperança de o custo cair?
+Certamente ele tem um custo, mas a questão é se ele entrega os benefícios para aprimorar a funcionalidade desses novos produtos. Se o aprimoramento das funcionalidades é superior ao aumento do custo, então seu uso faz sentido.
+Se o custo sobe 20%, por exemplo, e o desempenho melhora 100%, o uso faz sentido. Nesse caso, seria o caso de dizer que o grafeno é mais barato.
+Células a combustível não são nada baratas, então, me surpreende ouvir que o grafeno seja caro. Para os catalisadores, diferentes tipos de material são usados, mas creio que a tecnologia já esteja madura. O preço não é proibitivo.
+Qual é o foco de sua pesquisa agora?
+Depois de estudar o grafeno, nós nos demos conta de que ele não está sozinho. Existem muitos outros materiais bidimensionais, mas que não são baseados em carbono, e sim em outros elementos.
+Tem-se feito grande esforço para estudar esses materiais também. O que podemos fazer agora com tantos materiais bidimensionais é empilhá-los de volta numa forma tridimensional e criar no laboratório novos materiais que não existem na natureza. É isso que estou fazendo agora.
+Como pretende desenvolvê-los?
+Estamos tentando criar uma abordagem geral para fabricar materiais inteligentes, formulando os princípios básicos de como operar.
+Qual foi o tema de sua palestra em São Paulo?
+Foi apenas uma palestra geral, revendo o progresso da pesquisa com o grafeno. Tentei apresentar alguns resultados novos e mostrar um pouco a direção que a ciência dos materiais bidimensionais está tomando, fazendo o mesmo para a ciência dos materiais de modo geral.
+O sr. acabou de deixar um posto na Universidade de Manchester, no Reino Unido, e se mudou para a Universidade Nacional de Singapura. O que leva um ganhador do Nobel a abandonar um país de longa tradição em ciência e se estabelecer em uma nação emergente?
+É bom para as pessoas mudar de vez em quando. Isso refresca a nossa perspectiva e nos permite tomar novos rumos a partir do zero. É isso que espero fazer em Singapura. Não quero ser o mágico que só sabe fazer um truque e trabalhar toda a minha vida com grafeno. Eu gostaria de me desconectar do grafeno o máximo possível e trabalhar com outros materiais.
+O sr. foi um dos cientistas mais jovens a ganhar o Nobel . Como sua vida mudou desde 2010 ?
+Ganhar o Nobel é algo que muda sua vida o tanto quanto você quiser que ela mude. Ao menos até certo ponto, a mudança é uma escolha. Eu tentei fazer que não mudasse tanto. Claro que é impossível alegar que nada tenha mudado: as pessoas começam a ouvir você e é claro que surgem mais oportunidades, mas é importante usá-las de maneira inteligente.
+O sr. visitou algum centro de pesquisa de grafeno aqui no Brasil? Não desta vez, mas tenho muitos ex-colaboradores e ex-orientandos trabalhando no Brasil. Conheço-os bem e colaboro com eles às vezes.
+No caso dos cientistas e dos países que ainda não estão avançados na pesquisa do grafeno e de materiais similares: dá tempo de embarcar? Da perspectiva pessoal de um cientista, você sempre tem que trabalhar com o tema que mais o deixa entusiasmado. Existem muitas e muitas lacunas de conhecimento, em muitas áreas da ciência.
+Ainda estamos vendo descobertas e experimentos fantásticos sendo feitos com grafeno, mesmo ele já tendo sido estudado maciçamente nos últimos 15 anos. Então, se você é um estudante entusiasmado com o grafeno, eu diria simplesmente: “vá em frente”.
+Mas responder da perspectiva de um país é diferente. No caso do Brasil, existe um núcleo de expertise no grafeno com vários cientistas na área. Já o aparato tecnológico ainda está se desenvolvendo, mas o mesmo vale para outros países. Não dá para dizer que tenham perdido esse bonde.
+Na década de 1990, ensaiava-se uma rejeição da nanotecnologia, temendo que materiais nessa escala tivessem comportamento imprevisível e fossem nocivo aos humanos. Esse medo se dissipou? O público abraçou a nanotecnologia?
+A nanotecnologia é uma realidade. É preciso conviver com ela, é inevitável. As armas nucleares são um problema, mas não se pode ignorá-las.
+Como eram materiais desconhecidos, poderiam adquirir comportamentos diferentes dos convencionais. Então, temos que entendê-los bem, pode haver implicações que nos levem a ter moderação.
+É importante não ser relapso e fazer estudos cuidadosos, mas é crucial entender que eles estão aqui e que vão ser usados queiramos ou não.
+O sr. costumava se dedicar à arte, além da ciência. Tem tido tempo para isso?
+Pintar é meu hobby. Ao sair do Brasil vou passar alguns dias na Rússia e participarei de uma exposição do meu trabalho que usa inteligência artificial, algumas pinturas e peças de videoarte, feitas em colaboração com artistas de Moscou.
+Também pinto sozinho, mas infelizmente não tenho tido tempo. Faço umas dez pinturas por ano e me orgulho.
+É bastante.
+Sim. Mas é arte chinesa, que leva pouco tempo para ser produzida.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "993613e38fea0e8263cdcf46f9a63d1146b485ef43e8a6d95690f9d3454d9830",
+    "mention_text": "Konstantin Novoselov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65a0b09748eb6773b358495be19240a267299725dbb959cdf1c025a93d33caf4",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74bf543775487dedb8faf2639d53c39bc28afaafc04c8844da64d531e94aad57",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2f7d8967348546bbfc2b02944ad94ddcd4b76bfe4a400bd489836a514dc5237",
+    "mention_text": "PSL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "530fa8e87a52c8448992383124301c99876c8c15fcb79e6c6b57d9fc300613d2",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c904e082b8b71081827e8bae85690750578eb6c4ca9318dc8951623c3818ad8e",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "918f9073c141ec3825780ed58d68383a720b403fe7963d107f543d357b4a6c0e",
+    "mention_text": "Novoselov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b910fb19a62e4286f4069ecc4578c62c60f12ebcd743b1a1410e7bad621f2722",
+    "mention_text": "Novoselov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce5c107716db0194a7cd9d13192fecf0b4a805db726f00c29483703537ff5d5a",
+    "mention_text": "Universidade de Manchester",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99e0648a989d6595852e6039e477d8368c9a1a4fdd7fc9c3b4b1aa5a64086df1",
+    "mention_text": "Universidade Nacional de Singapura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bf8d26e5c32379428a128180bb175976a0d79045fd4ca06f3cc43527238f9a9",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21105ff8644c04a73e410bdafd8b8cb59755711f2133816b287c461476dedee7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c7b80ff001cad964536e118bc63c69a2e6f82abd7687755e6976b7916d7b7ce6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "79d30c819b63246288ba79b14bc1f10d13d8ca3793fdea1bfdeb1abde6632e59",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0bbac91e68012556c5e15a985982338d054343a37bd454705a06a51daf26969",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "236977e6c6ed8b88395e0b90154cbd52ca53fdac8a555500163bda6dfa44e116",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4eea921c88161491a90a4acc57ac0fdc0ab9f0916cc81b1f0861600878b01b64",
+    "mention_text": "Singapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c5d3f06b813b979a4a2f383fdbd815f8f2d1730d6f3e88a66d899024baaac36d",
+    "mention_text": "Huawei",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "595148e0e0ff89ae0c1f49b48137a4ae3386a34675eb3382a49422c2b7dfbf96",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ed4bc13bdef9d40b2553888732c254111aafabd1f7a121c19b352ed41d0b99b",
+    "mention_text": "Universidade de Manchester",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f76288086ce6aa002ae617e5d9a5a44784f3be4f5c65f443e891380b7ef9fbbd",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03be9ccab9055905c3a6143c5bcbf6d0f842737a3cd70242025149270e299be1",
+    "mention_text": "Singapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf513af7122530b25b1b6e94d0c7021729e407ff54912cd72cc4c82bf72af8fb",
+    "mention_text": "Singapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "24b20a0a5b668ccf84892d901d53e6fa5e5ac09c833873f31dbdb07412563f9c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "338cb27635f533bbafa0df4c1789017e65e180c7058dd66d45ffdae635bc6c33",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d33b4d8cd4940b1775af2c5e39312c485735e1d947922cdca3d51f69877fa3be",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a10c09405b45fe58f2dda43bba3ddc4d6bd8f1a04e81dd035faf98a44a67e050",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b7dcd89fee7200255a155283740b2b9f8b08a4f441887230dc3e0075e0ea6d22",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1ab951f6663a03293de8522fc776f2660e65887afb08c90977e15d73e1b0f007",
+    "mention_text": "Moscou",
+    "categoria": "LOCAL"
+  }
+]

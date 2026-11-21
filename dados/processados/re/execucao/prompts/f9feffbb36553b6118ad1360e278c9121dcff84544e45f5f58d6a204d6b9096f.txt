@@ -1,0 +1,363 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b88fddd2d40bc6fbb000c66b903d288c547c95de397c89659dcbfc651c7b5639
+
+TEXTO:
+Robôs farão tudo melhor; precisamos trabalhar com eles, diz professor de Harvard
+
+A competição entre seres humanos e robôs por empregos qualificados e bem remunerados já começou e deverá se acirrar no futuro. Como as máquinas serão mais produtivas em todas as profissões, a renda do trabalho deverá crescer muito lentamente e corre o risco até de encolher.
+O prognóstico é feito pelo economista Richard Freeman, de Universidade Harvard, que pesquisa os efeitos do avanço da inteligência artificial sobre economia, educação e mercado de trabalho.
+"Se você for pleitear um aumento de salário, precisa entender que haverá robôs cada vez melhores e cada vez mais baratos, que poderão substituí-lo", disse Freeman às repórteres da Folha, ao citar que hoje máquinas já escrevem notas jornalísticas.
+Seu próprio emprego de acadêmico, diz, está sob ameaça. "Nós vamos trabalhar com as máquinas. Elas vão fazer partes muito importantes do trabalho e nós faremos algo com elas."
+Um dos maiores riscos dessa tendência será o provável o efeito negativo da inteligência artificial sobre a distribuição de renda. Os donos dos robôs terão ganhos de rendimento muito maiores do que os trabalhadores, diz ele.
+Em viagem ao Brasil para seminários organizados pela Academia Brasileira de Ciências e pelo Centro de Políticas Públicas do Insper, o professor afirma que a única forma de amenizar esse problema é que a propriedade das máquinas seja compartilhada com os trabalhadores -por exemplo, dando a eles ações das empresas.
+*
+Folha - A preocupação de que os robôs vão substituir os humanos é legítima?
+Richard Freeman - A preocupação não é que os humanos não vão ter mais trabalho, mas que perderão empregos bons e bem pagos. Médicos, por exemplo. Já se pode fazer hoje muita coisa com inteligência artificial que dispensa os médicos.
+As máquinas conseguem ver coisas que os médicos muitas vezes não conseguem e conseguem chegar a uma conclusão melhor. Isso está todos os dias nas revistas científicas. Todo dia há uma coisa nova sobre o que as máquinas podem fazer.
+Muito mais do que nós, leigos, podemos imaginar?
+Sim. Nos EUA a gente acaba lendo mais sobre o que [presidente Donald] Trump disse ontem ou o resultado do basquete. Mas há uma ciência extremamente avançada fazendo coisas que nem imaginamos, muita gente em muitos países.
+Isso acumula e cresce, em todos os campos: inteligência artificial, robotização, outras tecnologias. Uma conferência de inteligência artificial que recebia 23 estudos há cinco anos hoje recebe 1.000. Nos negócios também há grande impacto.
+Mas, por outro lado, há muito pouca pesquisa sobre qual é o impacto das máquinas sobre o trabalho, não? Uma das poucas, de [Daron] Acemoglu e [Pascual] Restrepo , mostra um efeito não tão grande.
+Sim, muitos países hoje estão com pleno emprego. Mas a renda está crescendo cada vez mais devagar. O sinal desse efeito das máquinas não será no emprego, mas nos salários: não vamos mais conseguir o tipo de emprego que paga bem. A forma como fazemos as coisas está mudando e não há como impedir isso.
+Como esse crescimento mais lento da renda se relaciona com a robotização?
+Há muito pouca evidência. Mas o trabalho de Acemoglu mostra que, nas cidades em que os robôs entraram, os salários caíram. Algumas das suas funções hoje já são desempenhadas por jornalistas robôs. Os robôs por enquanto só escrevem matérias de esporte, este time ganhou daquele por tanto a tanto, nada muito complexo, mas a inteligência artificial os fará cada vez melhores. Portanto, se você for pleitear um aumento de salário, precisa entender que haverá robôs cada vez melhores e cada vez mais baratos, que poderão substituí-lo.
+É possível evitar isso? Ou devemos esquecer dos empregos e comprar alguns robôs?
+Sim, podemos comprar os robôs [risos]. Isso será ótimo.
+É inclusive sua recomendação, não?
+Sim. Antigamente nos Estados Unidos você tinha seu próprio negócio, o negócio da família, ou era um artesão e tinha seu equipamento. Vamos pensar em um encanador. Ele entende de canos, tem habilidades mecânicas. Se ele tiver um robô com conhecimento específico, poderá fazer um trabalho melhor.
+Mas a fatia da renda do trabalho será cada vez menor?
+Não dá para saber se continuará caindo, mas ela se reduziu em termos globais, em vários países. E com as vendas crescentes de robôs e inteligência artificial, ninguém espera que a renda do trabalhador suba muito. Economistas são ruins em prever coisas, é sempre possível que aconteça. Mas acho difícil.
+Em outros períodos também houve preocupação sobre o impacto da tecnologia. [O economista] Robert Gordon, por exemplo, diz que os ganhos de produtividade eram maiores antes.
+Seria bom poder dizer que os dados dele estão errados, mas não estão. Se olhar as estatísticas, você pode dizer que elas não mostram grandes mudanças. Ou você pode dizer: há tantas máquinas e tecnologia nova, robôs, inteligência artificial, capazes de fazer coisas inconcebíveis anos atrás... é impossível que não haja mudanças.
+Eu aposto que em dez anos veremos que Gordon estava prestando atenção só naqueles dados e não no que está acontecendo.
+Quem olha apenas os dados estatísticos de produtividade está cego. No caso do celular, por exemplo, todo mundo os usa e eles representam cerca de 1% do PIB dos EUA. Você não vê a produtividade, mas há todo um mundo de serviço em volta disso. Eles estão se espalhando por todas as áreas, todos os negócios. O que as pessoas estão fazendo no celular? É tempo produtivo ou só lazer?
+É preciso novas medidas de produtividade e crescimento?
+Seria bom ter metodologia para isso. O problema é que os departamentos de estatística são muito conservadores, só vão mudar a metodologia quando estiverem muito convencidos de que existem formas melhores de medir.
+Os robôs substituirão trabalhos intelectuais, como o seu?
+Sim. [risos] Grande parte dele. Nós vamos trabalhar com as máquinas. Elas vão fazer partes muito importantes do trabalho e nós faremos algo com elas.
+Máquinas podem fazer trabalhos pesados, ir a lugares perigosos, como apagar incêndios. Os bombeiros poderiam estar no controle, tendo certeza de que os robôs estão indo ao lugar certo. Cada trabalho humano os robôs serão capazes de fazer. Pode levar mais tempo. Provavelmente não será para nós, mas para nossos filhos.
+O que as novas gerações podem fazer para se preparar?
+É muito importante que as crianças aprendam linguagem de computador. Não precisam virar programadores, mas entender o que as máquinas são capazes de fazer, para poder funcionar nesse novo mundo.
+A Universidade de Illinois passou a unir todas as carreiras com ciências da computação há dois anos. Se você estuda jornalismo, também estuda ciência da computação, e tem uma dupla graduação, para ter uma ideia do que é preciso na sua área em relação à tecnologia. Para estar preparado e se ajustar.
+O que pode acontecer com os que não terão mais trabalho?
+Esse é um dos maiores perigos. Ter uma massa de desempregados e uma pequena elite que controla as máquinas e possui as tecnologias.
+O que vai acontecer com os motoristas, já que os carros autônomos estarão por todo lado e serão mais seguros? Provavelmente teremos carros elétricos, menos poluição, as pessoas serão mais saudáveis, mas há 2 milhões ou 3 milhões de pessoas que vivem como motoristas nos EUA.
+O sr. fala do risco de concentração de renda nas mãos de quem detém a tecnologia. Há quem defenda tributar os robôs e implantar políticas sociais, mas o sr. defende que a propriedade das máquinas seja compartilhada com os trabalhadores. Por quê?
+Porque a posse compartilhada aumenta a produtividade, enquanto a tributação a reduz. Se as pessoas tiverem ações das companhias em que trabalham, há incentivo para que elas contribuam mais para o sucesso da empresa. Tributar, pelo contrário, vai elevar o preço dos robôs.
+Mas seria mais fácil garantir que todos paguem. Se uma companhia não adotar a posse compartilhada, ela não pode ter vantagem sobre as outras, anulando todo o esquema?
+Nos EUA, empresas com ao menos 10% das ações nas mãos dos trabalhadores recebem incentivos fiscais. Porque se entende que é uma boa forma de capitalismo.
+A maneira que o governo encontrou para incentivar foi usar sua política tributária para encorajar uma forma de empresa capitalista.
+E quando se pensa em robôs e assemelhados, uma das vantagens de ter posse compartilhada é que, numa crise, há menor propensão a cortar a equipe, já que os empregados são também sócios. Eles se esforçarão mais para que a empresa desempenhe bem.
+*
+RAIO-X
+Richard Barry Freeman
+Idade: 74
+Formação: doutorado em economia pela Universidade Harvard
+Atividades: * professor de economia de Harvard * co-diretor do Programa de Trabalho da Escola de Direito de Harvard * pesquisador sênior de mercado de trabalho na London School of Economics * diretor do programa de formação em engenharia e ciência do NBER (escritório nacional de pesquisa econômica dos EUA)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "95312e75055acf8cc295cb692dae9aab49e9263ee4c5b832facfe5721cba7412",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "079137761e5534c4a3ee13909a030c985e7ca6da67ae4af943582a5b267ace24",
+    "mention_text": "Richard Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acdfee76bafd20686cf3b89ee77f499d713add625d53d25b84cb342cdeab5f14",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "784b58558985df45c412781797f14ea3cc7f71bfd71694392948d7701aba3d9b",
+    "mention_text": "Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2674d8279cbd94ed70b51ccbe43bb5d71d1e710990021fe57a95ae058abe26a",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9dcd001f57a9c68fb65a45f89f841a47f99bfbd3fd2fae737f3d708a7699492d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ce088067824e63515939653f6657952be08b9f0c93ee1d7f859d5942c194fb8d",
+    "mention_text": "Academia Brasileira de Ciências",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "668ab23811fd484bb36956744a2b32c30e21466fb14397094914c67bfbec2e3b",
+    "mention_text": "Centro de Políticas Públicas do Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8dfd68af1012903d2da85b73a4a647ad77f61d90b5dc049e6aaa8fd6fb7a1ba",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8620600b229446053109eae6ee965afe3cd255b112cd17e753dec6f876e9ce6b",
+    "mention_text": "Richard Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88e4b88234d65694721a42e3006b3bec53d9cf070063dd07a0e5906bb01b5944",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2ef69d9296df09055b230ef8f01617c4d8d2175641eeacc346a3891c2e84edc",
+    "mention_text": "Acemoglu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c38e484ec990839f535e3a643a193259725282c7c66238f934ef5c5e46579a60",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69d45c4ed02d5f4e773845b47099d452e7977598e6e307eeae180b710b1c2920",
+    "mention_text": "Robert Gordon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6903511dffa1b17d470f18eed5cfc239d5d83def4dc5df2feb16f36e4695d9bb",
+    "mention_text": "Gordon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "589d4b61c8e5b3b0d41e4e34ed06430134caee4dcff9afe22095423daf112e13",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8dd98e08f6bff339c81379bbef8898c2c3b7e985cf063ff7c481d3f148bd3a3",
+    "mention_text": "Universidade de Illinois",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e166f8b5a874f496360778e3cd3e74ff1ef382a657ab3a846866ba3a9efa56f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e317b61e3bb1a7ebfceaad6062087dfda6c20089a94c96d7ccc63a280a3eb015",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb60f15a4a1f8e5c5ef8eea62a619c77c1b7c87bc9e47297a2cb253051d7d9cb",
+    "mention_text": "Richard Barry Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8f326d3fb88c7af1e668215a77bedf6c15ce8418a57b7239c428aad21c2e7ab",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f5b8c801a3a59d01ed8be2706c7432ff5b3cc616e3ebc2f78be7e586b31e8e0",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3fce4f45e4c15e8e6933e86125c66de3c559180f9ad577cd3ded3ca6fbb6ae6a",
+    "mention_text": "Programa de Trabalho da Escola de Direito de Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8507e8005a00786ef52c81f4c447c3239de2e5432cc631f28259da15a9d4933",
+    "mention_text": "London School of Economics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f6157722d23cb3883812abe230da9c0cf5f9ef0bc436b2f258e424752947755",
+    "mention_text": "NBER",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d740f7720ece12efbbb07646d6f2ffd4c8d0eb96f5805e410f8e5587a68fda3a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  }
+]

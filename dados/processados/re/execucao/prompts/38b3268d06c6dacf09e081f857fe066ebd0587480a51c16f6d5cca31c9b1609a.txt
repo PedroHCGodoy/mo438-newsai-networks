@@ -1,0 +1,367 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0615fb3090ac41b32b89acf9becd2b683146a7ab13b3f89993a8b63a4082e37a
+
+TEXTO:
+Físicos acham partículas que viajam mais rápido que a luz<br>
+
+Cientistas italianos colocam teoria de Einstein em dúvida
+Por DENNIS OVERBYE
+"E ainda é igual a MC2?", pergunta a banda irlandesa Corrigan Brothers em sua nova música, "Einstein and the Neutrinos", abordando uma afirmação que chocou o mundo científico em setembro.
+Um grupo de físicos da Itália relatou ter observado que partículas subatômicas chamadas neutrinos viajaram mais rápido que a velocidade da luz -o limite cósmico de velocidade declarado em 1905 por Albert Einstein na sua teoria da relatividade especial.
+Se a pesquisa estiver correta -e os especialistas não têm certeza-, os teóricos de Einstein talvez tenham algumas explicações a prestar.
+Entre outras coisas, um neutrino ou qualquer coisa que viaje mais rapidamente do que a luz poderia viajar no tempo.
+Físicos do laboratório subterrâneo de Gran Sasso, na Itália, noticiaram em 23 de setembro que um feixe de neutrinos havia "vencido" por 60 nanossegundos a corrida contra um raio de luz metafórico no percurso de 735 km entre o laboratório e a sede do Cern (Centro Europeu de Pesquisa Nuclear).
+A resposta dos físicos do Cern e do mundo todo foi de que provavelmente ocorrera um erro na experiência.
+"Parece algo grande demais para ser verdade", disse Álvaro de Rujala, teórico do Cern.
+Os físicos têm enchido o arXiv.org, arquivo de física na internet, com estudos que buscam desbancar a experiência.
+Em um deles, Gian Giudice, do Cern, Sergei Sibiriakov, do Instituto de Pesquisa Nuclear de Moscou, e Alessandro Strumia, da Universidade de Pisa (Itália), argumentaram que, conforme o Modelo Padrão -a teoria hoje dominante na física das partículas -, se os neutrinos são capazes de violar a relatividade, os elétrons também deveriam ser, e isso não foi observado.
+Ronald van Elburg, pesquisador de inteligência artificial na Universidade de Groningen, na Holanda, sugeriu que o grupo não fez as correções relativísticas para a movimentação dos satélites de GPS (sistema de posicionamento global por satélites) usados para cronometrar os feixes de neutrinos.
+O erro resultante, afirmou ele, equivalia a 64 nanossegundos, quase exatamente a discrepância que os pesquisadores estavam tentando explicar.
+Esse estudo foi mencionado em um blog de física da revista "Technology Review" e divulgado pelo MIT (Instituto de Tecnologia de Massachusetts) e por sites noticiosos como sendo uma possível explicação para o mistério.
+Longe de invalidar a relatividade de Einstein, escreveu a "Technology Review", "a medição mais rápida que a luz acabará sendo mais uma confirmação" da teoria.
+Mas os cientistas do Gran Sasso  dizem que a análise de Van Elburg reflete uma confusão sobre o funcionamento do GPS.
+"Você entende bem que não podemos responder a alguém que alega ter uma explicação para os nossos resultados em termos de erros triviais", disse Antonio Ereditato, porta-voz do grupo.
+Van Elburg disse que uma versão melhorada do seu artigo está sendo revisto por colegas.
+John Learned, físico especialista em neutrinos na Universidade do Havaí, escreveu em um e-mail que, embora os resultados possam não ser corretos, "eles ainda não são facilmente descartáveis".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4c8e7fcaf6b784794a4c01f7ba53ee3c35e7a9471de1a4641b1d157d2eea9386",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5782c0b711ec42ae7c8eba12956589eca1ed73e0a47ffa7b609048b129cf1fec",
+    "mention_text": "DENNIS OVERBYE",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9506eecf2b690e6a7c306c1f1db8e7b03f2bacca525b144e722aaab35832b392",
+    "mention_text": "Corrigan Brothers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0187a95d9abee85fb420c70b51edc37db3b3e306ed11bf35e596a30b078614e2",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e5fea7bae6d49e28e6595b59fbcefbb29741faa68ace59883422b38425831cf9",
+    "mention_text": "Albert Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cece9ead474c13d6a59e34c6d4843ddc7e987f1a46939ac464f9e1e3e316a6b",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed5811d9d5880e245f2be89116905afa2b163188aa56e334c6d4ea932973615c",
+    "mention_text": "Gran Sasso",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf0e807de2263e0d0bb5a1f74890d5246a93865e978924d66e12e73dac8a8d5c",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fafb30e1c701d44da28a2e7b8f1f3371a6963a13ca4cbc8d89e01d6a8b80e1b5",
+    "mention_text": "Cern",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "baad96a0891783d123bf5693a85b99b9432084a4d068b0c649542e3e9fc8986e",
+    "mention_text": "Centro Europeu de Pesquisa Nuclear",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fe51709b89962d8d987def385988989c29577c6ad30e341508eba18961b5973",
+    "mention_text": "Cern",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "622123c2ef9ac0609afec811198fe6c2de8e42dd18fff227c730644e6c0d450f",
+    "mention_text": "Álvaro de Rujala",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "873994f17e26f25cceaabdb1dc9e1f31478dcfdf3527809dd255a49fca4def55",
+    "mention_text": "Cern",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2074b10a9a6e5e242e9344741b256d3a55ccb7587843e923266a9e3349f1943f",
+    "mention_text": "arXiv.org",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d890d76bfbf6a48057ded6868ff2830b855e544f0fcc212a8fa403ae8c3e83f",
+    "mention_text": "Gian Giudice",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8d4d352e81de95a086bb03535181b53f318fff8e80558e1443ea49148385be1",
+    "mention_text": "Cern",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4a0956499391da68ce2ebd91ba4a709181efc1280336e0ba5afcf6da907daa5",
+    "mention_text": "Sergei Sibiriakov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1cc116e3a55b764fa357adedeb78c461a3eaa90a0dfe75fd04aa12d0cdd8ea43",
+    "mention_text": "Instituto de Pesquisa Nuclear de Moscou",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ee2e2499fd5f0c65dc3e89f5e16031a314822d168f7fa312d7494db51ca4762",
+    "mention_text": "Alessandro Strumia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e17e314253e78c7c3bbcc4b910b96736ef46f58cc99a5674ad1e9d8d325f5fb",
+    "mention_text": "Universidade de Pisa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52d36b5903bd2d3efd6668364d1fccb7c469deb24e7ed417d34482decefa6fc2",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d6d1211be5709bde5f972964bf46a60d9285dc0cd756cd1d836936356f988d2c",
+    "mention_text": "Ronald van Elburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d76bccf678c3c4fda73334ada56b8a431427491def46e44f1e13eb105d007a74",
+    "mention_text": "Universidade de Groningen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e28dab5181d4458661a652e44046bd69ce83bbec2d1caad41384d2c6aa6b624",
+    "mention_text": "Holanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09ed343c2157a1792a17b51df816757e5373dc1e2a218755dcbec81754042546",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31b3e2753595177d759e9925f1e9b00efa834fa615375a31dee1badbcb1571c0",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de776b74e369684429ac1650f4aa54b564bbdebf1db3842618f3c9a6b380e546",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "96f8cc2b4ccd19d1dd082a6afe89f67d0336b06339d66fefb9bfac3a6e53cbb3",
+    "mention_text": "Gran Sasso",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c28880f26c75611afeed4a72b5440bed1a14116c121efa20e0b7627a31b89a20",
+    "mention_text": "Van Elburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88ba9c6fd7a281c4e195d3b14423aa6bc1903f512a46f0db35797a7a7467a614",
+    "mention_text": "Antonio Ereditato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4f2e9fa3a5cf919d9287982fa6120d001ee4c8d7f73255bb7efa2ca26c1fc5b",
+    "mention_text": "Van Elburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0514f9715b46dc52a88509790c6ed85b7d40989c2bbf43136ebe39e62d254aa5",
+    "mention_text": "John Learned",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b4c16515139db1c4561cf634ad9d858113bd4432e37a04a3cfdfd47f88f3b80",
+    "mention_text": "Universidade do Havaí",
+    "categoria": "ORGANIZACAO"
+  }
+]

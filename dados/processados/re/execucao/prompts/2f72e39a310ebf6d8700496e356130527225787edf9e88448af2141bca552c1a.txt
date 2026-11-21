@@ -1,0 +1,546 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 80934a1d52c16fc4b03569e41850e68cf2a216d763d84260bdaa0d346f1b6369
+
+TEXTO:
+'Estamos muito perto de fazer paraplégicos voltarem a andar'
+
+"Foi um ano muito louco", disse Miguel Nicolelis, entre duas longas arfadas, à beira de uma mesa na sede do Projeto Andar de Novo, no bairro da Vila Madalena, em São Paulo, numa tarde recente. O neurocientista brasileiro de 54 anos não escondia o cansaço. "Coréia, Alemanha, Estados Unidos", continuou. "Viajei muito."
+De olheiras fundas e fala ágil, Nicolelis nos recebia para tratar dos resultados do projeto que visa reabilitar pessoas paraplégicas por meio de um exoesqueleto e um capacete conectado ao cérebro. A ideia do encontro era buscar atualizações do plano. E também dados. Afirmativas. Intenções.
+Fazia mais de um ano que o primeiro chute com a tecnologia havia sido dado na abertura da Copa do Mundo e, desde então, quase nada se falou sobre a evolução dos estudos. De lá para cá, não foram poucos os colegas que criticaram, para a ira do neurocientista, a falta de resultados do consórcio milionário - só para a Copa do Mundo, o Projeto Andar de Novo arrecadou R$ 33 milhões.
+"Não posso dar muitos detalhes dos estudos antes de publicá-los", falou o cientista, logo no início da conversa. "É um processo longo, demorado."
+Ao pegar uma folha sulfite para explicar alguns fundamentos do cérebro, porém, o neurocientista deu valiosas pistas sobre o futuro de sua pesquisa. Ele falou sobre o que falta para seus pacientes voltarem a andar, tratou do mercado, das polêmicas que envolvem a implantação de eletrodos no cérebro e, por fim, discorreu sobre como é impossível máquinas imitarem o mais complexo órgão humano.
+De bom humor, Nicolelis também papeou sobre a história da neurociência, falou de experimentos com macacos, matemática, cobertura jornalística, futebol (tivemos que cortar na edição, o cara é um fanático) e filmes de ficção científica (também preferimos deixar de fora - ele detesta as licenças poéticas de Hollywood e, no papel de severo crítico cinematográfico, causaria revolta em muitos leitores. Exemplo: "Interestelar? Sofrível.").
+Motherboard - Bom, já que estamos aqui rodeado de exoesqueletos, vamos falar do Andar de Novo. Faz um ano que rolou o chute na abertura da Copa. A quantas anda o projeto? Miguel Nicolelis: O projeto continua. Pacientes seguem treinando e todo o pessoal daqui trabalha nas questões clínicas, computacionais, neurobiológicas. Descobrimos múltiplos aspectos de como o cérebro lida com a geração de movimentos. E como o feedback que a gente usou –rico, tátil e visual– influencia o modelo interno que o cérebro tem do corpo. Essa é uma das grandes descobertas que tivemos no projeto. O senso de ser. Modificamos o senso de ser e reintroduzimos o conceito de ter pernas. Quando começamos, pedíamos aos pacientes paraplégicos para que eles pensassem em andar e registrávamos a atividade cerebral. Não acontecia nada. Não tinha nenhuma modulação da atividade cerebral. Quando pedíamos para eles mexerem as mãos, só pensar, sem mexer, víamos que o cérebro estava realizando uma operação interna para imaginar e gerar o movimento. Foram precisos muitos meses para que víssemos uma modulação no cérebro dos pacientes quando pedíamos para imaginarem o movimento das pernas. Então reintroduzimos esse conceito dentro do cérebro, o que ninguém tinha documentado ainda.
+O Juliano, o paciente que deu o chute na abertura da Copa, continua aqui com vocês? Sim. O Juliano está treinando para as Paraolimpíadas. Os tempos dele têm melhorado demais. Ele é uma pessoa impressionante. Muito calmo. Possui uma capacidade de concentração muito grande. Talvez por isso tenha sido escolhido. Ele consegue modular a atividade cerebral como ninguém. Tem uma capacidade enorme de concentração. Ele conseguiu, e depois outros pacientes também, controlar os dois hemisférios simultaneamente e modulando esquerda e direita como ninguém tinha mostrado. Também somos caso único na questão do tempo de uso. Nos outros exemplos de interface cérebro-máquina em humanos usando eletroencefalograma (EEG) ou implantes, as pessoas usaram alguns dias e publicaram. Em um trabalho que saiu na Science dias atrás, um cara usa interface no lóbulo posterior para controlar o braço robótico em humanos. Não são usos agudos. Foram adotados por dois, três dias. Temos pacientes usando durante um ano e meio a interface cérebro-maquina. As adaptações que estamos vendo são muito diferentes do uso agudo.
+Quais são os efeitos do uso agudo nos pacientes? Não posso dar detalhes antes de publicarmos os estudos, mas existe o dado fundamental que é a análise psicológica ao longo do tempo. Alguns chegaram com quadro depressivo e tiveram melhora clínica global. O fato de andar uma hora por dia algumas vezes por semana transformou a fisiologia desses pacientes, melhorou função peristáltica, melhorou fisiologia cardiovascular, massa muscular e teve progresso neurológico, o que era inesperado. Será descrito nos trabalhos. Quando pudermos contar será emocionante, chocante. Tivemos reativação de vias neurológicas que não prevíamos ter melhora. É o grande resultado clinico do projeto.
+E qual o próximo passo? Publicar os estudos? Continuamos trabalhando intensamente com a mesma confluência de ciência da computação, engenharia, neurobiologia e reabilitação clinica. O primeiro passo é, sim, publicar tudo que estamos escrevendo. São vários trabalhos sendo finalizados. Um deles foi publicado nos EUA, no início do Andar de Novo. Era um macaco controlando uma cadeira de rodas com pensamento via telemetria, Wi-Fi e sem cabos. Tá em revisão.
+O quanto esse experimento com macacos ajuda na pesquisa com humanos? Descobrimos que o que ocorre com macacos é muito parecido no ser humano. O macaco tinha que imaginar dois vetores, o vetor de velocidade rotacional e o vetor de velocidade translacional, sair de um ponto e achar a recompensa –uma uva. Ele via as uvas caindo no prato e tinha que imaginar uma trajetória e fazer as cadeiras de rodas chegar no lugar certo, sem se mexer. Eles fazem. Em três dias eles passam a dirigir a cadeira. Eles acham a solução. E, conforme o tempo passava, começou a emergir no cérebro desses macacos a distância que faltava pra chegar no alvo. Isso não existia antes do treinamento. Sugere que, quando você coloca um primata num loop fechado de treinamento, o cérebro gera propriedades necessárias para realizar a tarefa. Descobrimos que é muito parecido no ser humano. É muito pertinente às estratégias de treinamento que usamos aqui.
+Dá para estimar o que foi feito da Copa até aqui? Dá, dá para estimar. Está tudo nos papers. Quando sair, te mando detalhes, não posso abrir.
+Mas dá pra estimar o quão distante estamos de fazer com que os paraplégicos possam voltar a andar? Estamos muito perto. É uma questão de engenharia nesse momento. A questão neurocientífica está basicamente resolvida. O que mais fiquei satisfeito foi descobrir que a parte de neurociência, os dados finais que estamos mandando e publicaremos, vão criar uma nova visão de reabilitação. Um novo processo. Os problemas pela frente, na minha opinião, são de engenharia: transformar todos esses conceitos e protótipos de tecnologia em produtos que possamos adquirir a preços módicos.
+Então agora a reabilitação é um problema da indústria? De certa forma, sim. Por exemplo: quando falei na Alemanha em junho, no Maksplan Institute, existe lá, em paralelo, uma rede do instituto, a Banhoffen, que transforma protótipos em produtos. Lá tem tecnólogos, cientistas e engenheiros especializados em criar produtos completos. Esse instituto foi criado para criar novos produtos de engenharia de várias áreas de conhecimento. Que eu conheço, olha, tem governos de Suíça, França, Alemanha e Japão interessados nesse campo. Nos EUA é a iniciativa privada; várias empresas que faziam exoesqueletos agora estão usando interface cérebro-maquina nos exoesqueletos que tinham.
+E o que mais vocês descobriram em relação às mudanças do cérebro do paciente com interface cérebro-máquina? Não posso dizer antes de publicar. Se alguém divulga o que fazemos, tiram o trabalho de consideração. Posso falar que as mudanças são impressionantes.
+Poxa. O que posso contar –porque está para sair– é o trabalho da BrainNet. São três macacos que fundiram seus cérebros mentalmente para jogar um jogo, que é um braço em 3 dimensões que tem que atingir alvos aleatórios, que você põe no momento. O macaco nunca viu aquele alvo. A direção do que ele tem que fazer. E um macaco sozinho não consegue fazer porque é um movimento tridimensional. São coordenadas X, Y e Z. E cada um tem controle apenas sobre uma dessas dimensões. Tem que ter pelo menos aliado. Então colocamos juntos e eles sincronizam os cérebros. Eles criam um novo cérebro que soluciona a trajetória em tempo real. A hora que esse sair vai ser a primeira demonstração da BrainNet do jeito que concebi quando escrevi meu livro (Muito Além do Nosso Eu, Companhia das Letras, de 2011). Agora está demonstrado. Temos ideias de como fazer isso para reabilitação com conceito da BrainNet, o EEG, não-invasivo. Vamos unir cérebros: um cérebro de alguém com deficiência e dois ou mais normais que colaborarão para o treinamento ser mais rápido. Isso ainda vamos testar, mas o trabalho sai em breve.
+Legal você falar do método não-invasivo. Na época dos preparativos para o chute muitas dúvidas foram levantadas sobre a eficácia dele, certo? Olha, foi uma fabricação tão chula da realidade, uma ignorância. O EEG, criado pelo Hans Berger, é o método mais robusto de diagnóstico cerebral que temos para atividade cerebral. É melhor que ressonância nuclear magnética. A grande vantagem do EEG é que não precisa penetrar. Põe um capacete e pronto. Dá para usar até com wi-fi. Hoje os aparelhos são tão sensíveis que não precisam de gel condutor ou raspar buracos no cabelo. Dá para ter uma visão do campo elétrico do cérebro de fora do crânio. Mas o campo eletrônico, assim como magnético, é tão pequeno que, quando vem de dentro para fora, o osso cria barreira e o sinal vem menor. Perde resolução espacial. Mistura um monte de neurônio no sinal. Quando você entra no cérebro, o que desenvolvi nesses 30 anos, a resolução espacial é maior. Você vê com mais nitidez. É como olhar uma pintura de pertinho e a Monalisa de 50 metros. Todavia, tem informações nos dois sinais. O que previ antes, e continuo defendendo, é que para criar movimentos finos, como tocar violino, precisa entrar no cérebro. O EEG não tem resolução suficiente. Para andar, não. Esse comando –andar, virar direita, esquerda– não precisa de uma resolução tão grande.
+Para que submeter cirurgia, risco cirúrgico, se pode captar o sinal de fora? Houve alguém que publicou em um jornal decadente que EEG é uma técnica de 80 anos atrás. Sim, claro, mas é a mais usada do mundo. Todo hospital que quer diagnosticar distúrbios funcionais e todo neurocirurgião que vai retirar foco epiléptico faz EEG.
+Automóvel tem 100 anos e quem disse que é ultrapassado? Tudo você aperfeiçoa, claro. Faltou noção de ciência. Infelizmente aqui existem comentários que parecem jogo de futebol. Não mudei de opinião: se quiser restituir os movimentos por completo, é preciso operar alguém; mas para andar é capaz de dar certo com EEG. E deu.
+Você já falou que é difícil ter autorização para implantar tecnologias dentro do cérebro no Brasil. O que muda se usar a tecnologia invasiva? As pesquisas são mais profundas? Nos Estados Unidos já está liberado. Usamos em macaco, braços, pernas, dois braços simultâneos. Mas os três casos clínicos com humanos são problemáticos. Antes, em 2004, testamos com 11 pacientes de Parkinson o procedimento intraoperatório e conseguimos reproduzir resultados semelhantes: eles atingiam alvos com o movimento dos braços, mas não dos dedos. Dos três casos com humanos publicados por outros pesquisadores, um deu certo e dois não, mas em um período muito curto.
+A tecnologia não dura, os eletrodos utilizados são rígidos no cérebro. Em 2006, falaram que relatariam nos próximos anos resultados da observação desses pacientes, e nunca mais saiu uma linha sobre isso –a empresa que bancava a pesquisa faliu, inclusive.
+O método invasivo não está muito evoluído então... Acho que até agora não usamos método invasivo no limite. Eletrodos rígidos te dão 10, 15, 30 neurônios. Filamentos dão 2 mil, mas não usamos em seres humanos ainda. Como FDA (Food and Drug Administration, órgão americano responsável pela administração) aprovou, pensamos em usar em pacientes terminais da doença ELA (Esclerose Lateral Amiotrófica), que não têm musculatura nenhuma funcionando, que já estão com respirador, para comunicação. Também precisamos ver como usaremos a interface wireless, o que é outro problema. Não faz sentido implantar antes de ter wireless. Se deixar cabo saindo da cabeça, o risco meningite é enorme. Estafilococos crescem nos cabos e seguem caminho, que acabam no cérebro. Nosso novo implante é fechado; um chip fechado no osso. Tem só uma antena e fica como um fio de cabelo. Há macacos com sete anos de implante. Ainda está registrando. Tem uma queda lenta dos sinais, mas ainda segura. Uma ponte de safena, para ser legal, tem que durar dez anos. Tem gente que tá na terceira, que trocou a ponte da ponte da ponte. Esse é nosso benchmark. Dez anos é um período razoável para procedimento seguro. Com sete, macacos estão vivos; se atingirmos dez anos, chegamos ao nível da ponte de safena.
+Pra que serviria essa interface wireless dentro dos cérebros de pacientes terminais? Serviria para tudo. E não precisa ser paciente terminal. Vamos começar com eles para justificar eticamente. Mais pra frente quadriplégicos, pacientes com ELA e outros quadros poderão usar essa interface cérebro-máquina para contar como está sentindo, para controlar TV, a cadeira de rodas, o computador, ler e-mail. Macacos já vivem ambientes abertos onde controlam várias coisas mentalmente. Estamos estudando para entender como os macacos reagem depois de algum tempo.
+E houve alteração no corpo nos macacos? Até agora não. O que houve foi alteração cerebral. Cada vez que uma interface de máquina interage num loop fechado, esses artefatos são assimilados pelo cérebro como extensão do corpo. É quase como a relação entre tenistas e raquetes de tênis. Grandes tenistas não batem com raquete, batem com extensão do braço.
+Você escreveu no Muito Além do Nosso Eu que, no futuro, nos comunicaremos apenas com os cérebros. Uma espécie de rede social do pensamento. Depois desse experimento com macaco, a tendência fica mais evidente, não? Ficou mais evidente. Tem quatro papers agora de cérebro-cérebro com dois seres humanos. É uma demonstração binária, bem simples. Basicamente o sujeito registra vê uma coisa e decide transmitir algo por Estimulação Transcraniana Magnética. Via EEG. Por exemplo: ele vê algo, manda sinal, dá um pulso magnético e, de acordo com isso, decide se é A ou B. Igual já fizemos com ratos. Nosso próximo experimento vai ser bem diferente. Será revisado um trabalho com 4 ratos em um sistema fechado se comunicando. Funciona quase como computador biológico. A informação se espalha nessa rede. São dois bits de informação: pressão e temperatura, saídas, se vai chover ou não. Esse baratinho computa com 70% de certeza. Está na revisão também.
+Como os ratos conseguem se comunicar entre si por essa rede? Eles estão conectados eletricamente. Então a atividade passa para esse, para esse, para esse, ai achamos uma fórmula para obter um resultado. Eles convergem como um todo. E a performance dessa BrainNet, invariavelmente, é maior do que cada rato original.
+Como seria com humanos? Se eu te contar agora, o Google amanhã faz. Essa vou fazer eu primeiro. É impressionante. Falo um troço, amanhã abro o jornal e tem alguém do Google planejando.
+No seu novo livro, Cérebro Relativístico , você fala que nosso cérebro não pode ser simulado por uma máquina. Isso.
+É um balde de água fria em muita gente que crê que a inteligência artificial nos imitará e, depois, nos superará. O que torna nosso cérebro impossível de reproduzir? O cérebro humano não tem engenheiro. Nada que vem do nosso cérebro teve criador do ponto de vista de engenharia. Qualquer coisa que podemos construir é computável. O martelo, o carro, o avião. Se passou por engenharia, possui algoritmo e é serial. É sempre assim. Mesmo os computadores paralelos usam algoritmo serial. A máquina de Turing necessita de algoritmo. Você reduz um fenômeno a uma sequência de passos que aceitam uma lógica binaria. O cérebro humano não foi construído. Ele evoluiu. É a solução ideal para um processo de milhões de anos, como diz o biológo Stephen Jay Gould. Ele define a evolução como fita da vida. Se pegar essa fita hoje, com nós aqui nesse ponto, e rebobinarmos e soltarmos de novo, nunca estaríamos aqui. Para estar aqui de novo, a sequência de eventos que precisaria ocorrer é inestimável. É impossível num processo aleatório.
+A dificuldade de imitar o cérebro se deve então ao fato de mudarmos a todo instante? Também. O cérebro humano não tem código. Está em transformação o tempo inteiro. Durante essa nossa conversa o cérebro está de um jeito que nunca vai se repetir. Cada evento da vida cotidiana altera a representação do mundo que o cérebro tem. Então não tem como voltar atrás, não tem como explicar olhando para o que era. Quando você tenta medir, já mudou. É o sistema mais complexo que existe. Físicos entraram na neurociência achando que iam explicar tudo e quebraram a cara. Eles explicam sistemas não-adaptativos, não-complexos. Estudar partículas atômicas é lindo, maravilhoso, mas não tem nada a ver com estudar sistema adaptativo e complexo. A física do jeito que eles estudam não serve para estudar o cérebro. Universo é fichinha perto do cérebro.
+Hoje parece haver uma corrida para criar máquinas inteligentes que possam funcionar como nosso cérebro. Quando e como começou essa história? Quando Turing propôs a sua máquina em 1936, foi trabalhar com o famoso matemático americano em Princeton, o Alonzo Church. Eles criaram uma tese de que se uma função é computável, ela é computável pela máquina de Turing. Ok, é perfeito na matemática teórica. Ocorre que a grande maioria das equações matemáticas não é computável. Mal e mal conseguimos traduzi-las numa linguagem de equação. Mesmo quando botamos em equação, boa parte não dá para solucionar à mão. Tem que usar truques, aproximar, mexer e, ainda assim, não soluciona analiticamente. São as chamadas funções não-computáveis. Aí os caras da ciência computacional transportaram esse teorema da matemática abstrata para o mundo atual. A partir disso começou a loucura de dizer que uma maquina de Turing vai reproduzir cérebro humano.
+E como de fato o cérebro funciona? Existe um modelo além da constante transformação? Nossa teoria é de que o cérebro funciona como sistema recursivo digital e analógico. Digital é exemplificado pelos disparos de neurônios, o que registrei minha vida inteira. E o analógico é como esses disparos geram campos eletromagnéticos. Essa interação entre digital e analógico gera a complexidade do cérebro. É um tipo diferente de informação. Não é digital nem algoritmíca. Ela é semântica. É o que a gente é. Descreve parâmetros imponderáveis, emoções, criatividade.
+Onde entra a parte matemática? Aí que tá. O mais curioso é que conseguimos conectar essa visão do cérebro com a matemática introduzida por Kurt Gödel. Você talvez conheça. No começo do século passado, tinha um debate acirrado entre os matemáticos alemães e austríacos. O cara mais fenomenal da época, o David Hilbert, acreditava que todos os axiomas e teoremas da matemática podiam ser demonstrados analiticamente. Ele sugeriu 9 ou 10 problemas que serviriam para mostrar que a matemática é completa. Todas as verdades matemáticas teriam demonstração formal. Aí um louco austríaco chamado Kurt Gödel, no mesmo simpósio, durante uma aula perdida que ninguém viu, propôs dois teoremas da incompletude. Ele disse que todos os sistemas formais são incompletos, isto é, são incapazes de demonstrar que verdades que sabemos ser verdade podem ser demonstradas categoricamente como verdades. E ele mostrou com a aritmética que coisas mais básicas e que sabemos ser verdade não têm jeito de serem demonstradas por uma linguagem interna formal. Ai perguntaram a ele como sabemos então que é verdade. Ele respondeu: com a intuição.
+A intuição é parte do cérebro? A intuição é uma propriedade interna do cérebro. Não é computável. Então isso foi um choque. A primeira reação do Hilbert foi dizer que Gödel estava doido. Podia até ser, mas ele, o Gödel, estava certo. Virou a teoria mais revolucionaria de matemática do século passado e acabou com a esperança de que sistemas formais pudessem ser completos por si só. No livro usamos argumentos matemáticos, computacionais, evolucionais e biológicos para refutar esse transporte do aforismo de Turing para o mundo real. Mais do que isso, criamos uma nova definição de informação. Existe uma informação que vai além da que todos conhecemos, desse negócio de 1 e 0. É a informação que encontramos na matéria orgânica viva e que é máxima no nosso cérebro. Chamamos de informação godeliana para homenagear esse grande herói esquecido. Dizemos que a informação godeliana surgiu antes e a projeção disso criou a informação de Turing. De Gödel você chega em Turing, nunca o contrário. Esse é o argumento que serve de princípio para o funcionamento do cérebro.
+Todo cérebro funciona da mesma forma? Fica meio estranho dizer que o Einstein tinha o mesmo aparato que o meu. Meio deprê até. Pra família dele e tal. Não. As linhas básicas são semelhantes, se olhar no seu no meu, na média, você encontra o corpo caloso, trato córtico espinal, mas os detalhes e a microanatomia variam. Quando pegaram o cérebro do Einstein tentaram descobrir a genialidade. Um louco do Mississipi roubou e começou a fatiar e procurar algo, não achou nada, comparou com o de prisioneiros, dementes, pessoas com QI super baixo, olhava olhava, nicas. Claro, nunca ia achar nada. As fatias do cérebro tão espalhados até hoje, coitado do Einstein. Mas a genialidade dele não vem daí, vem da microconectividade, não dá para ver e está distribuída por tudo. A visão fenológica, que existia e ainda domina um pouco da neurociência, teve um tombo quando analisou o cérebro do Einstein.
+Bom, professor, faz mais de uma hora e meia que estamos aqui. Vou te liberar. Fiz você dar uma aula aqui. Tudo bem, fica tranquilo.
+Aliás, você continua dando aula em faculdade? Dou aula. Meu único emprego real é na Universidade de Duke. Dei aula muitos anos na Faculdade de Medicina da Universidade de São Paulo, para os alunos de primeiro ano. Agora faço atividades com alunos da pós-graduação.
+A gente falou aqui de cientistas que foram ignorados ou tidos como alucinados e, mais tarde, foram descobertos como grandes teóricos. Questão existencial e jornalística: como saber a quais loucos dar atenção hoje? Infelizmente minha resposta é desanimadora. Não tem como saber. Imagina o primeiro jornalismo no interior da Inglaterra. Não aconteceu, mas imagina uma entrevista com o Charles Darwin à época que ele publicou a teoria da evolução. O público já queria matá-lo. Ele, que vinha de família religiosa, foi hostilizado, vivia em um refúgio. Físicos também ficavam ofendidos com teorias do Einstein. Agora, quando uma teoria como a da evolução começa a explicar vários fatos e quando previsões começam a se realizar, aí você sabe que aquele louco você precisava ouvir. Aqui no Brasil vai por aí. O conhecimento científico é muito baixo. É difícil saber quem ouvir. Tem umas barbaridades que você ouve que são inacreditáveis.
+Obrigado pela dose de desânimo, professor. É desanimador, eu sei.
+Para encerrar: qual seu próximo objetivo? Trazer o Palmeiras pro G4.
+Mesmo com o Valdívia lá? É o grande objetivo nesse momento.
+A entrevista foi resumida e editada para fins de clareza. Os trechos sobre futebol também foram suprimidos por questões de severas discordâncias.
+Leia este texto no site da Vice: 'Estamos Muito Perto de Fazer Paraplégicos Voltarem a Andar'
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "da856c786cd1dfc9dc09457d42caacf5b2c026f78fa8789c8678419cecfc0582",
+    "mention_text": "Miguel Nicolelis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9560c325995084518c317da9f5fd80c8b3fcfb62c79449eb370cd43480c03683",
+    "mention_text": "Projeto Andar de Novo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b4a38c9347686fcbe3282c8f8479939af34645e073958dec8d1b1b1cd6b88b8",
+    "mention_text": "Vila Madalena",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b098faa1859cc4f063a5447751a75f4a13d23140f125a81548a980b0b6ecb9ef",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4a91bf90163973c83bd19f55c2a60bd41c692d2eaf363a0e10940ee923da3c0e",
+    "mention_text": "Coréia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b0d017434902525d88c09fd41a7ae15eab713a541e12a7afdee5b22967f5bc01",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1b2cffc22081e4a05e95166a07951a8d610a4253eac95d14f5175b3eacd94de",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b26e5ee7976626efe227737083426ab63f5b0d10bab98dccbc80e863c9e7464",
+    "mention_text": "Nicolelis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a57978034bcfe0a62c3510dc9c1703a87d1ac1966e56f1427249deb5685085e8",
+    "mention_text": "Projeto Andar de Novo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b18208330187a8cff208b71860a8a9b3de193d2990fcc2cde7602184deb6c46b",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f46e26773af5b069a207c6135b8b173b6cbd8908c3e8452dd87701c0d1fb23f4",
+    "mention_text": "Motherboard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "384bc768fbdb56e37782614c04a0dbf5d87e8bbb148ffef35dda0021660bbc6d",
+    "mention_text": "Andar de Novo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fca877308f3359fa3feb61deb290c668c609293908be41346b45cb8390c820a",
+    "mention_text": "Miguel Nicolelis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "32b38cf17cd9b447b1f28adf1e1e3938542ee37b2207605b199b57c26742122c",
+    "mention_text": "Juliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7488f7bcfd5e88756c8331cb9fbf255d0656b9a53402b02ce74a95f090005a7f",
+    "mention_text": "Juliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c19b60242b5c43cab7f177d527b9bf29073f56c93906c9b505ae8d1db219c0e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40ff19fd1121a4d4c1c66b2355493443c88ae1392d74f3517c3b034135e946a2",
+    "mention_text": "Andar de Novo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a215273a456888f5911fdde66b06aedf174318b8cfa0ae561883be4a4a156381",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f7a603e6aaea1d187c3aae92d9cec3e2328b66703939cad8d9e71a4bdbc1cbbc",
+    "mention_text": "Maksplan Institute",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "213624b605d3d0703a31c3be270f8bc240bc0e544c419a64169399ebc21549ab",
+    "mention_text": "Banhoffen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb1ef3d5a7cf57ae537757f0106e4386b256ba935118f2d1385e0956252e9060",
+    "mention_text": "Suíça",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e78e95a3658386143e0424c57efa43a6cc1480eea372210d5ed688fae33074d7",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5eb6f464fdd7a1436d61d119fa6996e708a924a2784fe085902c8f1b61426379",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f399738de40f9b06ebdb2f393b01483ac6c18134c23049877184b06b6cc38c79",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb29130dc76f2a5cf8c8c52da117b2e297aa37f74fcae50e2163971f74f4bb6d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8dc33f8f5265afca77f8b610707dba355a666d4495e281ea64970f5ea42e06d8",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9ecebd5f4fc179f8783c24b38f4bdd09f07b5b8a8b432956f9dc305c0033e4b",
+    "mention_text": "Hans Berger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4dcaace6599b326b139e4c88b4b6b5b7162dcf0d9971115189482114f6da86a1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f100b1bff5b4aec3d029fb6edeb98927e124c2f5a224c4a48efe1a9c784d7b3b",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e38d59a1066f64e6af015918b8dd52d0845293509fcabfd821c012aab6a00184",
+    "mention_text": "FDA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebea28bab3bc381051976fc6494230dd6992c68a4377bc821cf9739b0432f8e5",
+    "mention_text": "Food and Drug Administration",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6f78fcf9e9032a0c4ee98bc31e7b4f36e0ae34d34ed1c165cb41ae6aa1dcb66",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c9e19cfffdedfafffdf0452a872bbb517c8108c072855b7c5e0d21ddf9d44491",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be971bc62114bbecec7e2008efcf8920023655352fd100707c46a1da1348f2ab",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e0ef8f84ac81bb4f42575894830df26fd8822ab1b7192f22f0fb62561a54cf1",
+    "mention_text": "Stephen Jay Gould",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ee1a1f8b32da553e74156a16283550510989021d3e060de3452d384fb0fc1da",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bbdba1a01d0b9375e006d4c5497da292610740e7ec685f463b41d2c5e2138720",
+    "mention_text": "Princeton",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3f5484ea0ff57bab1e3557c0cfa75a695f3d33e53fb9fa456c2b6dd7f238951",
+    "mention_text": "Alonzo Church",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e73f8149b7c32cfa104b9f25536e906780d79179bc8c90e0dd7935fec7e0d9c",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3c115093c72758d0debc33a17920d9905922963b59e14cd5f503f971ebc2335",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1b86b93b1be0907248edc759ae26ffff0b94df1443d139ac26247d1a7a99609",
+    "mention_text": "Kurt Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13cde89ec858f9957f881158754977e53d944b4ec9a873955346400fcb9bf04e",
+    "mention_text": "Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "034328e30ba5bbb2cc9b7892e94504e868f5e278320bdd614e9c7a6d0cb2aa20",
+    "mention_text": "David Hilbert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ce7521ce2f5979962544da7a9b725e289cf21b9d2ce268db34228985b628da2",
+    "mention_text": "Kurt Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea6679f15d4994917d5e9406daeeddec8724448efac1ffb89a845aa566c77ab3",
+    "mention_text": "Hilbert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4103ece76dddebbd34131533c69e94efd3c59032462d615d382162e971671a39",
+    "mention_text": "Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff3a142dfc920dd0a5fecd8cda97ac2bfe68629d1780e87d0bb94ef81602569a",
+    "mention_text": "Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2021691d6371fbf0503248c22309df6c1be231a76919be3dcd608670f913f7d5",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d5b4c64179d4adcec825e9c0bb61ebefd3498989ec93f2779a03168d96682b2",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2908810325683297f718432daaf0b4f60f1b40ad3c4fb0a94c014d3f75a5870c",
+    "mention_text": "Gödel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4932d3bf8a2f154a49c36c55fce3637ae810a33a6e732065b6c9973592177e1",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a4771de9c0d3c45b0f0f6a99ff8b241ac1fbdba52b7aefd2d35d02eeaa541ce",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd01f1ab2b7b8d666f3a56a701f9761c6154a781ec25b60a86e51cad3b99e3fd",
+    "mention_text": "Mississipi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "abaea8ae6e5ba89becaba32951fa9c7c29fa066bf93d999a352606a6daf13454",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b34c16424e9728abae8e498071008968889b0e0accc50f54795b965f45d048c",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fd98f363fc7f233f0dac912edc622cebda843b5cf33c233b5f86e33ed54e5c5",
+    "mention_text": "Universidade de Duke",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8a819f62f5c316896577c8f9b36192ebef90ac03da93dbd71fc6b2901d5a940",
+    "mention_text": "Faculdade de Medicina da Universidade de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f76a712fbe9197b94a060a27930b2f25e51b53dcc1f88813b2d7a51bcf0481b",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb5a411b02229b344cf008cd963fa83b5477015cb82be5668290a3689a7cdea0",
+    "mention_text": "Charles Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10226ae61a01fd32aafc2f599514fe35cb2e1be39b5bfd0419b7bc8682bfd935",
+    "mention_text": "Einstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a478fbfa2b7bb79fdaa70ddf5185e67c0c9343ff2e853fc04e6e0f6a0a179a1",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d979c3ca621cdea628b89a395a76621fb2342d1e515fb2201d53ddfefb2d134",
+    "mention_text": "Palmeiras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e85747169986f5597cc71dda39895afea5cd95b0d1062aec86a6274c49c929e",
+    "mention_text": "Valdívia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cce5e8246cb10d5e1866a7d74668c06b5307eb317513348cb249d5acb2e14bfd",
+    "mention_text": "Vice",
+    "categoria": "ORGANIZACAO"
+  }
+]

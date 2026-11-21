@@ -1,0 +1,356 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: addeebde1aa05bb2e9e2bc1ed2877630d5a8f113dbe1843faab2e0f7685e65a9
+
+TEXTO:
+Em novo livro de Dan Brown, origem da vida é mistério a ser desvendado
+
+Tudo começou com uma música religiosa. Mas uma canção religiosa diferente. Em vez de pedir a ajuda de Deus, anjos, Jesus, a letra exaltava Charles Darwin e o evolucionismo, citando trechos de "A Origem das Espécies".
+A música era do irmão compositor do escritor Dan Brown, que a usou como inspiração para seu novo romance , "Origem". O autor estava na Feira do Livro de Frankfurt, que se encerrou neste domingo (15), para divulgá-lo.
+No novo livro, reencontramos Robert Langdon, professor de iconografia religiosa e simbologia da Universidade Harvard, e uma obsessão antiga de Brown: a religião, agora em conflito com a ciência.
+Langdon é convocado por Edmond Kirsch, um amigo bilionário e gênio da ciência que descobriu o segredo da origem do homem e qual o seu destino –o bom e velho de onde viemos e para onde vamos. A confusão toda é que a revelação desse segredo promete destruir as religiões.
+No dia em que vai revelar a novidade para todo mundo, no museu Guggenheim de Bilbao, Kirsch é morto com um tiro. E cabe a Langdon revelar o segredo ao mundo –não sem antes resolver um quebra-cabeça para descobrir a senha que dá acesso a ele.
+Tudo muito Dan Brown: blasfêmias, mundo da arte, conspiração, mistério no estilo caça ao tesouro.
+Filho de um matemático, ele acha que as ciências um dia tornarão Deus desnecessário. Ao menos o Deus cristão.
+Não que não vá haver outras formas de espiritualidade, mas os deuses de hoje, diz, desaparecerão. Quem sabe, quando a inteligência artificial evoluir muito, os robôs não comecem a ter questões existenciais e tenhamos uma religião das máquinas?
+"Sempre falam de mim como um vilão ateu que odeia religião. Mas não é isso o que meus livros fazem", diz Brown, agnóstico, em entrevista à Folha . "Meus livros estão olhando para a área cinza entre ciência e religião."
+Acrescenta que seus livros são a forma que ele tem de trabalhar o conflito próprio entre fé e razão. Brown cantava no coral da igreja, que sua mãe dirigia. Começou a decepcionar-se quando ouviu falar em evolucionismo e foi perguntar ao padre se Adão e Eva não eram reais.
+"Ele disse: 'Bons meninos não fazem esse tipo de pergunta'. Comecei a me incomodar e acabei me afastando", diz Brown.
+Chegado a teorias da conspiração, a Folha questiona Brown sobre o mundo das notícias falsas –seu maior sucesso, "O Código da Vinci", que conta como Jesus teve filhos com Maria Madalena, não seria um caso de fake news aplicada à literatura? Ele vive algum dilema moral em criar tais teorias?
+"Para mim, a história do 'Código' fazia mais sentido do que aquela que aprendi na igreja. Mas era uma hipótese dentro de uma ficção. Fui acusado de tentar afastar as pessoas do catolicismo, de ter pacto com o demônio. Mas não pode ser um problema um ficcionista fazer seu trabalho."
+Mesmo com os conflitos que teve com o Vaticano, que condenou sua obra, Brown não odeia a religião, acha mesmo que ela faz bem para algumas pessoas –mas também a vê como algo dogmático e violento.
+E não acha que precisemos dela para nos comportarmos com moralidade. Mesmo que Deus não exista, não está liberado o oba-oba.
+"Todos temos um código moral intrínseco. Não preciso dos Dez Mandamentos para saber que não devo matar alguém. E mesmo que o mandamentos me dissessem pra fazê-lo, eu não faria", diz.
+*
+ORIGEM (ORIGIN) AUTOR Dan Brown TRADUTOR Alves Calado EDITORA Arqueiro QUANTO R$ 49,90 (432 págs.)
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d5eb87b950290ed4b2f4c991a538dfbac3512c7a9e0ec351bd3e98bfdf7e9f39",
+    "mention_text": "Dan Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01e3f9c3bec88e5283cd48e85507d89837321fdf91b36b5919c584460cb149e0",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18ad77fe807a02ab6472f5bd25211dd532d6f9843c646eefe29568819a250224",
+    "mention_text": "Jesus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16462a256bacd5ffa42b3d95990261d8f83644a3746d426f46e78d1b7cd45b3c",
+    "mention_text": "Charles Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56ccbc80649d0d8750ba0b5214441a1592940f9bdff9212f06a7e783eee95072",
+    "mention_text": "Dan Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be6d2d5b0b5f867eb61f3fc8d1196d6bba5f79ea62024503aa96b4718b562a35",
+    "mention_text": "Robert Langdon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0d87f0c9d172c52e7231cf5f03d163945bb456d97f32f64cd1322228449f9d2",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "431651e12537fcd35b9d5d14dcc7ae751b11e48e7b9c8582d8301ce7a53b5524",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "273e37db25f83c1fff2123960ba99e2f714a90172470c621c19602cadaeb67c0",
+    "mention_text": "Langdon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "816b52b03c349a2b508c7596ea99cc455b43d949ea439fcb7117c5459b6d80be",
+    "mention_text": "Edmond Kirsch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "947d071c48e66244724580a2af9d25d7fcb9ef773f52050cc84ace45cf021086",
+    "mention_text": "Guggenheim de Bilbao",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd9e760bd9baed1f3c5ddf5ce88f945fee0289cd108e175fafa95cd988021144",
+    "mention_text": "Kirsch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "296aad601deea31db2d7e6cffa799eb9e81fbe9474a86f095903d83a585f9e33",
+    "mention_text": "Langdon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "567b978daad5b33620bab4a8d68604b71fff0fce0613f2d05d36f09d01bbc153",
+    "mention_text": "Dan Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d7349bb3289d0bc89b7e3654a80fec68d406c05d882a50921108ff31ad15020",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d4dfe4ddd496ab3f8d41e143d2a38874eb181161946a3c6519ffbbed3909200",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3bd6ab2061389678a11082fa3e19cfcb465919c5483d31858debd5f87bc21f1",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b1e56830c7c3b300fc213f567fdd04fbe3e7dac915cacd16d1d44547ccd1b130",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fd6ec42e5fe77ff260bf9543469eb4bafb377ef01ed1e56b62231c3fbd55249",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6180b36d25637199be301beedb980dafdacd26521a26a21df5fa03e5651e5a6",
+    "mention_text": "Adão e Eva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4b1197043b5fe516ddb1972f9fc4a9daf3cfc974732aae8b03912c9d2dbe95a",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2d195cf4b5ecef79a284e01790661a926dfaf97fdd23424dabddd59e73c91343",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8eed435466ef7a40732b24bdd9a512aa2abe5083a5dfb04c25c54c639f41eb4",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31cd1e281dbf085563ae942346b6fb7d90510a7d53b5ddaa8d7cf219de0eb846",
+    "mention_text": "Jesus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f5a0e978dafe0e61269aed2e26bd8938b8492e12723bcbd960bc73a21b50372",
+    "mention_text": "Maria Madalena",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3f7de8f2938da1200ebc5e39446fef3ecf711061f4142ff05a96a6b2dd3c8f9",
+    "mention_text": "Vaticano",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f4b9eed6aa065a64d1212f5aad52c1437ed2936ff7c67572f28b16d15508ae2",
+    "mention_text": "Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da229e87a3750d6fd5bebba166669a9212d444a97cbf5ae514c5788cc2aee8c9",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f0bccfec14e5432d36a250415f13a0778a1afaf9eb359af44a44b7b15ca549a",
+    "mention_text": "Dan Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "291a45f3a6444b28a84d8d6ddbc64779a2c8e25c0192c0f80bcd8cc2a9cb1b6f",
+    "mention_text": "Alves Calado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0601e633e7cfd185b109eae4b15ee5867abad7f3e90b7eaa45f0bf5794260791",
+    "mention_text": "Arqueiro",
+    "categoria": "ORGANIZACAO"
+  }
+]

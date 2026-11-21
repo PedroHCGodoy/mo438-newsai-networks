@@ -1,0 +1,477 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: f5580a44cb759dfa1ffad0bb3365b4bda8a0706bba7a8af0828227d8db74876d
+
+TEXTO:
+Computadores substituem executivos que selecionam ações para investidor
+
+A BlackRock, maior administradora mundial de fundos de investimento, vem enfrentando um complicado desafio desde que adquiriu a divisão de fundos cotados em bolsa do banco Barclays, em 2009.
+Esses fundos de baixo custo e administrados por computadores vêm registrando crescimento explosivo, deixando na poeira os selecionadores de ações que propeliram a expansão anterior da empresa. A ascensão do investimento passivo —fundos com cotas negociadas em bolsa, fundos de índices e operações semelhantes— revolucionou o mundo do investimento, oferecendo grandes oportunidades a investidores comuns por preços acessíveis, e pressionando as grandes administradoras de fundos de Wall Street.
+Agora, depois de anos de deliberação, Laurence Fink, fundador e presidente-executivo da BlackRock, decidiu que vai apostar nas máquinas.
+Nesta terça-feira (28), a BlackRock anunciou um ambicioso plano para unir grande número de fundos administrados ativamente a fundos que dependem mais de algoritmos e modelos matemáticos para selecionar ações.
+A iniciativa é a ação mais explícita de uma grande administradora de fundos até o momento em reação ao êxodo de investidores dos fundos administrados ativamente. Os investidores agora preferem fundos mais baratos que acompanham toda espécie de índice e tema de investimento.
+Cerca de US$ 30 bilhões em ativos (por volta de 11% dos fundos de ações administrados ativamente pela empresa) estarão envolvidos no processo, em companhia de US$ 6 bilhões administrados pelos fundos BlackRock Advantage. O foco desses últimos fundos está nas estratégias quantitativas e assemelhadas, que adotam uma abordagem baseada em regras para seus investimentos.
+"A democratização da informação tornou muito difícil manter estratégias ativas de administração", disse Fink em entrevista. "Temos de mudar o ecossistema. Isso significa confiar mais em big data, inteligência artificial, fatores e modelos, dentro das estratégias de investimento quantitativas e tradicionais."
+Como parte da reestruturação, sete dos 53 executivos da BlackRock encarregados de selecionar ações devem deixar o comando de seus fundos. Diversos desses administradores de fundos continuarão na empresa como consultores. Pelo menos 36 funcionários conectados a esses fundos estão deixando a companhia.
+Embora a BlackRock tenha optado por agir gradualmente com os seus administradores, o novo plano é de muitas maneiras um ataque ao culto da inteligência, popularizado nos anos 80 e 90 por causa de administradores de fundos mútuos renomados por seu poder cerebral, como Peter Lynch, um mago da seleção de ações que trabalhava para a Fidelity, uma das gigantes entre as administradoras de fundos.
+Hoje, administradoras de fundos como a Pimco, Franklin Templeton, Aberdeen e, claro, Fidelity continuam a argumentar que seus administradores de fundos de títulos e ações conseguem fazer escolhas mais inteligentes do que a média do mercado —o que explica as comissões altas que elas cobram.
+REVIRAVOLTA
+Desde 2009, porém, quando o desempenho desses fundos começou a sofrer, milhões de investidores vêm rejeitando essa tese, e abandonaram seus dispendiosos fundos mútuos em troca de fundos de melhor desempenho, que acompanham diversos índices a uma fração do custo.
+Hoje, as maiores empresas entre as administradoras de fundos são a Vanguard, pioneira nos fundos de índices, e a BlackRock. Juntas, elas administram perto de US$ 10 trilhões em ativos.
+A BlackRock, com sua frota de fundos iShares com cotas negociadas em bolsa, certamente se beneficiou da revolução dos investidores —que ameaça desordenar o setor de fundos mútuos nos próximos anos.
+Ainda assim, o verdadeiro monstro entre as administradoras de fundos mútuos vem sendo a Vanguard, por larga margem. A empresa vem recebendo influxos históricos de capital para seus fundos de índices e fundos negociados em bolsa.
+No ano passado, por exemplo, US$ 423 bilhões foram retirados de fundos com administração ativa e US$ 390 bilhões foram investidos em fundos de índices, de acordo com a Morningstar. Desse total, a Vanguard capturou US$ 277 bilhões, quase o triplo do montante direcionado à sua rival mais próxima, a BlackRock.
+Fink sempre declarou não ter preferência quanto à escolha dos clientes de sua empresa, seja por um fundo de baixo custo negociado em bolsa que acompanhe ações de baixa volatilidade, seja por um dispendioso fundo mútuo que invista em pequenas empresas dos Estados Unidos.
+Para ele, o lema sempre foi permitir que o cliente escolha.
+O que Fink não revela é que no fundo se tornou um verdadeiro adepto do estilo sistemático de investimento, que favorece algoritmos, ciência e modelos dependentes de dados, de preferência à inteligência individual dos administradores de fundos aplicada à seleção de ações.
+Nos últimos anos, ele contratou Andrew Ang, um dos mais renomados professores de finanças da Universidade Colúmbia, para liderar o ingresso da BlackRock no investimento fatorial, uma abordagem temática de alocação de ativos.
+E desde o ano passado, os veteranos selecionadores de ações da BlackRock vêm trabalhando na mesma divisão que os profissionais quantitativos. Esses últimos, muitos deles detentores de doutorados, trabalham com a chamada seleção científica de ações, e podem ordenar a compra (ou venda) de ações da Walmart com base em imagens obtidas por satélite que mostram o número de carros estacionados nos pátios das lojas da empresa, em lugar de basearem suas recomendações na análise minuciosa do balanço da rede de varejo.
+Em resumo, Fink se convenceu de que a BlackRock precisa fazer uma grande aposta no poder das máquinas, quer se trate do sistema Aladdin, desenvolvido pela empresa para análise de riscos, quer se trate de consultores robotizados, sistemas de big data ou até inteligência artificial.
+Qualquer entrevista ou conversa telefônica com Fink confirma o fato —o diálogo invariavelmente se volta à tecnologia, e ele pouco menciona o que os selecionadores de ações tradicionais da empresa estão fazendo.
+Mas abandonar totalmente o investimento ativo em troca de um sistema passivo operado por máquinas não é opção, para Fink. Embora os ativos dos fundos sob administração ativa da empresa tenham caído a US$ 201 bilhões hoje ante US$ 208 bilhões em 2009, o negócio continua a ser muito lucrativo para a BlackRock, e representa 16% de sua receita total.
+De acordo com dados da Morningstar, apenas 11% dos fundos de ações administrados ativamente pela BlackRock obtiveram resultados superiores aos seus referenciais, de 2009 para cá. De 2012 para cá, US$ 27,5 bilhões foram retirados dos fundos mútuos administrados ativamente pela BlackRock, de acordo com dados da Morningstar.
+CONSOLIDAÇÃO
+A consolidação de fundos ativos e passivos está sendo comandada por Mark Wiseman, importante executivo do maior fundo de pensões canadense que Fink contratou no ano passado com a missão de reorganizar a divisão de ações de sua empresa, e o foco da reforma estará em estratégias sob as quais um administrador de fundos poderá fazer grandes apostas em um grupo seleto de ações.
+Mas a mensagem principal é inequívoca: os fundos dispendiosos e administrados ativamente que desejem ganhar território selecionando ações norte-americanas terão de se adaptar às novas realidades da BlackRock.
+Um exemplo é o fundo Large Cap Core da BlackRock, que investe em grandes empresas dos Estados Unidos. De 2009 para cá, os ativos do fundo caíram à metade, para US$ 1,5 bilhão, e ele apresentou desempenho 1,3% inferior ao do índice do setor, nos três últimos anos.
+O principal administrador do fundo será substituído por três especialistas em carteiras de investimento da equipe de investimento quantitativo da BlackRock, que recorre a toda espécie de modelos de computação em busca de ideias para selecionar ações. As comissões cobradas pelo fundo cairão à metade.
+É claro que nenhuma dessas medidas deve deter imediatamente a saída de capital registrada nos últimos anos. A verdade é que as saídas devem crescer, porque poucos investidores optam por permanecer em um fundo que está passando por uma grande reformulação.
+Mas na interpretação de Fink e de seu novo vice para a área de ações, é melhor lidar com a dor agora do que mais tarde.
+"O jeito antigo de selecionar ações, com aqueles caras sentados em uma sala e se achando mais inteligentes do que os outros... isso não funciona mais", disse Wiseman. "O mar está revolto para os administradores ativos, mas a BlackRock é um porta-aviões, e vamos encontrar nosso caminho nesses mares".
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "11f6e5843b6dd421d96c6b4e100bbdd69949ae7090a3d34e84261cd001b00b3f",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ead30ca63dbc171443b20924cb7f515200368288ccf374b5adf057d12d5cbeae",
+    "mention_text": "Barclays",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "85ad4816433053497f83c665cd409761f640c528d8ea4ce92117780dd26c009d",
+    "mention_text": "Wall Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d27d2506d0e8a3d2f9e1791496461f7599704299cd75ca7c06246b3c589bc46",
+    "mention_text": "Laurence Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c564f41a34298068bb8b58a028f8d9c7c94e4cc6cdc31a430a08330ea549a907",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1bb15907bb95fabb85a8c73b889a67ef3760f84bb84ccc2ce75f67686308fd5b",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2497abfcae5961fd2204b1638143a39aa57c269eca691e618bd5750571f77506",
+    "mention_text": "BlackRock Advantage",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c780b2d9293e5f2ff688f2659cd87bcb1213af2302a8f0cfb9b5a09ff66eb1ca",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c40967ac5d8e585470ca9014bb3f39b7c8481dff122bac46beac757c7f5aa90",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a05fc95c8518d08e665a7010be8f95eb2f8b2728a12d95a0da85a568148dd4e",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf5297b5405e83768b814b426b2c257d3af1f74a22559f6a666ae7bb4c74ab00",
+    "mention_text": "Peter Lynch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f0455bf3b576f861021378cc784cb8a3177e7363dfd4b2b465c082bf1904439",
+    "mention_text": "Fidelity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "539b838af7a356c3a82c7e97e5d989cc2ddf0a9f72fe1b06ea16c45247c0a77e",
+    "mention_text": "Pimco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b3ad9d07d78f97a9cb2950070430d4c2b6d205aaf5cf6870b6c5ef04d45532b",
+    "mention_text": "Franklin Templeton",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c87d5532d9b45c3670e3a9cdb410e2ef5326854d004005861d08b76c56257155",
+    "mention_text": "Aberdeen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fffc31c0d06182669426884aac7caf5cce0f7b31cae8f2c99aad5529546ae20",
+    "mention_text": "Fidelity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f6446d17c4d70597d5d96e46dd55a8bb2a8b86a93a7ab46fa8cc2ccffd056f1",
+    "mention_text": "Vanguard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81a6cbfc2e774d4c32fb4acc2f53fbb81348bb790affd78ee97a5e492870d2f9",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2b380fd9f321f206f744ee5927d76427fbbc2d10985355c84825bdccc8a8d4a",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1090000ef8dfbb6bad24a3a20d4d24d5b7a386fa57a18e97c95e8e87234cad2",
+    "mention_text": "iShares",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "957599c2a5fb7f836e4e03476ba1357665c8897d58fbc33daa0d982421461074",
+    "mention_text": "Vanguard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52a6babf2dfb7ed6d827230e657f49b20fba74297d6773ab8cf6fb15a6231cc4",
+    "mention_text": "Morningstar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d2d1290bb55e72daffede9d0d6bf7f39c3b727f352ef010e8386f65b0bc6aad",
+    "mention_text": "Vanguard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5df79f8b47f61f0d459a44c66c1c566f2cdec86915c8b4077798dc7409dc542a",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a65fe058da195ce19c228a4fd0c195d2f4d9266cb277414f271314babdda036d",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5647b08e2f624a3e333beda1357a3848c150d812e3a1ed3f062098a56fe61c4e",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e322614207cbae3844ff24eb9c8c4d40161a0bd1f77c745cfd5ee562f715b378",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f135e5eb34bb966b98c8d6cc1197a5fc1f619f979a37edfaa6057c82865c662c",
+    "mention_text": "Andrew Ang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "becd4fdf0bbffd879299e27cf101880ae61ef9c00f2d471c21aa08d4f6055a83",
+    "mention_text": "Universidade Colúmbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "903a8f4a9daa2377f2493aeee6ba04a8f9871fbf659ae22adae6dfd97c1a9170",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "133109761e76f70faa35d3023f0b8ace260ce3eca38978e48ff90af1efab676c",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f640b92605a3bfb3108e5adab7b407aa4287ed8a68b8ee3fe2a3612b37420533",
+    "mention_text": "Walmart",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "59c025188e07bb00ed90603992fc386e4538284ddb06ffde8d87609f0df5decb",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c2f062665c6f782cec36d70dfa9b0997e870ee23cae605462ce362a9748f1ea",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c326a074fd9dd45ef2ace57d8cdf8e4c5b37f7138356bcd026da8dbfa30aa82f",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11a38bb774e0072359d21dcb65c073b99e5d15d1340a044e9a3a9563ce7a2786",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd90d0dfbc7ac28068f243db08a5eada746541b25b866c3e40f218bfb46957d3",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a987ace206a41936825f476c28bbe31754d2d1f65f40880c897304cfced301d",
+    "mention_text": "Morningstar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1567d7eedbd25482776809219beecf10358fef203414708c1d7334a378448bbb",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa4a10d17dcdc7a77d55a7178b042007de2fc9b3a82f4e714cb03060b5296129",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c21eca1323b0a4e3c3174e5c2281a80959799c20ad65f3566c2b5e00e1893158",
+    "mention_text": "Morningstar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06d9a772695bcc0345c0801f111d200fa14d7ad30147bd6f214b45977f0e314f",
+    "mention_text": "Mark Wiseman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd9ca341563dbe816c6a2560c00220dcd6fe8b8bafcbdf737464d41790e3f555",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fafe3807ea2d11b675e882ddc7c16e1f2295d417c101b1e9e55a79d3e4cdbf7",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e387a8418cae2ffadc604844b84448a9e35b99f8c4b4a552056d66eaceb19a48",
+    "mention_text": "Large Cap Core",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4f7e6df72e17402bf7dd1d995547f1bc50bc0779aeae0773076a3535adaf6cf",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2172741189abc0885eb942354dfc3e2388a716bd1ba7aab341f2599f1bc4e12",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40779e71f815f794a0aeca659a10d11da094eb4a64c62ae6c32f75b4707c42b9",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5df26fa3ede0278f62810b249151f3a0762f2ec3d70a89175c140dbef9344b57",
+    "mention_text": "Fink",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80fcbaf3254437044d0024aeefded4f4262e41dd195e150ec69965c6850241c3",
+    "mention_text": "Wiseman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6be1b4118f4a17fb3467c5ca9b6796c4905e2ad8f3c4bceafc45be1e69541c1b",
+    "mention_text": "BlackRock",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ec4ab88c73060108b77305e809a827466f0b4329f9a1fdd82dec20550460b27",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

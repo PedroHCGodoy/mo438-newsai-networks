@@ -1,0 +1,647 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d4cd95728f445a7bf27dad317a953b9395b370fad34808f9791d6b0fdaee2243
+
+TEXTO:
+Novo campus do Google acelera avanço do setor de tecnologia em Nova York
+
+Companhias da costa oeste dos Estados Unidos estão tomando Nova York de assalto, mudando a cara de bairros da cidade e alterando sua identidade. De polo das finanças, moda e mídia, ela vem se tornando cada vez mais um centro de tecnologia.
+O Google anunciou na segunda-feira (17) que planeja construir um campus de US$ 1 bilhão logo ao sul do West Village. A incursão da empresa de internet em um dos bairros mais famosos de Manhattan a posiciona para se tornar um dos maiores ocupantes de espaço de escritórios na cidade, e permitirá que dobre os seus quadros na área, para mais de 14 mil pessoas nos próximos 10 anos.
+O anúncio do Google surge depois que a Amazon decidiu, no mês passado, construir uma nova sede em Queens que abrigará até 25 mil trabalhadores; Facebook , LinkedIn e Uber também anunciaram expansões de suas instalações em Nova York, recentemente —em boa parte motivados pela caça por talentos.
+Cada uma dessas empresas criará centenas ou milhares de empregos bem remunerados e alugará centenas de milhares de metros quadrados de imóveis comerciais.
+"A advocacia, a medicina e as finanças foram suplantados pela tecnologia da informação", disse Mitchell Moss, professor de planejamento urbano na Universidade de Nova York que pesquisa sobre a economia da cidade.
+O espaço selecionado para o novo campus do Google, em Hudson Square, antes um distrito industrial logo ao sul do West Village, reforça a presença da empresa no West Side de Manhattan e acelera as mudanças na região. Isso espelharia a maneira pela qual o Google transformou o distrito de Chelsea, em Manhattan, onde opera um escritório desde 2006.
+A empresa adquiriu o Chelsea Market por US$ 2,4 bilhões alguns meses atrás e um edifício adjacente em 2010, e aluga outros escritórios na área, a cerca de 20 minutos a pé de seu novo campus.
+A peça central do campus de 158 mil metros quadrados será o edifício St. John's Terminal, perto do Holland Tunnel, em Washington Street, e o Google também pretende ocupar espaços em dois edifícios próximos em Hudson Street. No total, a empresa expandirá sua presença em Manhattan em cerca de 30%, e ocupará 627 mil metros quadrados.
+"A cidade de Nova York continua a ser uma excelente fonte de talentos diversificados e de classe mundial", afirmou Ruth Porat, vice-presidente de finanças do Google, em comunicado na segunda-feira. "Foi o que trouxe o Google à cidade em 2000 e é o que nos mantém aqui".
+A transformação de Nova York em um polo de tecnologia começou depois da crise de 2008, quando o prefeito Michael Bloomberg decidiu se concentrar no setor como propulsor de futuro crescimento.
+O governo dele buscou melhorar a capacitação tecnológica da força de trabalho local, uma campanha que levou a Universidade Cornell e seu parceiro, o Technion (Instituto de Tecnologia de Israel), a construir um campus de ciência aplicada e engenharia na ilha Roosevelt. Iniciativas tecnológicas —novos cursos, edifícios e institutos de pesquisa — também foram promovidas pela Universidade Columbia, Universidade de Nova York e Universidade Municipal de Nova York.
+O Google chegou a Nova York quando abriu um escritório de vendas de publicidade em 2000. Adicionou uma equipe de engenharia à sua força de trabalho na cidade em 2003, e vem expandindo constantemente sua presença desde então.
+Outras das grandes empresas de tecnologia não demoraram a seguir seus passos. Amazon e Facebook têm, cada qual, mais de dois mil empregados em Nova York, e a Apple e a Salesforce têm mais de mil trabalhadores cada.
+O LinkedIn tem um grande escritório no Empire Estate Building, e a IBM escolheu Nova York para sediar sua divisão Watson de inteligência artificial e sua divisão de computação em nuvem.
+Desde 2009, o total de empregos em tecnologia e publicidade cresceu em 31% em Nova York, para 360,6 mil postos de trabalho, enquanto o número de empregos nos serviços financeiros subia em 12%, para 475,5 mil postos de trabalho, no mesmo período, de acordo com uma análise de dados federais conduzida por Ken McCarthy, principal economista da imobiliária Cushman & Wakefield.
+Em contraste, os setores de saúde e educação empregam cerca de um milhão de pessoas em Nova York, e o setor de hospedagem emprega 465,8 mil trabalhadores, segundo a análise dele.
+McCarthy diz que os dados federais classificam empregos com base no empregador, o que significa que qualquer pessoa que trabalhe para um banco será enquadrada como empregada pelo setor financeiro.
+Mas as atividades tradicionais da economia de Nova York —finanças, varejo e consultoria - também criaram milhares de empregos tecnológicos.
+Os bancos JPMorgan Chase, Goldman Sachs e Citigroup empregam milhares de profissionais de tecnologia, entre os quais muitos em campos novos como ciência de dados, blockchain e aprendizado por máquina.
+A expansão do Google em Manhattan contrasta com a da Amazon em Long Island City, onde o plano da empresa para se instalar naquela região antes industrial de Queens causou intenso debate local.
+Os executivos da Amazon, que prometeu pouco em termos de benefícios para o bairro em troca dos US$ 3 bilhões em incentivos estaduais e municipais que a empresa vai receber, enfrentaram protestos e um interrogatório áspero em uma audiência no legislativo municipal de Nova York, uma semana atrás.
+O Google se expandiu discretamente e não pediu subsídios públicos. "Estamos crescendo firmemente há 18 anos sem alardear muito, ou pedir apoio do governo", disse William Floyd, vice-presidente de assuntos externos do Google em Nova York, este mês. "Crescemos por conta de nosso trabalho árduo".
+Mas o Google também enfrentou críticas em Nova York. Os proprietários de alguns restaurantes em Chelsea se queixaram da perda de possíveis clientes, porque a empresa serve refeições gratuitas em seus escritórios. (As autoridades de San Francisco debateram proibir a criação de refeitórios que forneçam alimentação grátis pelas empresas da cidade por esse motivo.)
+E há pessoas em Manhattan que se preocupam com a possível expansão do Google e outras empresas por bairros históricos.
+"Minha preocupação é que a concentração do Google naquela área cause pressão ainda mais intensa por desenvolvimento de escritórios, especialmente para o setor de tecnologia, em bairros adjacentes como o Village e o East Village, onde já estamos vendo isso acontecer", disse Andrew Berman, diretor executivo da Sociedade pela Preservação Histórica de Greenwich Village.
+Berman disse que não se opunha à expansão do Google em Hudson Square, que ao longo da última década vem se transformando em distrito comercial, com muitos lofts e fábricas convertidos em escritórios que abrigam mais de mil empresas, muitas das quais de tecnologia, publicidade e mídia.
+Hoje, mais de 50 mil pessoas trabalham no bairro e milhares de outras o escolheram como moradia depois de uma uma mudança de zoneamento, em 2013, que permitiu projetos residenciais na área.
+Mas Berman disse que a demanda crescente por escritórios resultou na demolição de edifícios históricos, expulsou antigos inquilinos comerciais e moradores, e resultou em torres modernas de escritórios que não combinam com as demais edificações desses bairros.
+Tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "fc9582b1f41dab14514cf4e99d552e674c5da25f03698eaf293b520b9781db6e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28d0913f37862ddc28ab2c98c136e7e72dbd3df4372caf3de37e1107cdeee0ec",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "652a1dcf9d6de5b28cde4fb2bcbb7dfc59378ec6119f49c7b76d2010fd42c4a5",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f436b3561fe08e88fab1e8d92101a1d934e152a301f671a00e5ec4bb97b1738",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc3184e7f3505d5582515c889b20fbc883e4d6a6a91bf6acaaa00be9739582d8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1aceac3f8acd613bd06b6dc535afc262a4a3522c66dddf25f94fdabe8f1c3ca3",
+    "mention_text": "West Village",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08f4b886fa259fffcbd293304bb3d8a78bcd3f84e365dfdcd8336f57ad67e8a4",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9689d4c1a7aceb16dbd8744a98ca0e39104e5c90ee94c41afbaa8fcbc97a6a49",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f848027ca340f93ec0e12198b645e505204e3651bd9d90e90485defe460029f8",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce3c932afd8aa23fb1c2ecbec3e648e40277f198abfbd356497ed114b4ff272f",
+    "mention_text": "Queens",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef25a708dd1d09a6883370f57c205ed296e825556ee9f186a3e8986dc96397bc",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b812287a30c3f290cd169d6e5ff2117ea5613bd4b122c0e1656e7d435d8b4d8d",
+    "mention_text": "LinkedIn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a3d75c0d74d60f84699f100652a1cb8d421b979e9379a99f2575e20b69476a75",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1043ef3fd7f158160ad87226a65fb92bdfc314af73a99ade8cf84b786dbfb0fb",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "71e4cdd5cb71f5824aedeb20671d4cd3285f7303847fe13cda85d7890b19b545",
+    "mention_text": "Mitchell Moss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "816c6010f51039ac811bec033305494020167863fc3a617cd33dd2992c3908e5",
+    "mention_text": "Universidade de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25ebb8c7247f8bf5c2ab24e92886a789c6e114e79c71dab25c0dc76a7ff6a386",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5341a77b76e87d56a2ea061023f695839a218fcaadc1b685c4bef9120deaf34d",
+    "mention_text": "Hudson Square",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1749a56971165a0ce47cff12997323946d794d5330d73543eb95f9925e73097",
+    "mention_text": "West Village",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eae6e1711820107ebe9fe02b6a923e1d47feaa3d9bccdf2486ffddc5bdcacfd4",
+    "mention_text": "West Side",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53396bc7a16febdcf1cbbfe7149da790dfe5308598fb97d4f538a1a814ae4ad1",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acd2c55981b7a63df8ccad38ad9bbae7f471d6b04fc02888b7940a013ea440a8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd9956373dddc0d4164b8dbf6cb5446dc1b37c066a7d848cfebc65c3711d710a",
+    "mention_text": "Chelsea",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "adc5da7bd681a5fb5361084d2e72956bb3efc68fa2a667b16958102d56e60070",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1049a112e1d27bd0f536f1b7a79d13bb047d8bb49ba5a11a6674059b85de010",
+    "mention_text": "Chelsea Market",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e5ce58a9a5798e942589db9c3f2bf78b7b1b762fe85cbe32eaf8390469dca687",
+    "mention_text": "Washington Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a5b985844a673ece7fb1b5b6bfa6afb4f1198a245bffa7ad518cdf1ab3401c5",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a44912dab29ab58fd7c7ccdbf0860a893f6db4d3dca965c7f3f3e0e7877ffbd",
+    "mention_text": "Hudson Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5fb6964937d5c1edb90207cc577026b37b1a3e6c9667a1856f5e6905a0dc3254",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b64672fef386143b3bb38c4f7bdf2eadb8c964c3d9927ff74815e1e73fc3adb5",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3268b2f86ade9fcbe9cd84d1d10304b79d1e1754abb30522923e228b3d3f338",
+    "mention_text": "Ruth Porat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37c0304875e43d683fd23f2a2105f31a1dbfc8b9723e65fc03f0b24bacaa0be6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61ab6cdd43a155639da12faff585b2af2f8acce0534ae1cebd4a81649ac3b75c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf37119e4826759158d02dd8499c6c0b81738c164cde0acf56e53775fac88b8b",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "06ace8dbf209a0b31c5a0dc4a60b6003928c01f51ff88f4525779d98943a3a3f",
+    "mention_text": "Michael Bloomberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aab0b7582373aebf7e7e1daf2d972991e751d7fc91c95fbed12a542b592b11da",
+    "mention_text": "Universidade Cornell",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25454764dc97dd8f4da3df29e8f725b7a97edd9610b4a93661a5a2488d152d31",
+    "mention_text": "Technion (Instituto de Tecnologia de Israel)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23735ff25b085bd160b171d9311e36d1fde4d9614983774a890cfbe0556b1d46",
+    "mention_text": "ilha Roosevelt",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03a8c5a08c35ae986289c1b668a23c1ba1079eb956c132ab2aceb398de2db4d3",
+    "mention_text": "Universidade Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47d58d9a8577d72871868191d730a8971d53250805a9690a5a7fc191b72b18a6",
+    "mention_text": "Universidade de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5d13a319c2e55c80041b380f93521cdd3d3c2050b9ef99798f039cbf216673f",
+    "mention_text": "Universidade Municipal de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0f44f2cb9f104d03511af4c111fb5dfea1865d648d8bf16c379a45741bfa975",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb60699f552367032ef0487fae91e7b9395817858b374c42206cd9023af48380",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aea9321c4b6e26486784125a13aa5b050395097584bb447ddea4cb8a0fe722b7",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f369634af72809fddd7e8b68c38378cc37452578dbb602a09596e157ca88febb",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f39fe4e736ef52e3a999b46da9561adb1eb9b582af0acc50cfb183b17585a3bc",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e1e28a9ac14df1589d2cff4092f4bc12ce89ad365b9d78e431b3a3188181592",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2c8de4bd4ae7467b4196d1cd5130c1dc418dd96374f373207c7f00c041a77f0",
+    "mention_text": "Salesforce",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f410a9e8c7c3e94b1b8bab554c1261c5eda90d84e5eca11bda9f9a23442eeece",
+    "mention_text": "LinkedIn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18ad08e3553a0a661e17348557c392e83333ebe6ce4a69a1b85db12d4c23e22f",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8a2164137df88966e80ca2c1589722533ddd5f9d2e82d56beb2ec7deb0f3401",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af97569345c3e02e7757ad1bff4dd2e44554300d8284cd3ea13e430a6eb6b6a7",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39527772c607eb38a98888157b6dd4e62e8cafd916a08dbff5e1e9b3f263a3f8",
+    "mention_text": "Ken McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49660b6a8973c0c035f555728eb2a001af7f1961e4e2aacb7f4c4640a68f1cde",
+    "mention_text": "Cushman & Wakefield",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7bdb16bd9c714e2974d9c420db4de8a934ec679be4a75334aa86bc8508986185",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a85dbc1e452f1c48342753a6422379cb42eb206e2d43cde4ecc27c581455e8f0",
+    "mention_text": "McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df49ada9b8e0b21c792552a5817d0dd3f54c8cb6bec7ec88e18be45ba93e0fcd",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2de579a211feae66121382d7160cda58c01cf2a058ec9530ba86559241161957",
+    "mention_text": "JPMorgan Chase",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13f9e0913271a2f1bd2ce078d6eb01ff12f10db8ef9bce51c0b3f750317fac89",
+    "mention_text": "Goldman Sachs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de6d61f575a27eb59533381bb7920db2c11b6f2a90ca8e6fb75301cbd44d0d16",
+    "mention_text": "Citigroup",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "61ceb5facce3d14a72ed5208b1b256961cbdc167957a3ad7530564ae48974adf",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c421fb7602dd66c4086c7c3c747db3078c83be77bdcd1abcd0d3d74a8745ad74",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb0b25a6edf3f4df1ea8decfd3b06d4bf36f4930e95fd83a04a7e5772f022aa5",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "64f4c4cce9e820670762ff7d2019d939e6f22cf9f838c9f972497b1c23bd4eb6",
+    "mention_text": "Long Island City",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eba4ab3035c0318dbcdb447bc6755ccc970c7fd551a1ce7fa61e4702f56706a7",
+    "mention_text": "Queens",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "907aadc4283f24a67eecde08c82b847a350176c9f92619ae369701ad28436660",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "856f1f39b013a9dafb62fa2897a7a15d2e1cc82f18b0ea1bbc75e155c0e7e8b5",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e06c297cc6f55b53af77cfe34e8af638d0bd9e63df372aaae425fb842cd688d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6a0e2139d0940ef2c2265e010740d80901559d95dc9eb24f67371fa2ac9f2cd",
+    "mention_text": "William Floyd",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4092ab88a6ac4858a64f81987dfeefe8c29f114f780ceef9256a5d33d11da05",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36889550f3b7835d5ca6cad7fb947bc14f2ecbe134d7a486e4826e7dd36b4087",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1ab6ff4a0db1926b6c758e2a6b0fa2927d8db676944c39202be4624a5ec43c9",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "505a2ea6707f762456325b35ec536b8ac61f18d7fc253d4b96ad7f68cf537cfc",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c2ab9882fdeeaecd30ee0d7b5a9da21e534d0481aa3479e7cd397a43bf4fa711",
+    "mention_text": "Chelsea",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a92c2b8a5bb6bfb19144130be661eeafc6ef52c64077099f8e6a941e989d1d2e",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d1f077bb20ffd67bc121258950be12c74250b87585240dc95a4dcda54d20ed6",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "114ae3cbb6fb19af55c38c430fe5e4add1702184f6e797bf72adb70510be6ec4",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9573f601ce8d10af9c114679d57fb583fab5eb9450943ad0eb431bf75cf30fb2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "529e3e8f3f9738e1e81785114cf3f442dc41cbfe92dd9650129d69e3b66cd9f6",
+    "mention_text": "Village",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3c0cd9712de9b4215c397a5c819ca9a05e68db6864e8274ed8ad8c370f9b27e",
+    "mention_text": "East Village",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "325d2356c172171bac09801a62aef2f2ac970a04142efb6b87272970032ceaaf",
+    "mention_text": "Andrew Berman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ded20149116b982c9fda4b9a1cea434ea9d338ef203c5928a31b78d749295c3",
+    "mention_text": "Sociedade pela Preservação Histórica de Greenwich Village",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fadaf3a401e15dba39759128d2d1ec0c8ee7d41a9abb7785d0b4bf29315245c",
+    "mention_text": "Berman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3bedb23715d12406a2e8c34345e705c5b2d9f914542e6d413193c3cdeb27419",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "360e0c668f6c9f4124195c3e607cfe129fd4a69f7d643017a07e8c893ff78759",
+    "mention_text": "Hudson Square",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6fd12a0391b0670db70c29da01623736558485e7efb32f4a796ce946ef64e2e4",
+    "mention_text": "Berman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfd09585173a0bbdee4572151db591b2d43ce330d5021e4cc4009d79eba7478f",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  }
+]

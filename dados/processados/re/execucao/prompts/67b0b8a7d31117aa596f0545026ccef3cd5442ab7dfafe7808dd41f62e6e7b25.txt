@@ -1,0 +1,616 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0e77f1cf7448a78d97a795e5940dafcd790b24b1053f4e5da01a9f269f4db4ef
+
+TEXTO:
+Instituto que tem Gilmar Mendes entre os sócios foi investigado pela receita em 2018
+
+O IDP (Instituto de Direito Público), que tem entre seus sócios o ministro Gilmar Mendes , do STF (Supremo Tribunal Federal), foi objeto de diligência da Receita Federal no fim de 2018. Neste ano, o próprio magistrado e a mulher dele, Guiomar, passaram a ser investigados.
+Quando as primeiras diligências na empresa começaram a ser feitas, o ministro orientou os gestores do instituto a fornecerem toda a documentação necessária à Receita.
+A abertura de averiguação contra a mulher dele, e em especial o vazamento da informação, no entanto, levaram Mendes a considerar que está sendo vítima de um ataque.
+No ofício que encaminhou na sexta (8) ao presidente do Supremo, Dias Toffoli, o ministro explicitou a suspeita. Entre outras coisas, afirmou acreditar que há hoje no país “uma estratégia deliberada de ataque reputacional a alvos pré-determinados”.
+A notícia de que Mendes está sendo investigado repercutiu entre grupos e entidades de advogados. “Os órgãos de fiscalização do governo devem investigar fatos, e não pessoas. Quando investiga pessoas, eles não investigam: eles perseguem”, diz o criminalista Fábio Tofic Simantob, presidente do IDDD (Instituto de Defesa do Direito de Defesa).
+O secretário especial da Receita Federal, Marcos Cintra, determinou que a corregedoria apurasse os fatos . Segundo ele, a decisão foi ratificada pelo ministro da Economia, Paulo Guedes.
+Os ex-ministros Paulo Sérgio Pinheiro e Paulo Vannuchi e Belisario dos Santos Jr, ex-secretário da Justiça de SP, foram a Brasília para apresentar a Comissão Arns, criada para evitar retrocessos de direitos humanos. Eles se reuniram com a procuradora-geral da República, Raquel Dodge.
+O grupo foi batizado em homenagem a dom Paulo Evaristo Arns. Também fazem parte da comissão outros ex-ministros, juristas, intelectuais e ativistas. A iniciativa será lançada no dia 20 de fevereiro, em São Paulo.
+A cantora Pabllo Vittar realizou noite de autógrafos de seu disco mais recente, “Não Para Não”, lançado em outubro de 2018; o evento ocorreu na livraria Saraiva do shopping Pátio Paulista, na quinta (7).
+A Justiça de São Paulo rejeitou queixa-crime ajuizada pelo empresário Flávio Rocha , da Riachuelo, contra Guilherme Boulos (PSOL-SP) por injúria e calúnia.
+Os dois eram pré-candidatos à Presidência quando o líder dos sem-teto postou no Twitter que Rocha dizia querer salvar os pobres da miséria e seria, por isso, “um tremendo hipócrita, cuja empresa foi condenada por trabalho escravo”.
+O Ministério Público de SP recomendou a rejeição da queixa-crime. A juíza considerou que “não é aceitável excesso de suscetibilidade de quem deseja concorrer a cargo com exposição política e pública”.
+A assessoria de Flávio Rocha diz que, “ao contrário do que afirmou à época Guilherme Boulos, a Riachuelo jamais foi indiciada, citada e muito menos condenada por trabalho escravo”. O advogado Nelson Wilians diz que vai recorrer para que a Justiça reconheça que houve calunia e difamação.
+O diretor do Itaú Cultural, Eduardo Saron, a diretora da SP-Arte, Fernanda Feitosa, e o diretor do Balé da Cidade de São Paulo, Ismael Ivo, vão integrar o conselho de gestão da Secretaria de Cultura e Economia Criativa de SP —no total, serão dez membros.
+Os convites partiram do secretário da pasta, Sérgio Sá Leitão. A primeira reunião do grupo será no dia 22 de fevereiro, no MIS.
+O coreógrafo canadense Édouard Lock está criando uma obra para a São Paulo Companhia de Dança. O novo trabalho é uma coprodução com o Festival Movimentos, na Alemanha, e terá pré-estreia em junho, em SP.
+Mais
+O presidente do Itaúsa, Alfredo Setubal, e sua mulher, Rose, estiveram na abertura da exposição de Fernando Zarif na Luciana Brito Galeria, na semana passada. A mãe do artista, Rosemary Zarif, a diretora Bia Lessa, a colecionadora de arte Cleusa Garfinkel e o artista Guto Lacaz também passaram por lá.
+Caco Cruz e Caio Castro inauguram a hamburgueria The Black Beef, no West Plaza.
+Anna Peliano, Fernando Schüler e Synesio Sampaio tomam posse no conselho administrativo da Fundação Bunge, no dia 28 deste mês.
+Samira Regina comanda tarde pré-Carnaval no Olaria Bar do Paraíso. Neste sábado, às 14h.
+A plataforma brasileira de inteligência artificial Speck concorre como melhor ferramenta baseada no sistema Watson, da IBM.
+com BRUNA NARCIZO, BRUNO B. SORAGGI E VICTORIA AZEVEDO
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ad8ae50dbde0ea107a01b8f6191ac5ade696ada26cf2630013f5aac1f42b45c6",
+    "mention_text": "Gilmar Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc8d4f6bf89e15c3573de0ccff187bd7cdd0b93bba315de3f83f30c0d125569b",
+    "mention_text": "IDP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6dd9102918dd8157c2bfa494798df2c4b2e4ff2cf78ed7905145bd9510810d70",
+    "mention_text": "Instituto de Direito Público",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6fe5f9293185e174004b0806a5ddf91eae580855c5475535700bb5c08e81f14f",
+    "mention_text": "Gilmar Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da2ccdc933b10c25ab86f0e3af25d8b22041cbfee55b3ade0fdb176498facfda",
+    "mention_text": "STF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e2ff763c13668cf2b878e365745030f67b5cc0d8b48e6ad3e3cc110c04d4711",
+    "mention_text": "Supremo Tribunal Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f2950399144077d95ee518cf7bcc6cb927d0627168dbe02689de7bda86ae921",
+    "mention_text": "Receita Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "16b6e5d1043907f193aacfbf749b7b86959eb359b743d18326e845c5c16cd2f9",
+    "mention_text": "Guiomar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a5d01cd62c8c2073f789d011669a869dc906aa69973b16aefb342eef18d447a",
+    "mention_text": "Receita",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "977c8f8c6daef4d5008fa0ef428bce04b02e8314951a0322b82bda462f2a8969",
+    "mention_text": "Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14b9738bac8554437bbe9e1ea61d63cca9d515621990edb9e9d4a4ed954124d8",
+    "mention_text": "Supremo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2ccd80c6b417112a2b2e14e434d0edee8235866d524217946bbf2f98da2cf87",
+    "mention_text": "Dias Toffoli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f98930240967b5bed47920ce64346cb3113dd1e6ce9a1b35c49a1d6ca1f1bc4",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "548be78af3ff7f7b98c2c9c41dd227b4644e7bb60b900c285182ba0bb33c358d",
+    "mention_text": "Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22d869d04430406c2b5ef10b77962bdce799a214469991d2b3dceeb00dd72d9d",
+    "mention_text": "Fábio Tofic Simantob",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ecc688236a87970bf8e685ffcfc80784d029f44505092272f4bc3c7d74452d92",
+    "mention_text": "IDDD",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ec18680cb9250443c2997d46d8eabbea614f431b69f3829a912bbee8b6c1fea",
+    "mention_text": "Instituto de Defesa do Direito de Defesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0050140de8f27671e243384d70dbf366738dc8d5c033c5d58bcc00ffdbb498e3",
+    "mention_text": "Receita Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "919b95cdef97527f7bc3e631910b09b073a9347970dd8f5b7c7012056c4133a9",
+    "mention_text": "Marcos Cintra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a5e078386f330195941d61804cf914fbdcb6d14fe345d17dfdccb3c089105db",
+    "mention_text": "Paulo Guedes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72f1c245bfa464cbe1f089dcc087038e3107f6b3fd63b8a00f10a0a535f35171",
+    "mention_text": "Paulo Sérgio Pinheiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cae62050bbbdd887c6a43069de9f7a0b8926bc2afdbd532bba8aa1146cd9c5c1",
+    "mention_text": "Paulo Vannuchi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7003db18e8ffef9e369dbacfba96531e419283c44531dfc528206368b4b9b902",
+    "mention_text": "Belisario dos Santos Jr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fe967eafbbe64961c04c6acbd9b5b7c455e8ccde8fdb222db513988d271c395",
+    "mention_text": "Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dfb876e3b44f781913961f8af0e5ee95d82d3605816775a36007a965ad8037c8",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "72d865501c5253bf7e92ebb716eece4c0cbaca1af115e468a216a85d23573623",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dadc43ad3ab9652dd81b7cb858efb660da4693ff79f315cef5f2f0361fd5ddaa",
+    "mention_text": "Comissão Arns",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7821d113562b66b681250680c0e16fa10afbca3126a99d2a1099787c20658dd8",
+    "mention_text": "Raquel Dodge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e87e4f28f05082b80ab729f3145dd9b1d2cc979cb141d7c50b6e58e63f0a2b7",
+    "mention_text": "dom Paulo Evaristo Arns",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f79eea3750b245f80a8176e5f5db668f9ecbd4e7f962cad87a002300bd474e5",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e27067577b073e3f42279a29ee57522d3420d59b096ce1f03aed9c4f62d8688",
+    "mention_text": "Pabllo Vittar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "084c2af8b6b0d32c51d0ac62fb3bd0f0b959e7278dfb4ab6eb259a3623dbe587",
+    "mention_text": "Saraiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9864c6f8d41ac28c919a3add409246967357622356eff5f0bbd6e838822b662",
+    "mention_text": "Pátio Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea83f408116f285e5bc8aaeb88f331d8775c4d08ceae96f444d5a2d3d15dada2",
+    "mention_text": "Justiça de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a8bd7b2644dff8ec63ea1847537dd3e6e50c9f549c238faf3e62945b31100bb",
+    "mention_text": "Flávio Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4280036e9bd3fd4b7df67223292d12e369660689e8ce0761fb19aba5a3bc84c3",
+    "mention_text": "Riachuelo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "91ff75ab5552ffa3e34726a6a5ef89d7856488a44a07b53b4c07967686af2071",
+    "mention_text": "Guilherme Boulos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc5f054a2f27246983385b492d1bad85c81deb79fdcc9caec0da4542de745e59",
+    "mention_text": "PSOL-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e49fbbb2b06203a50a206d3b766fb6bae4bdbfd955b87fab14ac12d319a8331a",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14fd3c2803a556379ed99b83a38523c215149bc6262c66066f063041e091978f",
+    "mention_text": "Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9cd683bdb893843563937ec20889bef1c61adc54a2f642372efd550cc9d6f9e1",
+    "mention_text": "Ministério Público de SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f8073ba419bca46cca33144b610edfac456a67dfa68a443c187c51119f1d76c",
+    "mention_text": "Flávio Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "512546a2d66a148f20adc41799c44d6d3fc8f0fb05ac3f1c36744e9693f84aa9",
+    "mention_text": "Guilherme Boulos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab378dfd310e3b6bcfe6c9e751c6dcda4c956fb054fcdc5c4646ab6a982aee38",
+    "mention_text": "Riachuelo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c619b614a1af616e410adf3d36215cb19ff8bd403fe678d43b247564fb33aa13",
+    "mention_text": "Nelson Wilians",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3b93c308fedca87092512e783340314dd74d573a38ca227eae2a70173af9900",
+    "mention_text": "Itaú Cultural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad2040e82b49496af0c86dc08d9f001e00e424a7e2b59d867d03c4d68b6a3208",
+    "mention_text": "Eduardo Saron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dcdee9f4ef74540b79794a8e59d3e88ee71c1b4fbfce5037d63454ef8d5ed9ec",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e39f3637e3df97f37a0ca0cba932187391a72af7fde102ab72553749b29c0cc1",
+    "mention_text": "SP-Arte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81b858e29dff4cf872bb276172f4b3882e3553ce3bf535bc60a1536e5f657716",
+    "mention_text": "Fernanda Feitosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80f8da089bc0064d476f7fa89a9b596aab185ade1d78ea3f0f7ae58454fe4d71",
+    "mention_text": "Balé da Cidade de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b8fe2573dadd9467a861e45f923d7e88978066ac18cb2be0c3bcb3cd7db5689",
+    "mention_text": "Ismael Ivo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ae00a620821ff7292b96fc517fb4766a972e0b14869b989a313f365a0865dd8",
+    "mention_text": "Secretaria de Cultura e Economia Criativa de SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7c60f3a09fa1cd076bcd88aed2d806eb99aff588ef898357fe220c0de8b4400",
+    "mention_text": "Sérgio Sá Leitão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0103cef183332d3bd9cff07cda5d803993b7da33485c826839c46ddf4b45f3d3",
+    "mention_text": "MIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b6f8139eca7f81963ee938b62e77bc4d54df1e5aedfb3d36de6b1f0a7f85323",
+    "mention_text": "Édouard Lock",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02ed66f9b569a25a8d339c54deb4be7e3f5f6fe504df6a71d92018b063608cef",
+    "mention_text": "São Paulo Companhia de Dança",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01545c0eca977864aca34f5c9d6f1b5205c2ec675a13e6283e4f8bbfbe9387f2",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b4c7ad3ec90c2610ab100f7470dce297337cf401887fd5fd099c848781cab62",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8dd046a39de8576b93b9f914eea45fb8ef26eb7ca0763c154d5fdf1a9726371e",
+    "mention_text": "Itaúsa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc3afe23274fcb9174eaae7f6317789982f38894f476e31086036edddccc2049",
+    "mention_text": "Alfredo Setubal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8784426831c1eb23d04d34fbe78035a0917afeac0ef9e3ef253663ff0763fa9",
+    "mention_text": "Rose",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b684db20992ba7ac740e2ff79740b70bc0583d19ddf80e233ee8808eb1dc3cc8",
+    "mention_text": "Fernando Zarif",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "041a3160763ea09fb119667c480c5351f0d402720961b28c22e06ff075b5752e",
+    "mention_text": "Luciana Brito Galeria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89284913a98b9bcc9c8cd9309d847baa15ff3bc15cdac198ae2220e8121facf1",
+    "mention_text": "Rosemary Zarif",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb86846c8e472551bba4261ae259d01eedf68c24080ef6427933fd5ac8622622",
+    "mention_text": "Bia Lessa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a37547c7318e1d47045be9379d4cbd61a83af4c353b0e4468c9d115882f8caf",
+    "mention_text": "Cleusa Garfinkel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05f0e3335e7657fb66c96fbb8fdbb276ccf790191b71d2627f501df4d4adc989",
+    "mention_text": "Guto Lacaz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8b5f0c24f6d603930f8e61cf83ad53f166a85751db876d258f0637130e637fc",
+    "mention_text": "Caco Cruz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71b1aef78e73e0655b240a1ad69f832a890955b51d6a7e8ac6b7741d8ba179ff",
+    "mention_text": "Caio Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ce936d59d2259c84b6817f995676de0fa3b38f0d8ccdf587359ed0d36d9fa7a",
+    "mention_text": "The Black Beef",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f83a5a953d60533752379182f9eb43c2f437f8178fd5416d57e5c1c987e3cda",
+    "mention_text": "West Plaza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a9bb17c1c9d4a9fe0aa292281f3449aeef66d8a8987511c0a83a93139107b51e",
+    "mention_text": "Anna Peliano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c843fa1aa4e6cb574a8773e8cb8912cb3aaaf36677ba93ca476f99621fc78864",
+    "mention_text": "Fernando Schüler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c072fb0705e28a9f6fdf493a5097e8424566dd609ef92e71b2a083b6a8329d29",
+    "mention_text": "Synesio Sampaio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc04f97d160a83f850417a3c2114498f42fd866c60225a0d68c60e35d4aaf4ba",
+    "mention_text": "Fundação Bunge",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "634a0bd9a27f309b50f85c68e5a98eb449ea1061129f4ad145225632854919a6",
+    "mention_text": "Samira Regina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c220cb9ffe64239a00fcb9a14a1fbb3b4963a3643a0033e6306c61e1ace9aa1",
+    "mention_text": "Olaria Bar do Paraíso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3f906e022e55c9f28edcdc3231bf9ec770d2e32d663d27f15aa7294f21d0849",
+    "mention_text": "Speck",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8acd7935e4b544271b14104e1e24f4e72adc74e5c60a80538d0e1ece0b1db79",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6994ec8a4de4adf636ee5cedeb8729fdc357f5d71709522b33ae1bb7912fb1d",
+    "mention_text": "BRUNA NARCIZO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5569ee6e709fbb95513854fcd6f07d6fe8250800a0f95c1489324a752a61e05",
+    "mention_text": "BRUNO B. SORAGGI",
+    "categoria": "PESSOA"
+  }
+]

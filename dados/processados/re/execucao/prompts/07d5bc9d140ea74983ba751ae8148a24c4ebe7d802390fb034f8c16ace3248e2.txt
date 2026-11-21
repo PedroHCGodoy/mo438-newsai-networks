@@ -1,0 +1,493 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 98053b35b1069a63c0883520cc54740b3cc1713fcce62ee2342edb4776d4f285
+
+TEXTO:
+Agências brasileiras repensam uso de Facebook após polêmica sobre dados
+
+Nas agências de publicidade, os executivos começam a questionar como deve ser a relação com o Facebook depois da polêmica que envolve a rede social. Uma consequência pode ser a perda de verbas publicitárias, dizem.
+A plataforma passa por uma crise depois que o Guardian e o Channel 4, da Inglaterra, veicularam histórias sobre como a empresa Cambridge Analytica usou o Facebook para obter dados de 50 milhões de pessoas.
+“Que garantia temos que informações das próprias companhias que anunciam na rede social também não são vulneráveis?”, questiona  Paulo Sant’Anna , presidente do Grupo de Mídia de SP, associação dos profissionais.
+Outro tema que incomoda os executivos há tempos é a falta de auditoria terceirizada, ele afirma. As informações que o Facebook passa sobre o tráfego na plataforma não são certificadas por uma empresa independente.
+Há um clamor por transparência de dados nesse momento, diz Sant’anna .
+“Agora é uma hora propícia para negociar essa questão. É preciso contratar alguém que possa verificar a veracidade dos números.”
+O Facebook já passa por uma mudança no perfil dos anunciantes, segundo Cesar Toledo, executivo da agência Tribal Worldwide .
+“As marcas deixaram de usar ferramentas semelhantes às que a Cambridge Analytica empregou por receio de ficar associada a um evento como esse e o anunciante entrar em descrédito.”
+No exterior, agências de publicidade de grandes anunciantes, como a Unilever , procuraram o Facebook para pedir mudanças na plataforma.
+Resorts têm primeira queda na ocupação desde 2010
+Os resorts brasileiros tiveram uma queda de 7,1% na taxa de ocupação em 2017, em relação ao ano anterior. Foi a primeira variação negativa desde 2010, segundo a ABR (do setor) e o Senac-SP .
+“Em 2016, perdemos demanda no segmento corporativo, mas ganhamos no turismo doméstico. Em 2017, o mercado exterior reaqueceu, mas os eventos não acompanharam”, diz Antonio Bonfato , coordenador da pesquisa.
+A rede Bourbon projeta um aumento nas viagens de empresas, afirma o presidente, Alceu Vezozzo Filho. “A ocupação em Foz do Iguaçu (PR) cresceu 10% e ficou estável e m Atiba i a (SP), mas a receita por quarto subiu.”
+O Club Med , que não é associado à ABR, cresceu 40% em 2017, mas ficou estável ao se desconsiderar a abertura de um resort em São Paulo, diz o CEO para a América do Sul, Janyck Daudet . “Investimos R$ 80 milhões para aumentar nossa capacidade.”
+A previsão da ABR é de uma alta de aproximadamente 3,4% na ocupação em 2018.
+“Crescemos 10% até fevereiro e deveremos manter o ritmo devido a uma atração nova e à chegada de voos internacionais a Fortaleza”, diz Murilo Pascoal, do Beach Park .
+À espera do inverno
+A indústria calçadista criou 6.400 postos de trabalho em fevereiro deste ano, segundo a Abicalçados (que representa os fabricantes).
+Ao todo, eram 296 mil pessoas empregadas, número 1,8% menor que no mesmo mês de 2017.
+Há um princípio de retomada, mas qualquer recuperação mais vigorosa só deverá começar no segundo semestre, afirma Heitor Klein , presidente da associação.
+“Não houve ainda uma recuperação da demanda que leve a uma geração maior de emprego. É diferente do que já se observa com outras indústrias, como a de eletrodomésticos”, diz ele.
+“O inverno é uma variável que afetará as nossas expectativas. Quando intenso, ele acelera a busca por calçados, algo que não ocorreu em 2017.”
+Confiança com classe
+A confiança da classe C na economia cresceu constantemente no último ano e atinge o melhor nível desde 2015, aponta a ACSP (Associação Comercial de São Paulo).
+A inflação em queda é a principal responsável pela melhora, diz Marcel Solimeo , economista da entidade.
+O desemprego em alta prejudica o índice, que está longe de seus bons momentos, como no ano de 2011. “Apesar da melhora, não se pode dizer que a classe C está otimista ainda”, diz Solimeo .
+Capital  para automatizar
+Os fundos de capital de risco OpenView Partners , Trinity , Redpoint e Valor Capital investiram US$ 16 milhões (R$ 52,8 milhões) na startup Pipefy , de softwares de gestão de processos.
+“Gerenciamos fluxos de alto volume de empresas, como os de contas a pagar”, diz o CEO , Alessio Alionço .
+A prioridade da marca é desenvolver recursos de inteligência artificial para permitir a automatização de tarefas como checagem de documentos, por exemplo.
+Errar... Cerca de 80% dos diretores de empresas brasileiras já se arrependeram de contratações que fizeram, segundo levantamento da consultoria Robert Half .
+...é humano Um terço deles demora de um a três meses para perceber o equívoco. Falta de compromisso e mentiras no currículo estão entre as maiores razões de desapontamentos.
+Feito... O grupo DPSP , das drogarias São Paulo e Pacheco, vai lançar uma marca própria.
+...em casa Cerca de 50 itens de assepsia e cuidados pessoais serão vendidos a partir de abril.
+com Felipe Gutierrez , Igor Utsumi e Ivan Martínez-Vargas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e74b1237632288a1cb28868efd865c0a1bcc2d7be3d79e4b70be3cb6a58c275f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b39b67489e8cf74bcfaf45687f984f95104666d6ebe404d8e4d141ba684cf75",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa2baab271f2a7ba418c99dcf39220c276e210f59a8f26329d09bcff0f13a2fa",
+    "mention_text": "Guardian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a8a77e374d1f52e6177cb26d79fb602eb3df9f5a2bd3b7dd6747c40124a8505",
+    "mention_text": "Channel 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f00a5b73ad96c6c18f1d37b8ac921f06d8a34c9a6f45baa8dc03e85166c78b3",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2d8d2ff5ea206241b9adc1ab6f18e33f034c0fdf8aaf2e4f898ae577d01665b",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43a3b3f5a9a56b61eb41b5938ede59463190c89862e8dc7715b8b1f2d47662a2",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9292402d16a9de2595cf29e1c0d4f4f173e334629fc31ccf41beb5978091fec8",
+    "mention_text": "Paulo Sant’Anna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dbbe99d115ce3b32a20e9d4f05d88f2fac6bdbe0c42c82ab3f4237b450f75104",
+    "mention_text": "Grupo de Mídia de SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35171533fa014089768143b925c8267c4e73f5bf0ddb7482ba0ee4180cc3227a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d127c9ba1ddb231b3354cd57cab0ab2aba69b068ae6ca335e17e3e18bc1468ed",
+    "mention_text": "Sant’anna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e886adb0ab6b9696872aed1838a4e7a007b4a2f9f82edabee24c18baa75c81b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0071f0be0afdd4e1a884a59e96435a9d59f24f22b894343467c9c4cf077c289a",
+    "mention_text": "Cesar Toledo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02aca16dd988c0a0f4d4d74bc618a3a891468bbbcc031aebb876d7b166cd2467",
+    "mention_text": "Tribal Worldwide",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "94d2922e7e1f22744edc1c750fb8a0e151b3ccf8e822bdf2e1aa3ad406117b4b",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d007450e9a893e826ac73b7757fa998031cc8173f1e596fe075ed43bc2d20f4",
+    "mention_text": "Unilever",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4423699a4dbfa2fbfb4b7a3db200054912db9e16a720bdc23b826122a3725e0b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c1407b87448d9d7ebb4d4e0f6aa853e2edbeb12ed9a0c96b1e011d88c14efc8f",
+    "mention_text": "ABR",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74791717acc2f38049c9fb6bdc6ed3be752f61dca8cc3408bcfadef59a92cd9e",
+    "mention_text": "Senac-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9db963c3d4ad00a437d4c905907e7758ace2dee2e9ae2dd761b45e4228facb5e",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a1b829222b34f8891c8bbce8929a8c4b1032dcbec2c6a24771f8d4b1f015054a",
+    "mention_text": "Antonio Bonfato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3365512b2cc097364cb20a634948c9893dc24c50e6339ab992d1d31e14d09ef6",
+    "mention_text": "Bourbon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dce33b01d95e8a6deca96f2cbe183956d28810578d6ec640285d4d207f508dcd",
+    "mention_text": "Alceu Vezozzo Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82b622ae27790e16c58b7b6d25df24bca8f164bd1df0b050e2eb05d7982a28fd",
+    "mention_text": "Foz do Iguaçu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3606f8a77949d60e2cadd42cd0100b4eed7b72b952092795929385ee65bca2d3",
+    "mention_text": "PR",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e15b7ce73d23dfffd3d223f76046bbb0cc6d45593a9314d6d44aab464f2788ff",
+    "mention_text": "Atiba i a",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a184fc7cd4e33cb7eb45fff3d6be50e64e44b98a289cc6a8cba19fbf98488ece",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ce031aca48360fd988da6a19c8b0fd5fe77df918fdd325b02b8a6e24775cd370",
+    "mention_text": "Club Med",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af7d5e2096a7ed17c42a38a93d850f20d6925208e4c0ac51a00695b0d833e4ba",
+    "mention_text": "ABR",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "504fe66a9ec4538361397eed91e4dccc4204707f177055ac371d3a5215409955",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d5cfa177ea18d9edbfab5876eed1d7b6cd7802e48656498c0772bbc73ad7d2ab",
+    "mention_text": "América do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b05c38d1bf244a3a5ae1b7cfec426aba181547d148b3e443c82babdce09e39f7",
+    "mention_text": "Janyck Daudet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0cc81135af3ca52ef87940b15d1f66c4753e3f7b18d581a75a7844391addce8",
+    "mention_text": "ABR",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07ccb6adb4ac3fdaf60647e218fd2e289adcd4d7c6a1f4e5690c70b3bda0be4f",
+    "mention_text": "Fortaleza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "52adbe0ac53fd04961eec4edbf679fce1cbcf60f27b9f72ba1116b8b7c6ba165",
+    "mention_text": "Murilo Pascoal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "850c876a672479b368479ca6809ee578c95ba401a3be4bedf5948a694a3b6a1c",
+    "mention_text": "Beach Park",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89aaac69d46f23b71c1e86363e09b557fb0c416dbf6d51941edac81d2ab28d0c",
+    "mention_text": "Abicalçados",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d32dc00416e3fd0b6a85659ec1aa21fe5cc3ca0cae23c7c6c3852d717679ca4",
+    "mention_text": "Heitor Klein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "304a739ce73cd93ff7496b890a0f4463999a5f5adf9d0d8819f07ed697da2d79",
+    "mention_text": "ACSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14138d08d8fa1e5a3e042fb61f6eca32a9e18f5b3488277579d47e7a9330f1d6",
+    "mention_text": "Associação Comercial de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ccc1c1dbfd6c39f09efc9fd1e85fb752ea955cae7bfd94181a78b3079bf6dc1e",
+    "mention_text": "Marcel Solimeo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b8ddf2d4530db2f351739ad04bbeabdb2fd6d13d0820228dd65066174fa379e",
+    "mention_text": "Solimeo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1dcb20121e92b7ab48209b424c2f6bd238637ffe230f528e60d6ca89239e5b4a",
+    "mention_text": "OpenView Partners",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b7fad111b4c3f277738211300e8cdf1825f800bc4880a5fa0acffe4f561aed4",
+    "mention_text": "Trinity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "552d4a0522519713db05a8ff6325f5d552790353fa0c44136de093d044b3fceb",
+    "mention_text": "Redpoint",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d74cf45ccac40c1c9671c071d2ccc7563d739aaaacefdd3ba5992a1b2605bb1f",
+    "mention_text": "Valor Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "079b618180fb59a54b4b06b33bb290e600e1e1d8a9255249a68f7a7ebc602651",
+    "mention_text": "Pipefy",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df278ca533de769dc675c6ae2b37d948870835a1a995d51c8aa537c0b614c3c2",
+    "mention_text": "Alessio Alionço",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e31efa345eefa793add923e95b76339384df524c8f2391cffd81630e2618428e",
+    "mention_text": "Robert Half",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43799fdb3fde6992af952701843188b9c4eea9ec1e6a3c1e675f615b92472889",
+    "mention_text": "DPSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ab6987869c327c88d84baff59fa1f8f177240b976fe6d28da22fb46a99d3601",
+    "mention_text": "São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29c433ee29198775e67816a56466589d141306b4dbfc3d5bfca962bf1e686599",
+    "mention_text": "Pacheco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52e0e88898c88807c66e6149829c5310453596f2fd8087c7278dca9ebe9a3582",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "372eac238e98185e2d5542f91176066e582a6d10a63e3dfc5c6855c7adc7f8c3",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a03204144c5c1e607d44f847f0833630203bc39c6468aa0e00b544aa5362e5b",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  }
+]

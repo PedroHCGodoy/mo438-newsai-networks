@@ -1,0 +1,432 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b9c51f60f5a71fabc12cecffee2010865abe1e8456c962eefa34db4af675ec92
+
+TEXTO:
+Francis Pisani: Inovar: um assunto de ecossistemas
+
+Aproveitando o momento de relativa calma que agosto propicia, quero fazer um primeiro balanço --parcial-- de minhas viagens ao redor do mundo da inovação. Depois de ter visitado 33 cidades, entrevistado 200 pessoas e lido alguns livros e artigos sobre o tema, a expressão que se impõe para descrever aquilo que possibilita seu avanço é "ecossistema", o que implica um jogo complexo de montagens tecnológicas e encontros humanos. As duas coisas, em termos gerais, se beneficiam caso apoiadas pela maior diversidade possível, e operam em relação aberta com o resto do mundo.
+Seja qual for a definição que lhe demos, as inovações sempre resultam de novas formas de montagem para elementos muitas vezes já conhecidos, o que permite colocar à disposição da sociedade produtos, processos e serviços "objetivamente novos ou melhorados", como dita a Organização para a Cooperação e Desenvolvimento Econômico (OCDE). É esse o caso, por exemplo, da NadiMobile.com, companhia ganesa que combina mensagens de texto e inteligência artificial para oferecer a seus clientes um serviço de encontros adaptado às realidades africanas.
+Ler "Where Good Ideas Come From" [de onde vêm as boas ideias], livro de Steven Johnson, ajuda a compreender que elas sempre são fruto de processos lentos, pois derivam do conceito de montagem e de diversidade. Os elementos existem há algum tempo e a inovação se torna possível no dia em alguém encontra meios para acomodá-los de maneira nova. É a isso, em larga medida, que se refere a palavra inglesa "hack" (que sugere o uso de um machado), enquanto em árabe o termo utilizado poderia ser traduzido como "subterfúgio" ou "truque".
+Dessas montagens dependem os encontros, igualmente improváveis, entre pessoas diferentes mas animadas por um mesmo espírito empreendedor, ou seja, pela vontade de reunir recursos que não controlam (ainda) a fim de concretizar uma ideia que, no começo, mais parece um sonho. Os participantes estão livres para se dedicar a ganhar dinheiro (empreendedores de negócios), para criar empresas socialmente responsáveis (empreendedores sociais) ou para mobilizar pessoas que desejam mudar o mundo (empreendedores ativistas).
+Porque a inovação sempre trata de um processo social que implica relacionamento e colaboração entre pessoas de experiências e horizontes distintos. A verdadeira riqueza surge da diversidade, e é fundamental facilitar o encontro entre engenheiros, designers e empreendedores, estes divididos nos três grupos citados acima, e por isso não necessariamente regidos por uma mesma filosofia.
+Para tal fim são necessários lugares para trocar ideias, compartilhar projetos, iniciar uma aventura conjunta. Entrevistei pessoas em cafés nos centros comerciais da Kuala Lumpur (todos dotados de acesso à Internet, um requisito obrigatório da prefeitura), nos centros de "polinização de ideias" da JokkoLabs, em Dacar, no iHub de Nairóbi e em conferências da Arabnet realizadas em diversos pontos do mundo árabe. Também conversei com pessoas no bairro remodelado de Porto Digital, em Recife, Brasil.
+Depois disso, resta encontrar investidores dispostos a financiar o lançamento dessas aventuras sempre arriscadas. "Aqui há dinheiro mas as pessoas que o têm não investem no mundo virtual ou em aventuras que considerem pouco seguras", foi uma frase que ouvi em quase todas as minhas paradas. Do Brasil à Polônia, passando pela África e Turquia, esse é um estribilho repetido por quase todos. Um verdadeiro bloqueio. A exceção são mercados como Israel, Índia e Rússia, que podem ter passado por isso no passado mas conseguiram superar o obstáculo.
+Para escapar a esse bloqueio é essencial, quase sempre, um sucesso espetacular (tendo em vista o contexto local anterior), que faça com que as pessoas compreendam que, no campo da tecnologia da informação, é possível triunfar com uma boa ideia, por um lado, e, por outro, que vale a pena investir nessas ideias. Não é necessário criar um Google ou Facebook, mas obter certo tipo de sucesso, como o da IndiaGames, de Mumbai, adquirida pela Disney em 2011, ou o da ICQ, de Tel Aviv, adquirida pela AOL em 1998.
+Meu balanço pessoal determina, pois, que existe gente no mundo inteiro gente disposta a apostar na inovação, especialmente no ramo da tecnologia da informação e comunicação, para enriquecer, promover o desenvolvimento ou mudar o mundo. Mas isso demora, pelo simples motivo de que, por definição, os ecossistemas se comportam com a mesma complexidade de um ser vivo.
+Nenhum elemento tomado em separado conseguiria fazê-lo. E se bem que governos e legisladores possam apoiar seu surgimento, não contam com capacidade de criação. Cabe aos empreendedores fazê-lo. E estes são todos diferentes entre si porque, por natureza, respiram ao ritmo da sociedade que os rodeia.
+Componente novo e essencial, a internet permite adquirir em qualquer parte do mundo informações sobre o que se faz de melhor em qualquer outro lugar. Ela oferece informações a todos os interessados nos desdobramentos mais recentes, nas realizações de ponta. Também facilita a comunicação, a formação de contatos, a interação. Facilita, em resumo, que as pessoas trabalhem juntas independentemente, das cidades onde estejam --como ilustra a LetiGames, uma empresa africana de jogos criada por um jovem de Gana e um do Quênia. Para eles, o inglês foi indispensável-- um ponto a favor dos indianos e contra os brasileiros e russos, por exemplo.
+Ofereci aqui alguns elementos de reflexão profissional. Vocês podem acompanhar minhas peregrinações no blog unpasomas.fundacion.telefonica.com/winch5/, onde informarei sobre minha segunda volta ao mundo, que incluirá visitas à Cidade de Ho Chi Minh, Cingapura, Manilha, Hong Kong, Xangai, Pequim, Seul, Tóquio, San Francisco, Boston e Nova York, do final de agosto ao começo de setembro.
+Antes de partir, continuarei a compartilhar algumas das coisas mais notáveis que aprendi.
+Tradução de Paulo Migliacci
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9823482e07079cceb7dd26a0eec9105c2d0b2c924303fb574b6cbc72bc23898b",
+    "mention_text": "Francis Pisani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad711e148980a75e12a084ba7380f84e91424d33f862da9dcd273b55d37e485f",
+    "mention_text": "Organização para a Cooperação e Desenvolvimento Econômico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65452688b2be936e3d0c3ca1ecebe2e709244589a33c68ab38ba1f6a6b0e8824",
+    "mention_text": "OCDE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "575ba1f5ada1156a59ba794a54c2ff931583df30d6b757282ad5985284098e72",
+    "mention_text": "NadiMobile.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2583321c6a81d2d837289a64fed1e05a306ba27cddb93c6f4971ccbad6034d9a",
+    "mention_text": "Steven Johnson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4c7e56705ed6ff5f1fccb902d206f05361d0cd659397426dae0544dd504a76a",
+    "mention_text": "Kuala Lumpur",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b787782571492b240849fd8e45397b0071c9c77d489065d4613bee1ed4822186",
+    "mention_text": "JokkoLabs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8eae40536a17c6f014242b1618d93863bd420ba5ebedc2631d34a0f6945432c",
+    "mention_text": "Dacar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ac17c408dbe51cad0e326fb359f5bf2cb811e0c3d3b683fa3a399aabb980a873",
+    "mention_text": "iHub",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b9aa7cf167ef89dd2ed3fc9ebc5cdba836d4222232a6181941cdb8279c59730",
+    "mention_text": "Nairóbi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e47c9a7f83765610a333c3d5a8e7b634bff8d59e21c779f36c780701dcde588",
+    "mention_text": "Arabnet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "640aedd10ec73d037f683570900aac988b1aca553c9c7b173824377638de4b00",
+    "mention_text": "Porto Digital",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "557a86828896bf8fa7c4953965b183b75050bc019966f45ab5c06a1ec3a99234",
+    "mention_text": "Recife",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9767db99e6cf12638321a073431ce0c2f1649a6921779bd5bb70e7dbb12c05ca",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "24af2e49c5b3084bc9d863ec189d8af99b0e547d4766ef8e0e6e53e21267ddb6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ad776b784491a675e02283f119918a29b5ee5f2241e5d617658685171e2306f9",
+    "mention_text": "Polônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0c4cd849f0b89cd429b6c21f3f91cd0cf50620e33e1d903182f1d607cc9f73a",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "32614296772a71e2a359f90d36e9a647667cc900df4b03e1f41166a14df8f830",
+    "mention_text": "Turquia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3a5b1047085cd0e3c869549ce21d5b53ea39907c8c585b851b0e50e9cbc157ac",
+    "mention_text": "Israel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ae46aeb54feb48780dab4822fd39edbd0b7d824c9127960f78ab9a7019f0023",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "58543315bc06317db7fe8a8181fe8b83e1d474d945c5e0aee4a1ac52648c6488",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "55d055d546aa1ad44dc3b91b08a6c31b658113590bb9e2dd0e6b73d910699914",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a9b32332513d98107bc3f762f363cc64311b735acb587a599dbbdcb112cb439",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b55c31ed02dbded4c0a39ea27632e512a0ef4e9219acaf33087657c5071a68a2",
+    "mention_text": "IndiaGames",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f792425a61621156d3f8b984690b3564ce84b45ca21e73584f8d3ed5b626339d",
+    "mention_text": "Mumbai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "66fda28a4f78039f3f279cee6402a211d526d4ff3e381ff904bdd243223ba149",
+    "mention_text": "Disney",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "feeadf92a20664d831e93e70790b7c0ec225e78695bd308b85f1fc729723a457",
+    "mention_text": "ICQ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b05692bd709e6dc3fd1ab5a36d386a7846926bc9773fd15043da5bd306d38004",
+    "mention_text": "Tel Aviv",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a416e06b827860314d6b28150cafb95bb4c98b391c161199ac9ad17bd7114bf6",
+    "mention_text": "AOL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "913ffc59cc56cfe9551943587b4920b7cc1268f9e9f507041a08d1e5e383cd31",
+    "mention_text": "LetiGames",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5dd47687328d2035c074272331172c94fa0e496687e0a769283e372ec036710",
+    "mention_text": "Gana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0235048431152d7012e08b972b0b5e69d680cbf460dad23e1d1ddf6ea337c24c",
+    "mention_text": "Quênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "05cdb475fd2ce3beb2d49e95c84bfecfd90955c28d1655afd8e69e7e7e5fa8ee",
+    "mention_text": "indianos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "533c2d77c4a5b0c2de8412b9b7ada72567bf81db39e4078b63418ab7fe9b8fb9",
+    "mention_text": "brasileiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11cf80f7898f54d339430700a23d561439789b84aaf16d4920bf3a5586da7e04",
+    "mention_text": "russos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d244d82a535865fc2c1565d73ad93ec955685cb5b9be32fd9958d370b9d83982",
+    "mention_text": "Cidade de Ho Chi Minh",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "353974d4127c677e8c662555c3b36be9f8a16494800efd87de90343a41987f70",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "60017576c53435efc09994da1a7206a64d50b56cbc8a9c22c2bce6321d719f94",
+    "mention_text": "Manilha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8545e4870d618c6555b3a752ca5cb2cb864a4e77609ddbe7ee4fe5955ef4e89f",
+    "mention_text": "Hong Kong",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa89fb246034e7f01c56b87e212149334c168347f2f90794bc8b31f215c1b727",
+    "mention_text": "Xangai",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f4aea6910870608885e207123ef9b104ecbc9366ee9dded55a048aed966b322",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3baa012453d102bd9d49d4fe4e82164df3b7abff2d33e16af0428f784b2fe0d0",
+    "mention_text": "Seul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5744b389cf07ede254fd261ae93512dba9910726b59942a8797f1cb78dc93908",
+    "mention_text": "Tóquio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe347ec8c13aa0190c24d70a0b5d56efb31102de6a82390d2ef0fcaa9ea31597",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0ca614787be25df23cfd61f2d5e2d7710c73119db7a9c86ae9dd2ca58f6bc317",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "659844d56578af5acd9888a4aed4255b813a0616281aa634ba3c7c9ff926d7c5",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e06b25500d1418bf0d9b5122e303aa21a068087aa425dbe242fa107494fc650a",
+    "mention_text": "Paulo Migliacci",
+    "categoria": "PESSOA"
+  }
+]

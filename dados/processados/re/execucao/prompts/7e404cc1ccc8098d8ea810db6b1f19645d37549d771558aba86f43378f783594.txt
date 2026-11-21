@@ -1,0 +1,336 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: eb4e4cac396bc38123844eb5d4acafba9e2d0804b165d6be4c12587ac5c7d9a4
+
+TEXTO:
+Dólar alto deverá ajudar gigante agrícola a alcançar receita recorde
+
+A desvalorização do câmbio deve contribuir para o resultado de empresas do agronegócio no Brasil. O dólar bateu em R$ 3,77 na sexta-feira (18).
+Na Cargill, vai contribuir para um resultado recorde, segundo o diretor-presidente, Luiz Pretti. “O dólar mais alto ajuda no balanço. Estimo que a receita alcance R$ 40 bilhões pela primeira vez.”
+Se concretizada a previsão, será um aumento de 17% em relação ao faturamento de 2017. “A Cargill vai bem na volatilidade. Tem uma área de inteligência e é a única a ter banco.”
+Os investimentos devem voltar a crescer no ano que vem. A estimativa é que sejam aportados cerca de R$ 600 milhões —foram R$ 420 milhões em 2017. Será preciso ampliar alguns empreendimentos, como portos, que se aproximam de sua capacidade máxima.
+“Traders”, como a Cargill,  são as principais beneficiadas pela valorização do dólar porque contrataram a compra da produção com a cotação mais baixa, e receberão os grãos com câmbio alto, diz André Nasser, da Associação de Empresas de Óleos Vegetais.
+A cadeia da soja também se beneficia da seca na Argentina, que fará com que o país vizinho tenha uma safra ruim.
+O país deverá exportar 18% a mais em 2018, calcula Nasser. “A grande razão da melhora de margem do setor no país tem a ver com a Argentina.”
+Não para a Cargill, diz Pretti. “É indiferente. Ajuda o segmento agro no país e prejudica também —tem preço maior para venda, mas quem consome o produto processado precisará pagar mais.”
+A empresa também tem produtos finais, lembra.
+23 são as fábricas da Cargill
+6 é o total de portos
+10 mil são os funcionários
+Clínicas e hospitais recuperam 43% de pagamentos bloqueados em SP
+Hospitais, clínicas e laboratórios privados paulistas recuperam, em média, 43% dos valores glosados (bloqueados pelo pagador por algum motivo), segundo a Fehoesp (que representa o setor) e a consultoria Websetorial.
+Aproximadamente 90% dos bloqueios são efetuados por planos de saúde, mas também há casos em que o responsável é o governo, quando estabelecimentos particulares são contratados para atender a rede pública.
+Entre as situações que podem levar ao não pagamento estão erros por parte do prestador de serviço (como o registro incorreto de dados do paciente), o surgimento de custos adicionais que não estavam previstos e inadimplência.
+“O nosso grande problema é quando o pagador cria uma dificuldade de propósito. Quando há glosa, o valor é recebido 90 ou 120 dias depois, e isso impacta o nosso caixa diretamente”, diz Yussif Ali Mere Júnior, presidente da entidade.
+Quase todos (97%) os estabelecimentos enfrentam algum tipo de glosa, de acordo com a Fehoesp.
+Com o pé atrás
+O índice de segurança de crédito, que mede a parcela de consumidores paulistanos com alguma reserva financeira, subiu 11,5% em maio, segundo a FecomercioSP (federação do comércio).
+O indicador subiu de 74,5 pontos em abril para 83,1 neste mês, em uma escala de 0 a 200 (maior reserva). O aumento maior, de 20,6%, foi entre os endividados.
+“Há famílias que recuperaram o emprego, mas estão receosas de retomar o consumo porque não enxergam firmeza na retomada e, por isso, guardam dinheiro”, afirma Fabio Pina, assessor econômico da entidade.
+“Pouco mais da metade dos não endividados e um terço dos que têm débitos pendentes faz alguma poupança. No geral, algo em torno dos 35% dizem ter alguma reserva.”
+Opção pela estabilidade
+Cerca de 7% dos trabalhadores brasileiros foram promovidos nos últimos seis meses, segundo a multinacional de recursos humanos Randstad.
+A porcentagem é inferior à de países emergentes como China (15%) e Índia (15%). Foram entrevistados ao menos 400 profissionais em cada um dos 33 mercados analisados pela empresa.
+Ao se considerar os trabalhadores que mudaram de companhia para assumir outro cargo, o percentual brasileiro cai para 5%.
+“Com o desemprego atual, é natural que pessoas fiquem mais inseguras de abrir mão de sua segurança e estabilidade”, afirma Pavel Kerkis, diretor da Randstad.
+“Além disso, não temos tido propostas tão boas como há cinco anos, quando eram oferecidos aumentos salariais de até 40%.”
+Farmácias A receita das redes independentes que atuam de forma associativa, com a mesma central de compras, subiu 21,5% nos 12 meses até abril, segundo a Febrafar (do setor).
+Inteligência artificial A rede de laboratórios Fleury começou a realizar testes genômicos com o software Watson, da IBM, para exames de oncologia.
+Flexível Sete em cada dez brasileiros gostariam de trabalhar em casa ou em um local fora do escritório mas não têm essa possibilidade, segundo a Randstad, de recursos humanos. ​
+com Felipe Gutierrez, Igor Utsumi e Ivan Martínez-Vargas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "619d81beba096fec1604ba0823a81a3bcadae59ca8bc2ae43041f44b02155821",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "853acbc4f8f5f36bf86c6e1f4b73a887f1167ae070a489a8e69e433d89151609",
+    "mention_text": "Cargill",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f5ba64de48fc2f3979b725906c8ece04752ef537ae0d476afe22634a6a79f7a",
+    "mention_text": "Pretti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c003e990aca673f332767c53d1c653d1a96adbe8db4855af01abfc9f6e83898",
+    "mention_text": "Cargill",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d92a91beec6518ad527aab92838f6267bb2e0061de4ebd314964b39b7bd2762",
+    "mention_text": "Cargill",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8631c680f2fe884f098c96fd6c1862c5bcae9ae2987bc283bac0f7f058f3b52d",
+    "mention_text": "Nasser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1742033481ebe3e9159724dec032423042f10b67d93347a4485af50374b1f022",
+    "mention_text": "Associação de Empresas de Óleos Vegetais",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f0ad2c359226911a8c6534f5fb39bd03924737044870c70da9fba85a2627579",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c1a87e25dcc2336aedd067c89acea5c508425855856e340193e4bd4ead272188",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f764ddc04a28202ce8f636570c94bd1c2a9738d61d304be0493f1f9cf9a5352c",
+    "mention_text": "Cargill",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c60e2fa776a577d71409963998f7ece75fa3036dcea238cbb5f1d6c98f448bd4",
+    "mention_text": "Cargill",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd9c1e01f542141c8b943dfa34395139a58bbdf192e2e9cd99a34e9d484393a7",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9fd3067ab6d29233344f24fb4c4062f0b2bf38532c3c48f7a64e15195653878b",
+    "mention_text": "Fehoesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5522546804a511976483e8424192eb440911c37bea83b3e08434695a1277b3ad",
+    "mention_text": "Websetorial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e8cad218404bb4a8898dda513da68ac4a9334e50995bb99098535513dce1f05",
+    "mention_text": "Fehoesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7c59d60df911ad1bac0d7f1144fb2b4c078146e4e2a9fb007a3bc98b1ba48d5",
+    "mention_text": "FecomercioSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bee0f3b2321a52a695aba8df47ecbebfd3757a98029a44cd036638c7ccb03e35",
+    "mention_text": "Randstad",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01ec62edbf8bf528f9cae5f8aa8ffd84473dcc1e5d4b3e8f868cdd30cc9990d4",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec99c9f74c047bea927dda3844159b17c996f844d27a67434af8f62714a38324",
+    "mention_text": "Índia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02c643658e644fd2278defe30b8f8519bafa3e1fdec6b59403d6a0c2a1104f67",
+    "mention_text": "Randstad",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "385d3861c00fc58c8eb53b764a223b4d748f926b886cac6f5db64d3f748d1720",
+    "mention_text": "Febrafar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b06a5a24092b8ef6af7b7eca48f3a4fb40d998271aa21690880d6ea372e0d9c",
+    "mention_text": "Fleury",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "420e52b9910b95f4c303f417b2d20dc10fabcd4f8bcc4c7b5169d1c25e676610",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebc3e9315a4c47ecb88b683111436fd6d53549a182ef910dc6b05697d146ced6",
+    "mention_text": "Randstad",
+    "categoria": "ORGANIZACAO"
+  }
+]

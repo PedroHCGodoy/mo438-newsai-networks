@@ -1,0 +1,319 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 133463a795151bc2262db54cc91cc121effa47a7f809916d7b7a257b246ac9a9
+
+TEXTO:
+A maçã mordida
+
+Uma das marcas mais conhecidas do mundo é uma maçã mordida. Colada em automóveis ou até tatuada na pele de fãs mais ardentes, o símbolo da Apple é visível nos produtos espalhados pelos colos, mesas e bolsos de usuários de todos os tipos. Onipresente, a frutinha seduz com o design de suas formas, desafiando quem a vê a mordê-la.
+Maçãs têm uma tradição mítica no Ocidente. Desde muito antes de a Bíblia retratar a tentação do pobre casal no Paraíso, Hércules já enfrentava problemas para colher os pomos dourados da árvore da vida. Guilherme Tell precisou de sua flecha para tirar uma delas da cabeça do próprio filho. Branca de Neve mordeu uma enfeitiçada e só foi acordar com o beijo do príncipe.
+Do ponto de vista tropical, o culto a uma fruta tão sem graça não faz o menor sentido. Mas na Europa medieval eram raras as plantas que sobreviviam aos rigores do inverno. Por causa disso, até o século 17 "maçã" era um termo genérico para definir qualquer fruta estrangeira. Em francês, até hoje chamam batatas de "maçãs da terra". Em defesa das macieiras, acredita-se que o grande Isaac Newton tenha imaginado sua teoria de gravitação sentado sob uma delas.
+Símbolos de conhecimento, pecado, tentação e poder, não demoraria para que maçãs fossem transformadas em marca. Uma das mais conhecidas foi a gravadora dos Beatles, Apple Records. Mas, enquanto a maçã dos rapazes de Liverpool era cortada ao meio, a de Steve Jobs era mordida. Seria uma referência nerd ao termo "byte", conjunto de oito bits, cuja pronúncia ("baite") é a mesma de "bite" ("mordida")?
+Há quem defenda que a mordida foi referência a Alan Turing, matemático e criptógrafo inglês, considerado o pai da ciência da computação. Turing era um gênio. Decifrou códigos alemães na Segunda Guerra, desenvolveu o modelo teórico de um dos primeiros computadores, fez pesquisas importantes com matemática e biologia e criou o teste que leva seu nome, até hoje indicativo de inteligência artificial.
+Turing era gay, o que, acredite, era ilegal na Inglaterra há 60 anos. Deu o azar de levar um desconhecido para casa e acabou sendo roubado por um cúmplice. Ao denunciar o crime para a polícia, declarou seu relacionamento com o ladrão e acabou acusado de indecência. Foi submetido a injeções de hormônios para "corrigir seu desvio". Em 1954 foi encontrado morto em seu quarto, envenenado por cianeto. Ao seu lado, uma maçã mordida. Não se sabe se a morte foi acidental. Sua estátua em Manchester tem uma maçã em uma das mãos.
+O símbolo da Apple seria perfeito para qualquer teoria de conspiração, ainda mais se considerado que na versão original a maçã tinha faixas coloridas, possível referência ao movimento gay. A explicação, infelizmente, é mais prosaica. Rob Janoff, seu designer, colocou a mordida na maçã para que, quando diminuída, a marca não parecesse uma cereja. As cores representavam as faixas coloridas da TV.
+Misto de desejo, conhecimento, esperança, mito, anarquia e poder, a tentação fatal dos produtos de consumo eletrônico tem, ironicamente, vários pontos em comum com a mitologia da maçã. Irresistivelmente tentadores, se é impossível evitá-los, recomenda-se consumi-los com moderação.
+Luli Radfahrer é professor-doutor de Comunicação Digital da ECA (Escola de Comunicações e Artes) da USP há 19 anos. Trabalha com internet desde 1994 e já foi diretor de algumas das maiores agências de publicidade do país. Hoje é consultor em inovação digital, com clientes no Brasil, EUA, Europa e Oriente Médio. Autor do livro 'Enciclopédia da Nuvem' , em que analisa 550 ferramentas e serviços digitais para empresas. Mantém o blog www.luli.com.br , em que discute e analisa as principais tendências da tecnologia. Escreve a cada duas semanas.
+Comentar esta reportagem
+Termos e condições
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a703dd24e29686529cf4495ca881d99cb63a70babce7a2902c2d50462c6838a4",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8674b958fc63edd7430331c0421a42cc59f2739a968d2b932f1d61acd0c728a0",
+    "mention_text": "Ocidente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8c1e2a3cbb8d1e862948a0510704d48ab1b35800f17fc644c278cb19bdd101d",
+    "mention_text": "Paraíso",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0813198f986b33a4ca26881be5b4904013d324a0a5733008d8f261c9de55435",
+    "mention_text": "Hércules",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8aea61215a974cab8f37d7fcebb020e6c3b12b16e5076c9d39f2fe59d992e0e4",
+    "mention_text": "Guilherme Tell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09c248f254c31471ba700b01a50e250932bb9def0754b348af6c667f739494b8",
+    "mention_text": "Branca de Neve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68b05d1dd492e00260d80f4148b6d5c64be1a890559790ac788fa203296933cb",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a0debe3f5725ffe7a1493c3303803fccb7fb97bb51783411293234e91ca6edd",
+    "mention_text": "Isaac Newton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ed43620a091a501fa942f90a7737e80d9bd06a51638fd5916d12699200c9c86",
+    "mention_text": "Beatles",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f0dab3a6fa8627ea5517dd9a60545abdbdeed1bdb7e13b8a3b08edda154a1e4",
+    "mention_text": "Apple Records",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4251b46bbe2e23d94e89f4912934672f91501939d95d77077e84580ec7f8e8e5",
+    "mention_text": "Liverpool",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "92e759ceeb26d09cc8de7655e0e76b8e3495df298a0ecce03ed7dda9400ecf63",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb18a26a36b4b3f79a091861c7d221500f4a7dbb389431d2bc94ba242d825741",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2fe357194be30cd8e36d84d2dde20fb39feafe07c329b3dc304d23ed9178c44",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d596c40bfc827a717e2e5a1406e885988bea7e12e4b6d3123a61cdcbb9db5952",
+    "mention_text": "Manchester",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "653d5ad28fdf18556e15564ba5f553c916e001b3e147727ba35d6297e85aa28d",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "475f6098955832cac06fa7a51ea6ddf27152f1de392025a0687500a0bc521425",
+    "mention_text": "Rob Janoff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dba356d0346dc89606194f4d1b275851cc0a06bfdfbd6c7e31d8ccc99e0d5116",
+    "mention_text": "Luli Radfahrer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f69b228c326c06805d136b00ead7ed93cea552586851f38198a5fbaab151ef36",
+    "mention_text": "ECA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f1a7fa9e5ec54387e437b57472783c061701cc304e5d7a2e2783d2eea5af8ad",
+    "mention_text": "Escola de Comunicações e Artes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3fe0f2b632a05c8edee24e70531428f07fcae53fae47308fd9378a4529546b36",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e565a4dfc9d37a73b1600f089a556010183d216b0217690e92cc0aab8afca952",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "90af07b8bc62e9e46c1d5eb2e3a12cc27c84135380e0529b72be671e8674fcea",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f77ef2d17b00692b820d90b53eaf5ef7d016b79ae6cb74bd92c6efc805690eb8",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cacb8ddd85cadede0d589cd4514d4d616d86c1f3550aaa1eeb1e46393321f63f",
+    "mention_text": "Oriente Médio",
+    "categoria": "LOCAL"
+  }
+]

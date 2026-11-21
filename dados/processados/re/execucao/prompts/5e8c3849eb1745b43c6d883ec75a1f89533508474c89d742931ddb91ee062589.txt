@@ -1,0 +1,751 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 9b5206bdce838f55455edb35570db7ce0e08b47bcdf72156b6413ded96cb33c2
+
+TEXTO:
+Conheça os convidados do evento que debaterá inovação no Centro-Oeste
+
+A Folha realiza, no dia 12 de março, o seminário Inovação no Brasil: Centro-Oeste.
+O evento discutirá os desafios para o desenvolvimento na região e abordará questões como o desenvolvimento da indústria 4.0 e a aplicação de inovação na administração de gestões públicas.
+O seminário Inovação no Brasil: Centro-Oeste terá início às 9h no K Hotel (avenida Deputado Jamel Cecílio, 2550 - Jardim Goiás), em Goiânia.
+As inscrições são gratuitas e podem ser feitas no site Folha Eventos .
+Confira abaixo a lista de convidados.
+Eduardo Braz
+É fundador da Agência de Inovação e Transferência de Tecnologia da Universidade Estadual de Goiás, a qual coordenou de 2014 a 2018. É professor concursado da UEG nas áreas de produção e administração estratégica. Realiza pesquisas sobre o impacto de tecnologias disruptivas como internet das coisas, inteligência artificial, big data, biotecnologia e nanotecnologia.
+Fabríci o Motta
+É procurador do Ministério Público de Contas de Goiás com atuação n o Tribunal de Contas dos Municípios do e stado. É p rofessor da Faculdade de Direito da UFG. Preside o Instituto Brasileiro de Direito Administrativo ( IBDA). É doutor em d ireito do Estado pela USP e m estre em d ireito administrativo pela UFMG.
+Francisco Gonzaga Pontes
+É o atual secretário de Desenvolvimento Econômico, Científico e Tecnológico e de Agricultura, Pecuária e Irrigação de Goiás. É e mpresário do setor metalúrgico e conselheiro do Senai . Foi presidente do Sindicato das Indústrias Metalúrgicas de Anápolis, em Goiás.
+Gianna Sagazio
+É superintendente e diretora de inovação do Instituto Euvaldo Lodi (IEL), instituição vinculada à Confederação Nacional da Indústria (CNI). Atuou, por mais de vinte anos, no Programa das Nações Unidas para o Desenvolvimento ( Pnud ). Possui mestrado em desenvolvimento econômico pela Universidade Católica de Brasília.
+Helena Nader
+É presidente de honra da Sociedade Brasileira para o Progresso da Ciência (SBPC). Atua como professora titular da Escola Paulista de Medicina da Unifesp e pesquisadora do CNPq. É m embro da Academia Brasileira de Ciências (ABC) e da Academia Mundial de Ciências ( TWA ). F oi vice-presidente e presidente da SBPC.
+Joaquim Mesqui ta
+É s ecretário estadual de Gestão e Planejamento de Goiás. De 2012 a 2016, foi secretário de Segurança Pública e Administração Penitenciária de Goiás. É especializado em gestão em p olítica p ública e mestre em a dministração p ública pelo Instituto Universitário de Lisboa. F oi diretor de a dministração e l ogística e de gestão de p essoal da Polícia Federal.
+Jorge Almeida Guimarães
+É presidente na Embrapii (Empresa Brasileira de Pesquisa e Inovação Industrial). É membro da Academia Brasileira de Ciências e pesquisador sênior do CNPq. De 2004 a 2015, foi presidente da Capes. É doutor honoris causa pela Universidade de Nottingham . Foi condecorado com comendas do mérito científico pela Argentina, França e Brasil (categoria Grã-Cruz).
+José Mário Schreiner
+É presidente da Federação da Agricultura e Pecuária de Goiás ( Faeg ), do conselho administrativo do Serviço Nacional de Aprendizagem Rural ( Senar ) e vice-presidente da Confederação da Agricultura e Pecuária do Brasil (CNA). É técnico agropecuário pela Universidade Federal de Santa Catarina.
+Luis Henrique Bassoi
+É pesquisador da Embrapa Instrumentação, onde realiza trabalhos de desenvolvimento e difusão de tecnologia nas áreas de manejo de irrigação, fertirrigação , uso da água na agricultura e agricultura de precisão. É professor do programa de pós-graduação em agronomia da Unesp.
+Marconi Perillo
+Atual governador do e stado de Goiás , cumpre seu quarto mandato no cargo (1999 a 2002, 2003 a 2006, 2011 a 2014 e, agora, 2015 a 2018). É filiado ao Partido da Social Democracia Brasileira (PSDB).
+Maria Zaira Turchi
+É presidente da Fundação de Amparo à Pesquisa do Estado de Goiás ( Fapeg ) e do Conselho Nacional das Fundações Estaduais de Amparo à Pesquisa. É professora titular da Universidade Federal de Goiás. Foi vice-presidente da Associação Nacional de Pesquisa e Pós-Graduação em Letras e Linguística.
+Mauricio Neves
+É superintendente de planejamento no Banco Nacional de Desenvolvimento Econômico e Social (BNDES), onde também atua como coordenador do Comitê de Enquadramento e Crédito. Já foi superintendente da área industrial e da área de indústrias de base. Possui mestrado em políticas públicas para ciência, tecnologia e inovação pela Universidade de Sussex .
+Paolo Petrelli
+É diretor de projetos na PontoGet Inovação e no Instituto Gyntec .  Atua como mentor e consultor em inovação para médias e grandes empresas. É sócio no MidWest Ventures, fundo de investimento com objetivo de apoiar startups em estágio de validação.
+Pedro Luiz Costa Cavalcante
+É coordenador de estudos e políticas de Estado e democracia no Instituto de Pesquisa Econômica Aplicada ( Ipea ) e professor de pós-graduação em gestão pública na UnB, Enap e IDP . É doutor em ciência política com pós-doutorado pela  Escola de Relações Públicas e Internacionais da Universidade de Columbia.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9c52647d67b112505190d1182380c7d67069fd36263defd27b95f906f0ed94dc",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "376ffe413ffdc17fb376194778274d81084140bf3d97f96a9fcc5134a54c8feb",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47522ceaaad98a3749fa1aec7cff817216c951e8acb37fce914c22f43c3b9118",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b535c82358d4d407230fc61851be16145239ab9d26a53a62894647ff1c4ab8d",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43a5c1938e69228f16de988fe368fa3181e4ae3e4680b334df13ff41511ed57c",
+    "mention_text": "K Hotel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dcee908445c9d2329f6e9e4acde0eb621b77b09c3790d3f91d86a5468d5c1e35",
+    "mention_text": "avenida Deputado Jamel Cecílio, 2550 - Jardim Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11aa37795b8cfd457100e198ffac2f8bbb48d0742cdd9308ee08a52b4c1321dd",
+    "mention_text": "Jardim Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76306b026270e2a063d128b5fdc09fdf0d3ec0cb4fe90cb0e2a68cbf62222f58",
+    "mention_text": "Goiânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1ba73d85ce49b53b3f96e25f4f4654bbf79bbe6a91ce1ee1335c8f182c023df",
+    "mention_text": "Folha Eventos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f0ecc7c5c25390824746a24b0803872197fd1f98c32f2aaf690178ff16dfbb4",
+    "mention_text": "Eduardo Braz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "86dfed7908c7d4628271f0234d32f3f58a90eb2549e03fa490b1f89663a8f2d1",
+    "mention_text": "Agência de Inovação e Transferência de Tecnologia da Universidade Estadual de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "082edd6cab31976e84a5f07ad1833f432750119e0ce5d8f05d6b4a090c75bc58",
+    "mention_text": "Universidade Estadual de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48b5c092a519cc81cd07f8798c1506032192b02bd0f7ec48ef46c168f7dc1881",
+    "mention_text": "UEG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a5361bb3f32cd93f52e6a754d0ec5926980c80b875230d0e73f7f5615180c8f",
+    "mention_text": "Ministério Público de Contas de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7903ebbec28f679f15612d9a571717e545bb34de2b5391c357c2bec15fe7b4b5",
+    "mention_text": "Faculdade de Direito da UFG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3914ee1b3e68ab37742dc6065540c6f35bcbd0fe24738050e3405ef42416bac5",
+    "mention_text": "UFG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0758c91db6323d3642479561a2a87628c0e94f9dfcbfb993b924fe5f643c868c",
+    "mention_text": "Instituto Brasileiro de Direito Administrativo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbf42d7af0048d80ea22206f434b3790ccedb392509f471e4bb6e1bafd641dc0",
+    "mention_text": "IBDA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "066dbfff04e119a3ce8a88705a8e2e34c4427c6502d82c199e51f4a8aa8f0034",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d446ac90be6443b40923aaa8ad4cbe87f906da9d29fda1ec7933f682219cff8",
+    "mention_text": "UFMG",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92764e6a19006276f409a8d3d8c8f8d91b1f590ce6a6d7a2db88632966901382",
+    "mention_text": "Francisco Gonzaga Pontes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b38751845f541b9da4024871adf70f0b17b35fb3f15a03f7c688cdc5da7d0920",
+    "mention_text": "secretário de Desenvolvimento Econômico, Científico e Tecnológico e de Agricultura, Pecuária e Irrigação de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ffde624d1756cdedaf414a6a4663bef6a9552947abe303526dc57c52cc6d463",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6f927dc523155698bc72a8656b27595721fd350c180d1cf9eed64c5659a9985",
+    "mention_text": "Senai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc755e66b8f75438aac75e733c62b5e72320884f7d575da004fdd7781f66b642",
+    "mention_text": "Sindicato das Indústrias Metalúrgicas de Anápolis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd9aa4dd38bc7c26ec0ee63d0c5877b57f1107c011e196682b37eb4846cd4c21",
+    "mention_text": "Anápolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "15265851097da09b1027c7490c863e441ef0ae0a7c910127f3bdcbaeca064834",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0778fbc02c7dd6837caaeb16e57a93013d27f8a7eeeff78aaba328aa3d379692",
+    "mention_text": "Gianna Sagazio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "218cd5e9f1fe927efcd46dae24f22660605d748d7bae5ba20ffb13fc44c8b706",
+    "mention_text": "Instituto Euvaldo Lodi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b513a9f982cbe14894b03c0227188530877c7cf1a8637d760718fb6469002c76",
+    "mention_text": "IEL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e793de5f906cb363f65ac986459552ae0d63a424775ff6ad3d4fdd57fc207f6",
+    "mention_text": "Confederação Nacional da Indústria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdbc5eef390a097cca65ef9984793e9787317296079861a4a18ffb189d50a624",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "225c953a6e4133c2e09e726b6050f4457dbf13d48598e439f1e2b7bb56ebc28c",
+    "mention_text": "Programa das Nações Unidas para o Desenvolvimento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "628e9ac4f97561f39aa3bb2d04afa460433fe141a5b29f535d9b7e727cb92112",
+    "mention_text": "Pnud",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd88463d6c82edb4ea37fc51061d5f9c67d92ff33d32312239f08785eedfe14c",
+    "mention_text": "Universidade Católica de Brasília",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e341fa449dc316b82ea0606b6f6bbdd0ba316ca97c52f34c58c9b0e97b30a53",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e2bfd6d52be9b41219dbc2fa4c33a78140e5f303968e7164e21a59276f26d39",
+    "mention_text": "Helena Nader",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be0eb36619ddd200243110317c9f5922628561a98ce98f315339e2a097e69eb8",
+    "mention_text": "Sociedade Brasileira para o Progresso da Ciência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5df54ddb7553b8f1df3868750dfcee2d6fb62044e7f2e19a0b6acbed308bbc6",
+    "mention_text": "SBPC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c41a1de0c1ffce8ebd3d089ebeb112fcd302eb41410433533531840fb664b5aa",
+    "mention_text": "Escola Paulista de Medicina da Unifesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df9eee9e0a0b49091fd0dd12f6b6da2548d4d2e0aca6276ebe1e6a293078e83f",
+    "mention_text": "Unifesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdf24f7e4407127caff5b0f81887c4ea578e1332ea0b64e90c324a9a3362929a",
+    "mention_text": "CNPq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49a6516ad7e75681cd396a8123714c1e88ba467164371119e7417494792bd27d",
+    "mention_text": "Academia Brasileira de Ciências",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc1cddae933f532f6c944bdaa388b75eae2accfba58422ad29ee05690c33ccd6",
+    "mention_text": "ABC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0202a51434b42af01e7356293b680bb5369b7e68e63a9400946ff2e7bdcc402e",
+    "mention_text": "Academia Mundial de Ciências",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ac18fb5ea7527499d2b713efd7fcbd57369b999b75e927eef3f989ab2338a64",
+    "mention_text": "TWA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "777ac17715cb49b1c38877bc88c5804c31bcd0a6b60816c5e048f8a13ab31def",
+    "mention_text": "SBPC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18bdb8200df36998148efe8032683faf38e9099059e3559f3e5c6efcdf015fd5",
+    "mention_text": "Gestão e Planejamento de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "602e5c74ab08eb4d3abc42ca84e98876b662c90498be0b8b1001af4e1fdee0c8",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a6656ecbd6219db58aa2cd7719ad6320db39cf7f33ba5404733485145510d3b2",
+    "mention_text": "Segurança Pública e Administração Penitenciária de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6b1177a73e45836fa1382ab10057777ad96f40f7bf46b0434a6ae729ff42767",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f470e69273fbf634f0e34f049243e0578e2b012a0c709abb317088a2ade5460",
+    "mention_text": "Instituto Universitário de Lisboa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58fea77caf510d3c4ffa8b83c137c47ac6349a3aca9c407a8d8d5d7a60d323c5",
+    "mention_text": "Lisboa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3f32dd918fa20f2a09295e802f5a488f6165f489404b0e432b6cc566067bc3fb",
+    "mention_text": "Polícia Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba3b885d0b0a1840856d4c7c42c924b473c14cc7f196c03e48db011b9fddef13",
+    "mention_text": "Jorge Almeida Guimarães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c9b22c5165f7c24f8a1623e8da2c88fd87037c8d861502003a63db3e36594a6",
+    "mention_text": "Embrapii",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44c1650263c4f5a2d6ea51e08f55a21cc9b3fef01cc6f280263fcf2cd6aebec9",
+    "mention_text": "Empresa Brasileira de Pesquisa e Inovação Industrial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce330d13bd1c4c802cede09cb8aba2e1dbe307034975cad8b126852fa9a752f8",
+    "mention_text": "Academia Brasileira de Ciências",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d17db5439a39d040620e9f97b92d3b701dceca205ed1970ca03d4d54ef5b5bf",
+    "mention_text": "CNPq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04b5db40ed5dd0c89c33b08a06d03f4f323f1ac3db3078316655545890925e08",
+    "mention_text": "Capes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ba87ccd3c7e536f528ed1a203ce9c5b3f9022106036f4578b807a8ad96c1037",
+    "mention_text": "Universidade de Nottingham",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e575c857da5901ec449f3bce1bc849220c7672f7a6e841ca67f992f5e96ff8fb",
+    "mention_text": "Nottingham",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c48098d6139cb52643ddf9e97716db207259269ed93b7ad16e7adfcce895bf1c",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bbfb99d543db568f11bc3458558f579f5c8c30fdcbce394a5357a15a42bbeb91",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ec5a1de2ac74e4f5d4caecdbbbccff17ad3cc56b83c1c676225eeaaab16d900",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3856a9fdfb45c8c5c42b2d54045d2565d7e8f496f34904bca96767b1d9443e86",
+    "mention_text": "José Mário Schreiner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38157504e233125358fc3d8c5b31f5f804f8d00f76788bede0472bc8d241c717",
+    "mention_text": "Federação da Agricultura e Pecuária de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cf34a48e4734a291ff702127b7cf5975c4434b92af02c2ba1832dae5073462b",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ebb5386df022b590a505205377cc608f4bedce48b2fb72d24cebe03caf57ef50",
+    "mention_text": "Faeg",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ff1d11c015de9681ddb6c596bb8115ccc6c7e0600c7f7cb238e314756f9ea5d",
+    "mention_text": "Serviço Nacional de Aprendizagem Rural",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b5dd63a1974ce3d124c3b89c050cc6ffd2fcbaa67409022b8708433ab9cb43a",
+    "mention_text": "Senar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a4946196a8bc4affd8eeda2de83f689facf8ace0bce6d040813338335319c6e",
+    "mention_text": "Confederação da Agricultura e Pecuária do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9c7870f8f1dcfc6f6251ce2b362a087a5ee69da3f6d2fc47fd32e03bb8a18a7",
+    "mention_text": "CNA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5481744f022e11f56d33aeb482ae7910f589a3c8b387d7c0cf3dce19c076419e",
+    "mention_text": "Universidade Federal de Santa Catarina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9c456688ca0b2eb97d620148cb5471442b1f0fd778d4e4a292645c048ed72d7",
+    "mention_text": "Santa Catarina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e785679229b6c20b220d30ec15b8fce6cc133afdcbbe5b85c2cbbde5f5b05a38",
+    "mention_text": "Luis Henrique Bassoi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9299920bd532ed8f512dbef143672cf016d2c10ff7a431d61b8d62fea632b99b",
+    "mention_text": "Embrapa Instrumentação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b81fe9d700e900e54c1f93c737c5a6d714270ef98e1ddba81c4a3844d0c3bd66",
+    "mention_text": "Unesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52f78d710d194567f4f582deca70271baf8e55ff124ffeeca621f7adeaacf636",
+    "mention_text": "Marconi Perillo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f4056e7eaff37a4fd5545dff1859413ae538ea6395ec7f61419dd801762fd54",
+    "mention_text": "Goiás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7f73d0e8f6bd14eba7da0c6337e5c8d61d5b7192004ed9a44da9131567c56cd2",
+    "mention_text": "Partido da Social Democracia Brasileira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9f968ce96f9d67a1ef351884b568e6d596ad9a5f960409f6ba5ad3051f69861",
+    "mention_text": "PSDB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1d99abbba864ba6881b8faa158867e40e016b8293f51892a320df8c93aea5b7",
+    "mention_text": "Maria Zaira Turchi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "351664177fa4a691b339af55ff54d520a3c3172700c32ab45c0a970f5f0da433",
+    "mention_text": "Fundação de Amparo à Pesquisa do Estado de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a59f5b5bd14bfff339e2be9a00db28f4d82352a44b0c463586ee72eca917ba61",
+    "mention_text": "Fapeg",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd5e14b1f43ebe9783811426ebab1993e371abe9bdd112e45d40a8e5fb594476",
+    "mention_text": "Conselho Nacional das Fundações Estaduais de Amparo à Pesquisa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c72c8880fb2ef6bf106c86bbe087ac4ef83eb966c9c6d23eb4858fec797eca8a",
+    "mention_text": "Universidade Federal de Goiás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41e7b2107208933056f7dd0bbb4c0997baa387102a37508f9a9f48f32f6f3cdb",
+    "mention_text": "Associação Nacional de Pesquisa e Pós-Graduação em Letras e Linguística",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a79dc539b7c1a6817b9ec9dac631d5a319361a45f36fca7ff98b353ab1cbde3",
+    "mention_text": "Mauricio Neves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bd4623e54766fdbf7e870b2af797090ba327168286c151a9d1710d807e5d81c",
+    "mention_text": "Banco Nacional de Desenvolvimento Econômico e Social",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b54da4d45c96b0f9a63531e6994f817669b187eb27f26ea2d61b80c38a0d4b57",
+    "mention_text": "BNDES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b13237005e9ee99db05bbd3c6154d7d2b8f19c965aab04c2504d50957a983f9",
+    "mention_text": "Comitê de Enquadramento e Crédito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b26259ddbc8ec9492c98addccbcb6289d67cd96d4fc6c797d16400bb14805f89",
+    "mention_text": "Universidade de Sussex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e557e3b705107540ac7ae8698776166cd8eaa2397b14ad8c2980e9dc7f1b6be",
+    "mention_text": "Sussex",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "284277b48ca0e11daa7a5121decdc04b09cf7a44a8a439d845231e5e9dddfb99",
+    "mention_text": "Paolo Petrelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e20fdfc3e53880fc4e8a650374c7bf2b53addd5ad51eca0080c4117ec2e6d00",
+    "mention_text": "PontoGet Inovação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "639b4716b994c3b78be7e39e24bbb06309c666a0696edcf22bdd532b779f9303",
+    "mention_text": "Instituto Gyntec",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cf4b833dcf0543023d4b8edbd60f26d53cb4095a09ff726c4bbebc30af2d4dd",
+    "mention_text": "MidWest Ventures",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d30241d1691693664889b9042c5c88c00c1b8c4d7b1ce82b9075122558f65c2",
+    "mention_text": "Pedro Luiz Costa Cavalcante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e63c0d11be67da873748bba8f41642cf0481d836bc276f2a20203b3c23d93ea0",
+    "mention_text": "Instituto de Pesquisa Econômica Aplicada",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb0286b8d6c78351d0b124e0aeeb6af310bbc47dc615e1170b1df218b2527889",
+    "mention_text": "Ipea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e6e7004e595364aeff8d4ff5c18cf72c511b10f0504c91e80992a5665057f2d",
+    "mention_text": "UnB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7f7f6834e08e43be549fd1c112f7a70020e9013f2696fa069182a0718f855f0",
+    "mention_text": "Enap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b0c896d2bdac8f45eb3951c4aad1f2e0803b94dd0fc3980a6f40cedbf0a234a",
+    "mention_text": "IDP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cba7915b2427a39cbcdac02137f18da0d63d126232ef76f68adb34a0243038df",
+    "mention_text": "Escola de Relações Públicas e Internacionais da Universidade de Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54bb92f7b434d89400f7a4f12601e53582dca50eb50a04539d6f5dcf352fa2bc",
+    "mention_text": "Universidade de Columbia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04b216ea353bf95a2e61d5cb07d6b0e37e79b0d727f01e27042e1e9e2cbbcae7",
+    "mention_text": "Columbia",
+    "categoria": "LOCAL"
+  }
+]

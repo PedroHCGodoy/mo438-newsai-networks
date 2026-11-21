@@ -1,0 +1,681 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6c667ab88937589c8b635e582fda8e6b56fc60ad780595dcbdbbacf1132f8666
+
+TEXTO:
+Pela 1ª vez, quatro marcas dividem a vitória como aplicativo de banco
+
+Nos últimos 20 anos, aconteceram cinco Copas do Mundo. Foram também cinco Jogos Olímpicos de Verão nesse período. Se usarmos uma métrica do cinema, sete filmes da franquia “Star Wars” entraram em cartaz nas últimas duas décadas. É um tempo longo, seja lá qual for a medida que se adote. Há 20 anos, a Visa ocupa isoladamente a liderança na categoria cartão de crédito.
+Diante da pergunta “Qual a primeira marca que lhe vem à cabeça quando se fala em cartão de crédito?”, 18% dos entrevistados pelo Datafolha mencionaram Visa. A marca se destaca entre os mais instruídos (28%) e os mais ricos (27%).
+Essa categoria começou a ser tema da pesquisa Top of Mind em 1992. Naquele ano e nos cinco seguintes, o primeiro lugar ficou com a Credicard. Em 1999, o topo da tabela registrou um empate de Visa e Credicard. De 2000 em diante, a Visa liderou esse segmento de maneira isolada.
+“Visa tem um propósito claro e relevante na vida das pessoas. Não está restrita aos momentos especiais, é uma marca do dia a dia. É útil e próxima”, afirma Sérgio Giorgetti, vice-presidente de marketing da Visa do Brasil.
+Com o objetivo de manter a marca em evidência, a empresa lançou campanhas ao longo de 2019 e deu início a novas fases de ações que já vinham sendo veiculadas.
+O Visa Causas se encaixa no segundo caso. A iniciativa sugere ao consumidor entrar no site da empresa para escolher um entre cinco temas: crianças e adolescentes, idosos, educação, saúde e animais. A cada pagamento feito pelo cliente com o cartão, independentemente do valor, a Visa doa um centavo para uma entidade do setor escolhido. Lançado no primeiro semestre de 2018, o programa já recebeu mais de 104 milhões de doações.
+O novo estágio da campanha reúne depoimentos de pessoas beneficiadas pelas entidades parceiras da empresa. Esses relatos são apresentados em diversos formatos, como vídeos e textos.
+A Visa do Brasil também patrocinou pela primeira vez a Copa do Mundo de futebol feminino, sediada pela França nos últimos meses de junho e julho.
+Neste momento, a empresa se dedica ainda à divulgação das possibilidades do pagamento por aproximação. Fechou um acordo com a rede de metrô do Rio que permite ao passageiro pagar o tíquete com o cartão Visa. “Quem começa a fazer o pagamento assim dificilmente volta a usar os bilhetes”, diz Giorgetti.
+O segmento dos bancos também apresenta uma posição de liderança isolada. O Banco do Brasil ocupa o primeiro lugar desde 1992 , quando o Datafolha passou a pesquisar a força das marcas nessa área.
+O banco obteve 27% das menções neste ano. Em 2018, alcançou 31%, uma variação dentro da margem de erro. Não é possível, portanto, concluir que a marca tenha sofrido um dano expressivo com a retirada do ar de uma campanha dirigida ao público jovem com atores que representavam a diversidade racial e sexual. O episódio aconteceu em abril deste ano. Naquela ocasião, o presidente do Banco do Brasil, Rubem Novaes, acatou um pedido do presidente Jair Bolsonaro para suspender o comercial.
+A propaganda vetada, que ficou duas semanas no ar, tinha uma personagem transexual e diversos atores com tatuagens e cabelos coloridos. Nota enviada à reportagem pela assessoria de imprensa da instituição diz o seguinte sobre esse episódio: “Ao avaliar o vídeo, o presidente do Banco do Brasil considerou que faltaram outros perfis de jovens brasileiros que o banco busca alcançar com suas campanhas de publicidade”.
+Na Folha Top of Mind , o banco obtém seus melhores resultados entre os moradores das regiões Norte (38%), Nordeste (37%) e Centro-Oeste (34%).
+“A marca BB é um patrimônio intangível importantíssimo e, por isso, reinventamos constantemente nossa atuação junto ao público, no intuito de permanecermos relevantes, como somos há 211 anos. E é esse um dos principais desafios do marketing, manter a marca do BB sempre no topo da lembrança dos consumidores”, diz Paula Sayão, gerente executiva de marketing e comunicação do banco. Entre as campanhas recentes, Sayão destaca “Fato ou Fake?”, que foi ao ar na virada de 2018 para 2019. Vencedora do prêmio Estrela de Ouro de melhor fotografia de campanha publicitária do ano, a ação criada pela agência WMcCann enfatizava as qualidades do povo brasileiro.
+Ela ressalta ainda a campanha “Pronto, Falei!”, veiculada no início de 2019, quando é comum o acúmulo de despesas. Os gastos com festas de fim de ano se somam a contas como IPTU, IPVA e materiais escolares para os filhos.
+A executiva também chama a atenção para as atividades das quatro unidades do Centro Cultural Banco do Brasil, presentes no Rio, em São Paulo, em Belo Horizonte e em Brasília.
+Mais antigo do país, o banco fundado em 1808 também lidera as menções dos entrevistados quando o assunto é aplicativo . Nesta categoria, porém, o Datafolha indica, pela primeira vez, um empate quádruplo entre Bradesco (13%), Itaú (13%), Banco do Brasil (11%) e Caixa Econômica Federal (10%) devido à margem de erro da pesquisa. Quando aplicado o “awareness” (critério de desempate), os quatro permanecem em igualdade: Bradesco obteve 25%; Caixa, 24%; Itaú, 24%; e Banco do Brasil, 22%.
+Propaganda lançada pelo BB em agosto, também criada pela WMcCann, dava ênfase à praticidade da abertura de uma conta diretamente no app. “Todos os meses, em média 350 mil novos usuários acessam o App BB para fazer transações, consultar saldo, extrato, pagar títulos e contas, entre outros serviços”, conta Paula Sayão. “Um número impressionante é que 62% de todas as transações realizadas pelo BB são feitas por meio do aplicativo, com uma média mensal de mais de 1 bilhão de transações.”
+Para ela, o banco também se notabiliza pelo pioneirismo em inovações digitais. Segundo a executiva, foi a primeira instituição financeira a realizar atendimento com chatbot (robô que conversa em um chat) nas redes sociais.
+O aplicativo do Banco do Brasil tem melhores desempenhos nas regiões Centro-Oeste (16%), Nordeste (15%) e Norte (15%), de acordo com o Datafolha. Já o do Itaú se destaca no Sudeste (19%). Segundo Renato Mansur, diretor de canais digitais do Itaú Unibanco, o bom desempenho da marca se deve à “conveniência do que entregamos. O aplicativo é concebido com base em tudo o que a gente ouve em pesquisas”.
+Segundo Mansur, a comunicação do banco nos últimos meses tem se voltado para a oportunidade de comprar moedas estrangeiras dentro do app.
+Ele explica que os projetos para os canais digitais incluem uma personalização cada vez maior e uma atenção crescente aos serviços de assessoria financeira.
+Os planos para o aplicativo do Bradesco, que também divide a liderança nesse segmento, seguem uma linha semelhante. “Os canais digitais estarão sempre onde o cliente estiver”, afirma Márcio Parizotto, diretor de marketing da instituição.
+“A busca incansável pela criação de experiências governadas pela visão do usuário já guia e continuará guiando cada passo de evolução nesse e em outros campos. Certamente a BIA [Bradesco Inteligência Artificial] é parte dessa estratégia de acompanhar o usuário onde quer que ele esteja”, diz Parizotto. O Bradesco tem estimulado os clientes a baixar o app enquanto estão dentro das agências bancárias. Quando fazem isso e realizam transações nos canais digitais, eles recebem descontos.
+“A mensagem central nas comunicações com o cliente é que o aplicativo é uma solução para facilitar sua vida e economizar tempo”, comenta o diretor de marketing. O BB e a Caixa estão pela primeira vez no grupo que encabeça essa lista. No ano passado, quando o segmento passou a ser estudado pelo Datafolha, apenas Itaú e Bradesco dividiram a liderança.
+Na edição 2019, a Caixa consegue seus melhores índices no Centro-Oeste (14%).
+Diferentemente do que ocorre com os apps, a Caixa não divide a liderança com outras instituições no quesito poupança. O banco mantém a supremacia desde 2002, quando o Datafolha começou a pesquisar esse segmento. Em 2019, a Caixa obteve 54% das menções, exatamente o mesmo percentual dos anos passado e retrasado.
+O banco alcança resultados mais expressivos na faixa etária de 25 a 34 anos (60%), na áreas metropolitanas do país (59%) e na região Nordeste (58%).
+A reportagem tentou ouvir um representante da Caixa, mas não obteve resposta até o fechamento da revista.
+A liderança folgada de uma marca em poupança é uma realidade bem distante do que se vê na categoria seguro. Pelo quinto ano consecutivo , Porto Seguro (10%) e Bradesco Seguros (8%) dividem o topo do ranking neste segmento. O empate acontece devido à margem de erro da pesquisa, de dois pontos percentuais para mais ou para menos. A igualdade persiste mesmo após o critério de desempate (“awareness”), medido a partir das respostas obtidas na segunda pergunta feita pelo Datafolha aos entrevistados: “De quais outras marcas de seguro você se lembra?”. Neste caso, Bradesco alcança 13% das menções e Porto, 12%. “Muito além de atender a demanda de seguros existente no mercado, hoje a companhia oferece uma gama de serviços, de investimentos a crédito, que torna a Porto Seguro referência nesses mercados”, afirma Felipe Milagres, diretor de marketing, comunicação e clientes da empresa.
+Entre as campanhas recentes, ele destaca a da Porto Seguro Cartões, cujo mote é  “Tudo que um cartão tem mais as vantagens de ser Porto Seguro”, que reforça a comodidade de usar o cartão de crédito em compras do dia a dia e a possibilidade de oferecer, por exemplo, descontos e benefícios no seguro do carro.
+No caso da Bradesco Seguros, uma das novidades foi o lançamento do jingle baseado no mote “Com Você. Sempre”, criado pela agência AlmapBBDO. Segundo Alexandre Nogueira, diretor de marketing da seguradora, o objetivo do novo jingle é associar a marca a uma “empresa humana, com quem os clientes têm uma relação de longo prazo e que fala com todos os públicos”. Para a campanha da segunda edição da Quinzena do Seguro, promovida em maio, a empresa convidou o ator Otaviano Costa. “Faltavam peças de comunicação voltadas ao público de mais de 40 anos e que traduzissem sentimentos de família. Otaviano conseguiu atender esses requisitos”, avalia Nogueira. Não foi o único apresentador famoso a quem a empresa recorreu nos últimos meses. Além de Otaviano, a Bradesco Seguros tem lançado peças publicitárias com a voz de Cid Moreira. O bordão é “Você sabe o que isso quer dizer?”.
+Como explica o diretor de marketing, “o tom de humor é importante para assuntos que, às vezes, são delicados”. No comercial “Bilhete” (também da AlmapBBDO), acompanhamos um homem caminhando pelo estacionamento da empresa onde trabalha. Ao chegar ao carro, ele pega um bilhete deixado no para-brisa. Surge a voz de Cid Moreira: “Você sabe o que isso quer dizer”? O homem imagina que se trata de um recado deixado ali por uma bela mulher, seu amor platônico. A voz entra em ação novamente: “Não quer dizer isso, não! Quer dizer que alguém bateu no seu carro, não deixou telefone e é bom você ter um seguro auto da Bradesco Seguros. Bradesco Seguros, com você, sempre”.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "284d77e010e52ad82dddd2c8c6a93b97d8e70a8e6b67cad6911ed1a650e72cab",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f17ac1243b34d22345cabf57335aabe3f45ddfd8bb26ff9e8e82df113cb3504",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb230a2608752dbe9bbe5ca64f06dd05350ba6480cbfba4a29eea1f22ef6419d",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9409578acef8f75cd5ebbd4faaab5de0b6ac478c245e8e766061b3279f136bfe",
+    "mention_text": "Credicard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36bc70f21bdfba5c752ba9f780ddb7d1adc79c46258f8a3952f167d5d24ff155",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26fc09155e078227be90954f46653be171170822dde72a21da3b92939154c87c",
+    "mention_text": "Credicard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1436df2580970c30f7daf1808aa555ba7a218ce836e428d4b0b4a17b07242a22",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d4e960c582be9534c749bf13e18e8a5c1a249bde9f9a9e372b9a36f361db4ae",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd76dc7302ced9fb1086004c142418c2be510c3905f4419809620d5dfa34e65b",
+    "mention_text": "Sérgio Giorgetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f18bad9e48982f21e849a0f73b0e29d754f6e7594fe0fafa73038495685d8ff4",
+    "mention_text": "Visa do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c134545db54454f82ec6d8881f2296a6423237bc8d73f1ccd033234eb62e37e",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd9c709f1a2525e03982414c282cc318c8500e202a6bf0a31ff944dff99f56ea",
+    "mention_text": "Visa do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "681a86ce374222d0792f68cae3fef209ab9f807e748ed50c4f2d046b61613983",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "59f7fc31ca7e36f560ac83f804c49a5f96ead87e69a8a17d76a0e12773130bd6",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04db9c6482c5bbc180a53eb620300c65bf8d7e6962f7d60c1e42c31f6863967b",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb29fe7155c4d79dc77c073c84d2c394ddecdf3877f612e8a1f7599ad6faa689",
+    "mention_text": "Giorgetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fa8f5be4d24c5cb45aab0d727c24867a5cf5e87fc3d60b187fefb351654f5a5",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac6a00f4f9dbb717797d9e45352f1db1c67320174149b30dff69aaa8371d05b1",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b98718591bd20d68c9f9b6f92c3e64673c8cc495667c7a0da3a8b71b1a376ed",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4bded9e95314057938efc3364e38d9da804765dd2e48c522cf55d4bf94899fc6",
+    "mention_text": "Rubem Novaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9c3420da5f64921ade0ff06da8f830baa9eb72db247632bb13e6f8c1c2994251",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25e5dc886aadafd9cbdedd1af3de93692f445b1ffac0efa0c866f828c9509bad",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfa7b70420c17ae760d973d239615c2140421f67436c246d5f07d502253e6dde",
+    "mention_text": "Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "35c77d276b8ed717b2430d180f6bc307b5aaa1ce8142e94ff00d84b2e7513063",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "874a48d4172a545f5544afe3254b9e01a16d95638902343c8e89934189d86f6d",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "61e34c8c269956b410f9a3ba8fe452487bfa7c1d373d85e0c8dd4acf27187eba",
+    "mention_text": "BB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9aab443cb000980febc0ab1f4fe73ff5db25446c71f50c2c88bbd8217df10636",
+    "mention_text": "BB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3597b99f5492a70803e702e79c5fc86f714c9afc6946ef311aea7c0624b9710f",
+    "mention_text": "Paula Sayão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfbfbab4074b005bffe5e0542c42a201febb03f66def78e75165dcd4c2bb1eed",
+    "mention_text": "Sayão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b67ebb4c56251a341508f183ce590cf96d741cfeacd323d580b213fb8086633",
+    "mention_text": "WMcCann",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93eac5d1cd31dd75b503b1984b539d52a27ea5ee4a8a31d2ffcfdcf2fdcba865",
+    "mention_text": "Centro Cultural Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20cd2859a89d17b48880219907ed480b504ef8b7083faa76bfd2f495c89afe3d",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e07a11fdb7b945ede0947d7cfe325b1af0afc8d0ee2c476e73cd4eb34b3c070f",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56d2d7800ab289d735e47306b28538bacf305d7d2d622189cf47a6d0b69dbf06",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "454a2586fcc5b407de0467528cd66020920873797d22cb2b057cb50a2a0a87db",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "30bf2cc82b86ae7dee0835faaf17c05537133d57b1121356ae9d0378061ebfcd",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5368d9b6ec1df09bb0858b88953b9bb347d8ec8b388cfcd08945d7efdfcf3fc",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e150fd97f94d99975f52748bc1384ea7708e2d8258af26baa33ae9765a002feb",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57ec9f162a60a929c2a2477ee835e44ca3b698644c85a68cb85c37e9423bd98f",
+    "mention_text": "Caixa Econômica Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d111e511293aa6792f677cd3efb76ceb8b4361fd38807d0123e27a5c201357be",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fcaadaae309536048eda2ebf1ba24591c34ede5402fa67ab553b7546ee51d91",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "774bc6358a934027f22a016a7123c62bf5c6c2425e8f4ad0d4b16f1f36dd5ad6",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a342a775b185612a961b4aed5fae67a1f264424e8e8428381cd542e21049b2c7",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "122e242af67ca8126c35363e3162655950bd6e3562c341b497b1e8f526aef5e6",
+    "mention_text": "BB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e31a1e0a64191f2cf465abf6bdbd006e8b233b22e7d69586e94c90e5a62fad64",
+    "mention_text": "WMcCann",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cd80780e62076d25ab2b18e82daa4d1addf202c1e6646dee97b0d9cd0137c2f",
+    "mention_text": "Paula Sayão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3709860a9b7291580d1aae60e9ef0a774030ae37ed272acd61c3c028021b3650",
+    "mention_text": "BB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6af77bb68c35d26834e27258a200583138a6de4d0baab8879a7ad409081af366",
+    "mention_text": "Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "028c309ddf3d7977fe3eecb93c4d7a09733474580fc97d68e4583df2ea3d7598",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1382abf81267b165c3f7ffd8bb98852b9731a5f2be559f0111f23b5da7efbfb3",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fb52e120b19565d558b74df6ac10c9d3b0186d473ea965850653e93dc84cf230",
+    "mention_text": "Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a26a33c080978201ce7bfd635ec0a4ede5eef29df16615986b7667f997198766",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3319f58572c4d6df780449ea75be96903441d5398dfc64a5fbeb7b3d8be99e2",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "011fc198ad0cb9db567c2d668023a797181924927317814a1ccc58e0eb7bed1f",
+    "mention_text": "Sudeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f6b9607be08c1b15b8b909fd9f3e001be98bbd8a186a95f927f7c934208d56f",
+    "mention_text": "Renato Mansur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d173446048f2e57ca9953bfd0d1d0114e2e4875b7a1a500b2ba3ecde1b570a7",
+    "mention_text": "Itaú Unibanco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "849dadf3ccc019cc95a7db856cf164fc3f8b650de503e85f663a0f7887dc631f",
+    "mention_text": "Mansur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8c2d9135d308fb38de24b73d6eec486d4269d130529e8f540ddafff039e19e8",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "031512a0be2bfab08d5fa6aa4ee5acc19f37d8632c280cedd58e52d6d1cde494",
+    "mention_text": "Márcio Parizotto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b616130150a6bdd1d79d8c24976886b7738fe094b5110e4e4bdd616a21f415ba",
+    "mention_text": "Parizotto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a8b981f55a00d5be9252d657f517c139adac6936b85c08464139b245dec7642",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa37e97310d59df6af8eaf279480a0cbb60728d2b189304d011a3d3c2661d528",
+    "mention_text": "BB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d39ab5240136540891b3b79eded9f2d365637874b6a55933a62d352d1b5b7069",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97107cc430990e9af4b326c8f06f5b0a2ab6f24e3687a37506e61474498591f0",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "527fefe26048c5f18b2191ec21e28d0c9afbbeac8cea7e0969b070d38b72d30f",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e86432d51866799e1ffcc293b949227637264609f0eb675a4885e6bc4cc79d8",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5832ad80914eba77bf1f0da45d97007d35558cf6e3f152a0249eeea857bf111f",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7a617fbb18182bc28f57d061fbdce1bfdf679c7572e2592a57c72a32ec9d403",
+    "mention_text": "Centro-Oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a97198cffa13f4da6a6d61bb038c28d9da8b44ba326e5114b61f9f5b15d05f0c",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92a7efba2d0c0f03c863377436dee5809c42750ca095e25eda7f577696ad0e96",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2e8cf9873d946104e917fe5b6bc0139094d7e55db9a96d60da6e5470ea722070",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2347af57001a50cd1008ba0e65ba7d90d0de8a0fef78b32e5adc2c24653c2ff",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12012a0945d6097aa09f19de8cfd3bdc9279f51427a38de41e66bcf379a432c6",
+    "mention_text": "Caixa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e06003da7e800556d539c73cf428809212dbcd63fedd30ef1df15557762039ad",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d6f2e324264f36fe51df31822b4fe0cee858a046c0285c1ed577c576c474b43",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5b7b1fb5c0f2feaa0818fad38e56319d613b3b0d3ea08371652d3d4c953a552",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f14f7c46e733013b194eea8960a8f604f5f1647d7d7f271aa505c85f034ac4f",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd8ba96dc3d15cbf32aaec863708aa7e244f66420ab2ff81831d0758eaee117d",
+    "mention_text": "Porto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cf90242d1fbb918740e8c88c5e6f6b28194391c9155eaba5f40df25bf7b3e6a",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a63547db28f53b38b57d08ab4c4b467c265e120ba706a4922b3aa6f327adc1c0",
+    "mention_text": "Felipe Milagres",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4a647bc60ddd07907d44f7b85c157f33d51968371763f540fba5d2ccb16ec15",
+    "mention_text": "Porto Seguro Cartões",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "047e27ecab5d3f8c7ee4e0e3293ae297a532e039233abdbfb958da092c50d0a8",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c212dcf035fffb7392579dc3964e385755121304660efa9fdc401b42a0940b7a",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3aec8cf9b6440208f2c9e22c20703c6679669a2aeafab0c64b248102afda5bfd",
+    "mention_text": "AlmapBBDO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "445ef0b7e8b5478c067d3b83fd1c691a9badcb7e278a3b052c6cdf4bb7cce32e",
+    "mention_text": "Alexandre Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e8aa68350a9485c59af0db737b65c2a35cb1abd20bdc307c1cbf93aee3ff510",
+    "mention_text": "Otaviano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b47f814dabb25ba46ef679a0fcdcb73b1c0a217b4fab5c5534dc85fd236b4c4d",
+    "mention_text": "Otaviano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "864711d2c5a33d7929bd8d90eb022491621fdb68ef24f79c52ef1ad959950f77",
+    "mention_text": "Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34c8671f79b093ffc5ef35add8406aa543f7ab7a43c4b28eb1c93ce1111b59b6",
+    "mention_text": "Cid Moreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20310c460aa9dc36fbf2164fc3d9bf201fcfef6d2b9932bfe461773e4a73b81a",
+    "mention_text": "AlmapBBDO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1ca63c76a12f56c2dc26e641cbf8469d732b94225692aba5c29c668c26ac017",
+    "mention_text": "Cid Moreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c0ad4aac40456516a029b3eb6baa97bea92f352a728b8314ece946f4724b220",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ceaebb76f88e79fbc676daabea9436ca8cefc265bc050c3e860a91b4961e9470",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  }
+]

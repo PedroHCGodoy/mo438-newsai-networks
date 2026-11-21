@@ -1,0 +1,482 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d417e677bd812758c2e44bfad2f0de0e028617c25ae5e17fa88a74d5900b1d49
+
+TEXTO:
+Festival leva cientistas ao bar para debaterem suas pesquisas com o público
+
+Se alguém duvida de que em conversa de bar cabe qualquer assunto, talvez seja hora de mudar de ideia: começa nesta segunda (14) o Pint of Science , evento de divulgação científica que ocorre em diversos países —Brasil incluso— e que promove encontros nos quais se discute ciência em meio a cerveja e petiscos.
+Com a ideia de aproximar cientistas do público, o festival leva durante três dias pesquisadores de diversas áreas para falar sobre seus temas de estudo num ambiente diferente das sisudas salas de aula universitárias.
+O Pint (pronuncia-se "paint") surgiu na Inglaterra em 2013 —daí a alusão ao tradicional copo de cerveja inglês— e chegou ao Brasil em 2015, quando foi realizado em São Carlos, no interior paulista.​
+Denise Casatti, analista de comunicação na USP São Carlos trouxe o festival para o país. Ela propôs que a universidade apoiasse o evento e entrou em contato com Michael Motskin, criador do Pint.
+"Ele gostou da ideia, mas queria que ocorresse em ao menos duas cidades. Como faltava menos de dois meses para o início do festival, no entanto, concordou em abrir uma exceção. Garanti que se conseguíssemos montar o Pint aqui, se espalharia."
+A aposta deu certo. No ano seguinte, o evento ocorreu em sete cidades; em 2017, foram 22; e, neste ano, 56 —os quais vão desde uma metrópole como São Paulo a pequena Santa Rita do Sapucaí (MG), que conta menos de 40 mil habitantes. Dentre os 21 países que abrigarão o festival em 2018, o Brasil só perde em número de cidades para a Espanha, com 58.
+Para Natalia Pasternak, organizadora nacional, apesar da cultura boêmia nacional, o sucesso do Pint por aqui é algo surpreendente. "Ou tudo é desculpa para ir para o bar ou o brasileiro, como parece, está realmente interessado em ciência e conhecimento. Talvez um pouco dos dois", brinca.
+Outro fator que pode ter contribuído para a expansão, diz Pasternak, é o engajamento dos cientistas em popularizar suas pesquisas.
+"A coisa boa dessa crise na ciência é que a comunidade científica acordou para o fato de que a divulgação precisa acontecer. A ciência traz imensos benefícios, mas se a gente não se empenhar em divulgar, ninguém irá perceber", diz.
+"Em que outra situação a população fala diretamente com o cientista e pergunta o que quiser?", questiona Casatti. Assim, ao promover esse contato, o festival contribui para amainar estereótipos que cercam a profissão de cientista.
+"Persiste a imagem do cientista maluco, nerd, de jaleco branco, trancado no laboratório e esquecido da vida lá fora. Nada mais distante da realidade", afirma Pasternak, que também é pesquisadora da USP. "Cientistas são pessoas normais, que escolheram a ciência como carreira, assim como outros escolhem medicina, arquitetura etc."
+A realização do evento, que neste ano terá cerca de 500 encontros em bares e restaurantes, demanda comprometimento. Tanto as 750 pessoas envolvidas na organização quanto os 885 palestrantes são voluntários. "Ninguém ganha nenhum centavo, fora o dono do bar", diz Pasternak.
+A programação do Pint é definida pelos coordenadores de cada cidade, responsáveis por ir atrás do palestrantes. Essa seleção é submetida aos coordenadores regionais, para garantir que as palestras abordem assuntos científicos.
+"As palestras podem contemplar qualquer área, só não podem contemplar bobagens pseudocientíficas", diz a organizadora nacional do Pint.
+Inteligência artificial, produção de vacinas, teoria das cordas, presença de micróbios no corpo, nutrição humana e jornalismo científico são alguns dos temas deste ano.
+As jornalistas da Folha Cláudia Collucci, Suzana Singer e Mariana Versolato participarão do evento, assim como Sabine Righetti, Salvador Nogueira e Reinaldo José Lopes, colaboradores do jornal.
+Paternak diz que, após o festival ter-se consolidado no país, a meta agora é aumentar a diversidade do público.
+"Uma parte significativa do público é universitária. Neste ano, estamos lançando uma campanha para que cada um deles leve um amigo de fora da academia. Só dessa maneira conseguiremos, de fato, popularizar a ciência."
+Brasília Smart drugs: o 'doping'  da vida cotidiana? 14.mai, 19h30 - London Street Pub
+O Universo para você descobrir: a astronomia  no cotidiano 15.mai, 19h30 - Stadt Bar & Music
+As máquinas vão dominar o mundo? 16.mai, 19h30 Resenha Bar e Restaurante
+Fortaleza Saúde e violência nas cidades invisíveis de uma metrópole 14.mai, 19h30 - Cantinho do Frango
+A física simples de sistemas complexos: aplicações em ciências sociais, políticas, neurociência e (até mesmo) em física 15.mai, 19h30 - Brava Boteco, Carnes e Frutos do Mar
+Em busca da Terra 2.0 16.mai, 19h30 - Boozer's Pub
+Curitiba Por que a música fala a  língua da ciência? 14.mai, 19h30 - Hendrix Brew House
+Uma pitada de ciência no hamburguer 15.mai, 19h30 - Hendrix Brew House
+A cientistas estão chegando 16.mai, 19h30 - We Are Bastards Pub
+Belo Horizonte Me engana que eu gosto:  fake news em pauta 14.mai , 19h30 - Cantina do Lucas
+Cadê o vírus que estava aqui? Vírus e mutação 15.mai, 19h30 - A Cafeteria MM Gerdau
+Era uma casa muito engraçada: novos materiais  na construção civil 16.mai, 19h30 - Xico da Carne
+Rio de Janeiro A multidão que nos habita  (e nos mantém saudáveis) 14.mai, 19h30 - Teto Solar
+A beleza que se põe à mesa: interações entre flores e polinizadores 15.mai, 19h30 - Jarbô
+Dois chopes e senta  que lá vem história: como a matemática está por trás da ciência e da  arte de uma boa cerveja 16.mai , 19h30 - Jarbô
+São Paulo A flecha do tempo: por que envelhecemos e não rejuvenescemos 14.mai, 19h30 - Tubaína
+Socorroooo! Relógio biológico desregulado 14.mai, 19h30- Quintal do Espeto
+Nós estamos cobertos  de germes! Que bom! 15.mai, 20h30 - Capitão Barley
+Levitação acústica de cerveja: pode isso, Arnaldo? 15.mai, 19h30 - Bar da Avareza
+Caçadores de mitos:  da nutrição ao exercício 16.mai, 19h30 - Galeria 540
+Sexo, antibióticos e rock'n roll 16.mai, 20h30 - Japan Tower
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ebe1743e83687a2d74f49824fe1ff1e8977019082ccd01f8a5dbcb53220f666a",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3372c05a8f8228e241afef6f4e1578925a936c82c6e086496ea98cd8fb7a8342",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "acaeb4fdc90c3e3ca2d2f12400f29ec48f348c8def61984c9c8ca85fd4643d2d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b97bfe27cfd70ccf8fa1e1a7630e221b18a3e80fd46b390c6b843bec5a340934",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "139418e88ffe3c8174bd75a4fa900aadfcd645d693dda96c48350e992cacd1d3",
+    "mention_text": "interior paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "181552f2578267dea19a429814442079a55cc223a25425fdcb9e293d3a92d2d2",
+    "mention_text": "Denise Casatti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71661b12a51c402d5e5034e57a9c6ea8fa4e54e88243a359e8a12dbb6a259afc",
+    "mention_text": "USP São Carlos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51e2dff1fb851b090b3d1e41cf807ade03b66682b897d5202d9699148cbb79ad",
+    "mention_text": "Michael Motskin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0dee3460375856b81db9df6e4fbb456d07f53ed6a9210743e3e30aa43d9ccc02",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2dfe6b425d69943ec16261d3165e4137af6b5e6afda641d61dd3a3ba1dc19df8",
+    "mention_text": "Santa Rita do Sapucaí (MG)",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f0f7f8a78bf727b8eb3db3ebf0b3cbe52710591810e29deb0ba4ff3b4121472",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8750054fa53e6e1db3b91d0f8eb3bef5dbc6669d171da3cee53a57312239078c",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7310cb3c8aaed0d506552efb52264817e44d03af89fc7f2ffe15a7fed4ba268d",
+    "mention_text": "Natalia Pasternak",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d7822476bf432e69fe1c00675b0a0da0541282305235c298efb12f95d5be1ea",
+    "mention_text": "Pasternak",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3832da1280005c27c5b92bea0bf020dced5a43a49f11b6e48fa2024820a133a3",
+    "mention_text": "Casatti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f4894954426fc62c5dcbf314288e6c3d4ded8e144caf8bd8bc3474ccbb5dc839",
+    "mention_text": "Pasternak",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6baf879845c3cfaa7f9bc04ca6eb81d643aee5f4116081941d60f2e676a9f6f0",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "197e9bce935d2bb3b3433726486a512987b942b68bc456d39cbcb253be37ab59",
+    "mention_text": "Pasternak",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39c25770adb881efd9f64675be4aebbc8bb7c681687a8f65767ecbb248001948",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00f882ca1b383cfb98a958e5e559968041bbe3e37fd8550d637e59f6158b32ff",
+    "mention_text": "Cláudia Collucci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4e0f0daffc27128c8c6eb8ed0653f6710c9af101d366bafda03358293fb1bcb",
+    "mention_text": "Suzana Singer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6a84f83faa4a405ecae6a171602375eb56926c09a6afabb5f0afa291e29079f",
+    "mention_text": "Mariana Versolato",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abb030c54ed9b49380344bf72ceebcb8e092fde0fa09b4a9b168570a1aebc78e",
+    "mention_text": "Sabine Righetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "78eb0219f4d3c47102315ce2b20e6da9101a4eb9d49fbcf2e4286709fb572f8b",
+    "mention_text": "Salvador Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e07164f76502bfd7a75f0b3d363130969cf5ad9dd0841de7dee9dea70b6e06f5",
+    "mention_text": "Reinaldo José Lopes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97949592c8e8db46f443091261828c54064b46265fcefa8de3c74cf14dd34a1a",
+    "mention_text": "Paternak",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2988cea5b4cc85d5fcc7c3664e63287754296c50ebad7861175526f494ceadab",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3c7d13500213a4245716fe8827e1aed02c2d8a38ba56f5f12c3e2f326f408d01",
+    "mention_text": "London Street Pub",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20e27f7e2cc77ff02a6092da37c09addd7b39c021f4968f8ad0226520f3e79bc",
+    "mention_text": "Resenha Bar e Restaurante",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "78ea36e4c021f53badccc5d2e24e575aac5d02c65b843053fb9a45afcbc2a857",
+    "mention_text": "Fortaleza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "342baf58ba44f48cc156090eb4ca3a8305eea494b1228e34e71e7a7e2ffd21b8",
+    "mention_text": "Cantinho do Frango",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a314cd86c1f0f48d83633a0d7d211738a0b50d3ef07df4d4dda58d97dbd7185",
+    "mention_text": "Brava Boteco, Carnes e Frutos do Mar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "424c49f6a3839728b3164556500a90cf4ada468ac46568481f0bb3786ba85bd0",
+    "mention_text": "Boozer's Pub",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a1729089f152de1b97a14abc3416b68ea2e1f9ba2a5cd25fccada8c8169bae9",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7227073d75c94c05911cadcc70a2436447bfe36978fa572de0019d57f2166d19",
+    "mention_text": "Hendrix Brew House",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1582352b372bcd0720f2ef555f836867666ca23242cad6838d1986f56d74ad2",
+    "mention_text": "Hendrix Brew House",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f45f19cdeb210aa9fc77c1b65288314954037eb59c8f5db8e3fed9f021629fb",
+    "mention_text": "We Are Bastards Pub",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "90d5f305232348c4cfe1d163c60294f769c98650c955c34f002cfa8f2f834329",
+    "mention_text": "Belo Horizonte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a25ea80de579d098b2487da7bd9aec6e1e36387f896d00f48dcbf03af1a640e",
+    "mention_text": "Cantina do Lucas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "50cb9857b5115e23f6cd8bff1061f869687db16c0a0c6ae24329b7d7e381d63c",
+    "mention_text": "A Cafeteria MM Gerdau",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2f728e945f2c07e8c254b45d15d18a6515d165b22b91acb488d2d218c1bcaf9",
+    "mention_text": "Xico da Carne",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0287f4e481841011c4d7a74bd98ec48190f07eb5caf13e7b9c14094e7c237a7",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "231b117b824ccb262fc40b84fcedc5deeda2e9233defbb2341c42e8b5e450af6",
+    "mention_text": "Teto Solar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2a3e5260285e6a58664fbe8ce8d1dea847c85c6260c5a9da365edf0db14c8cdc",
+    "mention_text": "Jarbô",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f84aa0dd2e035ae9ab2458939b70fe181182d2cfbfafe472457226487d888b4e",
+    "mention_text": "Jarbô",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "71a060f1fe591ffd9a330b56ab7a196ed227dfc92e05e5c87e8e91d121780d78",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4fe9cafa85fc3596a00de345291876107b9737cffefac63c3456ced3bf74e4ac",
+    "mention_text": "Tubaína",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d7c90a5334be97d6d23ae863b61f7f82c2eefa1abdbf7368e343c3f381454e5",
+    "mention_text": "Quintal do Espeto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "14796729075a06567e93f24fc31b3f9b2ce60e667802ef1a412f85a653e1aba0",
+    "mention_text": "Capitão Barley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a837066d32470c5be39ed2e33acdf99d40959229f145a2f62848a2f50968209",
+    "mention_text": "Bar da Avareza",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1466b25c104da6fe23017ee8110215e89cb1ab8755f21c06f603063bfc87ce6",
+    "mention_text": "Galeria 540",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7223becf3272276da86c4b14c085dfa138591e23b395bf485413d70a5e514bc3",
+    "mention_text": "Japan Tower",
+    "categoria": "LOCAL"
+  }
+]

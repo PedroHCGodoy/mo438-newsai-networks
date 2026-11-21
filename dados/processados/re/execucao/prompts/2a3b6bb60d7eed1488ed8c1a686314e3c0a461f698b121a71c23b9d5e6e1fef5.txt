@@ -1,0 +1,1215 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 002a2f6f6a9a778a2d9288521d6b78e2ecda1b478aee7c675d64199561c5a6eb
+
+TEXTO:
+Blade Runner: 7 previsões para 2019 que o filme acertou, errou ou se antecipou - 04/11/2019 - Cinema e Séries - F5
+
+Pular para o conteúdo [1]
+Pular para o menu [2]
+Busca [3]
+Aviso
+Ícone fechar
+Este conteúdo é para maiores de 18 anos. Se tem menos de 18 anos, é inapropriado para você. Clique aqui para continuar.
+Acesse seus artigos salvos em
+Minha Folha,  sua área personalizada
+Acesse os artigos do assunto seguido na
+Minha Folha, sua área personalizada
+Modal 500
+Ícone fechar
+OK
+Assine
+Folha de S.Paulo
+Entrar
+Entrar
+|
+Sair
+Ícone fechar
+Minha Folha
+Artigos salvos
+Newsletters
+Assinatura
+Editar Perfil
+Senha e Conta
+Atendimento
+Sair
+Menu
+Buscar
+últimas
+astrologia
+bichos
+celebridades
+cinema/séries
+estilo/beleza
+música
+novelas
+televisão
+você viu?
+colunistas
+Link externo, abre perfil do F5 no Facebook
+Link externo, abre página do F5 no X
+Link externo, abre página do F5 no Instagram
+Busca
+Buscar nos F5
+Buscar
+Ícone fechar
+Assine
+Ícone fechar
+Minha Folha
+Artigos salvos
+Newsletters
+Assinatura
+Editar perfil
+Senha e conta
+Atendimento
+Sair
+Últimas
+Astrologia
+Horóscopo Diário
+Bichos
+Celebridades
+Carnaval 2025
+Cinema e Séries
+Estilo e Beleza
+Música
+Televisão
+BBB 25
+Novelas
+Você Viu?
+Colunas
+De Faixa a Coroa
+Outro Canal
+Rosana Hermann
+Thiago Stivaletti
+X de Sexo Por Bruna Maia
+Prêmio F5
+Siga o F5
+Link externo, abre perfil do F5 no Facebook
+Link externo, abre página do F5 no X
+Link externo, abre página do F5 no Instagram
+Cinema e Séries
+Descrição de chapéu
+Filmes
+Blade Runner: 7 previsões para 2019 que o filme acertou, errou ou se antecipou
+Blade Runner é ambientado em novembro de 2019, com Harrison Ford no papel de protagonista
+- BBC News Brasil
+dê um conteúdo
+Ícone fechar
+benefício do assinante
+Você tem 7 acessos por dia para dar de presente. Qualquer pessoa que não é assinante poderá ler.
+benefício do assinante
+Assinantes podem liberar 7 acessos por dia para conteúdos da Folha.
+Já é assinante? Faça seu login
+ASSINE A FOLHA
+Ícone compartilhamento
+Ícone fechar
+Copiar link
+Salvar para ler depois
+Salvar artigos
+Ícone de fechar
+Recurso exclusivo para assinantes
+assine
+ou
+faça login
+4.nov.2019 às 9h49
+Atualizado:  4.nov.2019 às 14h30
+Szu Ping Chan
+BBC News Brasil
+É novembro de 2019 e Los Angeles vive um estado de decadência urbana. A população está em queda e os humanos enfrentam uma nova ameaça: androides construídos com técnicas de bioengenharia que acabam se rebelando contra a humanidade.
+Em 1982, foi assim que "Blade Runner", adaptação dirigida por Ridley Scott do conto de Philip K. Dick de 1968, imaginou que o mundo seria hoje.
+Trinta e sete anos depois do lançamento da versão cinematográfica da obra de ficção científica, quantas das previsões popularizadas pelo filme se concretizaram e assumiram papel central em nossas vidas?
+Abaixo, sete acertos e erros do filme ambientado em novembro de 2019.
+1. OS ROBÔS DO FILME SÃO MUITO MAIS INTELIGENTES
+Na adaptação de Ridley Scott, Rick Deckard atua como um policial designado para caçar e matar os androides conhecidos como replicantes.
+Os robôs da geração Nexus 6 eram descritos como "virtualmente idênticos aos humanos" e "com inteligência equivalente aos engenheiros genéticos que os criaram".
+Quando o grupo de replicantes chega tenta estender ilegalmente seu prazo de validade de quatro anos, Deckard dá início a sua caçada.
+Hoje, fora da ficção, robôs não têm a aparência hiper-realista dos androides de  "Blade Runner ".E, mesmo quando assumem uma forma humanoide, a exemplo da Sofia da Hanson Robotics, eles surgem geralmente com conversas truncadas ou piadas previstas em um roteiro prévio.
+Estão longe das reflexões existenciais dos replicantes cinematográficos sobre mortalidade e "lágrimas na chuva". Mas a inteligência artificial está em crescente aprimoramento.
+Nesta semana, a empresa DeepMind (ligada ao Google) afirmou ter criado os primeiros "agentes" que atingiram o topo da liga de Starcraft 2, um dos esportes eletrônicos mais populares do mundo.
+E como os "modelos de prazer básico" do filme, dispositivos para usos sexuais também deram origem a uma crescente indústria de sexo robótico, que já oferece até um bordel na Europa.
+Relembre o filme 'Blade Runner: O Caçador de Androides'
+ic_save
+Mais
+ic_share
+Leia Mais
+Ícone fechar
+Voltar
+Ver novamente
+Voltar
+Voltar
+Compartilhe
+Ícone Facebook
+Facebook
+Ícone Whatsapp
+Whatsapp
+Ícone Twitter
+Twitter
+Ícone de messenger
+Messenger
+Ícone Linkedin
+Linkedin
+Ícone de envelope
+E-mail
+Ícone de linkCadeado representando um link
+Copiar link
+Ícone fechar
+2. DOMÍNIO DAS CHAMADAS DE VÍDEO
+A videoligação feita pelo policial Deckard para a replicante Rachael é um dos exemplos de como a tecnologia atual suplantou a apresentada no longa "Blade Runner".
+A comunicação via vídeo surgiu nos anos 1920, quando o chefe da gigante de telecomunicações AT&T conversou com o ex-presidente americano Herbert Hoover usando sinal de TV e linha telefônica.
+Mas a tecnologia só se tornaria ser popular no mundo a partir de 2003, com o lançamento do aplicativo Skype. Hoje, há uma série de serviços que oferece comunicação por vídeo, como o Facetime da Apple, o Duo da Google e o WhatsApp do Facebook, todos capazes de oferecer imagens de alta resolução em telefones móveis, e não apenas em cabines telefônicas como mostra  "Blade Runner."
+O serviço também foi barateado com pacotes de dados e wi-fi, e uma rápida ligação não custa US$ 4,30 (em valores atuais, ou R$ 17,16) como no filme.
+3. RESIDÊNCIAS TAMBÉM ESTÃO FICANDO INTELIGENTES
+Assistentes virtuais têm papel proeminente no filme. Ao chegar em casa, Deckard precisa dar um comando de voz para ser identificado. Ele responde falando e digitando "Deckard 97". "Obrigado", responde o assistente com voz feminina.
+No mundo real, a Alexa da Amazon e o Google Assistente pode nos identificar por meio de padrões de voz e personalizar a comunicação a partir disso.
+Eldon Tyrell, fundador da fictícia Tyrell Corporation (que fabrica os replicantes), também usa um assistente virtual. Mas sua predileção por luz de velas em vez de lâmpadas conectadas pela internet seria impossível hoje com os sistemas de "casas inteligentes" disponíveis hoje.
+No quesito segurança, Deckard usa uma chave inteligente para abrir a porta de sua casa. O norueguês Tor Sørnes lançou o primeiro dispositivo desse tipo nos anos 1970.
+Hoje, esses cartões são amplamente usados em hotéis ao redor do mundo. Mas a onda mais recente de fechaduras inteligentes incorporou sinais emitidos pelo celular e leitores biométricos.
+No filme, o método Voight-Kampff tem papel central na investigação dos caçadores de androides que buscam identificar se alguém é humano ou robô.
+São feitas perguntas com o objetivo de provocar reações emocionais, enquanto uma máquina monitora funções corporais, como movimentos da pupila.
+A aparência pode parecer bastante diferente do primeiro polígrafo, máquina inventada em 1921, mas agentes de segurança do Reino Unido ainda usam esse equipamento conhecido como "detector de mentiras", especialmente em investigações envolvendo suspeitos de abuso sexual.
+Mas a credibilidade do polígrafo é bastante contestada. No Reino Unido, o resultado de uma avaliação num polígrafo não é aceito como prova legal.
+De todo modo, a empresa americana Converus oferece hoje uma tecnologia que monitora a íris para detectar mentiras.
+4. DETECTORES DE MENTIRA AINDA SÃO USADOS
+No filme, o método Voight-Kampff tem papel central na investigação dos caçadores de androides que buscam identificar se alguém é humano ou robô.
+São feitas perguntas com o objetivo de provocar reações emocionais, enquanto uma máquina monitora funções corporais, como movimentos da pupila.
+A aparência pode parecer bastante diferente do primeiro polígrafo, máquina inventada em 1921, mas agentes de segurança do Reino Unido ainda usam esse equipamento conhecido como "detector de mentiras", especialmente em investigações envolvendo suspeitos de abuso sexual.
+Mas a credibilidade do polígrafo é bastante contestada. No Reino Unido, o resultado de uma avaliação num polígrafo não é aceito como prova legal.
+De todo modo, a empresa americana Converus oferece hoje uma tecnologia que monitora a íris para detectar mentiras.
+'Blade Runner 2049'
+ic_save
+Mais
+ic_share
+Leia Mais
+Ícone fechar
+Voltar
+Ver novamente
+Voltar
+Voltar
+Compartilhe
+Ícone Facebook
+Facebook
+Ícone Whatsapp
+Whatsapp
+Ícone Twitter
+Twitter
+Ícone de messenger
+Messenger
+Ícone Linkedin
+Linkedin
+Ícone de envelope
+E-mail
+Ícone de linkCadeado representando um link
+Copiar link
+Ícone fechar
+5. O PLANETA ESTÁ MUDANDO
+Ruas mal iluminadas e céu escuro marcam a fictícia Los Angeles de 2019 como um lugar afetado pela poluição industrial.
+O cenário levou muitos a migrarem. "Não há problema de moradia aqui", ouve uma replicante no longa, ao entrar numa casa. "Há vagas para todos."
+Por outro, na realidade, Los Angeles fica a cada ano mais cheia de gente, e o Estado da Califórnia passou a liderar o processo de redução das emissões de carbono.
+6. BLADE RUNNER IGNORA A GERAÇÃO INSTAGRAM
+Fotografias desempenham papel central na trama de "Blade Runner", tanto como provas da investigação quanto uma maneira de Rachael se convencer de que é humana.
+Em sua investigação, Deckard analisa uma série de polaroides em busca de pistas para achar os replicantes. Fora da ficção, câmeras com polaroides continuam a existir, mas estão restritas a um nicho no segmento de fotografia, hoje dominado pelos smartphones.
+Imagens em redes sociais, como Facebook e Instagram, também passaram a ser usadas como provas e pistas em investigações policiais ao redor do mundo.
+A fotografia digital com auxílio computacional se tornou dominante, permitindo registros mesmo com baixa luminosidade ou com o fundo borrado a fim de simular lentes analógicas.
+Por outro lado, uma tecnologia apresentada no filme está à frente da realidade. A máquina Esper é usada por Deckard permite observar objetos e pessoas em uma imagem estática a partir de diferentes ângulos, e até mesmo encontrar objetos que não apareciam à primeira vista.
+Pesquisadores em inteligência artificial trabalham atualmente em ferramentas que permitem criar imagens interativas em três dimensões (3D) a partir de imagens em duas dimensões, mas ainda deve demorar anos até que aplicativos como o Photoshop ofereçam essa possibilidade.
+7. CARROS VOADORES NÃO SÃO DOMINANTES...AINDA
+Muitos filmes retrataram carros voadores no futuro, mas apesar de todo progresso feito neste campo, tanto no Japão quanto nos Estados Unidos, não há equipamentos do tipo voando por aí. Até agora.
+O interior dos veículos voadores de "Blade Runner" são repletos de equipamentos tecnológicos, lembrando a cabine de um avião.
+Chama a atenção, no entanto, que os ocupantes desses carros não estejam com cintos de segurança, equipamento que só se tornou obrigatório na Califórnia depois do lançamento do filme.
+Final do conteúdo
+dê um conteúdo
+Ícone fechar
+benefício do assinante
+Você tem 7 acessos por dia para dar de presente. Qualquer pessoa que não é assinante poderá ler.
+benefício do assinante
+Assinantes podem liberar 7 acessos por dia para conteúdos da Folha.
+Já é assinante? Faça seu login
+ASSINE A FOLHA
+Ícone compartilhamento
+Ícone fechar
+Copiar link
+Salvar para ler depois
+Salvar artigos
+Ícone de fechar
+Recurso exclusivo para assinantes
+assine
+ou
+faça login
+Envie sua notícia
+Erramos?
+Comentários
+Ver todos os comentários
+Comentar esta reportagem
+Termos e condições
+Horóscopo do dia
+Áries
+Áries
+Touro
+Touro
+Gêmeos
+Gêmeos
+Câncer
+Câncer
+Leão
+Leão
+Virgem
+Virgem
+Libra
+Libra
+Escorpião
+Escorpião
+Sagitário
+Sagitário
+Capricórnio
+Capricórnio
+Aquário
+Aquário
+Peixes
+Peixes
+relacionadas
+As previsões para 2019 feitas em 1983 por Isaac Asimov, gênio da ficção científica
+A batalha para manter a internet grátis e aberta a todos
+Horóscopo do dia
+Áries
+Áries
+Touro
+Touro
+Gêmeos
+Gêmeos
+Câncer
+Câncer
+Leão
+Leão
+Virgem
+Virgem
+Libra
+Libra
+Escorpião
+Escorpião
+Sagitário
+Sagitário
+Capricórnio
+Capricórnio
+Aquário
+Aquário
+Peixes
+Peixes
+Fique por dentro
+Últimas notícias
+Julgamento de Bolsonaro
+Defesa de Bolsonaro nega descumprimento de medida cautelar e se diz surpresa com indiciamento
+Polícia Federal
+Malafaia admite hipótese de prisão e ataca Moraes: 'Tudo é possível, mas não tenho medo'
+#Hashtag
+'Quero que você olhe para mim e enxergue o Temer': redes ironizam mensagem de Eduardo a Bolsonaro
+BNDES
+BNDES tem lucro de R$ 13,3 bi no 1º semestre, e resultado fica estável
+crimes virtuais
+Golpe da transportadora no WhatsApp mostra dados de clientes; veja como se proteger
+Mais lidas
+Meryl Streep revela com quem teve o melhor beijo no cinema: 'Ele foi único'
+Outro Canal: Pesquisa feita pela Globo aponta diferença de popularidade entre âncoras do Fantástico
+Outro Canal: Sem espaço na TV após ser demitido da Globo, Rodrigo Bocardi cria canal na internet
+Sylvester Stallone se irrita com escolha de Noah Centineo para viver Rambo no cinema
+Simaria posta foto sem roupa e apaga logo depois; clique íntimo viraliza
+Topo
+Últimas
+Astrologia
+Bichos
+Celebridades
+Cinema e séries
+Estilo e Beleza
+Música
+Novelas
+Televisão
+Você viu?
+Colunistas
+Assine a Folha
+Newsletter
+Siga o F5
+Link externo, abre perfil do F5 no Facebook
+Link externo, abre página do F5 no X
+Link externo, abre página do F5 no Instagram
+Copyright Folha de S.Paulo. Todos os direitos reservados. É proibida a reprodução do conteúdo desta página em qualquer meio de comunicação, eletrônico ou impresso, sem autorização escrita da Folhapress.
+var elRotateHoroscope = document.querySelector('.js-rotate-horoscope');
+if (elRotateHoroscope) {
+var dt = new Date();
+var d = ('0' + (dt.getDate())).slice(-2);
+var m = ('0' + (dt.getMonth() + 1)).slice(-2);
+var y = dt.getFullYear();
+var url = 'http://www1.folha.com.br/horoscopo/previsoes/';
+var uri = url+'/'+y+'/'+m+'/'+d+'/horoscopo.json';
+var cache = false;
+var callbackName = 'jsonp_callback_' + ((!cache) ? Math.round(100000 * Math.random()) : '');
+var script = document.createElement('script');
+script.src = uri + (uri.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+document.body.appendChild(script);
+window[callbackName] = function(data) {
+delete window[callbackName];
+document.body.removeChild(script);
+callback(data);
+};
+var horoscope = {
+service: {
+init: function(data) {
+data.horoscope[y+'-'+m+'-'+d].forEach( function(item) {
+var index = item.order-1;
+elRotateHoroscope.querySelectorAll('.js-horoscope-description')[index]
+.textContent = shortenText(item.info.replace(//g, ''), 60);
+elRotateHoroscope.querySelectorAll('.js-horoscope-period-start')[index]
+.textContent = formatDate(item.period['start']);
+elRotateHoroscope.querySelectorAll('.js-horoscope-period-end')[index]
+.textContent = formatDate(item.period['end']);
+});
+}
+}
+};
+function formatDate(date) {
+var day = date.slice(3,5);
+var month = parseInt(date.slice(0,2), 10);
+var monthNames = [
+"jan",
+"fev",
+"mar",
+"abr",
+"mai",
+"jun",
+"jul",
+"ago",
+"set",
+"out",
+"nov",
+"dez"
+];
+return day + ' ' + monthNames[month - 1];
+}
+function shortenText(text, n) {
+if (!text) {
+return;
+}
+if (text.length > n) {
+n--;
+var last = text.substr(n-1, 1);
+while (last !== ' ' &&  n > 0) {
+n--;
+last = text.substr(n - 1, 1);
+}
+last = text.substr(n - 2, 1);
+if (last === ',' || last === ';' || last === ':') {
+text = text.substr(0, n - 2) + '...';
+} else if (last === '.' || last === '?' || last === '!') {
+text = text.substr(0, n - 1);
+} else {
+text = text.substr(0, n - 1) + '...';
+}
+}
+return text;
+};
+}
+!function(s,e,n,c,r){if(r=s._ns_bbcws=s._ns_bbcws||r,s[r]||(s[r+"_d"]=s[r+"_d"]||[],s[r]=function(){s[r+"_d"].push(arguments)},s[r].sources=[]),c&&0>s[r].sources.indexOf(c)){var t=e.createElement(n);t.async=1,t.src=c;var a=e.getElementsByTagName(n)[0];a.parentNode.insertBefore(t,a),s[r].sources.push(c)}}
+(window,document,"script","https://news.files.bbci.co.uk/ws/partner-analytics/js/pageTracker.min.js","s_bbcws");
+s_bbcws('partner', 'folha.uol.com.br');
+s_bbcws('producer','brasil');
+s_bbcws('language', 'pt-br');
+s_bbcws('track', 'pageView');
+var bannerMobile = [
+"banner-300x250-2-area",
+"banner-300x250-area",
+"banner-300x250-area-materia",
+"banner-970x250-area",
+"banner-970x250-area-2",
+"banner-970x250-area-3",
+"banner-970x250-area-4",
+"banner-300x250-outstream-area",
+"banner-native-area",
+"banner-native-shop",
+"banner-native-2-area",
+"banner-300x250-2-area-mobile",
+"banner-300x250-3-area-mobile",
+"banner-300x250-4-area-mobile",
+"banner-300x250-5-area-mobile",
+"banner-300x250-6-area-mobile",
+"banner-300x250-7-area-mobile",
+"banner-300x250-8-area-mobile",
+"banner-300x250-area-mobile",
+"banner-bottom-materia",
+"banner-bottom-materia-2",
+"banner-bottom-materia-3",
+"banner-bottom-materia-4",
+"banner-bottom-materia-5",
+"banner-320x100_app-area",
+"banner-320x100_app"
+]
+var bannerDesktop = [
+"banner-300x250-2-area",
+"banner-300x250-area",
+"banner-300x250-area-materia",
+"banner-300x600-2-area",
+"banner-300x600-area",
+"banner-970x250-area",
+"banner-970x250-area-2",
+"banner-970x250-area-3",
+"banner-970x250-area-4",
+"banner-300x250-outstream-area",
+"banner-native-area",
+"banner-native-shop",
+"banner-native-2-area"
+]
+//UOLTM - ads
+document.querySelectorAll(".advertising").forEach(function(ad){window.pushAds.push({id: ad.id, isMobile: bannerMobile.includes(ad.id), isDesktop: bannerDesktop.includes(ad.id)})});
+//IVC
+(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalIvcNamespace=p.GlobalIvcNamespace||[];
+p.GlobalIvcNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments)
+};p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
+n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","//gadasource.storage.googleapis.com/ivc.js","ivc"));
+window.ivc('newTracker','cf','ivccf.ivcbrasil.org.br',{idWeb:'125'});
+window.ivc('trackPageView');
+var folha2 = {
+HTTP_REFERER : "",
+HTTP_X_REFERER : "",
+HTTP_X_NAMESPACE : "",
+HTTP_USER_AGENT : "publisher"
+};
+window._taboola = window._taboola || [];
+_taboola.push({flush: true});
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "85c25f0dd619655cd8b0df667cef8cc9cae1ba7301619eb16fad1289050c48e9",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a326e8f76252a187c4dd3dba287d1646bc9403552cc39fec8670ab776d42ec5",
+    "mention_text": "Minha Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c48ffa289f3f9e552a45fd6535c27dba8406d772db394f5a5f5a5f0d6b14cb2",
+    "mention_text": "Minha Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66fb534e1c404002a81c48d852321d429b45ef2e78de13c857b7a624943e7c7b",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8807b5ef85d564d2713725d8521c6f1dfd94fa54a3843a21d5de7aa8a9a425b6",
+    "mention_text": "Minha Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b078d3c8d55b28b991ce71d975bfa6a3c1747e3373304fb4ae49157d930037c",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c379c969332bce0d2d3b4f57690e77c619e297632f39ae365fb3fae6412a09c0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3adb8ea2ddd3e1caf331621ea4cf8f2045ffda2a47f27388233bddc5a0d8c49c",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd6d1e9baf8a89a76b4ddc30363b594dd1b2d5aa4e354079556089ed14bec865",
+    "mention_text": "X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "547ead039ed01148c753df886b5f0cda0f762ea39889fc0624cc61a8243259e9",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a276584de146cb1755413396206413a4c18310f27425d80214ba08125f17f2af",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "951fc05d0caf43b2cfdb5fefe7104e139d24307191b8da7b4c82f9b9468a4a9f",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e34648dfb3f15c9ffa8f69b476a64499abd601cfc8098f2ed60533413e7d4e2",
+    "mention_text": "Minha Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a610539963e2bd418116f752412fe6e4955f65bdf8ac2b587c5fbdc921d942a1",
+    "mention_text": "Rosana Hermann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8268e9629d737cf88440c72537271c16b6f89c23fd89cfb6c4ca115869a3b20",
+    "mention_text": "Thiago Stivaletti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb79ff91152efb06bcb5860c233a502aeb9a2aad93c3aff3e088fea32fac5cb9",
+    "mention_text": "Bruna Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "65c8d8b12ca8149d06e92172ee7374611c50643444704b858a27b00f6aad978f",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c74027bd54fd8638cddf74a9ea4cff34e5348e8ae3ffff558015afd1569b17a5",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a5c0fc06ef57d25a18b6b99f3c73e14b57ae20fa73851212acbee81509f24fa",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbda332ac4b675471427fb2b44f45ae52fda9772f0742c20e4497704c1d5ec31",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c0bbb714d226dc5dc7639f1aa82a114ef49b3cd1fff153a177fa60c10f4bcd6",
+    "mention_text": "X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fec5fb3f429a67b39c1ac8897a1d7a73e72b964fe380f09fe147809675ef28d4",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6be19f5df118c1455314c76c3a2045fb5671b1bc38a5597bb62ef609a8231ea",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e07c89e33d1d1ce713169b65d6a85cab93a07e5c5fbf6ee99148fcc8dc85dc77",
+    "mention_text": "Harrison Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5108a36eb0fa869ea0935ba904335d62c06c8647126c6a632b4c7b271509b30",
+    "mention_text": "BBC News Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19c6a5fb3af5e21c413801dca9cae42082fa4ac99756e258491870c1d631cda9",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de402092e0106a403122ee433a32c8986784c923d9f56c4faad14a8889b2407b",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d135d8d029b2b3a4f3dd66d4de543a838d1c50ccaa6f9662591e03cf11f2372",
+    "mention_text": "Szu Ping Chan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7313528533bd94edd5ab21a1059758305951c7bc8addea2a84ea69379032948c",
+    "mention_text": "BBC News Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77c309fbcf352ab3b011cc7711674f234d0c14730cd91aafdb269e25aa81d9bd",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0cf28acfca1abf2825fc0ca54778139fd175341dd96851691ce9af8c93d64091",
+    "mention_text": "Ridley Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "721687afd4fc443de341f0db49c27645689afdfe0e768c5c1177a44a8d5356d8",
+    "mention_text": "Philip K. Dick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9137e83aa081638c2a30aa4982865bc284eddd44b458635d80bf93f9ebdc25ef",
+    "mention_text": "Ridley Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eccad42b602bdc057043dd0a4fdbc0b3bfac515e6579633ceb8c9976821dd0f7",
+    "mention_text": "Rick Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f23e5704de9dbe73546f434a75e70ac5e27f08a2bc5ae3c68f00a90a9ee8ab4",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f34fa67c835729caf739031323301d64e0edaaf6f7ffeee4d3e50dcc3be6ed1b",
+    "mention_text": "Sofia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39e21c0738c9cffe0bbd01ed5c301003e5af64fb26080e8d586b898fe2027fa0",
+    "mention_text": "Hanson Robotics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1cc59d297ac99efd320ee8493b111d9a8df5a9a4d54c87eee310b265fcc9f97",
+    "mention_text": "DeepMind",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c35b8cc7fbc1550ab1d068572a3f13f16fee8212d55b46bf3d0a7edd8d080ba",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65cfcdcb922c1c9fc5fdfe4b2d223a6ad50c9384fc445e2788fe1a5b2d1607d3",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "257c31900f7da9854686959e1554538dea2c7deb559be389c99a50e72a25fba3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b6853ebddca5a5d257ff569f64d10e48629cdb610be7ce071fbf3287cfca2263",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34e48b88e7cfc6e5733330fb607f845a687f4eb5c06ea410c12e41bdcc22fbd8",
+    "mention_text": "Whatsapp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6457e1e36571845dac44ca398cb4fd3089ac4f83669b4df9d46a37379953981",
+    "mention_text": "Whatsapp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be897e884a5f60b3be840e704a762ed30e82ddf68c3f4d5cca27b83329917c15",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "150e5a9e7d63b6800885feece1866c5645a219adb2778fa7e37bcef0c202e744",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c0f22d687e6811e18d9df830ea3d314cd701b2160a0fc95ce747efca5e15af2",
+    "mention_text": "Messenger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e76d6b3284fb00fa095de1934ab41b7fa97180285fe12ac59798cd8f977283f7",
+    "mention_text": "Linkedin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c325ce6fc0b398814c7025a11f4aab3b8b64f5c72aae2dee03f3c06e01f787b",
+    "mention_text": "Linkedin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b93a3732334a99715ffdeb0bb51cec094cb8ee7bb6219ddc96c145d222690c20",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4016e0c4cc24ff5d31efe5235a7e0916f3086f1d80e2fef820ce57defffbeb8",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1fd9f530cf40845ecd16a7a277d5fccd76b1e641787ac5ab47e173cfacae0fb2",
+    "mention_text": "AT&T",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07b34299bcd057483807f20e82cd38e5b0ac3b081ca1bf3b04eea63ba7651900",
+    "mention_text": "Herbert Hoover",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8636686b36883c13d86ca98974079269e46dbbe1ee9da2d7f1d7772dca47a40",
+    "mention_text": "Skype",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a506ffe3491873274c3ad17b48f66964576af384e826a31bdebf464c7b39865",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a845580ffffbc5448edbd982b79f72f7f9e597f2efbd97192e2bc0e1379cf59",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7daa183c196219dfa6f4a5be5b218cd00809f4076e3391d549f0ffd0fe20a30",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ffd9b49c3cfbdd9e3346ea6bf40c4637174ac5b8ac2d0072e84661ab50c5b1f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33f53af1005b43edf084c9c286e9b155dcb673e9d77bddb029a93f81f1c16c12",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aebc46789870772c9d46b536313e8105dadfa65f46721d1ce4bd280c196a927d",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14f82fe3fdeea62e7b5fd0f39050f1c36beb2ac913eaf9ec8b6269d56b8a6e57",
+    "mention_text": "Eldon Tyrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e09c72fb45f8c89c0399443be58937e08906b1b6848eec8a1f7213a28f0d3705",
+    "mention_text": "Tyrell Corporation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c310086a5c9b47f48d867c107df36ee4850ff62c9ea721827258aafd988acfb",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2814a1711de737f3e6346e63102671fdffc3286305ef82a47cc24a48dec41be",
+    "mention_text": "Tor Sørnes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47a76192731dad646d00821212b380e0af5e871b4c72d91a352bc0922412ddcc",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "450c958228eb16dddf50c3442f42e8a9c5843db40edd1beffcb11a96c2ecafe2",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e566a789e77579eddecfc6d1390702bdbf07a95285a122e00edd57049b584ad",
+    "mention_text": "Converus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4b99b8fca552154ac08eb30192d0a0d50286c99cc685c42ac351eaf8f135736b",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c96920b41a2144a0d04e79160d4b3d8f3f1daadd7328a609d12b7cda77a9263a",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f87a626a9f0a11b44f89185441b45b9df08cda6e433fa912124d54da9eebcc66",
+    "mention_text": "Converus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31bff857f701ac06865dcc40029e4639cca9b16f68b3b76a02559868d273e3b7",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b453b180792796068449da31c82c29ff874b92c894b69844a579b5f2eb7cddd",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc336a1becc2e2165d564c9b35753e8b77573ffdcfe23c8f13ba2221fb6c8ae4",
+    "mention_text": "Messenger",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cee0f23d995231d03ba8a78cf904e686a86440fa54e89be937f38e5586d8118e",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a3c305521a89f764a8e84f49af99605256be175b0385889d1fd357f9e4d3cef5",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "576904b9c9cb2a9df7564f9cc582a3bb072e717a652cd7b52b0cd59bb566eccb",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "260f47c48e0947349690ee5a9979ac2273bf0458073320fae0205468015380ea",
+    "mention_text": "Rachael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0cf7da720e3d8b491b3c7728432d88736a5f6b1b2b21f360b7de9ead66dbf200",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6fcd4ea036a55a80b2327adaeb7301fc10f5bef1bffc0a27e3b91c2eb955320f",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "093f130c0b7f94a9c206bcadb329d832208972732f2d0c2d00d3d0e98fabaf06",
+    "mention_text": "Deckard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90cd011caa09d172b930fcf422c3444526d52f4f083833ca5daa4103d2feae2c",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "20e33a93dfd220b3defef7773a41f26e0880963a990c303f683d2982036c6569",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f68bd29f57127c61fdafec5d29177c96267ccd61dfb3c3b5eafcc9fd855b2fc",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f5929fd994cc629374decec9c1d0736a0c5a0fc9c8097f55da4d9abb12591f3",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f3fdfaf476454b5558c84bba78cec49e1a08de63233e82b6b74b0e98b263311e",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "279bfb75251407da9675d6514697fe3a80343e14570e7ca024d281b3bbc3aeab",
+    "mention_text": "Isaac Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4780f96ca10736398052065a79e0eefc59b28f19a7bb8550eaec161a2cfb03c9",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f331add318a01b50d64c9b1117423448e0e85fba6565a70e83ebcf70500658e3",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09ebfc026199462526fd1f9959caa35540c1ab7ebd22d9b9f35d0b31c0d6ce1c",
+    "mention_text": "Polícia Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "333c72bc046dde9adb6a92971054e16e995857d6bd78625277ca53733ee87a65",
+    "mention_text": "Malafaia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ceb6ffc879b7e2d26b509ba8527630935f239c6b3875a4310f6f1e83aa987e42",
+    "mention_text": "Moraes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "010ed01a68ecd21ce0a6bacab5d3d192afd6e19935bb1ac7357ed1f3bf4d4b8d",
+    "mention_text": "Temer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ef615bfc01bbc431fa8b3281420843b638dfd5fe8e2867453459f73446c5cb3",
+    "mention_text": "Eduardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0371ea108bac167bdc8c06bf2611f91ef32ef4e5b6e987b54dc446b29b43af24",
+    "mention_text": "Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "864d02e6edd2f7057f3573da116bfce1bb26e6317779f34a3d03ca9728f96d03",
+    "mention_text": "BNDES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff3cd912f97b94798c7dcb53ffc646aa33e821defed4f91acea4149f9203d19b",
+    "mention_text": "BNDES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebc40806f6c3a0f1132c9925bf563f75db2c68b2fcdf697ac4c083b6f76c6564",
+    "mention_text": "WhatsApp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "970b8295346d73eb4d558926ed6860191611491fab931c11f64175e8321a454a",
+    "mention_text": "Meryl Streep",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "112409df376bebbf73b401be0f2b94ab2776588ec1ba1f58db2f362e9cde5db1",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b872b7387dddddaef5cafc38c06c10197fd4f708ec13fcaeee880154afa90980",
+    "mention_text": "Globo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c9c763ea7071c808bacc0570c8dd47af928d2c9856b32c1d1d7c321ad91ed385",
+    "mention_text": "Rodrigo Bocardi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2e37135baa7f016bb60d2f389b9fae3b2aa2d07fe574ff2c7f15de71a2f821f",
+    "mention_text": "Sylvester Stallone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f782956780dba6c97922bfb605a3916068f0b95d389d084f6040643edea235fa",
+    "mention_text": "Noah Centineo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1037afc3913a00f122fa6119bf238a80ed6fb647a3e5d92b43069730c48aa703",
+    "mention_text": "Simaria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "80383e102ea3cdc440f594b4da5e0e132ba3e62e1c5786aeaad2c5f93a8c0742",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c943f759b1b4887dd0d55da69929d5c7bd649d0f5449a0ad4261e94e44ae4af7",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be959f80485cd560266403f97cbd1b5a7502d8ad848743cb2d7a7ec6fc8dac68",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21c8696a05efea4ed7c9264fa0c26e7366f60318dd163f953d987fa82b0bb19b",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "467e501f58e1a260b4d2207388d8c5161ee59df48b2fd48756525fa47a366817",
+    "mention_text": "X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f26a7a270cfce777a277cfe1d536d838f624375c612843a0b3ed8bf8359328aa",
+    "mention_text": "F5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fa098154b494ffa0fa46fe7ffd31adbb701a0819cff851a2177a8af76a98b95",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d419be06f5829079b283918153d8825e90a09672b1fdb6238b6f37cdaa03ffb",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36c899965c681a1eaa73acefe1e7dee581e897f8782bef912bc98f9260003ef4",
+    "mention_text": "Folhapress",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,363 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e5304dee414225d74acec4078de16748c8f6c0196fee8058c1eb6fe5408774ad
+
+TEXTO:
+Quem tem medo de Ultron?
+
+Ainda não fui assistir a "Os Vingadores: Era de Ultron", mas vou me arriscar a falar um pouco sobre o tema subjacente à obra: os riscos da inteligência artificial.
+Desde que o escritor Isaac Asimov publicou "Eu, Robô" em 1950, o tema da dominação humana por autômatos tem sido recorrente em ficção científica. Algumas instâncias do uso dessa ideia produziram personagens notáveis, como o macabro robô HAL9000, do filme "2001, Uma Odisseia no Espaço". Em outras ocasiões, o mesmo discurso acabou obtendo um resultado mais cômico do que assustador, como o episódio em que B-9 -o robô com cara de eletrodoméstico de "Perdidos no Espaço"- perde o controle e começa a repetir sem parar "matar família Robinson", ameaçando os protagonistas do seriado.
+Ultron, o robô consciente que se torna inimigo da turma do Capitão América após decidir que a melhor maneira de atingir a paz mundial é aniquilando toda a humanidade, tem de fato um aspecto ameaçador, mas nem por isso é mais realista que o patético B-9.
+O supervilão apareceu pela primeira vez em gibis da Marvel em 1968, e sua encarnação no filme de 2015 reaparece num momento em que o receio sobre o que a inteligência artificial nos reserva no futuro preocupa mais cientistas, não apenas artistas gráficos.
+No ano passado, o físico-celebridade Stephen Hawking publicou um artigo ecoando esses temores, assinado com o nobel de Física Frank Wilczek, o físico Max Tegmark, do MIT (Massachusetts Institute of Technology) e o cientista da computação Stuart Russell. No texto, o quarteto fantástico diz temer um futuro no qual haja uma explosão de inteligência, e robôs consigam usar essa inteligência para aprimorar a si próprios, criando uma espécie de reação em cadeia que levaria ao surgimento de autômatos conscientes com inteligência sobre-humana.
+Hawking e colegas usavam o manifesto para pedir um investimento maior em pesquisas que ajudem a ciência a antecipar as consequências da evolução da inteligência artificial.
+Curiosamente, um desses estudos acabou de iniciar e tem uma duração prevista de modestos cem anos. Batizado de AI100, o projeto é liderado por Eric Horvitz, diretor de pesquisas da Microsoft e professor da Universidade Stanford.
+Curiosamente, o pesquisador veterano em pesquisas de inteligência artificial -que até investiu parte de sua fortuna pessoal no monitoramento dos riscos dessa tecnologia- não está preocupado agora com coisas como o surgimento de uma inteligência super-humana.
+Conversei com Horvitz em fevereiro durante o encontro da AAAS (Associação Americana para o Avanço da Ciência), na Califórnia, e percebi que algumas preocupações imediatas com a inteligência artificial tomam mais seu tempo do que coisas parecidas com Ultron.
+A substituição de humanos por máquinas capazes de fazer trabalho intelectual já começou, diz Horvitz, e pode ter na sociedade um impacto ainda maior do que a mecanização implementada durante o período da Revolução Industrial, que tirou muito emprego de trabalhadores com funções repetitivas ou braçais.
+"Imagine telefonar para uma empresa e ser atendido por uma voz que precisa alertá-lo de que você não está conversando com uma pessoa real, porque de outra forma você não teria como saber", diz o cientista. "Nós não estamos preparados para lidar com esse tipo de situação."
+Uma inteligência artificial não tão avançada, claro, já reside nos odiados sistemas telefônicos de atendimento automático por telefone. Mas já há sistemas que atuam em coisas tão sofisticadas quanto acompanhamento médico, pilotagem de carros e até redação de notícias.
+Horvitz e sua mulher, Mary, então, estão bancando um comitê de notáveis selecionados pela Universidade Stanford para produzir relatórios quinquenais analisando benefícios, problemas e mudanças trazidos pelas máquinas inteligentes.
+O estudo começa em uma época na qual a inteligência artificial movimentou uma montanha de dinheiro de investimento em empresas startup. Em 2014, foram US$ 380 milhões só nos EUA, segundo levantamento do jornal "Financial Times". É um sinal de que aplicações comerciais rentáveis devem vir por aí. Pouca gente imagina o quanto de inteligência artificial já se aplica em marketing hoje, diz Horvitz, e ninguém parou para debater regras éticas sobre isso.
+Eu, leigo, sempre achei que aquela haste que Ultron tem junto ao rosto parecia ser um daqueles headsets de telefone usados por profissionais de telemarketing. Agora já imagino ligar para um centro de atendimento e ser recebido pela voz do vilão-robô da Marvel dizendo: "Olá, sua ligação é muito importante para nós."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "01f902e58e3950dac0831eb31cf6ba6c8e573c984d2c7c7a405c9a7bb9b8198e",
+    "mention_text": "Ultron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b66c524558232ff8d3be592987bca525b4cc8fa968b978e88acfd1f9ad23a01",
+    "mention_text": "Isaac Asimov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b257865524fe6eb77052cc58732a79354978bb5cb766d6c6106044693373740",
+    "mention_text": "HAL9000",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ac779ee0ee6882d1df6f86d19bc186e6107449632290937fecafcf83094e78d",
+    "mention_text": "B-9",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83c1e94a1e05284425c2dce4e7fdd8c215e804ae2fc29064ed1cf6f0004f6b7a",
+    "mention_text": "família Robinson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "668c2d81ec048df2ad50f4a67e239aa34d16810d5058aad9dc9064be4bf90fb2",
+    "mention_text": "Ultron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e651b6eddef52622ec941e5b264a471b336368387a036850ead30679743708e",
+    "mention_text": "Capitão América",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eefae978a91f1afd9f3178d614881f9cf680ece49d7df077ac11fa87519b7c35",
+    "mention_text": "B-9",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ead8e719f557e9b7a933bb9100a072760ff20f3d5331b22388d635d00fff934a",
+    "mention_text": "Marvel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15f6f98aa7b32b9086e2dfa03418a826544bd709a28784bb9f049b702d3464b3",
+    "mention_text": "Stephen Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de0e3a3748dd0a1708fe8cd71ed18dfa75050be7b64c6a6f9e89f82e703a67e1",
+    "mention_text": "Frank Wilczek",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6085c6ab4c205c0271768d6ab04e439a4771932169ecb4d91191217c8c6106d9",
+    "mention_text": "Max Tegmark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b1986a0df67f8880d25e3b284c0fcaac94340ab51846f029d4780134d745663",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8289afd33bd6077c5df03f51ae02b335b428c7a740af529f5cfb76180af9264",
+    "mention_text": "Massachusetts Institute of Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d71ae122391ed2ce9d429fc355ef85af32141c48920bbf26989e529e8d04668",
+    "mention_text": "Stuart Russell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f8014c0c2df70d21d41c6cc9e093c2c4708865b3419264dd29f7368eb5e88f11",
+    "mention_text": "Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "672ae90544a0f798e8f4999243a35254dca9fbc885fdedd700e6d7c51ab640c4",
+    "mention_text": "Eric Horvitz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4995ccc5ef50a1af7c29dc4ebe45ba30e2b14fda3eb22f1279d161c8614b60ae",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea8841295a0c77c7f86b364cf1368d7bc8e15c38cab480acd59d3f47d7e4a077",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8713744eb1e6ffb3a8a18302fac995508b178371ba729addbca9ccab362f4e6",
+    "mention_text": "Horvitz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ba35f31ec1f66dd627d5592eefd1ba7f1246f245a1f55650f0891699b53c3c0",
+    "mention_text": "AAAS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3374e53220e47ed927852050255b2ac13cdb0573618442f0a1da5743da543577",
+    "mention_text": "Associação Americana para o Avanço da Ciência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33fad996447d422ca8750abfcc4f1c24d202b241306e304b3c47f8d384af819a",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5bc2272b9cbbaa9c56fc111fe0a39fa9f70c476d4726dd020f33b7d31c9b2bc",
+    "mention_text": "Ultron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc0eef84da42555801b0d41f7acb35917a6c2fab94f55095101dde119b23b8a2",
+    "mention_text": "Horvitz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "771d07f2664df25c5264dd1bdc39812aed0bdaa001de9aa75015b503237dd70c",
+    "mention_text": "Horvitz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0cc2c2b686ad4332773a0374c5f0e97e9d013ed3bf39a3467e5deacf9fbfa5d",
+    "mention_text": "Mary",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e21e835ebfbe2c770da7c57cc78ad7d9b01fc9aef3a245ad4ae02522d9456ace",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0611c7ac04960cb66e93df4642404addc4690321218ceac60adfe6ec2ccd9ea6",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc6eeb129d3b9d1f08100882f4e480f705f9ae39ef90369154ef758118749cb1",
+    "mention_text": "Financial Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5550afc00616238d7e51d7f87a7573fea757c7616694eb005c50f8ede52716c4",
+    "mention_text": "Horvitz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cdf868aa747b8ec4cf3157d64c91c91cc97f3167ebebc8702b9adf683db88b19",
+    "mention_text": "Ultron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "882894b12337618602135c0f734a696206cb57572d04b2e51c4ae545e6d348ce",
+    "mention_text": "Marvel",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,483 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 324d89de9e8cd7c3bd25bf940d11012cf8b2acc5e785d1e2764fc317abede41d
+
+TEXTO:
+Apple encara Google com Siri e novas alianças
+
+Publicidade
+DA REUTERS, EM SAN FRANCSISCO
+Quando a Apple envia os convites para seus cobiçados grandes eventos, um presidente-executivo que tem sempre feito parte da lista, recentemente, é Jeremy Stoppelman.
+O co-fundador e presidente-executivo do site de avaliação Yelp não sobe ao palco nessas ocasiões, mas sua companhia se tornou arma importante no arsenal da Apple à medida que esta intensifica seu ataque contra o antigo aliado Google.
+O Yelp e alguns outros sites de avaliação de produtos e serviços pelos consumidores, entre os quais o site de resenha de filmes Rotten Tomatoes e o serviço de reserva de restaurantes Open Table, ajudarão a acionar o Siri, o assistente pessoal acionado por voz da Apple, no novo sistema operacional iOS 6 .
+O relacionamento entre Apple e Yelp ilustra a disputa pelo poder quanto às maneiras pelas quais as pessoas encontrarão o que procuram na Internet. Mais que apenas um recurso inteligente, o Siri está emergindo como ferramenta crucial para o que alguns executivos do setor definem como "buscas casuais" --a obtenção rápida de informações de rotina, tais como o endereço de um restaurante.
+Isso pode ajudar a excluir o Google e outros serviços de busca tradicionais, o que atenderia aos interesses da Apple, para a qual o novo método é uma forma de invadir o território essencial de seu rival e gerar receita publicitária correlata.
+SIRI É ARMA DA APPLE
+O Siri também pode socorrer o Yelp e outras companhias de conteúdo que se tornaram concorrentes do Google.
+"O Google concorre diretamente com o Yelp e estou certo de que o Yelp tem consciência disso", disse Larry Cornett, fundador da Brilliant Forge, uma consultoria de estratégia de produtos e ex-diretor de produtos ao consumidor do Yahoo!. O Yelp, que depende do Google para boa parte do tráfego que recebe, provavelmente "vai adorar" o tráfego encaminhado diretamente a ele pela versão do Siri que a Apple está por lançar, disse.
+O Google continua a reinar no mercado de buscas, e a ser amado pelos consumidores devido aos resultados relevantes e pelos anunciantes por seu grande alcance. Rivais dotados de grandes recursos financeiros, especialmente a Microsoft com seu serviço de buscas Bing, estão tentando há anos, em vão, reduzir a liderança do Google.
+POR BUSCAS MAIS SIMPLES
+Em vez de concorrer com o Google nas buscas acionadas por palavras-chave --o que significaria combater algoritmos refinados por milhões de buscas realizadas a cada dia--, a Apple está tomando rumo diferente e concentrando suas atenções em uma porção menor e distinta do mercado de buscas, a que os usuários recorrerão mais provavelmente quando estiverem fora de casa.
+Os setores cobertos incluem restaurantes, filmes, esportes, listas de empresas, mapas e endereços --para os quais o que os usuários desejam são resultados curtos, rápidos e fáceis de digerir, e não a pesquisa mais extensa que eles costumam realizar com o Google. O uso crescente de aparelhos móveis para acesso à Internet reforça essa tendência.
+Os anunciantes percebem o valor dessas buscas, estreitamente vinculadas a localização, momento e intenção de compra, segundo David Tennenhouse, executivo de capital para empreendimentos da New Venture Partners e antigo presidente-executivo da A9.com, a divisão de buscas da Amazon.
+"É como se eles quisessem capturar só o melhor", disse Tennenhouse. "Será que posso capturar algumas das buscas mais valiosas? Existe muito valor a explorar nisso".
+Há muito em jogo, diz Oren Etzioni, especialista em buscas e inteligência artificial no departamento de ciência da computação da Universidade de Washington.
+"É difícil demais derrotar o Google nos computadores", disse, "mas as buscas móveis são assunto muito diferente, e ainda não está decidido quem sairá ganhando nesse segmento".
+RIVALIDADE
+Apple e Google são rivais cada vez mais intensos, em ampla medida devido à concorrência entre o iPhone e o sistema operacional Android para smartphones. À medida que essa rivalidade se intensifica, a Apple reduz sua dependência de serviços do Google --mais recentemente, com o anúncio de que criará um serviço próprio de mapeamento .
+O grupo de pesquisa eMarketer previu que o mercado de publicidade vinculada a buscas crescerá em 30% este ano, a US$ 19,5 bilhões ante os US$ 15 bilhões de 2011. O Google responde por três quartos desse movimento.
+A empresa tem participação menor, mas ainda substancial, no mercado de buscas móveis, que movimentou US$ 1,45 bilhão no ano passado. O Google ficou com cerca de metade do mercado, e a Apple com 6,4%, de acordo com a eMarketer, que prevê que o mercado movimente US$ 2,6 bilhões neste ano.
++ Blog de Tec
++ Canais
+Livraria da Folha
+Giallo - Vol. 4 (DVD)
+Vários
+De:
+Por:
+Coleção Pixar 2016 (17 DVDs)
+Vários
+De:
+Por:
+Comentar esta reportagem
+Termos e condições
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "09908ed7be26cfaa820264be50a20cd49cc2b0b7183b5397dfb3c5ee2ad717e3",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c74d3dd729d542477c3056012e49d42fdeaeb6d1f4e8513b132d1e251e049984",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4320b94a6168ca7042201b695f3324e0381fb73a91c347fcdca11b9890078285",
+    "mention_text": "REUTERS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e46375d91f41f250a2d3704668565d1fd5c234fb13d5bfa9fb1bfdb2b880aa9",
+    "mention_text": "SAN FRANCSISCO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47e246e00ad8dfc216c3fd5a25c2eb2c962da8694af054346cdebb5691d0c5ea",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a33dda77610665506b776100859c5bf98e8f636575f3b5d940f2f3ff63323dd0",
+    "mention_text": "Jeremy Stoppelman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef85ce8cde5d5d6d139960196e79c45f3db6c9614f6844277de0a9c8e522855c",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb01cbba7384c869725bbe925d03b6eb96b13f2ddb0c96d62694b3618f8a175a",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "884b38d2206a92b532ad5e716d7a1a0fca6f13b482b1ddcc4221b21359c240d2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd71e0d263b31cd2ceee2b56997c8a10bb60322193872ef309dbcdedc77d3ee5",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "275b3af6f08cb5b5406eb2d70c4ff5f56493ec9ec1faa616bd0abd7f524a0725",
+    "mention_text": "Rotten Tomatoes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aae8e319bb72540524566cdb6950b6b49e82f56ac09b510aaa3d6076e75aab0c",
+    "mention_text": "Open Table",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5ab8e4e30c02aa9bf60647e318590808131c4b75dbd0ad584ccfa482af52988",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f981ed93c76d1d511cae6d1e4a82a361bc79a6855c7bc9daa40276e503e7481",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "03e0845946bb236633a3ca161a7b6e641eec668b12824db960210fd66f915a1f",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa9b64ae3679545e647716db6f8a3a04057a162d5f7a08ae9ee37cebfe85006b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0723711b50fb25a69374367df5c15d069f1d824b75933d85fea940397b542ae",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b89f6812094d368eb24065027cfd25b1e4323e775395c69142a63fab91e813d0",
+    "mention_text": "APPLE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0f027b7fa32322c23230b0b062ca6d6613cc889c2bca313e98049f8f59b4cc0",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81db8d3ea884641ba688ad34970a6edda89b1e5985c638f3ab28ae341a74d42f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24c0b68c191746259d1a912b03ac27c69dd1d24b0c62ffb77a2a86b3786aa0a1",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e4123b3c0bb88ba114b53f4153b1ad8c33c58ce0bbc13fc4331da10e191f613",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc932a0b911a4c1b273a61ff38213fdecc4fbe7b7002ab91cb653c086c1b68a4",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1cccacb9d5d8a9d18bdedd3758f480c4d5b548e1db19007b30c3dc9d141d61d3",
+    "mention_text": "Larry Cornett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2a1dab6dce759cd35e73e24f799948b92ec78784e85a78e5a0018c90c6e93c5",
+    "mention_text": "Brilliant Forge",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc9937ca49922ddfa0b878b9f2afd74dd7de14d2c9c6e29b7819189a6a78ac0f",
+    "mention_text": "Yahoo!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00491ff2061f1c25c0f6e7d24d354be67352a8571dbfe908ffa9c38a3bfe197a",
+    "mention_text": "Yelp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ede1a9315dfcee30d5f8f437bfb5391c78783f41c315d7bd75255a1a55d11e07",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7dbb3f101923471541b0b39971d7da95356b05f5bf99febad9ae27919d8c4809",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "046677913da5f5e20ddabac972129a3a914bb839670f0a0323d383f204dc2082",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfeb15ad500eda50e036044a559a557009466f53e1b50ff9b6eebb30bb1e4fbd",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6b6ef27bf083222f2768eb39245af3345daee801c18c9c4a4839fa4eed7e5f8a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdf63a049c501c1bf2e3525a32a89b9b4562fd828b2df6cb5e5a0331ea3ec58b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7b4b607802261eeb058c5c64cf60e8ef5aa4c9f56d80d0e12a75ca165776f0b",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41ace5cca9035bc61b0a4d3d3417d687b187e247e0accbed039c3162486e0055",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "063b772df9e84ba5a30821961f8baf8971fa8c24b057a2ca8324507eafbb46ce",
+    "mention_text": "David Tennenhouse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c0ddc899d46b6137dad029c76281c2494d5fdfffc6f449e06895599aed845581",
+    "mention_text": "New Venture Partners",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "054b133639e6cd04da83fd94847ec4d62ce2bddde0df1f33f7b26023a990c8e3",
+    "mention_text": "A9.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98b615848c16ba518d9597ef3bda0d3f87b13b602187047161502d9fcd03ad57",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc693cfe1f8c39110a11cebe310e1f9940056421b89baf027c8ab61f4dabc281",
+    "mention_text": "Tennenhouse",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6691f89d0cf300b31c74a0a9d678e5c0b091ca52ce83b72e7732d289460980ed",
+    "mention_text": "Oren Etzioni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bfa64687aaa2143eb12c745709c2a8c32e40a8737b438ff82f9635d99b79650",
+    "mention_text": "Universidade de Washington",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "568b45050bc910e0ed65b825a24529412aa8751ca3afb236031df47ecac176e6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea150f1a527445d8d625e207ad3a5bc97e624481db5ce9a5ad4f269c3a69c110",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7ec385e102b3675ae468916c1c428d58be049c9d47e947b00c4c321b6140c02",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c66cb262da7b38bf6f2566f965e1a15cb487fdab9323c7fc8665c2c975bf0cfd",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "849da6f8134bc06a666a2085ea54934358c90b00f1d6b15bd7b337b72ae952df",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "161b21b90bb6cd21b711336855713afbffe366a579be13bde921e542ad5be017",
+    "mention_text": "eMarketer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3cb96a886f40395eeceba27057175393752879edd51df5058f4a619c3603932",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08b91d3977efcaa7b95def4c6d34f5ab5f01256493a74e5f39ccab80cc6c6e5a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6de554864aeced3c97f263c4e816ac5ba744a00c998e08ea1cb3b09e85ba213",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5fa814e803a31b90d68aa54bf06c67a1513b5d6dbf50f8dcb1f23619f115ace",
+    "mention_text": "eMarketer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc9510ca6d738a91864c97e432a2c2b5323056f500065dc82cc76ffa1f4aa5cd",
+    "mention_text": "Livraria da Folha",
+    "categoria": "ORGANIZACAO"
+  }
+]

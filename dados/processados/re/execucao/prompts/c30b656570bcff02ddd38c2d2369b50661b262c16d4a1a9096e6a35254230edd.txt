@@ -1,0 +1,335 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 60dafc8d617b510e3d8d5a5b5a49485f2b47ec66d80b49c7de7149f56e721d5b
+
+TEXTO:
+O ex-executivo do Facebook que largou tudo e prepara refúgio em ilha para sobreviver a 'apocalipse tecnológico'
+
+DA BBC BRASIL
+Antonio Garcia Martínez, de 40 anos, vivia no epicentro da revolução digital, mais precisamente no Vale do Silício, região próxima de San Francisco, nos Estados Unidos, onde estão as sedes de algumas das principais empresas de tecnologia do mundo. Mas desde 2015 ele mudou radicalmente de vida ao chegar à conclusão que estaríamos prestes a enfrentar um "apocalipse tecnológico".
+Martínez afirma que o avanço da tecnologia - em especial, da combinação entre automação e inteligência artificial - mudará radicalmente a economia global e fará com que empregos desapareçam em escala massiva.
+"Dentro de 30 anos, metade da humanidade não terá trabalho. E a coisa pode ficar feia, pode haver uma revolução. É por isso que estou aqui", diz ele em entrevista à BBC ao desembarcar armado com um fuzil em uma ilha próxima a Seattle, no noroeste americano, onde está criando um refúgio para se proteger caso a previsão se confirme.
+"Em San Francisco, eu vi como o mundo será daqui cinco a dez anos. Você pode não acreditar que está vindo, mas está - e tem a forma de um caminhão que dispensa motorista."
+ISOLAMENTO
+Martínez fez carreira no setor ao fundar uma empresa de anúncios online, que vendeu para o Twitter, e ir trabalhar no Facebook. Hoje, dedica boa parte do seu tempo a um terreno de cinco hectares no meio da floresta em Orcas, uma pequena ilha na costa do Estado de Washington, próxima da fronteira norte do país.
+Por enquanto, seu refúgio não parece ser grande coisa. Há apenas uma barraca, um gerador de energia, um balde onde faz suas necessidades, além de fios e painéis solares ainda não instalados. O acesso só é possível por uma estrada de terra, usando veículos com tração nas quatro rodas.
+"Ninguém conhece aqui. E dá para ir nadando ou de caiaque até o Canadá se a situação exigir", diz ele sobre os motivos que o levaram a escolher a região para montar seu abrigo, listando em seguida outras vantagens: "Clima ideal, uma grande comunidade, produção de alimentos autossustentável, e consigo defendê-lo caso as coisas saiam dos trilhos por um tempo."
+MUNIÇÃO, A MOEDA DO NOVO MUNDO
+Martínez deixa claro que será capaz de fazer isso ao atirar com uma AR-15 contra latas e garrafas de plástico que fazem as vezes de alvos improvisados à distância - e acertar todos eles.
+"Há 300 milhões de armas nos Estados Unidos, uma para cada homem, mulher e criança, e a maioria delas estão nas mãos das pessoas que perderão seus empregos", afirma.
+"Garanto a você que munição será a moeda corrente desse novo mundo."
+Ele não é o único a prever o desaparecimento em massa de muitos postos de trabalho. O pesquisador Carl Frey, da Universidade de Oxford, acredita no mesmo.
+Ele estima que 35% dos empregos no Reino Unido corram risco de desaparecer nos próximos 20 anos com a criação de robôs capazes de realizar as mesmas funções. Esse índice é ainda maior nos Estados Unidos, onde chega a 47% - e ultrapassa 50% em países em desenvolvimento.
+Por isso, o americano garante que outros no Vale do Silício estão tomando as mesmas precauções.
+"Eles têm suas próprias estradas, compram terrenos, têm um monte de armas, poços artesianos e tudo mais. É algo como o que tenho, talvez menos rústico, menos hippie, mas bem parecido."
+DÍVIDA
+De fato, Reid Hoffman, cofundador da rede social LinkedIn, estimou em uma entrevista à revista The New Yorker que cerca de metade dos bilionários da região têm algum tipo de "seguro contra o apocalipse".
+Mas e quanto ao restante das pessoas que não têm uma fortuna para investir em refúgios assim? Martínez garante não se preocupar com isso: "A vida é curta, e nós morremos sozinhos."
+Ele afirma que sua maior contribuição é divulgar sua previsão e contar sobre seus preparativos. "A única dívida que nós profissionais da tecnologia temos é essa. Poucas pessoas estão falando sobre isso e informando o público em geral", diz.
+"A tecnologia vai acabar com empregos e abalar economias antes mesmo que a gente seja capaz de reagir, e deveríamos estar pensando sobre isso."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "74b7e522d476a16c2f825952fb2510ac585cc11233b2cd67e9b6c84f199fe5bb",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb18c2fa73af5967f2e25b80c1f69d4675a0c7e6ba54aa07177ef38b5f1e3b9e",
+    "mention_text": "BBC BRASIL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8efd34e44a91adea95fc114279f85dfaaaf60022db1871b8b5145e10082189dd",
+    "mention_text": "Antonio Garcia Martínez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfa46cbe4e132132a5c6c944de50211170a32af8b16d7229f813d882dcd14f0f",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "299b8c02b0707ff1c5ba9711e78f0301fb6c420675712decd7778d4d6318ed76",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86cafa1b257b7bc47ec1fa33ec3372715e1846d83ad6e2c6402a2df4368f1cde",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5c90ee0c2d0b59f8f15f70521c4dd01453f2d9495fd2b921a26f35fae4abe2f0",
+    "mention_text": "Martínez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da315d7a78eef5edb06a55cf3087dcc3e1e4e2f53f7e91c74e3272e78ca129a7",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81c55367bdf81d58ad0a147f7fbe21f584d716b8590903ce3bd5e3fc676694ae",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7549c6c1f60937292c960784a732808120cbc06fea40307b4cf35a1bbb518bee",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b08bd4902453cd7ea6de4b7145f9166b6f7ce5a17a699183618868a534f01fc",
+    "mention_text": "Martínez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2acc0b12b0fed1f89d5194386e72237d3105bf6783a906c4e07b6e986dc21f4f",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb03847096f6cbcf4574aab4fa3772588bdd257d13a362260a673817c4879374",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ef9d8ec0981416767c444d574f99286a558fde5d229d280ca72f5ce80944f21",
+    "mention_text": "Orcas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8cde58801f1e76bde43155a98bb2293c7b162af69a4b1dd6135f28e63465d5b",
+    "mention_text": "Estado de Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eff450af26023de31d764fc5c5962f8de5cfd98bf2b7f55a308663203a89f1e8",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1ce2e91bd4e535e1b99e6523383e1f5f0e8ee8ba65edf63989c42f89f73951e",
+    "mention_text": "Martínez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e505ecbcb073d74d6ca8b819f8b73d32e434b5c6962e9b597f447941928c313",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dafe3497c20d9210b5054413b7fe727a47945db1fa861d8463fc8d020b2d33f7",
+    "mention_text": "Carl Frey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e28eda0309a397b1824935be09a376ce9e908cdeda3ef0e6b7166dff18804ddf",
+    "mention_text": "Universidade de Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e747f84e2a6ab560ea3563d42e2f98d80ee056ca01a8af2bc3df0943f3e4e1c",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e14f7fa8c1af12d7d43ce50847b12642a0001bb8012b22a187280f268309837d",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1a6d0e5a11b70b89948e64218960b6a9c4809397c4d278585b10c5cfea4f56bb",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "26737873cf36e2de34597fb8aaca437262ccd6179a6db5c097a7cb61cd8bc32b",
+    "mention_text": "Reid Hoffman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b19dd8ac7b39ee51dc7b283e92583592c6365218bebea0c8dc8a5069e5fa208c",
+    "mention_text": "LinkedIn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5567aed34fde17b1429baa40c53cd81c61a265641c95222d8dc4fe475272f244",
+    "mention_text": "Martínez",
+    "categoria": "PESSOA"
+  }
+]

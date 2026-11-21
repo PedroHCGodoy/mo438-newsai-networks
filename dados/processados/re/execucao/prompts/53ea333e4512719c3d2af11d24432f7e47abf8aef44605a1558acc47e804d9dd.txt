@@ -1,0 +1,376 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 63167295b58e08d57c61c91b61081d6aac8eb94ff338a2726767cd5d0b5f6551
+
+TEXTO:
+Bom senso chega aos computadores
+
+CLIVE DAVIDSON
+DA "NEW SCIENTIST"
+Consideremos as sentenças, em inglês, "Time flies like an arrow" (O tempo voa como uma flecha), em que a palavra "flies" significa "voa", e "Fruit flies like a banana" (Moscas-das-frutas gostam de banana), em que "flies" significa "moscas". É evidente que a primeira só pode ser compreendida se for vista como metáfora, enquanto a segunda é uma afirmação de um fato. Qualquer pessoa de bom senso é capaz de analisar corretamente essas sentenças.
+Nos últimos 30 anos, porém, sentenças bizarras deste tipo têm se mostrado um dos maiores obstáculos à criação de um computador capaz de compreender a linguagem do dia-a-dia. O problema é que os computadores não têm bom senso –ou pelo menos não tinham. Uma equipe de pesquisadores de Austin, Texas, acredita haver encontrado a chave para se prover os computadores de senso comum.
+Seu otimismo é alimentado pelos resultados obtidos do Grande Projeto de Base de Conhecimentos de Senso Comum (Cyc), que após dez anos de trabalhos está se aproximando de sua conclusão. O Cyc começou como parte de um projeto de criação de uma enciclopédia computadorizada, inventado por um dos nomes lendários da informática –Alan Kay. Quando Kay trabalhava no centro de pesquisas da Atari, ele pediu a Douglas Senat, professor consultor de ciência da computação na vizinha Universidade de Stanford, que acrescentasse algo original ao projeto. Lenat sugeriu a "automatização dos espaços brancos". Era sua maneira de dizer computadorização dos conhecimentos que possibilitam a vida cotidiana –por exemplo, saber que alguém não pode estar em dois lugares ao mesmo tempo, ou que um objeto cai se não estiver apoiado em alguma coisa.
+Vampiros existem?
+Mas a Atari teve problemas financeiros no início dos anos 80, Kay deixou a empresa e Lenat foi persuadido a transferir sua idéia para outro lugar. Ele começou a trabalhar na recém-aberta Microeletronics and Computer Technology Corporation (MCC), uma organização cooperativa de pesquisas e desenvolvimento, que procurava um projeto prestigioso no qual investir. A MCC tem sede em Austin e seus acionistas e associados incluem a Apple Computer, American Express, Microsoft e o Departamento de Defesa dos Estados Unidos.
+O Cyc foi planejado desde o início para ser várias ordens de magnitude maior do que os sistemas especializados existentes, que tendem a sofrer panes quando contêm mais de 5.000 a 10.000 regras referentes a uma área específica de conhecimento. Como Lenat reconheceu, não seria possível encontrar um caminho mais curto para se dotar uma máquina de "inteligência"; não havia equações de pensamento artificial esperando para serem descobertas. Eles decidiram representar o conhecimento em "quadros", numa abordagem desenvolvida por Marvin Minsky, um dos pioneiros da inteligência artificial. Os quadros são minibancos de dados que reúnem informações relacionadas entre si de modo estruturado. O nível superior de um quadro contém informações fixas que são sempre verdadeiras, enquanto os níveis inferiores, ou "slots", contêm detalhes de exemplos específicos daquela informação fixa. Voltando a nossas sentenças, o quadro "flies" (substantivo, moscas), por exemplo, conteria a informação fixa de que moscas são insetos e que elas têm asas, enquanto o "slot"contendo informações sobre tipos poderia ser preenchido com "frutas", e o slot "gostam de comer" poderia ser preenchido com "bananas".
+Mas em pouco tempo os quadros se mostraram limitados demais para exprimir os conhecimentos "comuns" que o Cyc procurava reunir –coisas como o que significa uma "pessoa", o que quer dizer "hoje". Então Lenat começou a procurar alternativas juntamente com R.V. Guha. Eles combinaram os quadros com uma forma de lógica chamada "cálculo dos predicados de primeira ordem".
+Os predicados, quando utilizados em conexão com a lógica, são afirmações referentes a indivíduos ou coisas, e são verdadeiros ou falsos quando aplicados a indivíduos ou coisas específicos. Por exemplo, o predicado "é um inseto voador" é verdadeiro quando aplicado a moscas-das-frutas mas falso quando aplicado ao tempo. O cálculo de predicados utiliza variáveis e quantificadores, como "para todos" e "existe", que permitem que se façam afirmações generalizadas sobre classes de objetos. No caso das moscas-das-frutas, por exemplo, uma das afirmações constantes no banco de dados pode ser que "em todas as moscas-das-frutas existe uma parte de sua anatomia utilizada para voar".
+Ao ampliar o cálculo de predicados de primeira ordem e combiná-lo com os quadros e outras técnicas, Lenat e Guha criaram uma linguagem capaz de representar o mundo cotidiano de uma maneira que os computadores são capazes de "entender". Essa linguagem, conhecida como CycL, permite que os conhecimentos do senso comum sejam reunidos como uma coleção de afirmações que são verdadeiras pela negação, e não por definição. As afirmativas geralmente são verdadeiras –por exemplo, em lugar de afirmar que "todas as aves voam" o CycL afirma que as aves são criaturas que "normalmente voam".
+O raciocínio, no CycL, é conduzido pela argumentação e não pela lógica estrita. Se uma sentença é dada ao Cyc, ele tentará encontrar argumentos pró e contra as afirmativas feitas naquela sentença, e procurará resolver as dúvidas utilizando critérios como, por exemplo, se elas se baseiam em relacionamentos causais ou se existem evidências favoráveis ao argumento. Já os sistemas baseados na lógica procurariam aplicar valores absolutos de verdade ou falsidade.
+Para resolver os problemas de se vasculhar um banco de dados imenso e depois raciocinar rapidamente, o Cyc é organizado de modo um pouco semelhante a uma biblioteca, onde o conhecimento existe nos livros e nos bancos de dados, mas pode ser mais rápido pedir alguns tipos de informações diretamente ao bibliotecário.
+O uso de um conceito conhecido como "microteorias" ajuda a manter a massa de conhecimentos contidos no Cyc em alguma espécie de ordem. O CycL trata um conjunto específico de afirmações como uma teoria. Assim, a sentença "O departamento de pessoal de uma grande empresa organiza a contratação de funcionários" seria considerada parte de uma microteoria referente a grandes empresas. Lenat diz que a grande vantagem das microteorias é que elas permitem uma coerência local sem exigir coerência global. As afirmações no interior de uma microteoria precisam ser coerentes, mas elas não precisam ser coerentes com aquelas que fazem parte de outra microteoria. Isto torna o Cyc capaz de manejar um diálogo do tipo deste:
+"Quem foi Drácula?"
+"Um vampiro".
+"Os vampiros existem?"
+"Não".
+Drácula e vampiros existem numa microteoria relativa a Bram Stoker, mas não numa microteoria científica moderna. Mas é possível "importar" afirmações de uma microteoria para outra. Assim, por exemplo, se Drácula deixasse cair um cálice de vinho, o esperado seria que o cálice se quebrasse.
+Foi este método de lidar com a coerência que possibilitou ao Cyc expandir-se para além das fronteiras de qualquer sistema anterior. Hoje o Cyc contém o equivalente a dois milhões de regras. Quase todos esses conhecimentos são expressos em termos de afirmativas que são verdadeiras apenas pela negação, em lugar de pela definição. Incluem milhares de microteorias e muitos modelos de abstrações como o tempo e o espaço, cada uma sob algumas circunstâncias mas não sob outras. Assim, por exemplo, o Cyc sabe que se um pedaço de madeira for retalhado, cada pedaço resultante continua sendo "um pedaço de madeira". Ele também sabe que se uma mesa é retalhada, cada pedaço resultante não é mais uma mesa.
+O banco de dados está sendo alimentado com informações fornecidas por equipes de "alimentadores de conhecimentos" que trabalham nos escritórios do Cyc, em instituições acadêmicas e nas empresas associadas à MCC.
+O final do projeto chegará quando o Cyc começar a ler e aprender por conta própria. O Cyc já está se afastando da fase em que todos seus conhecimentos são inseridos manualmente por seres humanos e começando a absorver textos lineares, também por "scanning", extraindo novos conhecimentos para incorporar a seu banco de dados.
+Tradução de Clara Allain
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e4345d8cc77612bc82eb814ce82720eeabd74a3ce8bc9b27b5a3dc79365c2a2c",
+    "mention_text": "CLIVE DAVIDSON",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fce86154e51e69658ffe450355fb6c6598df434cc177153e15152de1e83793dc",
+    "mention_text": "NEW SCIENTIST",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c957c8cecc5510d51b4fbb8960740491b67977e5a3fb6b3c5318f394dcb306a7",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d524156840f9327141d8babdf1eaad38fda07399cd3a15f7ba650fb02182c8eb",
+    "mention_text": "Texas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e66b547b836f8760a0d9fdbbcb89975c0b3e6b80e580f92230752d740ed441a3",
+    "mention_text": "Alan Kay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb0ea047e59e6827bb76b28d4074fb7c4986c6949e7000dc8d44d2717e6239f7",
+    "mention_text": "Kay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d8f33fc4ab89d86a8f7d5c840b00d0c072a1fa6a26e360527089801a5883761",
+    "mention_text": "Atari",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77dd2daa76a62cd293f3647ea6535e73766deba9578abef084636eb0840456dd",
+    "mention_text": "Douglas Senat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8cbb42641d82e9b0efa60897b19d24313a15fe657dcf9ed6aca836f16d666e42",
+    "mention_text": "Universidade de Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92c8809b2643c6044bc043dc28334ce4a575e93e36dc01cea02d2dde3b5cadc1",
+    "mention_text": "Lenat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "068231b69ba0d8e9804a0d7588e00e2b1cc76776f703cba565354026ea48ce67",
+    "mention_text": "Atari",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efac47e966021f062ed0686ca6b0eb6ff0c6ddf68ada24d269bd79a4b39f6a7c",
+    "mention_text": "Kay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f4167b622f24816f61889a8b966ae730fa778b6dd10493cf7b0254186c0e174",
+    "mention_text": "Lenat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4a0bd950e77d886da9b1f6b32e2b091571a08729d8e51b9db48a8fbad960ae6",
+    "mention_text": "Microeletronics and Computer Technology Corporation",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a0d2bc7a1577bd4f84f953fcc96a845713b39d0397d604f615ce3b11254a5a8",
+    "mention_text": "MCC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa5a45f890211646a97d6601035432c8f27e25cb7c5946e5289503166173bfb0",
+    "mention_text": "MCC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c1d30e2fc0e02f1d4ff45962c1d79d3581038cabfa920948fe325f9b73302ea",
+    "mention_text": "Austin",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93789bfe2d108d906638e78ebb908fe264e0a26caec38c0aade4e8618655b07e",
+    "mention_text": "Apple Computer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d44375692757a932e431e4a0208692dd80d6c59b1ad3c228d1516dbd092000a",
+    "mention_text": "American Express",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdb9025e3edd62a7d49b24d4305853ee89e694c4755ec9628cd8ce08fcca880a",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "167a55fb151e5fc7f4f247bdebe919a4e8f83b62ee2cb169433fce1934cbc3ea",
+    "mention_text": "Departamento de Defesa dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb8972fa0f795aad69c014375e821685cdde34d1fd88c9bf4ca2564e5a257a32",
+    "mention_text": "Lenat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "706605d942a61b0064d1b710a00877d7da8d113038942c17c48961ab4a5ed189",
+    "mention_text": "Marvin Minsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "475e9a5022689c03a33674cdbe5d44830082a443225597fd3118a82b7190f53b",
+    "mention_text": "Lenat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a94c1267c126d49b4ee023c8ce7ed12e26a0976fcc60f97338097aaa9f7591c1",
+    "mention_text": "R.V. Guha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7707d544a14261a5e0a1658b6874be434b1c556ecd68cc9027fa78a0be34f9ce",
+    "mention_text": "Lenat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8680adb19f09466e7a5466e35f1f1160b74c6bf3ee9bdcaafb3624c41d978710",
+    "mention_text": "Guha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49e9a434832110015df62371b1b45f997fb42135effd02004ec88a30d38cb1ec",
+    "mention_text": "Lenat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7dc2c89577a3279d37f0f6066bb96b7c5f1e2fd41159460632115201ce5d0ee",
+    "mention_text": "Drácula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8cf38a2db7e7b105c5cc02e85e7a828dd87481a830b982a67efc68c6182edc0e",
+    "mention_text": "Drácula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a88c268f9ac6494f0327b672b726b66dadb132f3ecc2d001857cc5108fe2b00a",
+    "mention_text": "Bram Stoker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3321643ee2ce69b69d6b6c758cc769a04a3950860531e91048d89720cb64acd4",
+    "mention_text": "Drácula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a24e431ae4384afbc6a8499a76fbef3d2d44f7e43123e610a9eed1b909dc70f",
+    "mention_text": "MCC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46d89346f4e4a3e960fa5418d8c9342df77f14e61846c78e28aecbd131c62ad0",
+    "mention_text": "Clara Allain",
+    "categoria": "PESSOA"
+  }
+]

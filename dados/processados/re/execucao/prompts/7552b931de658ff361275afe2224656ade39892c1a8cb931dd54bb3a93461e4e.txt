@@ -1,0 +1,371 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1abf19a8c06d9e601a0259f9a488c4bca328c9dbdbc937a106fd34a72dddf4b3
+
+TEXTO:
+Cingapura cria seu 1° aterro em alto-mar
+
+Por LINDSEY HOSHAW
+Cingapura talvez tenha o único aterro sanitário com uma lista de espera de quatro meses para visitá-lo. Mas esse aterro é uma ilha artificial que parece uma reserva natural, apesar das 8,9 milhões de toneladas de lixo incinerado que estão logo abaixo da superfície.
+A escassez de terra em Cingapura -sua área total tem menos de 700 quilômetros quadrados- levou o governo a desenvolver técnicas inovadoras de tratamento de lixo. Entre elas está uma ilha ao sul do território principal que foi aberta depois que o último depósito de lixo da cidade fechou, em 1999. Juntando duas pequenas ilhas, o governo criou o depósito de Semakau, o primeiro aterro sanitário em alto-mar de Cingapura, hoje um local de passeio muito procurado.
+A instalação de US$ 360 milhões inclui um dique marítimo de 7 quilômetros de comprimento e uma geomembrana de polietileno que reveste a periferia da ilha para evitar vazamentos. O lixo incinerado no continente chega em barcaças, e a cinza úmida é esvaziada em poços, ou "células", que mais tarde são cobertos com terra, onde as plantas crescem naturalmente.
+Ministros do Meio Ambiente da Nova Zelândia, do Japão e de Samoa vieram se inspirar para suas práticas de gestão de lixo.
+Os aterros renovados para uso público não são novidade.
+Em Nova York, o aterro de Fresh Kills será reaberto como parque por volta de 2035. Em 1994, o Japão transformou um antigo aterro a sudoeste de Osaka no Aeroporto Internacional Kansai, o primeiro aeroporto oceânico do mundo.
+Mas o aterro de Semakau é o único ativo que recebe lixo incinerado e industrial enquanto sustenta um ecossistema pujante, que inclui mais de 700 tipos de plantas e animais e diversas espécies ameaçadas. "Queremos manter esse equilíbrio pelo maior tempo possível", disse Ong Chong Peng, o gerente geral responsável pelo aterro.
+Espécies protegidas como garças de bico longo e batuíras da Malásia se aninham aqui, e os golfinhos brancos ameaçados da China foram vistos no litoral. E Semakau é o único aterro ativo que incentiva visitas públicas.
+Este ano, o lado leste da ilha deverá ser desenvolvido e poderá começar a aceitar lixo no início de 2015. A Agência Nacional do Meio Ambiente, que mantém o local, prevê que o aterro ficará aberto pelo menos até 2045.
+Os pescadores vêm durante o dia e os astrônomos, à noite. Caminhadas na maré baixa, que são populares entre grupos de estudantes e outros, são agendadas quase o ano inteiro.
+Um casal até posou para fotos de casamento lá em 2007.
+O governo de Cingapura se gaba do sucesso de Semakau citando o crescente número de visitantes, que triplicou nos últimos cinco anos, chegando a 13 mil em 2010. A Agência Nacional do Meio Ambiente diz que o sistema de aterro único reduz o volume do lixo em 90%, e que 2% da energia de Cingapura são gerados por quatro incineradores no continente.
+Mas os críticos questionam a gestão do lixo que depende completamente da incineração. Os incineradores em grande escala têm períodos de vida curtos, e às vezes precisam ser substituídos após apenas dez anos.
+"O Greenpeace é contra a incineração de lixo porque é uma grande fonte de substâncias cancerígenas como dioxina, além de outros poluentes prejudiciais", disse Tara Buakamsri, diretora de campanhas do Greenpeace para o Sudeste Asiático. "Os aterros sanitários e a incineração são técnicas importantes em todos os países da região, mas essas práticas criaram problemas sociais e ambientais."
+Houve protestos na Malásia e na Indonésia por causa de planos do governo de construir novos incineradores, e os filipinos os proibiram em 1999 por causa dos riscos para a saúde.
+Também existe um pequeno risco de que o lixo possa vazar. Medidas de proteção "em última instância falham, representando um risco para as futuras gerações", disse Scott Kaufman, gerente nos EUA do Carbon Trust, um grupo britânico sem fins lucrativos que busca ajudar empresas a cortar as emissões de carbono.
+Autoridades ambientais dizem que a TÜV SÜD, uma firma internacional de inspeções, testa a água ao redor por metais pesados todos os meses. Estão confiantes que o aterro será capaz de comportar lixo por décadas.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a1219aa1bf145300e2886cf0d60f8914a89fa8b089c00365710bf7d6a61beca9",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "152a9277bc90e173653a755e3f513e09cef7cac6140c706e2fdfb65a6766456e",
+    "mention_text": "LINDSEY HOSHAW",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f809c5bde3d611200edad86707e5e420d79f70c44c8db24cbdd512a738bb051",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0fa39b45f2070dc8ee42c8538da7915b725a7e8a74eacefde7b083b7d0c836c6",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1ab5dc4646937eb0bd9fc6f213f9a7b923f362a214b9bc6aabf6d60427711af",
+    "mention_text": "Semakau",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c2a27ed41f19d440209e8f46e414ad05443b9f6946447cfeffe6e6cf65312c13",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f402244db8291940cb10347645347a8cf87fbbbe8b0f60e5ceea7e5805c222e8",
+    "mention_text": "Nova Zelândia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c90a06fac61aa41d37c890afabd8990c72833670d2b744a7d4e880ffffee509c",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "892f94c03563e06fa56d135dfd5255b4d4759d96018533eb82ed72e1dd6d897e",
+    "mention_text": "Samoa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff4bd67c64614d742849801024fee90b6767ead2f6ae3d571266d379b97eb1b9",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bf7fa64f8d22c503dccfa2edd5cb239038a54c3984eab4680f0cdba077902d1e",
+    "mention_text": "Fresh Kills",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "592e812656fd56cc1b644b0e5477814b3c7bcda4e7d1eeae3a2f4a0f8c91cf07",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dfae8927739c55036bf356d68d9c03b0f5a13c7db40f3886b8c676696a1c3ea5",
+    "mention_text": "Osaka",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4953e807ba818701a194e922ce92bf76f0f4e93a4bd789118eb7155cb1700a87",
+    "mention_text": "Aeroporto Internacional Kansai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a91f416ec8d710f39ce064b49700317e9e553e844b2427342f428e7c1a284d0",
+    "mention_text": "Semakau",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b429fd2905a1caad62d5a895002f3009c1075d485a0294f4b680196c70e3bb4a",
+    "mention_text": "Ong Chong Peng",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb7fc596e5d83c7bbbecc034dba371878bf08ddc2d22d377240b193883bf336f",
+    "mention_text": "Malásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "316ab05fe6b2fa011066d83058f0fa7a28393a2d0438bb1eaafbbd4906022cfe",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f94de6371a914edb3df2fd5a246eb9e08cb67869575f129e48c7d83bfccc678",
+    "mention_text": "Semakau",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b868da091067a2e756fa2a8781b1d2a412f3d61fa39bb2906495266d540c9384",
+    "mention_text": "Agência Nacional do Meio Ambiente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bae526c6fa94764ddc41688ea5096ffce6e7d82cc1dc554250cff1b43152a43",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01b50cc85a8e31fe4c02a474db5d6605c32e26d00b6d416db94fb23fd8c23499",
+    "mention_text": "Semakau",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96c1cd792250748aa1cceb4b04d153e3550690cc9d6f16e6052af04e1eb663fa",
+    "mention_text": "Agência Nacional do Meio Ambiente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a349f2626cbd458c53582414c38e2c862ce5a283c70255bafcc7734ef07f4565",
+    "mention_text": "Cingapura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f41f738cf1349e115fe209d5db8bb1b13ee5c6fb18c11354cf47ae4e4dd3a552",
+    "mention_text": "Greenpeace",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54a3b72bf9a3e343aa4ae90520e305af941c9d955a9594e2d715a4f773194085",
+    "mention_text": "Tara Buakamsri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a67a2e13960e03032d88d6173789fc83d1a0191768e16ea667769037adc2a68",
+    "mention_text": "Greenpeace",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d4a5e5a1aab164db6b0c8e4919a80fc0d2c57c82890c54d1b40062fe9ee95d0",
+    "mention_text": "Sudeste Asiático",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9dbe37aa9792a061bf08500fc4d1b5ff6d06d0b621d488f2f1e9f7410e313963",
+    "mention_text": "Malásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a89a9c64f2b9c7c2fe8751c857787cad2fd40c44c6fe7411687e3cc34ba47fc",
+    "mention_text": "Indonésia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "44631428429143da4e7c579ff774d2802239dd2de09351b2a612ddb7049b8c88",
+    "mention_text": "Scott Kaufman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5d6b4fcbb8ba64983ab3f105f75ff11ea6d478f646ecdf9254b3bd64fa7d2c8d",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "efd0ebc231dd1f092335affb6262083452ba962911c92444973e3a7d56700700",
+    "mention_text": "Carbon Trust",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ccef07baeb64168778f62fd35c74a60fdda907281576898a5645bec017fbfb46",
+    "mention_text": "TÜV SÜD",
+    "categoria": "ORGANIZACAO"
+  }
+]

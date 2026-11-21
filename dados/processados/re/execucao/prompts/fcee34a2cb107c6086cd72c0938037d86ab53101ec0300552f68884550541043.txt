@@ -1,0 +1,458 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1d72c56ff8062170ae2b8fa9ad401431e2b61bb0d34683b83364f3f12d83106a
+
+TEXTO:
+Alta na venda de carros será insuficiente para seguradoras
+
+​
+A melhora da venda de veículos novos observada nos últimos meses não será suficiente para garantir um crescimento dos seguros automotivos como já ocorreu no passado, segundo seguradoras.
+O número de automóveis comercializados até abril chegou a 630 mil, 20,4% a mais que no mesmo período de 2017, segundo a Fenabrave (da indústria).
+A evolução, porém, parte de uma base baixa, e o volume vendido nos anos mais pujantes, como 2013 e 2014, já atinge uma idade em que o seguro é menos atrativo, diz Murilo Riedel, presidente da HDI.
+“No fim do dia, cresceremos porque diversificamos os negócios, mas o seguro tradicional seguirá em queda. O pior virá em 2019, com o envelhecimento daquela supersafra de veículos de 5 anos atrás.”
+“Quanto mais novos os carros, maior a penetração dos seguros, mas isso apenas não explica o nosso crescimento. Cada vez mais precisamos criar produtos de entrada para ter novos clientes”, afirma Jaime Soares, da Porto Seguro.
+Como 85% da frota segurada tem até cinco anos, os prêmios mais elevados também têm colaborado para uma expansão do setor, afirma Marcelo Goldman, da Tokio Marine.
+O otimismo existente para 2019 e 2020 se dá mais por causa do cenário econômico do que pelo aquecimento do mercado de automóveis, afirma Saint’Clair Pereira Lima, diretor da Bradesco Seguros.
+“Os emplacamentos ainda estão longe do nível de 3 ou 4 anos atrás, então temos reduzido custos e aproveitado as vendas por canal bancário para alcançar mais regiões.”
+O BB Mapfre prevê uma melhora gradual após as eleições. Até lá, tem apostado em reduzir preços e ganhar volume, diz o diretor Glaucio Toyama.
+CASAMENTOS E PROPOSTAS
+A Jobzi, de recrutamento que tem um site de busca de trabalho, abre uma frente de atuação para oferecer a triagem de currículos para empresas.
+A startup notou a dificuldade de companhias em selecionar os mais aptos entre tantos candidatos.
+“Algumas recebem 10 mil currículos e precisam de uma triagem. Entregamos um ranking dos melhores aos menos qualificados,” diz Paula Guedes, fundadora e CEO da Jobzi.
+Para grandes empresas, a remuneração se dará por um pagamento mensal, a partir de R$ 70, a depender das funcionalidades pedidas.
+A empresa já fez mais de 225 trilhões de casamentos de vagas e postulantes, afirma. Se o candidato não tem qualificação para a vaga, o site o dirige para outras posições.
+“A inteligência artificial, além de achar o candidato ideal, torna o processo de seleção mais justo porque é como se uma pessoa estivesse lendo com atenção 10 mil currículos”, diz.
+“Se a vaga pede inglês, por exemplo, e a pessoa escreveu língua inglesa, o processo usual não capta e ela é rejeitada.”
+Foi com essas pesquisas que Paula percebeu há mais de dois anos que a oferta de emprego estava caindo, enquanto crescia o anseio por um “outsider” da política para presidente, como o apresentador Luciano Huck.
+Comentou com seu pai, Paulo Guedes, um dos fundadores do Banco Pactual, que levou a ideia adiante e hoje é apontado por Jair Bolsonaro (PSL) como o nome que gostaria de ter para ministro da Fazenda, se eleito.
+Paula não se estende em comentários sobre política e diz que nada está definido quanto a essa possibilidade.
+PONTE O Banco de Desenvolvimento da China (China Development Bank) e a Prefeitura de São Paulo assinarão nesta semana um Memorando de Entendimento para acordos comerciais e projetos de cooperação.
+Adicionar ao carrinho
+O número de lojas online no país aumentou 12,5% no último ano, de 600 mil a 675 mil, segundo a multinacional de meios de pagamento Paypal.
+O número representa 5,6% do total de sites ativos no Brasil, segundo a companhia.
+“A alta deverá se manter. O número de dispositivos no país é maior que o de habitantes e passamos o dobro do tempo que os americanos engajados em dispositivos móveis”, diz a diretora-geral, Paula Pachoal.
+“A crise impactou o crescimento do comércio online no Brasil, mas ainda assim o setor tem mantido o ritmo de alta.”
+O crescimento no acesso via celulares impulsionou a alta de portais multiplataforma no país. Três em cada quatro lojas digitais adotam a tecnologia hoje. Eram uma em quatro em 2016.
+Luxo em pausa
+O mercado de luxo no Brasil, que apresentou resultados fracos nos últimos dois anos, não deverá ver recuperação definitiva neste ano, de acordo com a Deloitte.
+A perspectiva da consultoria é que o mercado mundial, que faturou cerca de US$ 1 trilhão (R$ 3,67 trilhões) no ano passado, cresça em 2018 na maior parte do planeta, mas com risco de volatilidade na Europa e na América Latina.
+“O Brasil e o entorno estão descolados do desempenho das outras regiões, que crescem em média de 3% a 4% ao ano”, afirma o líder de bens de consumo da consultoria, Reinaldo Saad.
+“Com o baque econômico, caiu o poder de compra da classe média, uma das responsáveis pelo boom do setor de luxo em anos anteriores. A retomada do segmento deverá se consolidar só em 2019.”
+Estoques sob demanda e a expansão do ecommerce ajudariam o setor a melhorar resultados no país, diz Saad.
+Tendências do segmento na América Latina Setor deverá crescer abaixo da média mundial
+México - considerado o país mais atrativo para marcas no continente
+Argentina - Empresas do ramo têm voltado ao país; escassez de oferta favorece segmento
+Brasil - Consumidores cortaram supérfluos na crise; cenário é de leve melhora
+Da infância A indústria de alimentos Pif Paf vai patrocinador o Museu dos Brinquedos, em Minas Gerais, espaço que conta com um acervo de 5.000 peças. Entre elas, há objetos que foram fabricados no século 19.
+com Felipe Gutierrez, Igor Utsumi e Ivan Martínez-Vargas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "9a2d2d7a4f9a907de0a358a3a91f5d589445ebb03aa837f8a5e178e27eb08e8a",
+    "mention_text": "Fenabrave",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a08c9e2d28247161becdcc8ce48044d5479d1e613b10fe8ce2bc41a1c98ee1ec",
+    "mention_text": "Murilo Riedel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a06c0fb7c3af5d9115b5284945f87ceffb7afedd3a0a28d25032fa76854e384b",
+    "mention_text": "HDI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0e9b2876098a7c5f6454741ab8cb297b3ef7127ca9aa7236095e919ec996022",
+    "mention_text": "Jaime Soares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "93648c30b240432c3a9bdea6611628965c7e4030ecc73bd7044d99bc7d61cbe0",
+    "mention_text": "Porto Seguro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edb38b5c2f2f5c1f88a08c9e2b74da4512b9c44ec3d33efb11b87d37a8839789",
+    "mention_text": "Marcelo Goldman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afc64f76cbc3331fc5120f7a0d4587bc06698d09c9c7467623b532e04de8fb40",
+    "mention_text": "Tokio Marine",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "add5f6ab05f20b5146ae0d926ea9a52a1a9e76b2a17520237c38ed8088a891cc",
+    "mention_text": "Saint’Clair Pereira Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "331ea886014e89d080e72571f97a93a5417d232ce3157e8553b2698840466b7e",
+    "mention_text": "Bradesco Seguros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02d793c8d4071c7f736b487ef4d8f5930af4a72cf047d34bdc957d625cd4221d",
+    "mention_text": "BB Mapfre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2dfb5b79468a55da7d30c28841915423cf196e28f52c2c9b9d1cc48616f80cb2",
+    "mention_text": "Glaucio Toyama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44050edc7be73e36a689a0d5ce2ef112ed6ce17ccd54d63edccd92cc474d788c",
+    "mention_text": "Jobzi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebb04d2a975edf1bb9e9209ed77b36f774fe5346ac8be7960dea96b7cfb5d3c4",
+    "mention_text": "Paula Guedes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce3caeffb20bdd9483d523d0fdb74feb6a74ab8664761013753b02efb557af57",
+    "mention_text": "Jobzi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bae68bf7b0b363b4deae6adc0823d115541c91509e8c6323dbcc28594b6fd35c",
+    "mention_text": "Paula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0157fd9d1899db005c1ce89de3a3a7e3d940616e2bf0861da3f747ffdb818c1",
+    "mention_text": "Luciano Huck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "253b1b0e20444b1bc7b31be37889bddbc589a4ddd1bb31fcddb4ebdc0e59fde7",
+    "mention_text": "Paulo Guedes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a949441596c1d60e11635548d942bbb3738106889d87ba30c383cfc0cccd7091",
+    "mention_text": "Banco Pactual",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5fe38b3a40635fd1af2f46e30f23cb20007ce729521eb53d0744886aebaadac",
+    "mention_text": "Jair Bolsonaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "483578452f6ef9bd2878fc8ac08822620c7db0e144c745fea9e0c3a656f6b660",
+    "mention_text": "PSL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f89ef8ee727aa36011cc4ad1028a637b516224757c53c6ee728362a3bef863b4",
+    "mention_text": "Paula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "696a1a8886418996320c4c9cb20d55569f10e7cf5c9942f69551667045a39e3b",
+    "mention_text": "Banco de Desenvolvimento da China",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9986df911152a46dba80b9489d7985ef76bf175c446044bd320d2119b8742d68",
+    "mention_text": "China Development Bank",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f932bc83ec826843be8655128bfb4d2f534f0d5ae08a764eb7e88d691f996c47",
+    "mention_text": "Prefeitura de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88ddf36a4f862818dd5914a4265e231e751e99a40e8b069b795d5db687d35556",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "617fe0c4443493fce4378544ce97456cdbfd9a40465d019b44d61b8154e6c843",
+    "mention_text": "Paypal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae23a1a6dad6fbd90c6847a66b7d1c72850b0a1cc913bd58a0171181d79a76f6",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "531ab6712dbf2dfeb18ed96f4be754bd60c934c901ee2535aa3036aa42dab292",
+    "mention_text": "americanos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d537677ee317b504e4bba92c2a5ca3cb84c164aa9fe5b87bea2c8f49dabfab7c",
+    "mention_text": "Paula Pachoal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9fb0b62ac49b5330aeeea8bf95da558968e03d727f2f009ce49336517a670ffa",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ffac36f74fa8cfcbcd0be0281f6bbf7117fe36359bd1d17cd3cb08df0e86848",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf65d2773af9c1943775215a7fbb3f92c7af457b5625bb98348cc0c74a792a89",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b57e37c00326e173defc4850fb1af346351784adef4c53048b16b58c0c8e0c5",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "18841fe7c64c3c3c7696f72d2bb5b87b8ce2f16fcacad044ec8c4b2f36af3073",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec8ba67265b427d7723f773738a6c8c4eb08320ad97d7b0149c660d2c8910566",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "896e0cf1fe44620776ef6953c35510895058ea0cc81e45a740aa5865db732055",
+    "mention_text": "Reinaldo Saad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43d48f9489cbbd78371a065188870470c71836cd3233843f61df760f9f30c369",
+    "mention_text": "Saad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d5924f53b2bd9419fa9ced8177f287e4f1dcd1a9216134fc95571e9f4fb6d4e",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3610337909711a5cb371c418f43dbb767cbc2184279fd163e4e4ab168be82ad9",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c141295418680681ed7e8a9eed43646b10315692e5a5af42bab9aeac7e18c689",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "edf4107448d1a501710e46affde2924a3b07269ef311b12bbc0632029b2a0561",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70663133e0c5fb3a57131bd9a697b199496efd65c9e71fba4f99e446c2b6906f",
+    "mention_text": "Pif Paf",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "677c626a9b8d1a58f3708db72418daaa819c92ea4d2fc3f7ec6ccdf2ba7ebd29",
+    "mention_text": "Museu dos Brinquedos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e48cae32cc05be18b1dfb4a06c3ea31cecb34506d651ce186a73adf739371d83",
+    "mention_text": "Minas Gerais",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0ac2757036e9117b6a15bd4f2b525e4d11e3f564df0e055611a173a2396ce6b2",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad48f8e9efc57972462313296bf9375c7fcb407fd1a584eb70445e922b70e0e5",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8353269c3ad96521e06ccdbe2ad8521fb4617bda655e0e11f6482f0efdbeda6b",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  }
+]

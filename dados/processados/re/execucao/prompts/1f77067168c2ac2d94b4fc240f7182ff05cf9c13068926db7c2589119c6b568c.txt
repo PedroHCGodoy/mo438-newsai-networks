@@ -1,0 +1,837 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ce1d5520d96aa4608623a8ca7eee8503bafd84b3475cc4ccd55c4f006aed6132
+
+TEXTO:
+Folha Ao Vivo - Eleições 2018: Três em cada quatro integrantes do Congresso disputam a reeleição
+
+Abrir sidebar menu
+Menu
+Assine
+Ir para o conteúdo [1]
+Ir para o menu [2]
+Ir para o rodapé [3]
+Entrar
+Buscar
+ao vivo
+Busca
+Buscar no sites da Folha de S.Paulo
+Buscar
+Assine
+Fechar sidebar menu
+Editar perfil
+Senha e conta
+Newsletter
+Assinatura
+Sair
+Edição Impressa
+Últimas
+opinião
+Editoriais
+Charges
+Tendências/Debates
+colunas e blogs
+Colunas
+Blogs
+mais populares
+Mais lidas
+Mais enviadas
+Mais comentadas
+acervo folha
+Há 50 Anos
+Saiu no NP
+eleições 2018
+em tempo real
+candidatos
+Entrevistas com candidatos
+Sabatinas
+Folha Informações
+Comprova
+Painel
+poder
+Entrevista da 2ª
+lava jato
+mercado
+cifras & letras
+consumo consciente
+folhainvest
+ir 2018
+mercado aberto
+hora do café
+mpme
+o brasil que dá certo
+previdência
+vaivém das commodities
+Publicidade Legal
+cotidiano
+educação
+ao seu tempo
+febre amarela
+Folha verão
+rio de janeiro
+loterias
+tempo
+mundo
+coreia do norte
+governo trump
+venezuela
+esporte
+esporte
+campeonato brasileiro
+ilustrada
+mônica bergamo
+quadrinhos
+comida
+painel das letras
+ilustríssima
+F5
+Bichos
+celebridades
+horóscopo
+você viu?
+televisão
+guia folha
+ciência
+Ambiente
+equilíbrio e saúde
+sãopaulo
+o melhor de sãopaulo
+viaja sãopaulo
+descubra sãopaulo
+estradas
+especiais
+Seminários Folha
+empreendedor social
+imagem
+fotografia
+tv folha
+parceiros
+BBC News Brasil
+Deutsche Welle
+Financial Times
+Global Media
+Piauí
+Radio France Internationale
+The New York Times
+The Wall Street Journal
+The Washington Post
+Telepadi
+banco de dados
+dias melhores
+painel do leitor
+sobre tudo
+carreiras
+classificados
+morar
+rodas
+vida prática
+turismo
+Serafina
+mais seções
+folha en español
+folha in english
+Folha Mapas
+folhaleaks
+tudo sobre
+folha tópicos
+folha transparência
+versão impressa
+Mapa do site
+Sobre a Folha
+sobre o grupo folha
+expediente
+política de privacidade
+projeto editorial
+treinamento
+trabalhe na folha
+fale com a folha
+anuncie (publicidade folha)
+atendimento ao assinante
+erramos
+ombudsman
+painel do leitor
+Contraste
+Claro
+Escuro
+Edições
+United States of America flag
+ENG
+ESP
+Siga a folha
+Link externo, abre página da Folha de S.Paulo no Twitter
+Link externo, abre página da Folha de S.Paulo no Linkedin
+Link externo, abre página da Folha de S.Paulo no Instagram
+Link externo, abre página RSS da Folha de S.Paulo
+Folha de S.Paulo
+Assine
+Topo
+folha de s.paulo
+Sobre a Folha
+Acervo Folha
+ClubeFolha
+Expediente
+Política de Privacidade
+Prêmio Folha
+Projeto Editorial
+Seminários Folha
+Trabalhe na Folha
+Treinamento
+Fale com a Folha
+Anuncie (Publicidade Folha)
+Atendimento ao Assinante
+Erramos
+Fale com a Folha
+Ombudsman
+Painel do Leitor
+editorias
+Poder
+Mercado
+Cotidiano
+Mundo
+Esporte
+Ilustrada
+Ilustríssima
+F5
+Ciência
+Equilíbrio e Saúde
+Fotografia
+TV Folha
+Educação
+Banco de Dados
+Turismo
+Sobre Tudo
+Revista sãopaulo
+Guia Folha
+Serafina
+opinião
+Opinião
+Colunas e Blogs
+mais seções
+Dias Melhores
+Empreendedor Social
+Especiais
+Folha en Español
+Folha In English
+Folhainvest
+Folhaleaks
+Folha Mapas
+Folha Tópicos
+Folha Transparência
+O Melhor de sãopaulo
+Últimas
+Versão Impressa
+Mapa do site
+serviços
+Aeroportos
+Classificados
+Folha Informações
+Horóscopo
+Loterias
+Mortes
+Praias
+Tempo
+outros canais
+e-mailFOLHA
+Datafolha
+Folhapress
+Folha Eventos
+Publifolha
+Top of Mind
+Audiência da Folha
+Circulação
+292.194 (impresso + digital)
+Dados do IVC (Instituto Verificador de Comunicação)
+Páginas vistas
+178.785.887
+Total de páginas acessadas do site da Folha em julho de 2018, segundo o Google Analytics
+Informação
+jul.2018
+Visitantes únicos
+30.428.376
+Total de visitantes diferentes do site da Folha em julho de 2018, segundo o Google Analytics
+Informação
+jul.2018
+Escolha suas newsletters
+Link externo, abre página da Folha de S.Paulo no Twitter
+Link externo, abre página da Folha de S.Paulo no Linkedin
+Link externo, abre página da Folha de S.Paulo no Instagram
+Link externo, abre página RSS da Folha de S.Paulo
+Copyright Folha de S.Paulo. Todos os direitos reservados. É proibida a reprodução do conteúdo desta página em qualquer meio de comunicação, eletrônico ou impresso, sem autorização escrita da Folhapress.
+(function() {
+window.universal_variable = window.universal_variable || {} ;
+window.universal_variable.aud = { userType: "none", loginType: "folha" } ;
+window.UOLPD = window.UOLPD || {} ;
+window.UOLPD.dataLayer = { "t": String(Math.round(Math.random()*9)+1) } ;
+//
+if ( typeof paywall === "undefined" ) {
+window.paywall = {
+inicio: function( d ) {
+var logtype = "none" ;
+if ( d.subscriber_folha == "yes" ) {
+logtype = "subscriber" ;
+}
+else if( d.logged == "yes" ) {
+logtype = "logged" ;
+}
+else {
+logtype = "not_logged" ;
+}
+window.paywall.data = {
+origin: d.origin || "folha" ,
+log_type: logtype
+} ;
+}
+} ;
+var scr = document.createElement( "script" ) ;
+scr.async = true ;
+scr.src = "//paywall.folha.uol.com.br/esta-logado.jsonp?callback=paywall.inicio" ;
+var el = document.getElementsByTagName( "script" )[0] ;
+el.parentNode.insertBefore( scr, el ) ;
+} ;
+//
+function uoltm() {
+window.uolads = window.uolads || [] ;
+Array
+.prototype
+.slice
+.call( document.querySelectorAll( '.c-advertising__banner-area' ) )
+.map( function( ad ) {
+window.uolads.push( { id: ad.id } )
+} ) ;
+window.uolads.push( { id: "banner-1x1-area" } ) ;
+var scr = document.createElement( "script" ) ;
+scr.async = true ;
+scr.src = "//tm.jsuol.com.br/uoltm.js?id=1p0oxf" ;
+var el = document.getElementsByTagName( "script" )[0] ;
+el.parentNode.insertBefore( scr, el ) ;
+} ;
+(function tryType( delay, times ) {
+try {
+window.universal_variable.aud.userType = paywall.data.log_type ;
+window.universal_variable.aud.loginType = paywall.data.origin ;
+uoltm() ;
+}
+catch ( e ) {
+( times > 0 ) ? setTimeout( function() { tryType( delay, --times ) ; }, delay ) : uoltm() ;
+}
+} ( 150, 10 ) ) ;
+})() ;
+var ivcUrl = ("https:" == document.location.protocol ? "https://datpdpmej1fn2.cloudfront.net/" :
+"http://ivccftag.ivcbrasil.org.br/") + "ivc.js";
+;(function(p,l,o,w,i,n,g){if(!p[i]){p.GlobalIvcNamespace=p.GlobalIvcNamespace||[];
+p.GlobalIvcNamespace.push(i);p[i]=function(){(p[i].q=p[i].q||[]).push(arguments)
+};p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
+n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script",ivcUrl,"ivc"));
+window.ivc('newTracker', 'cf', 'ivccf.ivcbrasil.org.br', {
+idWeb: '125'
+});
+window.ivc('trackPageView');
+function omniture(){
+setTimeout(function(){omniture();},30000);
+UOLPD.Audience.countMetrics();
+}
+setTimeout(function(){omniture();},30000);
+if ( typeof ivc == "function" ) {
+function ivctrack(){
+setTimeout(function(){ivctrack();},30000)
+window.ivc( "trackPageView" );
+}
+setTimeout(function(){ivctrack();},30000)
+}
+var _sf_async_config={};
+/** CONFIGURATION START **/
+_sf_async_config.uid = 50059;
+_sf_async_config.domain = 'folha.com.br';
+_sf_async_config.useCanonical = true;
+_sf_async_config.sections = 'aovivo';
+_sf_async_config.authors = 'Folha';
+/** CONFIGURATION END **/
+(function(){
+function loadChartbeat() {
+window._sf_endpt=(new Date()).getTime();
+var e = document.createElement('script');
+e.setAttribute('language', 'javascript');
+e.setAttribute('type', 'text/javascript');
+e.setAttribute('src', '//static.chartbeat.com/js/chartbeat.js');
+document.body.appendChild(e);
+}
+var oldonload = window.onload;
+window.onload = (typeof window.onload != 'function') ?
+loadChartbeat : function() { oldonload(); loadChartbeat(); };
+})();
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d19ba6c896a7b9e23ef0a6c782e92ce298d0a8393e762ef6fa1a32b4e4ee1eca",
+    "mention_text": "Folha Ao Vivo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "775a093b573e908affad7a3c659546108b205f4554c3b368da8ddd3378266992",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77cac5130bd58b98009865f36665eb35da29031feb2f679f5372ad3c2ad207ba",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a1b24f93202412889fc2f63970942da4abbd2301be6283733507ee0e29d43b7",
+    "mention_text": "folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34f2c24fc89b91f8b4f509596274872b461a9801dbd718344976a3525bfdffdf",
+    "mention_text": "Comprova",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48c5b506dac492dfb6098064d82b28eebffd001821527b5d8682038d2d0327b1",
+    "mention_text": "folhainvest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c9f61cf81cf52c34eecbb6b054e3447b8681e9ba79acba456c60cb0179d697ee",
+    "mention_text": "rio de janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "265c2e4e99a6624a1cc0db122a5b7d21a568155277030517770fc3b14e5a7663",
+    "mention_text": "coreia do norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a061230c9515cf2ea88afdaa24bd7259f47ccf73260ff7a583ee2e852e5236d",
+    "mention_text": "governo trump",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4a8010944a20f3592c9ce3003fbaa347801517192a7036a356ae90d265aff19",
+    "mention_text": "trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a8064befa8a906cb4fa3654e4f824ca566d08569a728ee2764000a0cdd6ff37",
+    "mention_text": "venezuela",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5f41fe72d8af49060ef10ab9bd06440520b3cc5f6ff2ce10d117acc89dbcf2eb",
+    "mention_text": "mônica bergamo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57ce7d7dabe1a8406f2ddd661213db8c5c1068d38c4650bb6b233aa9b5d9ef91",
+    "mention_text": "sãopaulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c6ff14c13757e34dccfa66f153493de218a6b13014a7220915401383af0dda7c",
+    "mention_text": "tv folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d569278eb970360e26b0892d6e19b600a2b1f9e377b7194274cd425641b8815",
+    "mention_text": "BBC News Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "303c0bc76483910d756db671322b8d696356fc4bb5e650ba6a2ffec0a8afddec",
+    "mention_text": "Deutsche Welle",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f732460130134e99ce6e8f8207458a91c8adef6bed2450cd490bf8819f265ab",
+    "mention_text": "Financial Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "045f5e20e30847e602ed2f64b3f071e64dc9bd2053322b8ebe2f1fb2934dce6d",
+    "mention_text": "Global Media",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e96432ea8e4f2c3b31c52400f37f2da9d735a21684a075687c0c64d55f2db990",
+    "mention_text": "Piauí",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de91381e922d49d8319afd5c5332a480434c8a4000e79f4d5d8a6ffce204fcd3",
+    "mention_text": "Radio France Internationale",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb5e46b581213453a87555c3894849337a005fd273f74dc61cd1e2b7d56735d0",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e64f37f05c2159475d7896cd49032bbb24e4713dcb145d3c6c97a56e744d0944",
+    "mention_text": "The Wall Street Journal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f132468a5c4cf27cf9ccf7814d00a7bbcdb3019af121cc84fb50784b841b614",
+    "mention_text": "The Washington Post",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71c197846a1f793647f247fce01a8a31292de63dc120ebf2bf7c73fe4888cf25",
+    "mention_text": "Telepadi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f453523c1519b3dda3fb562bc75b289363fe48a5b0c3aa3267dbb634f5ca7db7",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ebe6fab7ec9883c28b40e0b1b3096c9d30fe24418589b49a365597876cfaf836",
+    "mention_text": "grupo folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ccaabebceca182b64e8902bec1eb7aa30e58d6c70438e821efdb6b900f32690c",
+    "mention_text": "folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbcc34884cb75f4b9615d9fc32bb960fac03373e58c0d3c88a7fa3f9b6d65a46",
+    "mention_text": "folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24f73c898ef60a1a45caee21ad125dedc81c76c6e7e0718f636754125eadec12",
+    "mention_text": "folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "192c224d895c1e3f998fd2dd02da5ee663e3ce81398f4e8fe10bc58d25376f65",
+    "mention_text": "United States of America",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "945d4c6751c9034a3c3e426693d638eff43915017deb2b8aa8560b58fa8126aa",
+    "mention_text": "folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db31877d101020750218e61fa3e91d4b2b8200ff5408d1d86c0e6ebe68c15023",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d2bcc40ca2f02cbfc80035d2abdf06f3b39809babdfa5d730dfde0fefddc92d",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7929ac4f08ea38e392b983726b620ed39283fc0121ab92a5340dafaaaca5436e",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ddd0beb428a10d0db55593a10af414b34f7f2c3d705f648cd6c59f7a9122d66",
+    "mention_text": "Linkedin",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7ae729463c52f76be71503f1d8d9d1f569a9535c4c9edcc85341a614f5f47ea5",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42bda1bb568bae5fb188b6f16a53897c647de29fd0a6d8b5656eee52aca02813",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f365b13a7634326e5bc4d45b1ad98fd6be352a03733a6563254c78b3125d6ae5",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b0a32d2d64dddb11a2852a45cefd21f06d7b7a166b3c031839739f32a92153b",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa3634036c4067f4c4f585b0dda6a2b5fa37f86f13d1f411984c202d547f7b57",
+    "mention_text": "folha de s.paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a5c98f6732aaa3c59131f51c3ff8ca5ec8a77d28ea4e13cd60f05061ca78dd0",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "584e731daf1ceab401ba128a3733a54b97351d6eeb82f92bfd288985879b23a0",
+    "mention_text": "ClubeFolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1d3d7bdfc24968cb2c76f464b587e4f526b8a943d59a310d70193395ea87bab",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a24441e9d659ea1a3d302f0400c62f6d06ce095a4550bc0a95eee8abcac439dc",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c78387cb7d75b7e20754f066d6f6b89a0121007913a27a8c9146da898d988cf5",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "302f6b824d2a464c56a43b4a83941ca79295ace48285d04a58f7afb64f0035ba",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cabb18449d42d024b9f29d8fe27926e2569fe0d71d81b3de77102192f9ca544d",
+    "mention_text": "TV Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10809c45b37c9c3fb0741b19a6aa7ad5f6a0c75769573d73dd0f291c2b55c2b5",
+    "mention_text": "Folhainvest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07b799784e247c44251a9d22161eb937ee375161a36df9f55527b8028aec10e4",
+    "mention_text": "e-mailFOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87c856a527684c3990b159b1ac93041c0d864b89b444433364ba6d4292727cde",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f0d343c8416b01b0e8192908b2a7740a5751f2de4eae43f44fced4f59ec8f88",
+    "mention_text": "Folhapress",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5c9226df9d0af9b392255180e7e2c47f855d78b9fd649429b9a8234cd9bc4aa",
+    "mention_text": "Folha Eventos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e44414d537db8a3d3d797ae65babb8b2e01d80ae3d23d32e7e0728a16c9ba26",
+    "mention_text": "Publifolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "243662546e092d5e3a74fa8b9bb35c475ccd429e619fb9992b5cc18d32bcbcea",
+    "mention_text": "IVC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "847eb77cc2f6cb5ab1e832e5971459213693189792ec977faddbc704166a7685",
+    "mention_text": "Instituto Verificador de Comunicação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0198b8d0c520285ebcab8789ac814902e3430b063de61bdd29d97239d4bc9788",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23c5e1574550deca067bfefae307ea0b78c2d8f36f53790033d32a76b78ae5d0",
+    "mention_text": "Google Analytics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1331e10db794ef8d82c882dcd6fe98ad3cdcc433653f62e0c613d2d6fd5a6df2",
+    "mention_text": "Google Analytics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb1beb6e0d9fc5e7bfd85e3d514e9934bf55e7492e547891c7880396c94b5caf",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9b75653efb51ac98533643cdf7c0d8a770b061ac67bce8822b447f78b06c36a",
+    "mention_text": "Folhapress",
+    "categoria": "ORGANIZACAO"
+  }
+]

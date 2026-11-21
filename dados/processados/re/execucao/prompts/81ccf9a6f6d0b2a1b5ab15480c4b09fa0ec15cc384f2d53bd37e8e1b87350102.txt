@@ -1,0 +1,418 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 111df06a5123021aed99175dde8ecd1384ec9a23306b73e17927bae70ae01298
+
+TEXTO:
+Televisão: Sozinho, Joey sente saudade dos "friends"
+
+TELEVISÃO
+No episódio de estréia do seriado homônimo, que vazou na internet, ator apatetado lamenta a falta dos colegas
+Sozinho, Joey sente saudade dos "friends"
+KIKE MARTINS DA COSTA
+FREE-LANCE PARA A
+FOLHA
+Quando o seriado "Joey" estrear 
+nos EUA e na TV brasileira, daqui 
+a cerca de três meses, não serão só 
+os telespectadores que sentirão 
+falta dos demais astros de 
+"Friends". O próprio Joey (Matt 
+LeBlanc) confessa no primeiro 
+episódio da nova série que sente 
+saudade de seus amigos e que se 
+viu obrigado a mudar para Los 
+Angeles porque cada um seguiu 
+um novo rumo e ele "sobrou".
+A sitcom "Joey" é o grande investimento da próxima temporada da televisão americana, que viu 
+no primeiro semestre de 2004 o 
+fim de seriados como "Friends", 
+"Sex and the City", "Frasier" e 
+"Whoopi", entre outros.
+Desenvolvida a partir do personagem Joey Tribbiani, o ator canastrão interpretado por Matt LeBlanc em "Friends", a nova série 
+foi apresentada na semana passada à imprensa em Los Angeles e 
+uma cópia do episódio de estréia 
+vazou para a internet. Quem baixá-lo verá que Joey continua divertido e completamente trapalhão, mas também poderá notar 
+uma ponta de melancolia e nostalgia no personagem.
+A história começa com o ator se 
+mudando de Nova York para Los 
+Angeles, e nem mesmo a viagem 
+transcorre sem trapalhadas. Por 
+engano, nosso anti-herói desembarca no aeroporto de Dallas, mas 
+consegue chegar à Califórnia. Lá, 
+ele encontra a irmã, Gina (Drea de 
+Matteo, de "Família Soprano"), e 
+seu sobrinho. Ela é uma cabeleireira estabanada e burralda como 
+o irmão, mas seu filho, Michael 
+(Paulo Costanzo), é um jovem engenheiro espacial, um rapaz bastante inteligente que por sorte não 
+herdou o Q.I. dos Tribbiani.
+Sonhando com uma carreira de 
+sucesso em Hollywood, Joey 
+aposta todas as suas fichas no papel principal que sua nova agente 
+consegue para ele em um seriado 
+de ação, mas a produção é abortada antes de ir ao ar. Para não ficar 
+sem trabalho, Joey acaba se metendo em várias confusões e faz 
+até um teste para ser apresentador 
+de telejornal.
+A parte triste é quando, no final 
+do episódio, Joey explica para sua 
+irmã que, às vezes, decisões aparentemente dolorosas e mudanças drásticas podem ser a solução 
+para grandes problemas na vida 
+das pessoas. "Eu era feliz em Nova 
+York e não queria que as coisas 
+mudassem, mas meus amigos se 
+casaram, saíram da cidade ou tiveram filhos. Todos mudaram, 
+então eu também resolvi dar uma 
+chance à mudança, mas confesso 
+que está sendo dureza", diz.
+Enquanto em Nova York os 
+amigos eram a família de Joey, na 
+Califórnia ele tenta fazer de seus 
+familiares os seus novos amigos.
+Matt LeBlanc está bem à vontade no papel -e não poderia ser 
+diferente, já que há dez anos ele 
+encarna esse personagem. Drea 
+de Matteo e Paulo Costanzo também desempenham seus papéis 
+com um "timing" perfeito e surpreendem positivamente. A vizinha gostosa de Joey, que foi interpretada pela loirinha Ashley Scott 
+(de "A.I. - Inteligência Artificial") 
+no piloto disponível na web, não 
+foi aprovada pelos produtores e 
+por um grupo de telespectadores 
+que assistiu a uma sessão fechada. 
+Quando a série chegar à TV, o 
+personagem será encarnado por 
+outra atriz.
+Pelo que se vê no episódio de estréia, "Joey" dá pinta de que será 
+um seriado bacaninha, mas tem 
+uma grande desvantagem em relação a "Friends". Enquanto a sitcom que ficou dez anos no ar tinha seis protagonistas e os roteiristas conseguiam fazer malabarismos incríveis para contar às vezes seis historinhas paralelas em 
+um só episódio, em "Joey" o astro 
+é só um, e isso iguala a série a tantas outras comédias que atualmente estão no ar na TV.
+Com um só astro, é como se os 
+produtores estivessem decretando "Joey': ame-o ou deixe-o". 
+Com vários personagens fortes, 
+capazes de segurar sozinhos uma 
+subtrama, os telespectadores não 
+enjoam fácil do protagonista e 
+muito menos do seriado. Resta 
+saber se Joey vai segurar a onda 
+sozinho.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e298e8494488fc499f774d97dd64fb26e000cef35eeb7a1de97afdc6903bf8cc",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e28e8d114c385989fc1e825129e37cb3b71ff730a41f6f73be23894b189e041",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "096e5985adacb13c2a673ffc784d44d5d8604d61b137913b9d745d0b1c0f50f7",
+    "mention_text": "KIKE MARTINS DA COSTA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed3762ce2dcd654d8944ccef05645fc7843d23d8d76c10f0fa6a8df0d72454c4",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "546f236a2fe07ec92f002bde4aa54237439adaefc9bd3fe176e6c7c3431da921",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d5cd20bd883838e8c1f9d18accbe2a1d5f19bf550429b804bb1b26653d87648f",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f7f92c6ba4a9396ebcf307e5551a9fd774b27920a7ec15b5610689a2527138d",
+    "mention_text": "Joey Tribbiani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ae95e7da27df48531afd9c949e69d53eb6f20111552b096e2709d19cdb01f85",
+    "mention_text": "Matt LeBlanc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "924f84137241da10b95d53247647efaacd260601fec09deb1124637cb1e8e5d2",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9e4b67e5b373a8feaa1215656fbae7e5dc8a43ddbd1633efa10cab0afe4198a",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7c51ddd8f2967cd4d463df5f169c195565e00de2675dbc45dc670c28b2007dc",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2e1e9c06c7c931abfbd2bebdb180efa563d39edb52d44c922b3f7a8da25e580",
+    "mention_text": "Dallas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a31f106f336337764fbbd46fd6035f5790400ee2fad58a8f6960f4e1aee9207c",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a861b0be0d329ca3ba901138243c27160606bcb0cf1c19428674c09983effa92",
+    "mention_text": "Gina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b87c5f406a0952ccda189115b1bebf3e35a5476b73d2c12c826888a0d0b3cd95",
+    "mention_text": "Michael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b437809cbbe6dce0fbbb8556a71bc44a261c8a63a4485ba3dabfb289b6e7509c",
+    "mention_text": "Paulo Costanzo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e789605cd0ca6dd5d6752add2562e2154ac83f5e4a27b2b17a5a48b7cb837c10",
+    "mention_text": "Tribbiani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d85175cfe8d1be595efe7f171bc10af094b83d4fd4df4d965218ee3bebea87fa",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa103b7590ce3b7f5ca3951494683d04232a857518097e1306ca58600e5dfb95",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e53633b45fdccce24698958ab7b160efc1450580e262bb76bddbda834170a390",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "faf34e1e0fbeaa7787bc754fa761e04e43e86f1be76e9507736bd52b7d0249a4",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b87e41ab8fa5d5846f3299534643f813e86ab54e4800a1c13a40a3a2148295cb",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d20c64c82a7b354be05c4b28137e1e8297a9431e6c4c9f6201697ca152eabc0",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "830aadf88755ec6f114d5f2312200399af390aad289ddd4a4d2c2244ec1843a4",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9bc5020e3386fddfc5aa85ea7a16433fa5bb9301c1901e222800c6261264802",
+    "mention_text": "Matt LeBlanc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2536e4cf753a5eb70a46396c54c16fb3e53f51b21923efe719805274a90a984",
+    "mention_text": "Paulo Costanzo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "416b9f2d104640a74c946b51128b68d47221a1883c0a75561b33c3ecfaacd89b",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "429cd31b55dd47400c3175cdc5cc6826c391ccd554782d9936c5b6bff10f5bd3",
+    "mention_text": "Ashley Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "749e1caa2d0c72c5cd6527f6b4d1f48ebad8e36d4bebb106291f9959e6d582e6",
+    "mention_text": "Joey",
+    "categoria": "PESSOA"
+  }
+]

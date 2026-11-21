@@ -1,0 +1,743 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 09739f7e4d61437bc3db4ed52dded34b94b41347e08533ffcfea96759f9d60e7
+
+TEXTO:
+Meio século depois, '2001' se mantém atual e ainda explica humanidade
+
+RESUMO ‘2001: Uma Odisseia no Espaço’ completa 50 anos como um dos filmes mais importantes da história. A frutífera parceria entre Kubrick e Clarke, os efeitos especiais revolucionários, a precisão obsessiva com sons e imagens e a intensa pesquisa sobre o futuro tecnológico ajudam a explicar tamanho sucesso.
+Ao iniciar o projeto de "2001: Uma Odisseia do Espaço", Stanley Kubrick (1928-99) afirmou: "Eu quero fazer o primeiro filme de ficção científica que não seja considerado um lixo".
+Passadas cinco décadas do lançamento do longa, a pretensão de Kubrick soa modesta. Dentre tantas celebrações que terá pelo mundo, a do Festival de Cannes deste ano se anunciou superlativa: "50 anos atrás, um filme mudou todos os filmes para sempre".
+Na época da declaração, no entanto, nada sugeria que "2001" viria a se firmar como um dos maiores filmes da história —e muito menos que pudesse resistir praticamente incólume à passagem do tempo.
+É verdade que o diretor americano criado no Bronx, em Nova York, já havia se aventurado por diversos gêneros cinematográficos e mostrado talento para reinventá-los.
+"O Grande Golpe" (1956), um misto de filme de gângster com filme noir, "Glória Feita de Sangue" (1957), uma obra de guerra, "Spartacus" (1960), um longa histórico, e "Lolita" (1962), uma comédia negra, atestam a habilidade de Kubrick em trabalhar com criatividade em categorias bem distintas.
+Alcançar sucesso com uma ficção científica, porém, era outro tipo de desafio, pois se tratava de gênero ainda sem prestígio.
+Sua vontade de se aventurar com um "filme de ETs", como disse num jantar ao produtor Roger Caras em 1964, não surgiu por acaso. Naquela década, a Nasa investia pesado em missões espaciais e o programa Apollo estava a todo vapor.
+Caras abraçou a ideia sem titubear e iniciou o contato com Arthur Clarke, astro da literatura de ficção científica. A parceria entre Kubrick e o escritor inglês resultou em duas obras: "2001", o filme, lançado em 2 de abril de 1968, com roteiro assinado pelos dois, e o romance homônimo , publicado pelo britânico em junho daquele mesmo ano (do qual Kubrick ficou com 40% dos direitos autorais).
+No dia em que fecharam o acordo para começar os trabalhos, os dois passaram o fim de tarde na varanda do apartamento do diretor, em Nova York. De lá, avistaram no céu um ponto de luz que se estabilizou acima do horizonte. Não se movia; não poderia ser um satélite, concluíram. Por dez minutos, revezaram-se no telescópio, deslumbrados. "Isso é coincidência demais. Eles [alienígenas] estão querendo nos impedir de fazer esse filme", disse Clarke.
+Foi um encontro de almas. O "enfant terrible" do cinema americano passou a ter no escritor inglês um companheiro para dividir seu interesse por vida extraterrestre. Os maiores frutos dessa colaboração, contudo, brotaram não de suas semelhanças, mas de suas diferenças.
+Kubrick era um cético, como seus filmes anteriores evidenciavam: a fragilidade humana em "O Grande Golpe", os horrores da guerra em "Glória Feita de Sangue", a loucura da corrida armamentista em "Dr. Fantástico".
+Clarke era um otimista. Acreditava que a salvação da humanidade residiria em descobertas científicas e invenções tecnológicas.
+Mais
+Diante dessa oposição, Kubrick buscou um terreno filosófico comum nos estudos de Joseph Campbell. Logo no início da colaboração, o cineasta pediu ao escritor que lesse "O Herói de Mil Faces" (1949), obra fundamental da mitologia comparada, em que Campbell defende que a jornada de todos os heróis mitológicos inclui três fases: separação, iniciação e retorno.
+"Foi uma ideia a que ambos puderam aderir, Clarke com seu otimismo inato quanto às possibilidades humanas, e Kubrick com seu ceticismo profundamente arraigado", analisa Michael Benson em "2001: Uma Odisseia no Espaço" (que a Todavia lança neste mês).
+O autor continua: "Foi esse aparente entrelaçamento contraditório de visões de mundo que conferiu a '2001: Uma Odisseia no Espaço' sua instigante fusão entre agnosticismo e fé, entre cinismo e idealismo, entre morte e renascimento".
+O grande mérito de "2001" reside na expansão desse entendimento sobre o herói dos mitos, que os autores aplicaram não a um único indivíduo, mas à trajetória de toda a humanidade. "De macaco a anjo", como Kubrick definiria mais tarde.
+As palavras do diretor aludiam a "Assim Falou Zaratustra" (1883), obra do filósofo alemão Friedrich Nietzsche, na qual os seres humanos aparecem como uma espécie em transição, alguma coisa entre o macaco e o que o autor chamou de "super-homem".
+"2001" é praticamente a transposição visual dessa ideia. Começa na pré-história, onde símios aprendem a usar ossos como armas depois da chegada de um monólito alienígena; passa pela descoberta, em 2001, de um objeto similar enterrado na superfície lunar; continua com uma jornada espacial para Júpiter, 18 meses depois, em busca de vida extraterrestre; e termina com o encontro do astronauta protagonista com o monólito, ingressando em um portal de espaço-tempo no qual acaba sendo devolvido à condição de feto.
+"Primeiro movimento: Aurora. O homem sente o poder de Deus. Andante religioso. Mas o homem ainda anseia. Ele mergulha na paixão (segundo movimento) e não encontra paz. Ele se vira para a ciência e tenta em vão resolver os problemas da vida em uma fuga (terceiro movimento). Soam as agradáveis músicas de dança e ele se torna um indivíduo. Sua alma se eleva para cima, enquanto o mundo vai afundando debaixo dele."
+Poderia ser uma sinopse poética de "2001", mas se trata da introdução escrita por Richard Strauss para "Assim Falou Zaratustra", obra musical de 1896 que ele definiu como uma sugestão sonora do estado de espírito do texto literário.
+Kubrick faz uso similar da composição: é o primeiro trecho da obra de Strauss, "Aurora", que dá o tom daquela que se tornaria uma das aberturas mais clássicas do cinema de ficção científica, inspiração para outros filmes do gênero, como a saga "Guerra nas Estrelas".
+A música sempre teve papel fundamental na obra do cineasta. Uma de suas citações mais famosas, revelada por Norman Kagan em "The Cinema of Stanley Kubrick", nunca editado no Brasil, é esta: "Um filme é —ou deve ser— mais como música do que como ficção".
+A prevalência do aspecto sensorial sobre o verbal em "2001", contudo, não estava dada desde o princípio. No primeiro rascunho de roteiro, Clarke havia escrito uma longa narrativa em off, marcadamente descritiva, que lhe parecia essencial para dirimir dúvidas e incertezas do espectador.
+Com o filme em produção, era comum que o escritor aparecesse no estúdio com novas sugestões de narração, que escrevia depois de considerar incompreensíveis algumas cenas filmadas. O diretor, entretanto, caminhou cada vez mais no sentido de eliminar diálogos e deixar as coisas subentendidas.
+Em novembro de 1967, Clarke enviou um telegrama para Kubrick: "Acabei de retornar turnê de palestras duas semanas 16 mil km passei cada minuto livre trabalhando narração como solicitado". O cineasta respondeu sem rodeios: "Lamento pela narração. Conforme o filme é montado, ficou evidente que a narração não será necessária".
+Ao assistir ao filme dois dias antes do lançamento, Clarke não escondeu sua decepção com a falta de didatismo. "Fui um impulsionador da primeira etapa e, ocasionalmente, ofereci orientação. Mas este é, realmente, um filme de Stanley Kubrick", teria declarado.
+Livro e filme se distanciaram de maneira radical durante as filmagens. No início, Kubrick disse para Clarke: "Tudo que você puder descrever, eu consigo filmar". Com o tempo, entretanto, foi se tornando clara a distinção que passou a fazer entre as duas obras: "Escreva a coisa do jeito que quiser. Faça o que quiser para deixar a história clara. O livro é seu".
+O romance, que se diz "baseado no roteiro de Stanley Kubrick e Arthur Clarke", acabou se tornando uma espécie de manual de instruções do filme, procurado por espectadores perplexos e decididos a decifrar seus mistérios.
+"2001", o longa-metragem, dispensou totalmente a narração em off e tem trechos inteiros em que não se ouve nada além de silêncio ou, no máximo, sons abafados de respiração. A versão final, com 149 minutos, tem menos de 40 minutos de diálogos, nenhum deles nos 20 minutos iniciais ou finais. O resto é silêncio —e música.
+Como declarou um dos supervisores de efeitos especiais, Douglas Trumbull , "as escolhas musicais de Kubrick às vezes aconteciam em resposta a um ritmo visual que ele já havia determinado".
+Por exemplo: o clássico "Danúbio Azul", de Johann Strauss 2º, coincide com a coreografia das aeronaves do filme. "Réquiem", de György Ligeti, traduz a sensação sonora que o monólito suscitava na imaginação do cineasta.
+A precisão obsessiva de Kubrick com os sons se estendia às imagens. E é justo dizer que Clarke não se preocupava só com o texto. Ambos demonstraram verdadeira neurose acerca da construção de uma realidade futurística tecnologicamente crível.
+A dupla se dedicou profundamente à pesquisa de tecnologia e detalhes da estrutura material do porvir. Kubrick cercou-se de consultores da Nasa, que fizeram o design das espaçonaves, e encomendou figurinos a especialistas que transpuseram as tendências da época ao futuro distante.
+O próprio escritor incorporou ao roteiro algo que viu em uma de suas visitas aos laboratórios da empresa Bell: o computador IBM 7094, munido de um sintetizador de voz, tornou-se a primeira máquina a cantar uma música. O episódio está na raiz da cena em que HAL entoa, agonizante, "Daisy Bell (Bicycle Built for Two)", enquanto o protagonista o mata desligando sua memória.
+O esforço de Kubrick e Clarke não tornou a obra premonitória —já se vão quase duas décadas desde o ano 2001 e a humanidade ainda não atingiu o patamar de avanço tecnológico imaginado—, mas salvou o filme de um destino comum na ficção científica: tornar-se kitsch e datado com o passar do tempo ("Star Trek" e os primeiros volumes de "Guerra nas Estrelas" , por exemplo, não escaparam à armadilha).
+A longevidade de "2001", contudo, não se explica apenas pelo intenso trabalho de pesquisa. O filme contou com métodos revolucionários de criação de efeitos especiais, desde "back projection" (projeção por trás de uma tela) —em vez da projeção frontal, padrão da época— até o uso de filtros negativos e "slit-scan" (processo de registro de imagem com slide móvel).
+Foram quatro os supervisores de efeitos especiais de "2001" —Wally Veevers, Douglas Trumbull, Con Pederson e Tom Howard—, mas nenhum deles foi indicado ao Oscar da categoria. Como só podiam ser indicadas três pessoas por prêmio, a produção deu o nome de Kubrick, que acabou levando aquela que seria a única estatueta de sua carreira.
+Com carta branca do estúdio e orçamento recorde para um gênero desvalorizado (US$ 10 milhões à época), Kubrick rodou quase 500 horas de material e concebeu quantidade enorme de cenas icônicas, para as quais contribuíram seu passado de fotojornalista e a admiração por diretores como Ingmar Bergman , cujo uso de simetrias encantava o americano.
+Além do bom gosto na composição das tomadas e do formato grandioso que escolheu (Panavision 65 mm), outras decisões favoreceram a perenidade estilística de "2001". Por exemplo, a opção por alienígenas inorgânicos, na figura do monólito negro, em vez de seres figurativos, que tendem a se tornar ridículos com o tempo.
+Kubrick e sua esposa, Christine, discutiram muito sobre como seria a aparência da vida extraterrestre do filme, até que ele decidiu por um objeto no formato de um maço de cigarros gigante da cor preta: "O monólito deixa um vácuo aberto, que sentimos quando tentamos imaginar o inimaginável", afirmou.
+Deixar o máximo a cargo da imaginação do espectador foi o caminho seguido pelo diretor Andrei Tarkóvski em "Solaris", a ficção científica apontada por muitos como a resposta russa a "2001" .
+Tarkóvski criticou duramente a obsessão de Kubrick em fazer uma constituição futurística e, em entrevista de 1970, declarou que isso havia transformado o filme do americano "enquanto obra de arte, num esquema sem vida, apenas com pretensões à verdade".
+A declaração pode ser vista como uma defesa prévia de "Solaris", cujo roteiro o russo desenvolvia à época, já consciente de que não teria orçamento para nenhum efeito especial comparável aos de "2001".
+Mas, ao despir seu filme da vocação detalhista de Kubrick, Tarkóvski acabou se concentrando numa reflexão sobre o espírito humano e sobre as questões morais e existenciais enfrentadas diante dos avanços da ciência.
+Em investigação similar, senão mais profunda, "Blade Runner" (1982), de Ridley Scott, lida com dilemas criados pela inteligência artificial, tendo ciborgues multifacetados e complexos no centro da trama.
+Em "2001", o único exemplar de inteligência artificial é HAL, inicialmente concebido como figura humanoide, mas que acabou com identidade visual simples, representado por espécie de webcam com um ponto de luz vermelha.
+Sua voz foi cuidadosamente dirigida pelo cineasta, que pretendia evitar a todo custo um excesso de sentimentalismo. Kubrick acompanhou a gravação pessoalmente, sentado ao lado do ator Douglas Rain, a quem pediu que mantivesse o tom calmo e os pés esticados em um travesseiro.
+Ainda assim, Kubrick injetou aspectos humanos em HAL. Além da sinistra humanidade de sua morte, o computador tem falas que remetem ao estado de espírito do próprio diretor àquela altura, depois de anos de trabalho intenso com o filme ("Estou constantemente ocupado. Trabalho no limite de minha capacidade, o que é, creio, tudo o que qualquer ser consciente pode esperar fazer").
+A tensão entre o homem e a máquina superinteligente é mais um traço de permanência do filme. O físico Stephen Hawking, por exemplo, já perto de sua morte no mês passado, insistia em dizer que o desenvolvimento de inteligência artificial completa poderia significar o fim da raça humana. O empresário inovador Elon Musk chegou a afirmar que, "com a inteligência artificial, estamos convocando o demônio".
+Se ainda não existem ciborgues como os de "Blade Runner" nem computadores como HAL —interessado em ouvir uma conversa secreta por meio de leitura labial—, os avanços tecnológicos do século 21 mostram que Kubrick não errou o alvo completamente.
+Hoje, câmeras monitoram movimentos em locais públicos e privados; algoritmos identificam padrões, decifram necessidades, antecipam desejos e propiciam novas maneiras de manipular parcelas expressivas da sociedade. As máquinas ainda não prescindem do ser humano, mas já fazem quase tudo o que HAL fazia.
+Ainda falta o monólito salvador de "2001", que eleva o protagonista do filme a um estado de placidez e harmonia. Mas o objeto negro ("black mirror"?) existe.
+O monólito de 2018 está acoplado ao corpo humano, quase uma extensão dos membros superiores. Aparelhos celulares e tablets que têm se mostrado fonte de tristeza, solidão e discórdia, muito mais do que de iluminação.
+A semelhança do iPhone com o monólito só não é mais assombrosa porque Steve Jobs e seus colegas são fruto da cultura que bebe consciente ou inconscientemente em Kubrick. É uma geração que conheceu "2001" ainda criança e que carrega o filme em seu imaginário.
+No enredo do longa, a equipe que avista o misterioso objeto negro na Lua, procurando manter segredo sobre a descoberta, inventa a história de que haveria uma epidemia na base lunar. No episódio inicial do filme, o efeito do monólito nos símios é epidêmico: o primeiro animal transforma o osso em ferramenta/arma, e não tarda para que seja imitado pelos outros.
+O paralelo com a atualidade salta aos olhos: adultos, jovens e crianças vivem afundados nesses monólitos portáteis, com consequências que vão de epidemias de obesidade, depressão e suicídio até atentados com armas.
+Em "2001", o monólito pode ser visto como um viabilizador da redenção do homem, que atinge finalmente a condição do super-homem de Nietzsche. A transformação ocorre quando a velhice toma conta do astronauta, que, num passe de mágica, volta à condição de feto. O círculo da vida se fecha e coexiste naquele instante; o protagonista completa a missão, que pode ser vista como espécie de retorno à origem.
+Na "Odisseia", de Homero, Ulisses vaga durante anos antes de regressar à terra natal, onde usa arco e flecha para derrotar os pretendentes de sua mulher, Penélope.
+Em "2001", Bowman ("homem-arco") é o herói que luta contra um ciclope cibernético para encontrar o retorno ao lar, sem que haja esposa, filho ou pretendentes —e aí talvez esteja demonstração do pessimismo de Kubrick. Como dizia o poeta alexandrino Claudian: "Omnia mors aequat" (a morte torna todos iguais).
+O cineasta tinha uma citação favorita de "African Genesis" (1961), livro de Robert Ardrey que inspirou o episódio de abertura de "2001":
+"Nós nascemos de macacos que se ergueram, não de anjos caídos (...). Sobre o que vamos ponderar? Sobre nossos assassinatos e massacres, mísseis e regimentos inconciliáveis? Ou sobre nossos acordos, pelo que valeram ou não; nossas sinfonias, por mais que sejam raramente tocadas; nossos campos pacíficos, ainda que com frequência possam se converter em campos de batalha; nossos sonhos, por menos que possam ser realizados. O milagre da humanidade não é o quanto ela afundou, mas a forma magnífica como ascendeu".
+Benson escreve que, em 2 de abril de 1968, quatro anos depois da primeira reunião com Clarke, o "rapaz barbeado de Nova York, autor de uma bem-sucedida sátira à Guerra Fria, tinha se metamorfoseado em uma figura barbada com os olhos marcados de cansaço".
+Depois de uma estreia calamitosa e traumática para o diretor, o filme, em menos de uma semana, superou outros sucessos da época e terminou como a maior bilheteria daquele ano.
+Kubrick se mudaria em seguida para a Inglaterra, onde dirigiu outros cinco longas igualmente profundos e inovadores: "Laranja Mecânica" (1971), "Barry Lyndon" (1975), "O Iluminado" (1980), "Nascido para Matar" (1987) e "De Olhos Bem Fechados" (1999).
+Mas é "2001" o filme que "mudou todos os filmes para sempre".
+Foi com ele que Kubrick entendeu (e mostrou) que, enquanto houver humanidade, estaremos nesse "algum lugar" entre o macaco e o super-homem de Nietzsche. Sobrevivendo a assassinatos e massacres, ouvindo sinfonias, ainda que raramente, esperando a ascensão à condição de estrela.
+Helen Beltrame-Linné , 37, graduada em direito pela USP e cinema pela Sorbonne Nouvelle (Paris), ex-diretora da Fundação Bergmancenter (Suécia), é editora-adjunta da Ilustríssima.
+Tiago Elcerdo , 38, é ilustrador e quadrinista.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "c4c19e8c163289590429ac94be77df3974c574cbf6f9b7787af8b1890f1dca8e",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "341b9b2bc963e930674db46c4ab250079205f2cf7bbb15a0e524538cb3246ad0",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af7f3ed77776c7463c9c5cd475429842fc271bc2fcede0cb6a823e8c389fd68c",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee948af7d94c30211b77dde6338dcbb19235f58b82d5c8af72135e7937acca50",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee3eb9db6af2e58204160e33a7d049c48926dc096f28fa9a4ab655e597441aef",
+    "mention_text": "Bronx",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1f51dfaac413f5d05a67d1b070053aba63509368e4436d5dc5adfe142963259e",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "06bed89a27938303f106514167afb48dad119b5584c0105c712a0eb4c9b0a0c5",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77770fbb956c70a840d6c4ae0a4aef1ba1997782c928eb46b5bce63930d7a896",
+    "mention_text": "Roger Caras",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8dce5da1d5939984097a753e0d9d027a6fb112092b41e1e28a49307a8b22417d",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f5099f662af9049db8230466f1593c11f3bc857274a9587f1558ae1c5db2eb8",
+    "mention_text": "Caras",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44b3530f3e1df426a9adc8b66ec7fb9e8f7df719dd362ee6395a41a2e732566a",
+    "mention_text": "Arthur Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d47bb1d6222498898d986a06182f4b029c81b22afdd3af79caa56e61ed5638b0",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5a03c7afa8699485516d429c9cc8f8532194285d8a3946561798cfb8ef9e12e",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "215b4265d58c7cf25c0f5d0bf632c26f4b8fc8c0cabb4dfc6c002e7bb697cea6",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e337d765457f3f8469bcf898ab3d16cbb7f123f1a5dcd1bb47bbae30f2d5eda",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be47dab8e84c257523c2a107fbffe41bcfef1b1e71319cc64de923334d4e4126",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b8be794cda4b5f3460fe23bcb9cf8cc75c65c7484a387bf4dece9ef4b827505",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b91dc18dccca09f9e397eabfa58ede8c99b33194cb911878085c5ca756d41f43",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9e038d6347695be3602909928fe0f14d81c09cea5872879c9c2f84085335011",
+    "mention_text": "Joseph Campbell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a291c4ec9c028e5872ba72ad17a406818f758466f66c3a9b3ddc68f05243aa6",
+    "mention_text": "Campbell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "675d7cb3a314e332cb6534df78c4fe52150ec840ce203b6cbd3801484c19cf79",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4455d35ca72c045b438eb5983090f2e55b819a196d64b783ec6a711ae8e3fc3c",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4471f779d78834bec9418bc38b8f598c268bb95497c3b1e6d584c53a11d984f",
+    "mention_text": "Michael Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db05215975c2c76fa9331f15016ecf192cf29e53891d8acb3b669e2fe41f15bb",
+    "mention_text": "Todavia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1e2052e3d4762d764753c8d8147273218b653893ecc31f360e00049e50ad7b8",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "95436ff73e1950f1b4358ce271edcf2674d01f4427a7286e9d107348448633c7",
+    "mention_text": "Friedrich Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85c14405b1b413c1e1773a3d448dd7b7afae37afa63e9a6ff86c9a27f9f663f3",
+    "mention_text": "Júpiter",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "568f87764eba931ac8eb3f15008ca8c697b3c8c8785cefb6ef8c51aeb5580b84",
+    "mention_text": "Richard Strauss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85685939f587ed951c08a4ed21bebc5fb2774f80abe9660c3e443fb3c9e724b4",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d208b5913a1e8dbfeb1f66088d2b541ca406520eb2ac20561310b5e386684de2",
+    "mention_text": "Strauss",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57dc6fb7a32a54f670a6d6287b327daf357ff1313eafa3d3284849d995d2acf6",
+    "mention_text": "Norman Kagan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ffc6192f4c0f3cc7cd82e71c09bafde45ddc857cdbd04542181b2727bffdbdb",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a61d37eaa2669ed07bfa0ec465032d326d33f7358dc695027402e6fdee657f4f",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "032ec20a2b0120759788d157875d704857c64843e271c9ae51cbc7c65bc18f25",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b40d390eda9dcdd2bc280a840960fd3b546053257a19f84c534dfd6676adb5c5",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1884a084bc459d56e0869e37bcf17f2489537ca428f1dbca9e1033d781d88b6",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eaef067e0ed9bc2457269537aca62c91b9f9595de160795375331ba8d5fe57f9",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e68fb410b79aecae55f57010fe0b7d2af0c80a4ef93ee6f54377b87f6d4dc5f3",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e47a6f09f71abae3b913c79d10d351fabd23293addf6448a3839c1e586ccffe",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14a5f5df1a9467545be31e126c9e2f0f502314c2ad86200f2dd35b624c90fdd9",
+    "mention_text": "Stanley Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0d9bddf9097a453b4268a1787bbfe367536f6e7e4d091f04c4d1174fb4c760f0",
+    "mention_text": "Arthur Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ff01981322c2f8bb8ff92711daf01cf68c8dfce051c13d83cba6279ba34ee23c",
+    "mention_text": "Douglas Trumbull",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ac802e704a4d2031a65486429c8c51542a12e0e4e32dec7ae22a9f0252bf6e1",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "feae77fbb271c749c845eec78a9b98e5ced602d6c32e648a1c4e2b2f9e3ca10c",
+    "mention_text": "Johann Strauss 2º",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0968dea15ef63cb14e3713d17492d2785b3f008f522f6e2ced93d361a8b6d819",
+    "mention_text": "György Ligeti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7087eb9de6178081fe0758b2aa6c90b62667b690e6052de5aec56c7182a6c296",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52321bafe6842b8af09a13c749261f4161028788576a337adc5ca34583cacae9",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2aa7e147ac0e81dab735129823948cab2332732447a1d4b68f287048e26699db",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "320ec53257ee02f18736c92d955dd6cbfdb33489f193bdc947a074edfccd98e9",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8340815d3217e2a2774c174ecf28cf56c8dbcbb61e8528817afd71c3fe6ffe01",
+    "mention_text": "Bell",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe2ad64d8b4f1f1bff4dc3826cf6df80f1ba81d732cbe2997487b8247376bc49",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "12d3739dbd5693c745aa4fda1877923fd838fd4425394f2c8536002fc8165b74",
+    "mention_text": "Clarke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6467ff34f66483588d6b9964eba4bd0cf151a7d6e6b2f5b42cb222a714673700",
+    "mention_text": "Wally Veevers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3d09d16e3079e499d40e5e4ec0a9a27754a9351931610a3da44e4e701f0ba2a",
+    "mention_text": "Douglas Trumbull",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd67f3637264f6dc335c588e8ae095e222cc2795da8fd1831de7a02d11fe49b6",
+    "mention_text": "Con Pederson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8145f59ba39805f487939f2781c5c9dfe631a04f77ae06498b240b09ada00f73",
+    "mention_text": "Tom Howard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ed06f2624fcf16ecfd6a72b46c98284545a4f32ae80117c49c9a2779419b74ff",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ba09fea5b588e6aab89586002fbf140270aac135bbc28c0b7204e5ec1960322",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "468f1aab4e24eda2fa806d52a6a49937dc1feea66a28d075a52dcfe056f02188",
+    "mention_text": "Ingmar Bergman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16ee0ecd7419c22184b32269def5a8e51aeda262ac3b12c74e859227040560bb",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e7a8493cd7d381afbb9d45b7abded68a3a6457ba112f64592f7436b0c875159",
+    "mention_text": "Christine",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3bc2484ddfb34d087c218ffeeeaf310ecb89347935aa5da62522a831017247c6",
+    "mention_text": "Andrei Tarkóvski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8df267e29be85f7f9b0c2b44ffe611573d9edc208b0889b968d52909c02bd18",
+    "mention_text": "Tarkóvski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f03d8a26396a852371e3fca808453b9f54b8e7bd7b0e109fedd2e4fbfeaf50b2",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59961d8b1b2c5ab01bf4ef9917400ec380115f080c55a8672e228d25635c0405",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfcc5db03c1d325b916192d868323a179117743ad6d7f9bf2598acbf7bb52e93",
+    "mention_text": "Tarkóvski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6227c38aaac58ad7d5bd627b735ef7815e99ef435a3687c1e8b40d6833345eca",
+    "mention_text": "Ridley Scott",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f383309a71408031b3762b790a8e52821a02c9f77330085034666113ff68ae2",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f1275740f9c3ba3a877c136027aa911aec8661e449eb8431e82aa781d7e5b86",
+    "mention_text": "Douglas Rain",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75e99d7d1552a3797166194ccb95cdff2243e6b934e27604caa0a17288582b88",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5e7821624f4917a42d8ffc5d4b9f43f464de54b3eceb1f8f5bd72be9319166c",
+    "mention_text": "Stephen Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15efb12ddda0f9a215e5cb125adc1250268e74fdd1c9cb4e1a9b92a8853f43a2",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d15d620b990152438cc63fa8eeed99fa99b1eea8fe6c8b7db9b0fae421b6d9fc",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "934e7c3a8515f68f88c1f8e6dbf2f59f2aea6cbef3c6838ea612441d985ec52d",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfdc7b2893e2ea4afd93ce90ed11b24165fba1be75dd94bcc28598eb356c0a68",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bef7998c0ed4145a997bd4b2b86cd6fdd4292d6628e35c2626283d3d1aba1987",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9af1b064064244d448f6bbc2e86de6443d5c8967f3abbf818947ecae04342eb4",
+    "mention_text": "Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14ca737415b1c8292f48029c244d99d3e46043ce745b37fc662d57f9fcf6a628",
+    "mention_text": "Homero",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "76e45499e36856349d39b9d0810c375ef2cf3e0c1fbf45e30b86d0ba62a0182b",
+    "mention_text": "Ulisses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c557493b1b3a5ccaa465f1af7adda764571dd0e42f5226a97729ffb50d1173c5",
+    "mention_text": "Penélope",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e55bc0aba7d5a44dea7dd39a4f836b9e5151d7c6a907d1759e001c9d547aac57",
+    "mention_text": "Bowman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e84b5e1c7d3495aef3d287b96afff9f0dcef9d9b74920dde2ad63a6cba26cbc8",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f2ede14eb361c87ae104c0b4c4c3284ea211ec90a3a2f2a900c5e247569bddc",
+    "mention_text": "Claudian",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bd3ad8bb6ce1b533721063c9e0e0719f129ea4fbc341ec42717ca1c50eab6e4",
+    "mention_text": "Robert Ardrey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e70c9acd87951f32052e0c4e75cd0f917ba2b050bf118aa135627ecaa331448b",
+    "mention_text": "Benson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b60bd7e358050bc0de0389d6f16bf00f86a412bc39eaa61ca021b5a94e9209b2",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d1c01760f447443ff98ae57fc1b673f90c1baaa39a0e9fc308f38cd6cadc5ae5",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e045c3077c70312b574c4c137107884db849ddf561f725de97210d1c6f57ca5b",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11ed6d1c25a43355823aa951d6c36d035d50acd83ea4b69be56c703e98ea1e21",
+    "mention_text": "Kubrick",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59e0bc84228d92119d7b42e67e988aec8df430d69bf84a73d978e05e6ce90957",
+    "mention_text": "Nietzsche",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2219a722bb18dc091bceaabf7a4e28edaee9c34f302c77b59c1268ad51fef7d4",
+    "mention_text": "Helen Beltrame-Linné",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "530392288ee1140ceb75b9bd6669fa9cb513a76d89ab9d4b2bd141ab589fa898",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44803e78593421fa96e7e762797c4643846e58a44b3079204f2559f334198087",
+    "mention_text": "Sorbonne Nouvelle",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "371562f5f773e982204f11a06c5d6e6da6c23b24d0991afec22936352b13b9e7",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "abbf2a9a7fe3147f62d69812baa6d7d46622467e09cb2d28ba46bf85e00989a4",
+    "mention_text": "Fundação Bergmancenter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38bbbadb4918bfdec7769386514460fb5930e46d6c6eb056959f345ea8cf3223",
+    "mention_text": "Suécia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6727fc2838fae18af24477cad08db9e2efd8424347e0fdc3f07442999674572",
+    "mention_text": "Ilustríssima",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfc020f7b4a41ea7073aaa6e16cbca3120b5f66917e574883ded4445aa80e62c",
+    "mention_text": "Tiago Elcerdo",
+    "categoria": "PESSOA"
+  }
+]

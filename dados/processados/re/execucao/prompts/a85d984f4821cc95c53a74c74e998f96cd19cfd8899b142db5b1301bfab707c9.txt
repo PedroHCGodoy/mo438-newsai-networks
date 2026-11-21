@@ -1,0 +1,372 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8a00524cca211549edd48ad938bbfb9396a5761d3fe3ad720b8ed002262f1184
+
+TEXTO:
+O perdão a Alan Turing: é preciso mudar a posição legal
+
+Recentemente, ressurgiram os apelos por um perdão póstumo ao matemático Alan Turing. Ele foi processado e condenado em 1952 por atos homossexuais consensuais, sob a seção 11 da Lei de Emenda Criminal de 1885, que tornava crime os atos de "indecência grave" entre dois homens --a mesma lei sob a qual Oscar Wilde foi processado, no final do século 19. Essa é uma mácula persistente em nossa sociedade, e é preciso que nós, britânicos, façamos alguma coisa a respeito --se não no Parlamento, então por ação dos tribunais.
+Brilhante matemático e professor de lógica, líder de uma equipe devotada de decifradores de código que trabalhou em Bletchley Park na Segunda Guerra Mundial, Turing, que é considerado o pai da inteligência artificial, desenvolveu um modelo universal de computador. A equipe de Turing ajudou a decifrar os códigos alemães transmitidos pela máquina Enigma, e não seria exagero dizer que sem o trabalho dessas pessoas o Reino Unido talvez não tivesse derrotado os nazistas.
+Mas o heroísmo desse trabalho não só permaneceu em segredo durante a guerra como, pouco depois de seu final, Turing se viu submetido a tratamento repugnante pelo país que ajudara a salvar.
+A fim de evitar uma sentença de prisão, o matemático teve de aceitar uma castração química, sob a qual recebia injeções de hormônios femininos sintéticos, que resultaram em impotência e ginecomastia. Em mais um gesto agressivo e autoritário, digno da era McCarthy, a condenação também resultou na revogação de sua licença de segurança. Menos de dois anos depois que ele iniciou o horrendo tratamento com hormônios, Turing cometeu suicídio, aos 41 anos, comendo uma maçã na qual havia injetado cianeto.
+Esperamos que o recente apelo por um perdão póstumo, liderado por Stephen Hawking, obtenha sucesso, mas os defensores da causa de Turing já sofreram revezes no passado. Em 2009, uma petição eletrônica que exigia que o governo britânico se desculpasse pelo acontecido obteve milhares de assinaturas. Gordon Brown, então primeiro-ministro, declarou que "lastimava profundamente... a maneira pela qual ele foi tratado".
+Mas a condenação não foi revertida. Uma segunda petição eletrônica apelava pelo perdão póstumo a Turing, e obteve dezenas de milhares de assinaturas. Mas em fevereiro, lorde McNally, ministro assistente da Justiça, recusou o perdão ao matemático porque "ele foi condenado corretamente pelo que, na época, constituía delito criminal", e uma petição apresentada na Câmara dos Lordes por lorde Sharkey, solicitando um pedido oficial de desculpas, não foi aprovada.
+O que poderia fazer diferença, agora, seria uma mudança na posição legal. Perdões póstumos foram concedidos em diversos casos: em 1998, Derek Bentley recebeu o perdão; os soldados traumatizados que foram acusados de deserção na Primeira Guerra Mundial foram perdoados em massa em 2006; e no começo deste ano, a república da Irlanda perdoou desertores da era da Segunda Guerra Mundial.
+Mas os perdões são conferidos ou negados no exercício daquilo que é visto como forma mais clara do privilégio executivo --a chamada "prerrogativa real"--, e os tribunais tradicionalmente relutam em interferir quanto a essas decisões. Mesmo assim, esse privilégio executivo sempre foi exercido de maneira racional, levando em conta os fatores relevantes, entre os quais a forma pela qual casos materialmente parecidos foram tratados.
+Se Turing ainda estivesse vivo, as petições teriam sido recebidas de maneira muito diferente. Sob a Lei de Proteção de Liberdades de 2012, uma pessoa condenada pelas leis de repressão à homossexualidade (que incluem a seção 11 da lei de 1885) pode solicitar ao governo que essa condenação seja "desconsiderada", desde que a conduta em questão não seja definida, hoje, como delito criminal.
+Uma condenação desconsiderada tem como efeito que "a pessoa seja tratada para todos os propósitos legais como se não tivesse sido condenada pelo delito". Mas a seção 92 só se aplica a pessoas vivas. A intenção do governo ao aprovar a seção 92 era reconhecer a injustiça das velhas leis repressivas --ainda que tenham sido aprovadas validamente em sua era. Por isso, não importa qual seja o ponto de vista adotado, a justificativa moral de McNally para recusar perdão a Turing não se sustenta.
+E tampouco tem base jurídica firme --a seção 96 da lei de 2012 dispõe especificamente que o poder do secretário de Estado para conceder perdões não está restrito ao disposto na seção 92. É perverso que o ministro se recuse a perdoar Turing por motivos que são diametralmente opostos ao da lei que hoje se aplica a pessoas vivas.
+O ponto é ainda mais sério porque o ministro deve exercer seu privilégio executivo levando em conta a Convenção Europeia dos Direitos Humanos, que foi assinada pelo Reino Unido antes ainda da condenação de Turing e não permite condenações criminais por atos homossexuais consensuais entre adultos.
+Turing afirmou que "não podemos ver a grande distância no futuro, mas podemos ver claramente o que precisa ser feito". Talvez o apelo de Hawking ajude o governo a superar sua cegueira quanto ao estigma que ainda pende, intocado, sobre o nome de Turing. Caso isso não aconteça, os tribunais talvez precisem ajudar as autoridades a ver o que precisa ser feito.
+Tradução de PAULO MIGLIACCI .
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f150fc9d170d8dc206d2b5abf48d72eec64a2ada2bce6d7ce00e7f34f7ab9406",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fef79ae3c758c74bfa68d3b0e5ac3e2dcba41ea8c4f3e5f7bc7825b3959d18b",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f39eb31d40cae578f2ed60a9414ef623400610e210d91e702f9b0cdb58de7ebe",
+    "mention_text": "Oscar Wilde",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40f0406df23c164ec4e24752cf446dfe27a76578eb068ffc47174a7d88468a30",
+    "mention_text": "Parlamento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49e94dab0277d5d0d1c73f46a828a336fd7bdfe4b6cdb78278b1331acc0d61f6",
+    "mention_text": "Bletchley Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "97058cc7fa5cdadda8433d4041f2f9e95cca4e6daa3b738736c1785cc8c77f80",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e1303cdb001260c617aeb1074dd548c828dbd43458cae8a80b96af56e72a425",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b08c1f7e8581dd6067a67a3422dcd5499fb6bfb0779ea8b9e435a9e61677cf64",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6751e171593b347e03549a0c724c1eb1d8607a49200ebe5eaa8ca84e80128277",
+    "mention_text": "nazistas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38dd8a2289a46396fc49ee35bf4a062df38c01ab7620b06358cc2fd741432386",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61b9f1e357fedf82f2a6be849633ee6c66fda32847cdc2d7e2971356c9439958",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b9d23e0df5dd8a0dc0cef38ae0245bed079dae884471d2bb9fde24d10815ec5",
+    "mention_text": "Stephen Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc82585c33d3c4724e0618396219c661a267abc6663a78a7fc562434c5342876",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf9d9f857dc9dffdcfcfc05c42270ded7e28a095d38789190f02d23fd04c9081",
+    "mention_text": "governo britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4acb366f2a2ac1fb7d286679e74ae55a14677c11ff6e9f2963814a8cb7645c5e",
+    "mention_text": "Gordon Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f1f6d636d75482053f28f2611494172fc86c61b184e7f57caa3e84ea6ceb3de",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e861c6662e425cd010122a544db9374b465bea94b3bd15d98b5d443f98431106",
+    "mention_text": "lorde McNally",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "732d179c52f601dd4eca509b1181e62b70df751a569693f1dc8a7472dab5fdcf",
+    "mention_text": "Justiça",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a0909a397ea2f446de72efa8307f8c093ccc458f0c576aa5a184856bef74158",
+    "mention_text": "Câmara dos Lordes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0fc57662f64eccc3d8275bca0d1354fe8be62474616bea27c59976c3a360331c",
+    "mention_text": "lorde Sharkey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2d33a0d44ab1f34c7e854989e819a85224a6308cf3e58f360cdc6080cd68663b",
+    "mention_text": "Derek Bentley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a24345762f88f52e31600f2cf06b16f72001285efbe6ffd02e34a898daf15bd8",
+    "mention_text": "república da Irlanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e8804259633c2a173983f4f1311dd97095f2563f06c11a4e97e52f426848283b",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f43e4c32eb64a4f1d97f300b9822d2165d63e106259ae3fd3613a5eaecc5d36",
+    "mention_text": "governo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1e5d8b101e062a0db6683591b9b047cbac0b2d540c16cb9ebcef9081d7b77d2",
+    "mention_text": "governo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a20ec58df6d84629b8dd2f867eb7e606c53aa63966848665bbe4d31a55983067",
+    "mention_text": "McNally",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e597f86e1bcaac2fde8481e3a24ad57c545a56d95f6d30afeeaeeef233a18209",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa1d8f39a8c35c23ab49a12acbcbb82707b31b49d900e4edd501fc31e2e50051",
+    "mention_text": "secretário de Estado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51aa74de4419cd36e7d4b74a9da6f6525586bfa575a552c28bd76000394805f0",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "249f38fee212fe42c9833db63922ebc4704c8d36f8b39aafe134d956ac762ddb",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ba23df0495b1b896cbc956e669e3d5ed534ff7df6c31d450dd23a37eb4453eca",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7e4a481d550d572b697a7985cdd35263ea0483c6ec285012f39e7ea6e18e1a3",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f819b1879a6cc02dacf05caf7a3b6aa81cf1a96672784932837afa9aac1a802a",
+    "mention_text": "Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4f5e3e4d28c367ebfa366110abe59ad842ebb04a4b08b11cfe543e16bf327e3",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3cc672bb9ad866016cc15b2bd0f507be63fcc6b91ae8fb7aca4b1b355441964",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

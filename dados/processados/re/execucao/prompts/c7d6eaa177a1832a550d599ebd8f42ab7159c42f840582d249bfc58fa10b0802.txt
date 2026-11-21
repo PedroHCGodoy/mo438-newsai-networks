@@ -1,0 +1,2866 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 1a6dc85a174de30418d38c9a9ce6e2d0c7f04d0d3daaa6db909749d2a54cb2e1
+
+TEXTO:
+Do indie ao funk, confira programação completa da Virada Cultural de SP
+
+O grupo Martha Reeves & The Vandellas, Baby do Brasil, Luiz Melodia e Teatro Mágico estão confirmados para a Virada Cultural deste ano. A programação oficial foi divulgada nesta quarta (7) pela Prefeitura de São Paulo.
+O festival acontece nos dias 17 e 18 de maio e terá número de atrações ao ar livre na madrugada reduzido em relação a 2013, segundo a prefeitura.
+Outros destaques da programação que já haviam sido divulgados anteriormente são a volta da banda Ira!, o grupo britânico de hard rock Uriah Heep e a funkeira Valesca Popozuda.
+A banda gaúcha Apanhador Só está garantida no palco da Libero Badaró. Também se apresentam lá os músicos Guilherme Arantes, Juçara Marçal, Silva, Filipe Catto, Marcelo Jeneci, Tiago Iorc, Tulipa Ruiz e Karina Buhr.
+O palco do Arouche terá uma programação dedicada à música brega, com apresentações de Rosanah, Tati Quebra Barraco, Falcão e Roberta Miranda. A Santa Efigênia, por sua vez, será o ponto de encontro da música eletrônica e a Luz de samba.
+Fora da programação musical, a Sé será palco de apresentações de Stand Up, com participação de Rafinha Bastos, Rafael Cortez e Marcelo Tas. O Anhangabaú receberá apresentações de dança e, a Praça Roosevelt, de circo.
+O Minhocão receberá mais uma vez os Chefs na Rua, com barraquinhas de comidas de importantes chefes de São Paulo.
+Veja a programação:
+JÚLIO PRESTES
+18h Ira! 21h Baby do Brasil 0h Vanessa da Mata 6h Teatro Mágico 9h Pepeu Gomes 12h RZO 15h Luiz Melodia 18h Martha Reeves & The Vandellas
+REPÚBLICA
+18h Hammond Grooves 20h Stanley Jordan 22h Paul Jackson Trio 0h União Black 2h Fefé 4h Fernanda Abreu 6h Blitz the Ambassador 8h Dexter e MV Bill 10h Projeto Nave (Marechal, Kl Jay, Síntese, SNJ, Ogi, Dexter) 12h Evinha & Trio Esperança (Clássico Casaco Marrom) 14h Dom Paulinho 16h Spok Frevo
+AROUCHE
+19h Peninha 21h Rosanah 23h Kátia 1h Tati Quebra Barraco 3h Gang do Eletro 5h The Rossi-Tributo a Reginaldo Rossi 7h Lafayette+ +Autoramas + B Negão 9h Márcio Greyck 11h30 Falcão 13h30 Brea na Garoa (Felipe Cordeiro + Lia Sofia + Lue) convida Manuel Cordeiro, Dona Onete e Fafá de Belém 16h00 Valesca 18h00 Roberta Miranda
+SÃO JOÃO
+19h Jackson Firebird 21h Helcio Aguirra - Homenagem 23h Uriah Heep 1h Mark Farmer 3h Secret Chiefs 3 5h The Medics 7h Anjo dos Becos 9h Agent Orange 11h Gueto 13h Dominatrix 15h Mercenárias 17h Lydia Lunch
+TEATRO MUNICIPAL
+18h Célia (1972)-Célia com Verocai 21h Tetê e o Lírio Selvagem (1978)-Tetê Espíndola 0h O Romance do Pavão Mysteriozo (1974) -Ednardo 3h Fausto Fawcett e os Robôs Efêmeros (1987)-Fausto Fawcett 6h Mandinga (1988)-André Christovam 9h Summertime (1981)-Cida Moreira 12h Trem de Ferro (1969)-Claudette Soares 15h A Bossa Negra (1961)-Elza Soares
+DANÇA ANHANGABAÚ
+19h Acts of Lights e Valsa do Abraço - Escola de Dança de São Paulo 20h Sem Passagem - Cia Experimental Kahal 21h30 O Cisne- Ana Botafogo e Luis Arrieta 22h00 Abrupto e Cantata - Balé da Cidade de São Paulo 23h30 El Indiano - David Morales 1h O Bilhete - Marcia Milhazes Cia de Dança 1h30 O Som do Movimento - Frank Ejara 2h30 No Singular - Quasar Cia de Dança 4h00 Stardust - Silenciosas + GT'aime 5h30 Do Soul ao Hip Hip - Nelson Triunfo 6h30 O Animal Mais Forte do Mundo - Cia Ângelo Madureira e Ana Catarina Vieira 9h30 África em Nó(s) - Cia Abayomi 12h00 Luceros Dança Toninho Ferragutti - Grupo Luceros Arte Flamenco 13h30 Por Um Fio - Gupo Experimental Mimulus 16h30 Travessia - Grupo Grial
+LUZ
+19h Velha Guarda do Camisa Verde 21h Riachão 23h Monarco 1h Mart'nália 3h Fabiana Cozza 5h Originais do Samba Homenageia Mussum 7h Sombrinha 9h Almir Guineto 11h Nelson Sargento 13h Teresa Cristina 15h Eliana de Lima 17h Pagode 90
+LG. GENERAL OSÓRIO
+18h Graça Braga 20h Thobias da Vai-Vai 22h João Borba 0h Mauro Diniz 2h Elizeth 4h Paulinho da Mocidade 6h Terreirão do Sobral 8h Zeca Paulicéia 10h Demônios da Garoa 12h Berço do Samba de São Matheus 14h Osvaldinho da Cuíca 16h Murilão
+LIBERO BADARÓ
+18h Mariana Aydar 20h Iara Rennó 22h Silva 0h Guilherme Arantes 2h Marcelo Jeneci 4h Karina Buhr 6h Felipe Catto 8h Seu Pereira e Coletivo 401 10h Tulipa Ruiz 12h Marcia Castro 14h Tiago Iorc 16h O Terno 18h Apanhador Só
+RIO BRANCO
+19h Felipe Cordeiro interpreta Expresso 2222-Gilberto Gil 21h Bruno Morais interpreta Sonhos e Memórias-Erasmo Carlos 23h Otto interpreta Canta Canta, Minha Gente-Martinho da Vila 1h Alice Caymmi interpreta Eu Não tenho Onde Morar- Dorival Caymmi 3h Cidadão Instigado interpreta Dark Side of The Moon-Pink Floyd 5h Leo Cavalcanti interpreta Ben-Jorge Ben Jor 7h Fred Zero Quatro interpreta Nelson Cavaquinho (1973)- Nelson Cavaquinho 9h Guizado interpreta On The Corner-Miles Davis 11h Lucas Santanna interpreta Gita-Raul Seixas 13h Romulo Fróes interpreta Transa- Caetano Veloso 15h Curumin interpreta Still Bill-Bill Withers 17h Céu interpreta Catch a Fire-Bob Marley
+PRAÇA ROOSEVELT-CIRCO
+18h Igbó Folhas de Fogo-Circo de Ébanos 19h Brasil Looks-Caminhão Trapézio 19h Virada do Circo-Show-Direção Alessandra Brantes 20h30 "Café Concerto" -Circo Amarillo 22h Glory Box-Finucane & Smith-Austrália 23h30 Brasil Looks-Caminhão Trapézio 0h Leo Bassi 1h Brasil Looks-Caminhão Trapézio 1h30 Trix Mix Cabaré 2h30 "O mundo dos irmãos Becker"-Irmãos Becker 3h Virada do Circo- Show Direção Mark 4h30 O resto é Parente- Cia K 6h Malabares Para Amanhecer 10h Brasil Looks-Caminhão Trapézio 10h30 Clássicos dos Tradicionais 11h30 Brasil Looks-Caminhão Trapézio 13h Palhaço Xuxu 14h Virada do Circo-Show-Direção Palhaça Rubra 15h30 Brasil Looks-Caminhão Trapézio 16h30 Besouro Mutante-Grupo Namakaca
+TEATRO-PÁTIO DO COLÉGIO
+18h O Mistério Bufo- La Mínima 20h30 12 Homens e uma Sentença- Dir. Eduardo Tolentino 23h30 Carta ao Pai (Denise Stoklos) 0h30 A Procissão (Gero Camilo) 1h30 Uma História Oficial-Cortejo Cia de Teatro (RJ) 4h Antígona Recortada - Contos que Cantam sobre Pousopássaros (Núcleo Bartolomeu de Depoimentos) 6h15 Os Adultos Estão na Sala-Cia Os Médios 8h Mozart Moments-Grupo Sobrevento 11h O Jovem Príncipe e a Verdade 12h30 Medinho e Medão-Cia. Viradalta 14h A Vida Sexual da Mulher Feia- com Otávio Muller 17h Vingança
+SÉ-STAND UP
+20h Show 1-MC Falcão-Rafinha Bastos-Alexandre Porpetone-Rafael Cortez-Maurício Meirelles-Diogo Portugal-Victor Sarro 23h Show 2-MC Rafael Cortez-Gustavo Mendes-Fábio Lins-Mehl Marrer-Fábio Rabin-Fabiano Cambota-Paulo Carvalho 2h Show 3-MC Bruno Motta- Ben Ludmer-Murilo Gun-Claudio Torres Gonzaga-Paloma dos Santos-Robson Nunes-Jeferson Farias 5h Show 4-MC Bruno Motta- Renato Rodrigues-Rogério Vilela-André Santi-Edson Duavy-Thiago Ventura-Larissa Câmara 8h Show 5-MC Zé Américo-Hitalon Bastos-Igor Guimarães-Lucas Moreira-Emerson Ceará-Victor Ahmar-Nando Viana 11h Show 6-MC Zé Américo-Afonso Padilha-Patrick Maia-Richard Rebelo-Márcio Américo- Dinho Machado-Criss Paiva 14h Show 7-MC Fábio Silvestre-Paulo Vieira-Thiago Carmona-Daniel Duncan-Nigel Goodman-Gus Fernandes-Marco Zenni 17h Show 8-MC Marcelo Tas-Rafinha Bastos-Murilo Couto-Léo Lins-Geraldo Magela-Rey Bianchi-Rudy Landucci
+BARÃO DE LIMEIRA
+20h Juçara Marçal 22h Bixiga 70 0h Systema Solar 2h Bomba Estéreo 4h RPB Red Plastic Bag 6h Dengue Dengue Dengue 8h Filosofia Reggae 10h Jah I Ras (Kadhu) 12h Mato Seco 14h Tribo de Jah 16h Al Griffiths 18h Planta e Raiz
+BENTO FREITAS-CABARÉ
+24h Dançarinas 24h Apresentadores: Léo Aquilla, Murila Martírio (Renato Kramer) 18h Parle, Chante, Rêve et Soupire-com Marília Vargas 19h30 Jaloo 21h Divas do Brasil Com os Mais Perfeitos Transformistas 22h30 Cabareteras 0h Buraco da Lacraia Dance Show 1h30 Teatro Delirante 2h30 Disco Clubbing 15 anos - Edson Cordeiro 4h45 Jessie Evans 6h Teatro Delirante 7h Alegria - Joe Welch 8h30 Frenéticos, Molhados & Croquettes 10h Caravana Tonteria com Leticia Sabatella 12h TrixMix Cabaré Pocket 13h30 Cabaré Batom - Simone Mazzer 15h00 Elke Maravilha 16h30 Bloco I Love Cafusú
+MERCADO MUNICIPAL-FORRÓ
+18h Luiz Wilson e Fatel 20h Sandra Belê 22h Rouxinol Paraibano 0h Trio Nordestino (Part. Lucy Alves) 2h Rastapé 4h Coisa de Zé 6h Edson Duarte 8h Forró Moleque (Part. Joquinha do Acordeon e Pablo Moura) 10h Catia de França 12h Trio Bastião 14h Vinicinho Magalhães 16h Peixelétrico
+CARLOS DE SOUZA NAZARÉ
+20h Mc Rodolfinho 22h Flora Mattos 0h30 Rincon Sapiencia 3h Maneva 5h30 Rashid com participação de Tássia Reis 8h Mc Dede 10h30 Karol Conka 13h Menor do Chapa 15h30 Projota
+25 DE MARÇO
+18h Festa I <3 Love Baile Funk C/ DJ Grandmaster Raphael, MC Sabrina, MC Mascote, MC Galo 21h Mc Lon 23h Tropikillaz (Djs Zegon e Laudz) 2h Ivo Mozart 4h Pollo 7h Mc Nego Blue 9h30 Forfun 12h MC Bola 14h Cone Crew 17h Mc Gui
+CÁSPER LÍBERO
+18h Xis 19h30 SP Funk 21h SNJ 22h30 Ao Cubo 0h Actitud Maria Marta 1h30 Sampa Crew 3h Ndee Naldinho 5h Ellen Oléria Part. Mulheres Negras 6h30 Mc Marechal Part: Xará 8h Alafia 9h OGI 9h40 Don L 11h30 Izzy Gordon Part. Larissa Luz 13h30 Cidinho e Doca 15h30 Flow MC Part. Drik Barbosa 17h Rotação 33 KL Jay Par.: Aori, Livia Cruz, De Leve, Max B.O, Parteum, Kamau e Boca do Lixo)
+XAVIER TOLEDO-SARAU
+18h Sarau O Que Dizem os Umbigos 20h Encontro de Compositores da Zona Leste 22h Coletivo Perifatividade 23h30 Sarau do Binho 1h30 Candiarte 2h30 4ª Feira de Cinzas (música) 4h Sarau do Charles 5h30 Sarau do Mercado 7h ZAP-Zona Autôma da Palavra 8h30 Sarau da Praga 10h30 Poetas do Tiete 12h Encontro de Utopias 14h Praçarau 15h30 EITA! Sarau Encontro Integrado de Todas as Artes 17h00 Poesia Maloqueirista
+LADEIRA DA MEMÓRIA-SARAU
+18h Clarianas 19h Tenda Literária 21h Cooperifa 23h Bodega do Brasil 0h30 Menor Slam do Mundo 2h Encontro de Compositores da Zona Sul 4h Sobrenome Liberdade 5h30 Sarau na Quebrada-Santo André 7h Sarau A Voz do Povo 8h Sarau Portas Abertas-Guarulhos 9h30 Sarau Matinal Beco dos Poetas 12h30 MAP (Movimento Aliança da Praça) 13h30 Sarau da Ademar 15h00 Sarau dos Fórum 16h30 Vagabundos
+PISTA PRINCESA ISABEL
+18h Sallun (Pedra Branca) 19h30 Shankara Live! 20h30 V. Falabella 21h30 Lyctum Live! SÉRVIA 22h30 Easy Riders by Yoni-ISRAEL 23h30 Mr. Suit Live ISRAEL 0h30 John 00 Flemming INGLATERRA 2h Vidigal 3h30 Tera Live! 4h30 Diksha Live! 5h30 Rex ÁFRICA DO SUL 7h00 Rica Amaral 8h30 Cosmonet Live! 9h30 Gui Milani 11h00 Future Frequency INGLATERRA 12h30 Skipper Live! 13h30 Dré Guazzelli 15h Cubixx ALEMANHA 16h30 Montagu e Golkonda (Symphonix) ALEMANHA
+PISTA SÃO FRANCISCO
+20h Carlos D Heart 21h30 Wallbreakers-Live 23h00 Mayara Leme 0h30 Ramilson Maia part. especial Janaina Lima (Kaleidoscopio) 2h Vitor Lima 3h30 Jason Bralli 5h DJ Andy
+LG SANTA EFIGÊNIA
+18h Apresentação-Participação especial Thaide 18h Nice Dance Hall 19h Breakbboyz (dança) 20h Dj Moretti 21h Gabriela Electra 22h Dj Claytão 23h Allstar Brasil & Battys Girls 0h As Minas & Magic 5 1h Dj Typa 2h Dj Katatau 3h Dj Marks 4h Dj Cinara 5h Dj July July 6h Dj Alex Music 7h Dj Raldy 8h Dj Cainã 9h Dj João Gilberto 10h Dj Kula 11h Dj Magoo 12h Dj Nego everton 13h Artex (dança) 14h Familia MV (Mateus Verdelho) & Convidados 15h Familia MV (Mateus Verdelho) & Convidados 16h Familia MV (Mateus Verdelho) & Convidados 17h Angel Keys (cantora R&B)
+PARQUE DA LUZ
+24h Samba Lenço de Mauá 24h Samba de Bumbo de Pirapora 24h Arte e Natureza-Jorge Amaro 24h Nego Fugido 24h Samba de Cavalo Marinho 24h Escurinho e a banda Labacê 24h Ciranda Tupinambás 24h Banda Cabaçal de São José de Piranhas 24h Oliveira de Panelas 24h Geraldo Mouzinho 24h Moçambique de São Benedito 24h Kolombolo Diá Piratininga 24h Jongo de Tamandaré 24h Maracatucutá 24h Sebastião Marinho 24h Mucambos de Raiz Nagô 24h Jongo de Piquete 24h Inimar Reis - O Brasil que Canta e Dança 24h ORQUESTRA DE BERIMBAUS DO MORRO DO QUEROSENE 24h Bloco de Pedra de Maracatú 24h Valdek de garanhuns (Mamulengo + apresentação dos Grupos) 24h Ciranda Tupinambá (Chico César) 24h Escurinho e Banda Labacê (PB) 24h Banda Cabaçal e São José das Piranhas (PB) 24h Oliveira de Panelas (PB) 24h Geraldo Mouzinho (PB) 24h Caju e Castanha 24h Jongo Dito Ribeiro 24h Tamandaré 24h Batuque de Umbigada de Tietê 24h Batuque de Umbigada de Piracicaba 24h Batuque de Umbigada de Capivari 24h Grupo Cupuaçu (Bumba meu boi ou tambor de crioula) 24h Grupo Babado de Chita - Gestinho Sonoro 24h Favoritos da Catira 24h Cido Garoto 24h Samba de Roda Garoa do Reconcavo 24h Ile Aláfia Maracatú 24h Sambaqui
+CORAÇÃO DE JESUS-BRAÇOS ABERTOS
+18h Grafite Live Paint 18h Abertura Poema Pessoal do Faroeste e Trilha 18h15 Mestre de Cerimônia-Flávio e Andrea 18h30 Palhaça Mafalda E Mendiga Catadora de Ilusões 18h45 Cabaret do Triunfo 19h Vento-Mastro Chinês 19h15 Cabaret do Triunfo e Madame Taratatá 19h30 Cabaret do Triunfo 19h30 Afrobase 19h45 Cabaret do Triunfo 20h Entrevista com Zezão no Grafite 20h Cabaret do Triunfo 20h30 MUB 22h00 Makubando 23h30 Não, não, perdão! 1h00 Nanny Soul 2h30 Drugreen 4h00 Causa Comum 5h30 Engrenagem Urbana 7h Chimpanzé Clube Trio 8h30 Clownbaret 9h40 Circo Teatro de Tubinho 10h30 Palhaça Rubra e banda "show de variedades" 12h00 Banda Lábios 13h30 Samba de Bolso 14h30 Mão de Oito 16h15 Dançando na Cidade e Cabaret Triunfo 17h00 Milagre Vida e Movimento 24h Documentário Campos Elíseos-Garapa
+CCSP-SYFY
+0h Sharknado 2h Robocroc 4h 2-Headed Shark Attack 6h Defiance - Ep 101 8h Face Off - Ep 208 (Burtonesque) 10h Face Off - Ep 405 (Two Heads Are Better Than One)
+OLIDO-MOSTRA BAILA COMIGO
+18h-19h "Os Embalos de Sábado à Noite" (Saturday Night Fever) - 1978. Dir: John Badham 20h15-21h15 "Footloose - Ritmo Louco" (Footloose) - 1981. Dir: Herbert Ross 22h15-23h15 "Flashdance" (Flashdance) - 1983. Dir: Adrian Lyne 0h15-1h15 "Dirty Dancing - Ritmo Quente" (Dirty Dancing) - 1987. Dir: Emile Ardolino 2h15-3h15 "Perfeição" (Perfect) - 1985. Dir: James Bridges 4h30-5h30 "O Sol da Meia-Noite" (White Nights) - 1985. Dir: Taylor Hackford 7h-8h Moonwalker (Moonwalker) - 1988. Dir: Jerry Kramer, Colin Chilvers, Jim Blashield 9h-9h45 "Os Embalos de Sábado Continuam" (Staying alive) - 1983. Dir: Sylvester Stallone. 11h-11h45 "Fama" (Fame) - 1980. Dir: Alan Parker. 13:30-14h15 "Breakin" - 1984. Dir: Joel Silberg 15:15-16h "Entre nessa dança - Hip Hop no pedaço" (You got served) - 2004. Dir: Chris Stokes. 17:15-18h "O Poder do Ritmo" (Stomp the yard) - 2007. Dir: Sylvain White.
+CINE DON JOSÉ
+18h Gretchen Filme Estrada 20h Vou Rifar Meu Coração 22h A Batalha do Passinho 0h Fita Mixada Rotação 33: Dj KL Jay 2h Música Serve Para Isso: Uma História Dos Mulheres negras 4h Bezerra da Silva - Onde a Coruja Dorme 6h Sonora Rio Bahia 8h Tropicália 10h Filhos de João - O Admirável Mundo Novo Baiano 12h As Canções Do Exílio: A Labareda Que Lambeu Tudo 14h Noitadas de Samba 16h Diário de Naná
+TEATROS INDEPENDENTES
+Cit Ecum 19h Primeiro Amor com Ana Kfouri 21h Moi Lui com Ana Kfouri 21h O Convidado Surpresa-Cia Empório de Teatro Sortido-Dir. Rafael Gomes 18h Primeiro Amor com Ana Kfouri
+Teatro Comunne 19h30 Nem Todo Ladrão Vem Para Roubar com Coletivo Teatral Commune 21h30 Cartografias da Mulher Contemporânea com Grupo Corpos Insanos 23h30 L'affaire Picpus com Enrico Bonavera
+Teatro do Incêndio 20h Abertura do Teatro 22h São Paulo Surrealista 23:30 Leitura de Poemas Surrealistas e Música ao Vivo 1h São Paulo Surrealista
+Espaço Redimuinho de Teatro 19h Peter Pan e Wendy- Pequeno Tea¬tro de Tor¬ne¬ado 17h Peter Pan e Wendy- Pequeno Tea¬tro de Tor¬ne¬ado
+Teatro Ruth Escobar 23:30 Assalto Alto 0h O Homem que Calculava
+Satyros- Maratona Ciborgue 18h Não Permanecerás-Cia Os Satyros 19h30 Não Morrerás-Cia Os Satyros 21h Não Saberás-Cia Os Satyros 22h30 Não Vencerás-Cia Os Satyros 0h Não Salvarás-Cia Os Satyros 1h30 Não Amarás-Cia Os Satyros 3h00 Não Fornicarás-Cia Os Satyros
+Teatro Ágora 0h "HORÁCIO" com Celso Frateschi 16h "HORÁCIO" com Celso Frateschi
+Espaço Parlapatões 0h Edgard 2h Como ser uma pessoa pior - com Lulu Pavarin 21h 700 mil Horas-Dir.Luis Louis
+Sede Luz do Faroeste 18h Ao Revés do Papel-Grupo Preto no Branco 19h30 Um Lugar ao Sol-Cia de Teatro Heliópolis 22h30 Ninguém no Plural -Grupo Ás de Fora 0h Sweet Batata-Teatro Reator 1h30 Leontina-Cia Com-Fé-Só 15h Ibejis-Pessoal do Faroeste (Infantil) 17h Solo do Marajó-Usina Contemporânea de Teatro (Belém do Pará)
+TEATRO OFICINA
+21h Valmor Y Cacilda 64 - Robogolpe 0h Zé Celso em Concerto
+GALERIA OLIDO
+18h Vozes Bugras
+CENTRO CULTURAL TIRADENTES
+22h Consciência Humana 21h Dexter
+CENTRO CULTURAL JUVENTUDE
+10h LabMóvel - um laboratório de audiovisual, com oficinas gratuitas para jovens. 10h Feira de Artesanato, Contação de Histórias, Curso de Dança de Salão e a apresentação de um grupo de Choro. 18h Feira de Artesanato, Contação de Histórias, Curso de Dança de Salão e a apresentação de um grupo de Choro.
+PRAÇA DAS ARTES-SALA DO CONSERVATÓRIO
+11h Orquestra Experimental de Repertório-K. 620 L.V.Beethoven-Sinfonia N. 4 em Si Bemol Maior, Op. 60 W. Mozart-Abertura da Ópera Flauta Mágica
+BIBLIOTECA VIRIATO CORRÊA-14ª FANTÁSTICA JORNADA NOITE ADENTRO
+21h Leitura dramática da obra de Isaac Asimov 22h Debate 'Robôs, ciborgues e andróides: a Inteligência artificial na literatura e no cinema' 0h Live-action role play-Confraria de Ideias 0h Filme:2001 - uma Odisseia no espaço 2h40 Blade runner - o caçador de andróides 4h50 Filme surpresa
+RIBEIRO DE LIMA-O MERCADO FEIRA GASTRONÔMICA 18/05-9:00 ÀS 18:00
+Alexandre Bazzo (Cervejaria Bamberg) Anderson Bellomo (Bellomo Gelateria Brasiliana) André Leme Cancegliero (Cervejas Artesanais) Carlos Bertolazzi (Per Paolo) Cassio Prados (Cacau Gourmet Brasil) Checho Gonzales (Cebicheria Gonzales) Cristiana Rezende (Orgânicos Com Vida) Deepali Bavaskar (Samosa & Company) Flávia Mariotto (Mercearia do Conde) Flavia Spielkamp (Aya Cuisine) Flávio Miyamura (Miya) Guilherme Hoffmann (Cervejaria Nacional) Henrique Fogaça (Sal Gastronônia) Jair Abril Rojas (Guanahani) Jônatas Passos (Döner Da Rua) Joyce Galvão (All About Cakes) Karla Rios (Comedoro) Lourdes Hernandez (Salón Calavera) Luana Davidsohn (Confeitaria da Luana) Luciano Lourenço (Le French Bazar) Marcia Garbin (Gelato Boutique) Mariana Gilbertoni Marques Andrade (Mercearia do Chopp) Neka Mena Barreto (Neka Gastronomias) Patricia Polato (Linguiçaria Real Bragança) Paula e Carol Labaki (Lena Labaki Catering) Paulina Alzamora (Sabor Latino) Pedro Franco (Fasano) Priscilla Moretto (Tangerine Cozinha Original) Raoni Saade (Frutos do Brasil) Rene Aduan & Flavio Veiga (Alma Rústica) Simone Berti & Marcio Berti (Chefs Especiais) Djs:Dj Spavieri, Dj Kbça, Dj Jeff Paiano, Dj Liberato
+MINHOCÃO-CHEFS NA RUA (dia 18/05 das 8:00 às 18:00)
+Raphael Despirite-Marcel Marcelo Pinheiro-Tarsila Ailton Piovan-Mondiale Carlos Bertolazzi-Cuccina Katia Barbosa-Aconchego Carioca Benny Novak-Tappo Trattoria Pedro Tarantino-Vinil Burger Allan Prisco-Hamburgueria 162 Dagoberto Torres-Suri Pedro Vita-Bra.do Lucas Corazza-Barbar Confeitaria Juliana Motter-Maria Brigadeiro Fabio e Mario Benedetti- Paellas Peppe Daniela França Pinto-Marcelino Pan Y Vino Janaina Rueda-Barda Dona Onça Milton Freitas-Antonietta Henrique Benedetti-Obá Ivan Achkar-Alma Cozinha Jimmy Mc Manis- BOS BBQ Salvatore Loi-Loi
+RESTAURANTES 24H
+Ninna 730 Marcelino Pan y Vino Brown Sugar No Name Butchers Market Fishersman BOS BBQ Beew Bar Antonietta Clubinho da AAMAM Sotero Bar da Dona Onça Estadão
+"CHEFS NA RUA - FOOD TRUCKS"-CURADORIA DE EMERSON SILVEIRA
+4 brothers Temaki na Van 13 Food truck Eatinerante
+ANHANGABAÚ 24h Feirinha Gastronômica com restaurantes, chefs e comida
+SALA SÃO PAULO
+11h OSESP-Maestrina Marin Alsop 14h Jazz Sinfonica - Maestro João Maurício Galindo 16h Coro da OSESP 18h Orthesp com árias de óperas
+CAFÉ E CAMA
+19h Sarau do Jornal
+MOSTEIRO SÃO BENTO
+19h Abertura-Organista Residente do Mosteiro São Bento 00h Maratona de J.S.Bach com Sérgio de Carvalho Oliveira 07h30 Oração de "Laudes"- Cantada pelos Monges em Canto Gregoriano e Órgão. 08h30 Missa com Órgão 10h30 Missa cantada pelos Monges em Canto Gregoriano e Órgão. 11h45 Oração do Meio Dia - Cantada pelos Monges em Canto Gregoriano e Órgão. 12h30 Maratona de J.S.Bach com Sérgio de Carvalho Oliveira 16h45 Oração de "Vésperas"- Cantada pelos Monges em Canto Gregoriano e Órgão. 18h30 Missa Tridentina - Cantada em Canto Gregoriano e Órgão.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "70403528d97424b2f223337eb5a6d42a1b309209f231619d3e9a11c9b8d166a2",
+    "mention_text": "Martha Reeves & The Vandellas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36fce786c632722dcc1bcc7be3f3f09d3f2c08b5a4f26b32fedcf8f7095012b2",
+    "mention_text": "Baby do Brasil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc6aebaf9768f9c6ad2ca9ade74e37d6cc6b143f57f48d018dcf69d0f661b817",
+    "mention_text": "Luiz Melodia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b956be9f1e8b4a92d38e9d21223bf86277882ad50bcccd8b5e204110a99faf51",
+    "mention_text": "Teatro Mágico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae4b503f2150cc0ac3b996626ecc70cb131f98d97e57875262774fcb29657bcf",
+    "mention_text": "Prefeitura de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32c644ceb50cb2b94e06dec8e4608d9db363dc094c996f79be77b8c60b17b9d5",
+    "mention_text": "Ira!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c24db37a30ce0e8842e3b583c4a8f64a7c3aa5a349ecc0993ec377ae5d06d4b5",
+    "mention_text": "Uriah Heep",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3f2e6197bad5fad43adc5919583cc1696e86578516628f2028967c762ac4cf8",
+    "mention_text": "Valesca Popozuda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb357b0f37b10fb67cf869f6db0f2a286a2f4182d23958fecb0d260d2b6dbd2e",
+    "mention_text": "Apanhador Só",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e1cd92bb83a7ae8096acf45e07ded082653d76b35b68835fc971335b8cdc8db",
+    "mention_text": "Libero Badaró",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eeed8ca6edafff983a98b1a627ffa938240fc680a7059e009c9ce64bc8dc33f8",
+    "mention_text": "Guilherme Arantes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59054ff5e034f110371b67ba293f938d7cb892c606aebac6576e80e4ce973fe2",
+    "mention_text": "Juçara Marçal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b4844c9d83ed8751b97f0d77435ff7698aacbc73ea70079ecf67c0bb0bb35bf",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e24faef9dcb4cd1762b77e51e386b1a22fb077bf820cc3b85d6bc2ca0bfd0486",
+    "mention_text": "Filipe Catto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2959ddfcac262cb13d4a511043462096711a333e0251289e99c1ef67dd0cce91",
+    "mention_text": "Marcelo Jeneci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4db8219cf9b8832cd9657d68fb72db7d915339bc6f579f380f0949895b4923a2",
+    "mention_text": "Tiago Iorc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afd0e02c6b0c2a3464e03b18a4025c3e58ddfdb03b8aca91ece23ba93d21cc8f",
+    "mention_text": "Tulipa Ruiz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18ed16fc3099a590c75d36b5a764d4acf6841e7671624fd7d03d047aec97f28c",
+    "mention_text": "Karina Buhr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "beb2804c4ee0fbc9bacb841f64867ee217a974901acba1424457ee1089a8320e",
+    "mention_text": "Arouche",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "877de8a2ddcf674f97ff7c1b543ccf64725c08be95bfa2c071e45146a1a40647",
+    "mention_text": "Rosanah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f5ad2098a022d44392c97c49a48a571be683e022f260f3ec1f40a3a2050d6576",
+    "mention_text": "Tati Quebra Barraco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b735323d1c8c2f5436d0dbf4825e6d006e531c68ce8538961f8d95723060d8b0",
+    "mention_text": "Falcão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e23447b28ecb920047c130b6f95fcb703b5fddbfee9afc0b8181c2dda67fe333",
+    "mention_text": "Roberta Miranda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9852482b3d179748edd3171ea7963cd547dc85eff60e8597011604e9cfba698",
+    "mention_text": "Santa Efigênia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a50dc20d0be79c9dd92eec2a3f0ec595d3d3916445224ec9396b5d7cc7f800a0",
+    "mention_text": "Luz",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8bc1aac11f031f0d193785e97939084b042ab8dd4590ae58b41d6a28c8aa0e32",
+    "mention_text": "Sé",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be5e425bb588142d52eb00697f22e136e419548615e8c03fc263fd8837a46424",
+    "mention_text": "Rafinha Bastos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce2562bdbfa6cdcd6c9eab64dc7bbec7d19af8ae7a2102c87bd100aad6f71139",
+    "mention_text": "Rafael Cortez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5c6cdca5ef4b92d276e96c3bf7e1eb03ca88ae60da59867bfce5a4be7d074e6",
+    "mention_text": "Marcelo Tas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb5ff92fce63db3e9712a18a37517eeb0a3d212f08270e62eb6f662341d16d22",
+    "mention_text": "Anhangabaú",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e8e40da226566921f896ef9ed9e75da4264184820d2942b0bd10b373a9e0294",
+    "mention_text": "Praça Roosevelt",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ced83b96f1bf0e7b870d69cf2e2afa3a5eaabecd541d1e3d4297f87a4ef7d327",
+    "mention_text": "Minhocão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a41ef613036a5085db9bb0c4cd64ed38981a624cd5fabae2cb873259b12bc03",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f9c8217545214d231a7184696d74f134cb09e932a24b69af4474a31082704042",
+    "mention_text": "JÚLIO PRESTES",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ae47bbe3acfe08d0a6bc66ae7519fe28d6f855577a73b76a2060182f4cbdad8",
+    "mention_text": "Ira!",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e57a942d251df2141f4e124546ce55688ca546a6b6c199603b57258721172d8",
+    "mention_text": "Baby do Brasil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "738e51a775f2db293bc96a622ab5194dfb3cb7ab530b32a50efada7c6b35ed2a",
+    "mention_text": "Vanessa da Mata",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d10e8c2b05ed786e17a30bd3d141608430477c17df8ef433a042bd4df61df839",
+    "mention_text": "Teatro Mágico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10ea89b46df09bd83f005eeb6498910763b02a73b35db411a7b433a38c938220",
+    "mention_text": "Pepeu Gomes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "040871ef3e9846e4a546a911fbcb727049359278c55ba4e6c497cbd740a18cc9",
+    "mention_text": "RZO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "389b67909cd30b019175a2821982c2d022c12d6aecd182123014a1b4eca12258",
+    "mention_text": "Luiz Melodia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8dc72db31cc4f93b65b6c350f2ea571d34fac927ea5c3652e927ee162cdb56f4",
+    "mention_text": "Martha Reeves & The Vandellas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87645154bc2269a00a46bbe98ccd0123e18483f839f1d3cb52e4a352c2629a9c",
+    "mention_text": "REPÚBLICA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "06be1ed9a1ef2c68ff847d13b4842f832200ef3e33b945a3de6904c6cbb9df2f",
+    "mention_text": "Hammond Grooves",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eede60a5e0a12f6b23e1505adc4f517607da40fb217fe45e6bcb8199a13ad527",
+    "mention_text": "Stanley Jordan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea3ef06d844e750dd2c14005cde6c0784ec70d557543282ae7b4bf5a455caf18",
+    "mention_text": "Paul Jackson Trio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48752f3591644a94553cae07fdb3f634b0e7fdf3a3cbe4af437fb6cda032e98e",
+    "mention_text": "União Black",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f081f3f2bcb14981f4eeb027b5add3c6b51e549fb4c34adf3ab62f6556dc88a",
+    "mention_text": "Fefé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f3a7976c5bbeb7f8dc638cdaf52a95a4457dedf298bbd19f4d5764c8864d8c6",
+    "mention_text": "Fernanda Abreu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c1a8b00d2e7e3d056d09dac15f878db6cbc668f768249f5efd3798a695f2cfbe",
+    "mention_text": "Blitz the Ambassador",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "305c28dc7e5a2cdc068226ef33cfcfc993d3aef9f0dd2ad9eb87191ad9530235",
+    "mention_text": "Dexter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8532e11ae2022ced5a29df61d352fa4c775a8a10ffaae55e31f766953e2cbb7",
+    "mention_text": "MV Bill",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5061764dce4d134145ddfe21b2e6b1b48db16b5c4379999919881cbe5f27a79a",
+    "mention_text": "Projeto Nave",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23a1171b79386b3a3bffb7ced942330a66283e68d20148d4bab269f8ee28ac9f",
+    "mention_text": "Marechal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62a57f09015eb2ff46576742ca1432db79f385e4e7437d48245b57f16a91fbfa",
+    "mention_text": "Kl Jay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5629a0e2ba5613f66becc1a804925ddc0a9e1d97d182ad8b6686f58e7f8fce4",
+    "mention_text": "Síntese",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49e3c3498f9ef378806f88eb0d79e03be5ea882c8b673ec6fbc43eb8b7541ae6",
+    "mention_text": "SNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e760d96228c3838c0c6974e84d38e686c8529c851d0be87d0d72c00385987a6",
+    "mention_text": "Ogi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "742e38d0bfd1062debef95bbf4c1c68cd2263239457ba94d471727354d46682b",
+    "mention_text": "Dexter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "942f0fb8a4435d3ed00ef1911cee1ba431b8ff1de0440f573c2a8c4524a9a424",
+    "mention_text": "Evinha & Trio Esperança",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "339d68dd1f755a4d27eeca01263fe7fdc05142102fad7946f03009ad7c301873",
+    "mention_text": "Dom Paulinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c42543f69134fdc264b9b3ee9633dfb73a022c13da67a17c1d542238bff60cbc",
+    "mention_text": "Spok Frevo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8dca859758c703330ea2c02cf13c9b23ae95fc5e8792bf731b3347f16ee0a3ca",
+    "mention_text": "AROUCHE",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae39d31c63b41382a03aa158f432fae5158e5d1395aafb726736b1f7315401f2",
+    "mention_text": "Peninha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b330595590bb5dd13aec1d978f577909878a540f637e233dd22fd9adae50ee2",
+    "mention_text": "Rosanah",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1364a3830916a9365bf1c350f655dd4a0cf875eddaec62e44651317663ffb0f0",
+    "mention_text": "Kátia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c2230c3de573affe94412a71cc771a5895fcff8e1a4643616a08bfa521dbe7b",
+    "mention_text": "Tati Quebra Barraco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0c87301badfb3155660cc887130acb7b47427097da86eaf6512bdfd1d3d5243",
+    "mention_text": "Gang do Eletro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "153ccaecc1e199f8b366e07dc27ad25e959e55469fb9bfa2deb604bad07fd486",
+    "mention_text": "Reginaldo Rossi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b228d115181365ae991b0d286d5b1beef8b5a265191e2bdb5f6f33c5dc626d3",
+    "mention_text": "Lafayette",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d72d362a805ce9bb6b0a03068704f1e47e5bb58f3f4ac5de953eee4d87e3fe71",
+    "mention_text": "Autoramas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a74e82a05de5dd395327221748c09ad76c9f75754212537f54831e1cab0352a4",
+    "mention_text": "B Negão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc812fe11872ab28cbb292fbeb13024b9de28767720b7406e9acea18324dfefb",
+    "mention_text": "Márcio Greyck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8543487792c310b1d336a49974303aab52a7ab8637c4ac2e9362936db3d04a5f",
+    "mention_text": "Falcão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "decae6f411ac2a87261c369911da847e9300e63c9c9bed6ca189f2158095b061",
+    "mention_text": "Brea na Garoa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "feeb4383f303cedab8e35d40d8b67fd7c9624fd0d0c6ca2b4294a787c481fc79",
+    "mention_text": "Felipe Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48b10ca594876bb0d65e65d01c6165b3c1b6855d3089bbdb9ba680e7c684cee7",
+    "mention_text": "Lia Sofia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d993094d17207182357b32c0d2ad8b9915c4cadd5b38bd9fad8cfa2d2fd3c141",
+    "mention_text": "Lue",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9cd0550e35223808d49e4dbd2eac7e4d807b9b7c56ef4e265258c62065662c8e",
+    "mention_text": "Manuel Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fba622dadf45aa6ebf5ef12f583e177d11eb5759baa9497a784e2f6cc4d14fbc",
+    "mention_text": "Dona Onete",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3fe8702756af2f0886df26bee32cb04404cb8c736a560b8bc4dd3e7592ac4bd1",
+    "mention_text": "Fafá de Belém",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d7d666d19a754839f5148c98475e8d5b8969af7c39daa8051e8537bd4faf8d7",
+    "mention_text": "Valesca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a46f53e2466edc067be30f946733d86846223cf61d012c183da0bdf2fd2bc85",
+    "mention_text": "Roberta Miranda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79959700b42e84059cc158810dd97cc98e6be701b8a757b5c5dd7a66217a720b",
+    "mention_text": "SÃO JOÃO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "78aa68f617bd66b94232cc5e1e1d7fd2205de3a171dff5888f1c4d8b4af3602d",
+    "mention_text": "Jackson Firebird",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1e968b8e436c9a1433fd1f3513482d43dcd209ae1d028ae0878aa84d10b14d0",
+    "mention_text": "Helcio Aguirra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1238cd1a1f017e46b3d5dbe6b819d0bb0f3cc9679680a8130701f661345ebd4",
+    "mention_text": "Uriah Heep",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe753bf2bb985fca3303f57c1fc3557ef13f3dddbdc1c96b7a6c659f6a657599",
+    "mention_text": "Mark Farmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f9d649656131ae9c7d779dad34a66305434abf3c630ae8b5526060522a120b5",
+    "mention_text": "Secret Chiefs 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "801eab07dd7d76dfae82ed683e785a85c6e9a567a8b54bfa1cd4c114fe0d830b",
+    "mention_text": "The Medics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "14e8d97f82d6344fdada252f55f445b56b8622fc04fee4cbc1fa8c9f496ce3f3",
+    "mention_text": "Anjo dos Becos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bc0dd03850bd643964dbc6026673d60b858eb33be26df9f16283756baac65df",
+    "mention_text": "Agent Orange",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89ec35e5b6a02d601dcb8cd67542f9dde1637b0c62061c28038b1b943ce0b78b",
+    "mention_text": "Gueto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f5a826f30e6a8e4aa310e3964bf0a9f89d54063b8ba2463060de5d92d1a10ca",
+    "mention_text": "Dominatrix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31ac0ee6b07c187c0fa8b8b9374dc0fa4f42495519eaf6779b956de3eeb10fba",
+    "mention_text": "Mercenárias",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18dd54d81dbaf1d9b12e6ce427f7e8f49aaf8d620bf9735b1863f7ffdcded510",
+    "mention_text": "Lydia Lunch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc7626583ad7304b0028a1d9c387a8b50b7d1b29b2412a41ee8c27357b7dd2cd",
+    "mention_text": "TEATRO MUNICIPAL",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89c26f04a1faa0d635b3002a208a4a8ea9797d4655a94e71e448ad599e9a986b",
+    "mention_text": "Célia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "231bf4c06d3785afb40661524ed0a5db63e5e5ba87d6927d5bb25aac634cad9a",
+    "mention_text": "Verocai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4fd953ca29f37afe9ddfb6e85f3cc38905531674ec1a89715d2b5a235076443",
+    "mention_text": "Tetê Espíndola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "752ec81f4049ac5e9c2272f2564563c9c0008325b21778fcbef5dc11f9b983b3",
+    "mention_text": "Ednardo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7614669f222be27ad8bcb983e96fd6e226b12cc3173f1754c7e0b0fa793a7e6d",
+    "mention_text": "Fausto Fawcett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25313b71adb8d4e2b678dbcc7b2058ad4a5233758eb560a935c89c87c7e80f14",
+    "mention_text": "André Christovam",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "31e9e163eca3cfd4660ae61340679e21795fc2446210584898cd199482dc0882",
+    "mention_text": "Cida Moreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa6c3c3a347d161f0776c7c1ca17466f505ada9c40a0095d6e39197ff30eae8a",
+    "mention_text": "Claudette Soares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b9dc43ddbd94f5c4487297a9618575629737a640e03a63e07db21032b3a24e9",
+    "mention_text": "Elza Soares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d78f8323982eeb044e04e495208082dc693e13c7f7617422a6d4b62692370bc3",
+    "mention_text": "DANÇA ANHANGABAÚ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "131f3b1d6bc5ec544055cdfeb0c770515e464322f5d6afde241ddb0c6bb89ab6",
+    "mention_text": "Escola de Dança de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95b70431164ade83a27c8ad776859f41c36cb4377f084828661b766d04621369",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07b3fbdcfc152a2181618e5cd9f52120398731fe02a4c3cec4db8356ec2a9e84",
+    "mention_text": "Cia Experimental Kahal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08abf194212945fdb3df50a52ddeacfd1babc518465dc0b88897389a6f933842",
+    "mention_text": "Ana Botafogo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56d8b886580b015f65c98eba94b341d8aa6dd414910a8916d2966e65f06f146c",
+    "mention_text": "Luis Arrieta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bcbd646928648c092aa34eb21960cd972302408e0b758bcefb27e6b8df8292c4",
+    "mention_text": "Balé da Cidade de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07eb2f8df0a8f015d685c58c82aa692b8fd570b30e8ff534869b86bc30c9e967",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d751ea0d03b9428114815df01430bb092d36da20e8226c8d8dbb3a5a2e6831a2",
+    "mention_text": "David Morales",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d71b6483c5a9d858d38d61e6218b6ef4476225721c2bdb0488c1a7a7dba421e",
+    "mention_text": "Marcia Milhazes Cia de Dança",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ccaac519e1b751473b783ee98dcd4d2b0d2c5fae6a5c32f3e7f82926d384d7e9",
+    "mention_text": "Frank Ejara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a6a02f622d113496a89c2adb52739d7a18e979c1fc1ef91a909c2e2305f1f164",
+    "mention_text": "Quasar Cia de Dança",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34239ae2b0f3043bd943539fa35056fe529bd6588ffdbfa07dc15f2bc509fbf0",
+    "mention_text": "Silenciosas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5499142c8185a0f91c7c743b91b2116ca4d1271aa13c8b2acb09b5fe9f1b5f8e",
+    "mention_text": "GT'aime",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "25a1bfae0aab8a859f500f49835f2772b641a0d4dc03c8c035c7548a4af85a7c",
+    "mention_text": "Nelson Triunfo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c799ca15cdeef5e5647e2d76853c6c2f3aa6e937d447d4ec8cfdc5a08609701",
+    "mention_text": "Cia Ângelo Madureira e Ana Catarina Vieira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db34a4723d02f7324523ce7a963958f3504de103488ab86f2155ba5978f72e13",
+    "mention_text": "Ângelo Madureira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "efa1e73cbc34bd2ffe6dd337d33468bb56010b3fd964fb3f362354496e0511b4",
+    "mention_text": "Ana Catarina Vieira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e44d49b98074bc5f973c281dafe329be993d918f988cfd2255e2eee0fff1e38",
+    "mention_text": "Cia Abayomi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79d66baa82abfaa4d4f5e2208988b9fe9fab5096a3c33c067e9b790809565f7c",
+    "mention_text": "Toninho Ferragutti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "662a2068a8a91283ca0eddd1393a57a93559ae2a05b26e93b5b954dec5365164",
+    "mention_text": "Grupo Luceros Arte Flamenco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21ab330453ec6f30dbfe7ef06095d2126454879e1259e858189455c698eb72f2",
+    "mention_text": "Gupo Experimental Mimulus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73bc1accfc1371ca229f0136c8810bc4a098287d858d758d0dd0f470e50da2d2",
+    "mention_text": "Grupo Grial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "709fbf2838097044f479dd76358065b6efbd6db7644acf5a8da3355816b02fb6",
+    "mention_text": "LUZ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e37d7961d3a2f909b0d2d5aa1db5e17ad317d09de2f774dc8cb9c3c36dccea24",
+    "mention_text": "Velha Guarda do Camisa Verde",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00f4db3f0f1399e533ccd2711a6b38f3d1cabcabec376c76745d6f55912106e6",
+    "mention_text": "Riachão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e90ed3674771ce0dee4cd0677c381523d342bee30a1f1a2ad3dfe6d1e26b5e0f",
+    "mention_text": "Monarco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02a014deb2d0e0307e747788457ce4c162d2726baeb9b15ec057fee0e1e002bc",
+    "mention_text": "Mart'nália",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe048fd7fe2fc48b9075d284b6f2212736b92acb7017fe3db29f33441b593271",
+    "mention_text": "Fabiana Cozza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "adb043e3d7bb87a05de52caa675b878b723a25542de4c4d7d714d25a4caa5acc",
+    "mention_text": "Originais do Samba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95f58081edcc2f27301afdb3ac344723505da6641db84dde8c08ba0ad8b3b045",
+    "mention_text": "Mussum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62622647ef5be6f487162120919b53faece89fd76202a4711e21eb95e5079511",
+    "mention_text": "Sombrinha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c38d7fe1cad580b2021519ff92768899e9859889964460e1861e88a6b37a0ff2",
+    "mention_text": "Almir Guineto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ed762dfa2c3cfbce3df5f1cb780c8ba0f9516ee4365fc2e3b9bef3da31d6f57",
+    "mention_text": "Nelson Sargento",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "28980a5c55e5d0c9ab003d88e7b4ce7fb00421ff77a2d3021c8535e5240cf4a6",
+    "mention_text": "Teresa Cristina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82e60d6e3e70575857a7dc18032a0dab582bd27f1775d480d2ad9eec5bb8a0bf",
+    "mention_text": "Eliana de Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "060916e7e7e28f3b5f20550e4cc9331cdcfa0f30c5c837ea269974f77e92efb6",
+    "mention_text": "Pagode 90",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2ac52c2a400f2db72f13935a3cfbade2d34bab2a06f94e910b12ad545272518",
+    "mention_text": "LG. GENERAL OSÓRIO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7c4747043350b8248a1029486dd168529a7adf5538fb70617dd544a85d40e993",
+    "mention_text": "Graça Braga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6e32b9edbc28acdcb2c56af3b90ffa6646a9351ba4df2bd5b0552b8023eb4c4",
+    "mention_text": "Thobias da Vai-Vai",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3dd03e748b46e47b363180dc8df92ed84ae96a3261ceb040d1b4d74fbc7aacf5",
+    "mention_text": "João Borba",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a49c7811af7a479fcda5b777d92286a26cfd2468123872b9b2c9a6899f36fc1",
+    "mention_text": "Mauro Diniz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdd7f043026e1ba15b906a64dcac083099a9f78e7932b2ff40fc7b848ccdc583",
+    "mention_text": "Elizeth",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "495b12be187e4fc57635b12305868e745f5f2806f0c6addc32ef65d93e07d35e",
+    "mention_text": "Paulinho da Mocidade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0257638484af537f37c286a6a018618842e75d306b8a372ea3971ef3b1bd0892",
+    "mention_text": "Terreirão do Sobral",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01628aa8a882ba0da7ef3890669a17e9d39bfb07523800e71aa996ee235c7840",
+    "mention_text": "Zeca Paulicéia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b81e13c9e3327137231abd39b542ec9b95bb2a0d64288cf04fadba3910726fb7",
+    "mention_text": "Demônios da Garoa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10ef7850fe4f2b4d44796a33d087de198abd257582a96854450db4d1297ef227",
+    "mention_text": "Berço do Samba de São Matheus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c5351ae60a37d1b31f0bc754fa2cee6077f3c47f7eb23b196c923235ea6403c",
+    "mention_text": "São Matheus",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "24f2862a2312137fa1f4b6a10638df3cd538bd46c42e3fd70367f089aabfd746",
+    "mention_text": "Osvaldinho da Cuíca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49fd8f7c6c609692186f77c2644e03ae83faceb7d1e3154c896dd8b7c468fc94",
+    "mention_text": "Murilão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a38fef266455813fd48d54633c3674524ead88fcaa15c8888d33ad2146f9631b",
+    "mention_text": "LIBERO BADARÓ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "16fda1b325ce96d5b89aba33cc1e7fae849aeff39b958b4a9d671f7e28dc79bf",
+    "mention_text": "Mariana Aydar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "988331fbcf7fbab534820cf2a975d2d4b90f8b928fed6f2bee82d045efaa6033",
+    "mention_text": "Iara Rennó",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b931f0ae07aadee5faf5209dc570f2d6007d63ce01257211f4cc63e9d8d73909",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72054acfe2d3c1de098efb9e19e0c4b21b70b79672bdf6c20f24091201476e51",
+    "mention_text": "Guilherme Arantes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18ce761120a1d8ced0d554e0a7d7184671abe517803cff1b3f088817d912e7c2",
+    "mention_text": "Marcelo Jeneci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42a9c6197859a1c4ededb658814496dd5fd0b2d4873df3d698c9a6840c7d461b",
+    "mention_text": "Karina Buhr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b866a22a7958ae431edd3b28a05eb520345a25d04f6fc5b252c324951cd2abf",
+    "mention_text": "Felipe Catto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd585728665f772bc6732e2e8222674dc73e76fe375906b64538e7299665c278",
+    "mention_text": "Seu Pereira e Coletivo 401",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff72f0187088e9393b4ab1ac4fe82e3f5f1bef78d083036b6631501e1dc07046",
+    "mention_text": "Tulipa Ruiz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7cd3a794ed6a1f5e74f8a61abc6e6dd46964e4a7efcfd122e618bd6bc665b0a3",
+    "mention_text": "Marcia Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d43e82c90c4b93fce9b36eaabf5b52bb48dc9fcc43094046a89b1efc9ec143e",
+    "mention_text": "Tiago Iorc",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23f0eb2d78a3bc2a9c29115650f563d61aa93e7096b1e27ec21004b3889107ac",
+    "mention_text": "O Terno",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4fafded4695809cf4b25dfac55da86fe51c350ec128610e2d6ba388d6ae5a70",
+    "mention_text": "Apanhador Só",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b882189ec686ae5cfc735c18d00260a958cfafe17d036358ceaa733e9d9b11f1",
+    "mention_text": "RIO BRANCO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff89169c0a62084afa3517f4a8ec624f1cf8c073de621f59a081d5e076d75c11",
+    "mention_text": "Felipe Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d29805517477bb1b9a645f870d58d4d77947b9190aaeebdc8be7a5c08e182bc",
+    "mention_text": "Gilberto Gil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a4cd5d21d4666886ab9d7546aa3668372df331037d6be0e1f5e87fdee560619",
+    "mention_text": "Bruno Morais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16f9624ad46fcb7a09bb56f9630bb0837c9881a28093f0a4ba3c4e02a487b606",
+    "mention_text": "Erasmo Carlos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18fa5d7576b521a4213588750e90de7c12b1b7eaeb7c0a4149625aa2762ce9bc",
+    "mention_text": "Otto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c7447f6939489758d660e16cf522aef7c8dc2f4484d8dd4197ae8ba8a4623ac",
+    "mention_text": "Martinho da Vila",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8739e92243c1e49d51fcf8f615e40d5eb00117696c34371be0909677bc9dace",
+    "mention_text": "Alice Caymmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5487256dd26a24749be38ce264000d8790b595b2966066d870208a437a91be81",
+    "mention_text": "Dorival Caymmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d465172f2d5f2d0307150ee76f4bb06afb8107e372a1f8eeaec10ceb01a9b44",
+    "mention_text": "Cidadão Instigado",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1e03365a8da0960c6e99aa51b0a9844f094871b14862b355dc5cdc853d1c0b0c",
+    "mention_text": "Pink Floyd",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eea98c08e091788b383296c5274014d1336f4dfa2922bffda1960b07dc67666b",
+    "mention_text": "Leo Cavalcanti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "876377c5d233a92ab8749991a0af0e47cf5363bdfe6b03f6fb25f7f0225ad428",
+    "mention_text": "Jorge Ben Jor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bdd4fd3242d3ee5e2d592c815831e6a93ad9d832a47cec74b22b31110d949abc",
+    "mention_text": "Fred Zero Quatro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5b2cbd6e559ced2b24e5b3988f34ef1015de339b648fc55cf2b5dbca01376e3",
+    "mention_text": "Nelson Cavaquinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b96ed4fa5f80d450698b1f8ea7ca9345c4b2650a0d304d8023ec51a1e6865b5",
+    "mention_text": "Guizado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3385f827d39c04af263aa42b189c82e85ff04f0489e2c0bd9b15d277f9f9455",
+    "mention_text": "Miles Davis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e63d64aa3199490ed665966751c724e7c5d764157c41b00faf21a482e38c094a",
+    "mention_text": "Lucas Santanna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6fe0a11bfeec0349f1bb71c262b39eb8f979a8eeee91e0bc4d0c0cb494e994d",
+    "mention_text": "Raul Seixas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bfc46bf469eac3cd79d76053eee78112520de04bfa877762c7f8f8fc4f6e248",
+    "mention_text": "Romulo Fróes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "316ec6a4d0ac5dde06fa03f39ccdb179028f50e8b65ad1b2e46a5a70a1ddb4f5",
+    "mention_text": "Caetano Veloso",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f9a296ddfb3261880d8fd60fbff200c351d06cb567f062bebfe0340394ee211",
+    "mention_text": "Curumin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75f4aba4ac7cff86bb47e2bd982800185831f523694637d29c721ef5b54a7e1c",
+    "mention_text": "Bill Withers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42b0bd6d57be6da1b65b8338ccc2c7ac9255dc098a82049c209b5451a5dc7c59",
+    "mention_text": "Céu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1e49f941e413fec882777f905a9c3283f12c52890c550658bde89ad4783039e",
+    "mention_text": "Bob Marley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c725afc63e4cbee68ab123dbcd6135823c27a9ab35d9b0c7e4e8e5cb53e415c",
+    "mention_text": "PRAÇA ROOSEVELT",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bb6e80e33ebe233f29604a0e1aa2d37a96e97f42fff9db92cc4ab1cde61641a2",
+    "mention_text": "Circo de Ébanos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b84bc5ccda26318768ae1f2e04097e19ef878056f2da42267ff1bcf9b084062a",
+    "mention_text": "Alessandra Brantes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b43e97b0f9eb750ceacddedf5395c83917ab3dc1b8ce96b720e21bf1df4e5169",
+    "mention_text": "Circo Amarillo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "179b2c79b202184d10818cce111260c40674e576ca58a9c87b13c3d2e0a3c7a9",
+    "mention_text": "Finucane & Smith",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ceb28ee34784001e92255aebb43876512dc808e02b137272271d845d82879c1",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f5e2b2b3ddf2454d7bc7167395a57ecb9a4c7cfe314c98dc375cbb9797768d90",
+    "mention_text": "Leo Bassi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd61285c850c67291d5d0b45301406b4f7a3618fd24e48a586af71ea9b3ee24e",
+    "mention_text": "Irmãos Becker",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c6fabe45ee51be4752dede5b2832f2b3d68cc68bea9c9cb1aff4677d9fc80422",
+    "mention_text": "Mark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f0aefbeb6b91e1fe08c330c6385d17c256ade6aa3aeb1c03b2d7c6c3918f9b1",
+    "mention_text": "Cia K",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdf84e84e79777429b0c7794138e8fed814987642a059fa2790bb170e40a454d",
+    "mention_text": "Palhaço Xuxu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bad11bfaf9b104be7f20438f9cd9910566f77f999f6b66dbd51e769deade9f08",
+    "mention_text": "Palhaça Rubra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6da40002730e22f307bef8c14eedab8984c8ce33769f15fbe1bbf351dffc5345",
+    "mention_text": "Grupo Namakaca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53d7b326e8d9a69d31825cbd8cb881b9acc4f64459bb1420ebec505a659d4503",
+    "mention_text": "TEATRO-PÁTIO DO COLÉGIO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed3e641f0a8132ddb54de1f4eea65556ddb5e51f936cac3eab54d28907de5e5a",
+    "mention_text": "La Mínima",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "651aff4a48a2d24a1b1c4f9f5566f48606696aa9c3eaf6757956c3d0d4a7c141",
+    "mention_text": "Eduardo Tolentino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e54cefbbfa52079e3de639480f5e2beacc4f5630de1b21fe8ab503c071245a05",
+    "mention_text": "Denise Stoklos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ea9fc36793b2cd035743f9192df51cc7143c37d2a0fc7d9769450cc69834b49",
+    "mention_text": "Gero Camilo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "608b5906e2c858b812fc5ce4d6b0e25ed0089fb1e4e5d6327abc03b8d5f2b9e2",
+    "mention_text": "Cortejo Cia de Teatro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7fdae98a0cd6444a5b3615322bfc013a776206f3a67d3900ecb1b33f1df3c2d",
+    "mention_text": "RJ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "004eb770e43c0679f611832b667b4d4135e70d4ff8dd62fbbd91bc5206a63271",
+    "mention_text": "Núcleo Bartolomeu de Depoimentos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd37843ef3e87aeacefec5a1aaccb1703f0558ebf87183380d2235580a5141c4",
+    "mention_text": "Cia Os Médios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d47edbaca9b3a61d0e783f4c174695c0ead9d2cdefda46c82691d6f55342414",
+    "mention_text": "Grupo Sobrevento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8bf73859adcddf7a8ea28b832edfd777579261c5ebe55011782f6f8fbcf98892",
+    "mention_text": "Cia. Viradalta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7c6306865ccb6e0f99324167c0e24540b1301aab8ba738a9689932d1d3d4f224",
+    "mention_text": "Otávio Muller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fde80f76050a24c161adb52d8023e3803e3dffd3e0b7113a1d12e92ab99ba75c",
+    "mention_text": "SÉ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9e8820f8f28ec2237905868fb6544a1bdde8d11304debfc8b4c199106021c305",
+    "mention_text": "MC Falcão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0a042b61e91d7e48cce79cc276cdfd8625481950955ee688496ea85e1181079",
+    "mention_text": "Rafinha Bastos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f75835ebdd834dc394a47f9ad66b4a485559f463d92aa5b65eabbacebcb0b60f",
+    "mention_text": "Alexandre Porpetone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1158eaa463bcf9cfd43de671f363385c03b0a03d60d1f2a208115ee87b7fbdc9",
+    "mention_text": "Rafael Cortez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a3e3179edca9f071125eab5b83370906ce3529ceb1cb39431b74ead391e7ddd",
+    "mention_text": "Maurício Meirelles",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab676c2f383e89bd3dc2f4a0c96069e28b91c6996974f2b2e3b9a48334858f67",
+    "mention_text": "Diogo Portugal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c9a0acb9fb365c1b0124b29b771c6b3a524a67d20ab864625b9a31990327f71",
+    "mention_text": "Victor Sarro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "235347cca2475c0df563afade8af2bd5cf2f5dbf048496f887fbd1f71c287653",
+    "mention_text": "MC Rafael Cortez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2f4dea34fc883ecb62ff72bc6fe14f2e5e4e3f8ff61345ac9ad93fc26657c8e",
+    "mention_text": "Gustavo Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b43d35dbc00961c844c37e74356c4ad02b199373df85582cdb3e28ca485c41d7",
+    "mention_text": "Fábio Lins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a94dd7445e64a7a74bd36a02ae91f76e49414adb5035a99c1bb2de3a2b5d409f",
+    "mention_text": "Mehl Marrer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa656bdd42677ebcfa2c5ba4c566d527cd19d62f3474a6871fc0b1b39881230f",
+    "mention_text": "Fábio Rabin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "522e54d0262eae83cffc84c1d22669e16b6bbb6ab1ed89af9c7fc2a640092b94",
+    "mention_text": "Fabiano Cambota",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d4f1139fea9af77cf1971cadc9b156a1dbc2f8d19d0ade20ebc95051e4b14d0",
+    "mention_text": "Paulo Carvalho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f99c3aca51d0769bd48752e354f96cc0770b233414dd5346c6af31e8cc45b247",
+    "mention_text": "MC Bruno Motta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d3e350283075352f2f33f1830e710d3e30bf26d2793746d08f2ca029a9a0a13",
+    "mention_text": "Ben Ludmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30847c1cd8cd5b1b24b2ab6a09e269b7a1d8df159afa83b60c81315b942bd3f7",
+    "mention_text": "Murilo Gun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a57b28a7bb9d890a297b08e8cff09543fd05cf5a15b0e1fef2a686b7bd68949",
+    "mention_text": "Claudio Torres Gonzaga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30b8d5a8b16cd9c3c5bf86d1140663035f56f555e0ebc76088af43f5af9037a4",
+    "mention_text": "Paloma dos Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9edc96035e14e0207e94253317308e3a9fe46023fecd0b46928abdeef73d47e",
+    "mention_text": "Robson Nunes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42396ced0b69901e0355a71c213d89bbe12fec9810470309a39b6ab98b1652e0",
+    "mention_text": "Jeferson Farias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5242b3248211775c5629a00281826f6ece5cafd6d683358832129b193484a834",
+    "mention_text": "Renato Rodrigues",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "061c84d599c3d268c94b4253115a945082f4649c7e25166eab25afdf8f1194c7",
+    "mention_text": "Rogério Vilela",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8eed16b12654c183c04b7d3b4e3001e77a4c840f20b4fe5a9d6f3b80f557256",
+    "mention_text": "André Santi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88715129bde9defe57682dcbec3902c751409c464f25af20d6a3d9934b47960e",
+    "mention_text": "Edson Duavy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e35ec63b3ae6b7b99b304b0561c936d10933219f8aa8f71ec557176f2a3f732",
+    "mention_text": "Thiago Ventura",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d79eca80e6b4082412042d5db720e1a17b20e89adde4019b43ca86fbbbdaee1",
+    "mention_text": "Larissa Câmara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5abf5a3b1fe21b691efdf445632d8528c96187b61ff8ce080bc3ee5b99ba4b64",
+    "mention_text": "MC Zé Américo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e2edd9f0bdf3aa13b96a6ae5b992ef27cca88b21b6e4e612efb5acf95a884bd",
+    "mention_text": "Hitalon Bastos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfe55ec2f21435210f76557d426fd8dfb1b8e3733572717886d34ee497775d61",
+    "mention_text": "Igor Guimarães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "408de451c738845a74906f11dca657a79244fbc6f710339468fd06d5cc5b726d",
+    "mention_text": "Lucas Moreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2dc305eb48d18460189496d134dfd0b3a678f20c1b9ff1895c59a6afbb3e12fe",
+    "mention_text": "Emerson Ceará",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aba47f3b973e2c1626ac7b90874c7a5943be5d6a3fe636cf04b657b0009e157d",
+    "mention_text": "Victor Ahmar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7b4bc43c8912d32b29b0f58294a2cbe880ce293ce190e8151cdf7c146b02c0f",
+    "mention_text": "Nando Viana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38838fa64e008f40d03a2e8bdc2bae626d662800f4b5c24cfe9d7c21269239a3",
+    "mention_text": "Afonso Padilha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55b3736fc4071f6f920b925bc4f99651ff70e426c539858c145cf4fc0aecebce",
+    "mention_text": "Patrick Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5da2fc98015fb1005616b4b25754523a7d51114c6e2895ecaf793877eae15624",
+    "mention_text": "Richard Rebelo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "99ce80fe182aa180692a8cc64f4d574550420511e8aabec6022fc4d9cbcedbb4",
+    "mention_text": "Márcio Américo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2113b433ea82743a670d894b61b3afcd8a9cb7d4be353f26cea0a859ba41259e",
+    "mention_text": "Dinho Machado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f1ac0d521e673dead5b3fa1431a038deedf466987f33c7714fb1de4dae96f5d",
+    "mention_text": "Criss Paiva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "879cd802710fd375997628555f5f75d2df7a317fd83c16dcf1ea54846e15e5aa",
+    "mention_text": "MC Fábio Silvestre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37fd3fefc2b332d2cbfcdef55d418003d36b8b3c50fcc04112e69135f5acb2a3",
+    "mention_text": "Paulo Vieira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "32596d8e283e2eeb9d39ca6f4f23ddf1686693695205fe7c215e63d8f847f34f",
+    "mention_text": "Thiago Carmona",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d489bcf32204785e3f15cf140c16200043bf4d95359791d7f33dcfe9e7228035",
+    "mention_text": "Daniel Duncan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f70c03ea08a721024f438c7a1fdac40c6ddca2cc7012f5c280c2bb2124268eb2",
+    "mention_text": "Nigel Goodman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3403423cb177f527bfa91f929a0aa920a95ccb1b0148888f7398ae939a919aa8",
+    "mention_text": "Gus Fernandes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d5e39e655ac489ee17718a9e1a58e8efea09be5cd93ee00b3608756176535fe",
+    "mention_text": "Marco Zenni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b428a32e0e03672a76691b331eb6c1dd9b30d58fe4df1f7557df70d5845adc8",
+    "mention_text": "MC Marcelo Tas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "445c65e2832d6806209c5f8cd07919991bd096d2e494724a1106b8945a90edc6",
+    "mention_text": "Murilo Couto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ecb0c13d1293eb62f8fa63dedf287bef3b759327d5572263ede9b94d721d54e8",
+    "mention_text": "Léo Lins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b02d862bae1dae93891835a29a600d438bbb5e302aa5846b55b1e16334d3dbe3",
+    "mention_text": "Geraldo Magela",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "877e8478b2e7756f10078078409dd1619bf4f534b22ff5e39781a4f88bf4f9db",
+    "mention_text": "Rey Bianchi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "662baa0e95423ce766dcc66533b89660a2db1187eb395972e4aa1931fcfd8011",
+    "mention_text": "Rudy Landucci",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09546685942e01ee33e0021ed0f31cdc4d8c6126a7d05fd65aeb5959fe468d5d",
+    "mention_text": "BARÃO DE LIMEIRA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4195397c66f6b6d37d8e0077b22c27c4d64f461de89331d3de6627977b89e9b5",
+    "mention_text": "Juçara Marçal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a1e61d9c01f4c5a11f16bbd4ad75b8b3223eb054184e10c04325fc6b25803ae6",
+    "mention_text": "Bixiga 70",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d4095a8476ea2e7ba37b18f9bc854d46b52574b25f21445f7f707cfb325e358",
+    "mention_text": "Systema Solar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1cdc7db096f1b15b2f331c908b4a26f0a643defebca38c525c99835dbeb4a1cf",
+    "mention_text": "Bomba Estéreo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf8d99f5732036c2b201dbd0584a2437b1166303618177d41179c41adac1264c",
+    "mention_text": "RPB Red Plastic Bag",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0a1c21872ad220871823654eb8bb3ac9a10fccde105d244f4724d21cf8aa035",
+    "mention_text": "Dengue Dengue Dengue",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a390668186c5bc10f7b23940a5039654a33bb695543db41483516dd90b42b81a",
+    "mention_text": "Filosofia Reggae",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6781defac00c4949a900a94fc348d00d1bfecb75d9e52e3db4bc9e3cdca18b3c",
+    "mention_text": "Jah I Ras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1cf071de20017f81ba06456094e821da1aee24cdb1076be636d5cff91e666439",
+    "mention_text": "Kadhu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "79eecf82c0fde91c1a7874b5859989f1fa7771ae295ebcabd9d1a70fa33304a7",
+    "mention_text": "Mato Seco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0c6e7e0af2a183eee69d7f40615ad49586fcdf7db3636f52d518c0d2f085ffb2",
+    "mention_text": "Tribo de Jah",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "91dd34e966afdd81a916d9e0fbc06d205027652654cd011ca8d049f3884201bd",
+    "mention_text": "Al Griffiths",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "853834febc2da31ede074c3d04ae831551f1a94ea3556ae19d525a48501346d2",
+    "mention_text": "Planta e Raiz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fa69bb5b23874fe2061d46a07c36cd0aa6cef1a1aff82fd456e19533d4515d8",
+    "mention_text": "BENTO FREITAS",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3028a2d071c64722d214fae590785807d927f00d8b4bd94a26735ded693e89f",
+    "mention_text": "Léo Aquilla",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b2c45756b4806109002914b36a2e79341f1891a58e7df81b562730b40bad1af",
+    "mention_text": "Murila Martírio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8161062972341d1abd5327cd09aed176837fe45810848d8b44147e5a88882ad2",
+    "mention_text": "Renato Kramer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22e166b8604a311029582934b72d95371a6789a3ade4014fb4246d01eaf41dd5",
+    "mention_text": "Marília Vargas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d8bd48cc532268b78ea7fe25b4f4850edffb5edaab9e5973adf3efd042ee408",
+    "mention_text": "Jaloo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f0d683033992224a18548752658830f3d83b4480fbedce78f0585a5acd94e00",
+    "mention_text": "Cabareteras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4a2fcd6753abc1370153bf37ca38ff52d260faf43b4c94fd7362f987794c5e71",
+    "mention_text": "Edson Cordeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25b1ddf959b313bd9695979ffd9cf80309addcfcd5fbfba6588d630448da4e1e",
+    "mention_text": "Jessie Evans",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "52509532c1f76f71e05401f3be9288107d0f406a9dd33e631776f067dcc0cef2",
+    "mention_text": "Joe Welch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b7e079e7ee98897c001965ef1535dab0646f3702f9f374816dc7c58143d68c8",
+    "mention_text": "Frenéticos, Molhados & Croquettes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6852dc48e8940afd39ce34be852221bec0629258c0762024b394ff22872d9316",
+    "mention_text": "Caravana Tonteria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2b98b2ac06b1b145685f63536c120dd0d60523bf2b79a1ea05efd5d03ac5e45",
+    "mention_text": "Leticia Sabatella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ece267b6f3fb03210ce4ac1641d5095facc42ea87599b0415f4d142ce0ce353",
+    "mention_text": "Simone Mazzer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e53d76cce543cb2f2088f63914178c69aac29526ae2d4b162db9d29b07f11b0",
+    "mention_text": "Elke Maravilha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8537faebc33db73d3d74e8a96cf7fd9d065da562503fd1aafaa17175a5be07aa",
+    "mention_text": "MERCADO MUNICIPAL",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b94d7155dac8a7c28a679398088c3d4327d9d7b2e8e0203a863fdf3e45ec31d9",
+    "mention_text": "Luiz Wilson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a607e8d21a8023fdc0f597b9fe36daa30da92a6b4a2c1ead544fa667ec1090f5",
+    "mention_text": "Fatel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "445396262c2b3d61d9f4b9bff218316389b262cf1c57ec20b6257118ffc70356",
+    "mention_text": "Sandra Belê",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f95498bea57877296cc5b4d4c86540c2d79384bd71786204673dbe8b539ecb5",
+    "mention_text": "Rouxinol Paraibano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "07b4ae5df89d2a946dbf06714d7a16fc4a62b62329157b13a80373f3e2049507",
+    "mention_text": "Trio Nordestino",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a156114645847617d015526add30f9fb3483c07adad416ebd90b4d83c61f2e5",
+    "mention_text": "Lucy Alves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "024a640651fc85f352d94a201a8b6484cf720c658d47c05664ed7f36077e4e30",
+    "mention_text": "Rastapé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a425ea5d4ddbbb8d39b2555677d4f630c68e09ef444fdb264562e8c4323fe6f7",
+    "mention_text": "Coisa de Zé",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f78b9fe2b270ad701e39a6a3e201254a1f536174157882f9d6c83a2c206f1916",
+    "mention_text": "Edson Duarte",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "224d92dc1c2884e2419f987711a077e9f451ce9d7b909c492aa577be29e0edd8",
+    "mention_text": "Forró Moleque",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "537e01c1ecf5587cc3dd325e2c6965097b73aef879d84f2d62b5672e6407d0a2",
+    "mention_text": "Joquinha do Acordeon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b898d006b538123625f2a7b097d414d822b265e92f42cf5a1960baa9dba176c3",
+    "mention_text": "Pablo Moura",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad3334d16f39766574f43a8ab87ce423757e525381112f64c4c408f9538c2acb",
+    "mention_text": "Catia de França",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06dab67f232758fcc38a48d73738a12e457ebcba6156c4560fc274b7f5119a3e",
+    "mention_text": "Trio Bastião",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdff8573e571f2e54154c105c745b01700a2e91164c92aaf2327dafb056385be",
+    "mention_text": "Vinicinho Magalhães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "13bd3f6ee6355b187cfe9360440f3211d207f39b9c798300d87ab38cc7998977",
+    "mention_text": "Peixelétrico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e3de2ad5cbec272453a460cba72078f0d89fc23fea9a90bccbff280092b0d42",
+    "mention_text": "CARLOS DE SOUZA NAZARÉ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1168214da621b27d0bcf05626d76be15a23dd811b9e164f8918a462cddad89b",
+    "mention_text": "Mc Rodolfinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "313ad92e1fb2025d214828176fa1dc51ed6eae7dd6da8fbe0042c2e059ea9e73",
+    "mention_text": "Flora Mattos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64c513955110404e6b25706eea3df408324be4adfa7f671df87cb3d12daf85f8",
+    "mention_text": "Rincon Sapiencia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f24bef63c6b51175f46f1d3a74e4b95a93ad2df5a2fa8f0c3c89619b128bcc9b",
+    "mention_text": "Maneva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "769c3bb8b8889b4077ef9bd8d9d2b637f512d9d6211f80cc430dbcf716984427",
+    "mention_text": "Rashid",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "597508ab0f69a04947569127f0d9df7ba3aca7bc62559efebcec8d8136bcb6e5",
+    "mention_text": "Tássia Reis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7d4642f0b128205d580e1efcb9715e0e4a82c69ecd0e09e3096b92c60915c66",
+    "mention_text": "Mc Dede",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c711d0f0cbf7333da2e31cd3ed08baeb6039e16095d656818b12569d90262dd",
+    "mention_text": "Karol Conka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c4f6526f1a4f014c60f1a3de802d4e1c3f2e1c35643a394fdd094f63c442e59",
+    "mention_text": "Menor do Chapa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccc05eaff67c18cc769cc9d21b6f808ebac789939566d2f4d5b7b189cfc7c461",
+    "mention_text": "Projota",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fd681b5009c655946223e29f8b8c86c0b79876d73c9c8afb306c6d83dfca52a3",
+    "mention_text": "25 DE MARÇO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8e54e9db044588a02c27773656312c69bfc015b4f6afe6b295df1834f1d3463e",
+    "mention_text": "DJ Grandmaster Raphael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "58c9c02c9c72a96292cb2b072cbe69f470f0363d5073b319813ffcbdd8e4f706",
+    "mention_text": "MC Sabrina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "53ecca422d4a4f185a9d4e415dfeed791020926a9146996be32ffd23a0536a1a",
+    "mention_text": "MC Mascote",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eadc028c23b7d09960191e476055b2633748cc52bac74cd0a22c0a86af935314",
+    "mention_text": "MC Galo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "487483d496cd3739570fef87ade60529a78e37372d3aca2aec007c3f00a9b031",
+    "mention_text": "Mc Lon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1eacfb04ec4462aa6dd40b77d91536db1ce540580260da7453e65e32edbd5d5",
+    "mention_text": "Tropikillaz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "66f24de64be08bd9507a17d9603cf5e47a7606e0c89da9fa7d696303c0583f76",
+    "mention_text": "Zegon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a28c6e3249323440a66e470f319b574e832b1f9e52632b619d0cf2012596b80",
+    "mention_text": "Laudz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9283450c5ec9c5df4b672bc36ec1d59a6a3be7289ba65bb58492345120398774",
+    "mention_text": "Ivo Mozart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1cbbee61787e0cbd4e5f6ed03e7f3ff6b164accec1d552e699039bb37d644f9f",
+    "mention_text": "Pollo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d6813b3ed111315ccf12d702c5ca2d04a15730079c49243543f6d36c80e5681",
+    "mention_text": "Mc Nego Blue",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f26abc4d64377f856930dd7eac505b76ce0b644098b0dbef5a2cb65749efb16c",
+    "mention_text": "Forfun",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "79456cf19e147ef0cdd34a575a63335608eb611240271db0f930b3dbe7841906",
+    "mention_text": "MC Bola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aaf7b4517058e781ecb22ec98fa05e01c08c6b0305c922911edfeb5999cffae9",
+    "mention_text": "Cone Crew",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84d91b950a24acaee3f8e51d9cb044bef2582f523994e4e0da4e2eb2018af963",
+    "mention_text": "Mc Gui",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b98236336e111e892a67c73a627468af42042814f53da8a75595781d728f240",
+    "mention_text": "CÁSPER LÍBERO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9bb00ead311bb637f849d81ef2cfa11dd5c9be5b65d9369942582f038d060f31",
+    "mention_text": "Xis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5b053459ca5f70911ca3d0deae8828522dbcc057177c20770debef798b437c56",
+    "mention_text": "SP Funk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5c710cbef3ea93cf2ebc2a5bcc131eeae32b345711712cf32bf63486ce1f502",
+    "mention_text": "SNJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d2b3b23bacdad07a43d79de8ab191292015e7f03bb557e39ce56541ee85f5ecc",
+    "mention_text": "Ao Cubo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8d4e98ae866e8d5a58ed03e0acce2d7b57c4cc0a699466aa4c3687b883c5242",
+    "mention_text": "Actitud Maria Marta",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e7f3d575b7c04dfbdc010ff12f5a14d8c34ba2e4dfda5adfef51bea64ac62d3",
+    "mention_text": "Sampa Crew",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f66e72794eb2f854479b2463d8eb1bda912952a266ae52bc744f548611fa2b2",
+    "mention_text": "Ndee Naldinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8e4ce7babefe89f1df5195b7d4222f9b2d49af435f46d8583956874fc801b11",
+    "mention_text": "Ellen Oléria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "668c8e155190f9817dcb932defa4dc96c03025394eaad4042445f2c9e5ed52db",
+    "mention_text": "Mulheres Negras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35b1381058a2707713fc17363b33459908e0b54efcf881621b193f15dd2ae407",
+    "mention_text": "Mc Marechal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "537c8b1efdc3a4aa4a42fd14c94a6aef3c08d4bfb3aec258c4ee6e63b2918378",
+    "mention_text": "Xará",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1571b3f27904b122e0018ad20fe6cc9693eca4b466823caa69db37c11f13cd6",
+    "mention_text": "Alafia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2b4b917df326e8b5520c8e6514f2ede7f28808702bd7c74a53fe9e9f05efa110",
+    "mention_text": "OGI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0666422d6eff26be449836d44c8dc5cec17a091ef9d244508d669e4866ee3f0",
+    "mention_text": "Don L",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1a65a14b2e3087c251c1bdf71f745f279cfffaba976d03a66ef24283712de8bd",
+    "mention_text": "Izzy Gordon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a72366e3a41362453fac4cd60035587056eda3220a9c8377873e60fe1051f055",
+    "mention_text": "Larissa Luz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5d392c27a52ee2d6b19d8baa4673b97bdc64ab61da2f8e8077dd5e5b3653b5a6",
+    "mention_text": "Cidinho e Doca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "733de9a272bec2b129b35f5a04f640b0ed8a88c995cc82ae3660eaba98aca818",
+    "mention_text": "Flow MC",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce08ae768a99e84f920ebbcf8a1cbaa85eb22b48adde03eba75dda7f83253fda",
+    "mention_text": "Drik Barbosa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce7b88fbd6cd2d348adad45207899ccf579d3f95387c25433c478dd424fd2a26",
+    "mention_text": "KL Jay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4582269eee2f13561540aa7f84d8fd6f9391472185b51730df18c0be98e91e6f",
+    "mention_text": "Aori",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf47f3f2603ff1cabea246ecb5938e62a79c5d8bafb6e7b73193e05499ef6c3f",
+    "mention_text": "Livia Cruz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ec6078c1b45f7795e4ea47a244e921c164c81e0ac451365379f26a2b3298bbe",
+    "mention_text": "De Leve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "539c0517490040b1103cc14527d100eb7e3f02b93a1bd9bc2fcf7638e42ae304",
+    "mention_text": "Max B.O",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c580f6d63ebed10a0d643f197d3b778b0ae477aa55cb61f2a7eeae3f3e36abe",
+    "mention_text": "Parteum",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e58f9593ac874159053c5d6c62aa0bb70b526e06e59d87e74d2319e227088d9a",
+    "mention_text": "Kamau",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9eef1bbc48eb5513b48f7d5747cae28af46bfe7a35e59f965355bd624ce8f673",
+    "mention_text": "Boca do Lixo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b406a16341859fb9d060b1d49ff81f34878188cd32f095748f61af21fb35c2a2",
+    "mention_text": "XAVIER TOLEDO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9036f8ed70c1b6c5b34618018c142bf81672ecb3f228061527420ad60035759",
+    "mention_text": "Coletivo Perifatividade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f84a812ba6926f9511d0e0f7c3da86cb6e119e44b4e95d00cef04e36dd93e35",
+    "mention_text": "Candiarte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ada210699e13d2cc308772919c28b2de812c10a78df39b3cc02260a02dcc23b2",
+    "mention_text": "ZAP-Zona Autôma da Palavra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0c1eeaf0af652567b35a2d71b2a22c7f34f78253aab7fe13fb4cf575ad6cf79",
+    "mention_text": "Poetas do Tiete",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b57d86e2238e1a5ed91b469f54eacdf10ec2e70b6e4b3320fca4bfc5ed2e3f7a",
+    "mention_text": "LADEIRA DA MEMÓRIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09d72913855cd624e8aa96f968fa5a87a4d1e99246c3e81effc68d7f150beb63",
+    "mention_text": "Clarianas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7f45dc466be03a0183ac3444adf942ce3058702a1b8d5413c6e05f34d98a7a1b",
+    "mention_text": "Tenda Literária",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "079a2c81ca48350788258bfbbc4068b79423731044ea9fd7aa1d09b3f74280d6",
+    "mention_text": "Cooperifa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9ecd8168b16f9a48c8736251a723e5bd73d8f9a86615be33486ee803bffddf5",
+    "mention_text": "Bodega do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c196458a65280e3b3c996efb3c0edded2cda2f9538338d4ccb75cfbfd6399a47",
+    "mention_text": "Sobrenome Liberdade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ab213c00494ceadf0d7dea04f70a44508cefb2dfbe85e3e96941ce0cdaa9508",
+    "mention_text": "Santo André",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "303217c9cabd7d37d38bcbca8d87c83f31331dabd4ca9d46625587b6afefa0fa",
+    "mention_text": "Guarulhos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2973fa580c3a254dffcc40179ee9749a96639950a0cb1569886a1607734f545",
+    "mention_text": "MAP (Movimento Aliança da Praça)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "427f70044175b74a5a7dcd9eedbd2ac5d492f931b5c644e7fd92fd49290311a0",
+    "mention_text": "Vagabundos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00144371c021bd8e0d2b6e37bdcdeabc692b31873944da2a97e08ada4bc07e77",
+    "mention_text": "PISTA PRINCESA ISABEL",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "13656659aafdd85f6f4db1beba1a409d0d2f0ade721c4f1e191c8a6f8bf34cbb",
+    "mention_text": "Sallun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "acf87760f8f95988e0aff11348b2317820062f87f3b93d20c309b035638df2fd",
+    "mention_text": "Pedra Branca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6fb37afc57bd2b2dd7711b54abd1bfb8e2fda273c4c8516e535935369fe1b87f",
+    "mention_text": "V. Falabella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4b1df0ff75d1487b62c7e8cd4a556a80175e5d7f6cdee1c93c4f7076dca73c4",
+    "mention_text": "SÉRVIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1b9587e3f1138d93d6f57dbace87288e6b7f32450ed9182662a0924ca9711ab1",
+    "mention_text": "Yoni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c47780049aacce2767f8aa18ea9fc1075566360b83a3af7185782c34bce65e2",
+    "mention_text": "ISRAEL",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38558fe69fd50045eb4bb06c66a5637c7524a23095e42f63ebbf039fe649e69d",
+    "mention_text": "John 00 Flemming",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6dbcd1a399a27b7328f02dbb048b6040414a0e04aac11ff7f02f9088de61df65",
+    "mention_text": "INGLATERRA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0052631b4752e4feea0edbea9cf59a5ed06c48ec082d9237acd1645133d415d1",
+    "mention_text": "Vidigal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0fabf6eba12e48dc1665ed81f18443e4c67dec2350689036e9cf6d0122e9ebcc",
+    "mention_text": "Rex",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f831f557383dba543b4a0c19b8e7e571d196ae622047513901e61062dfc8028d",
+    "mention_text": "ÁFRICA DO SUL",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a68c4e807c6ade87070ead1933a671ead55d72efb21f9d7eaac478fa273c0faf",
+    "mention_text": "Rica Amaral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbb097f9d118fb1c36e2d2be7d019dcf79c143aa9dff96c529d53ea39fe1f87d",
+    "mention_text": "Gui Milani",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8dde42a60d00f02531c6deb88dd44f314deadfbf589bdeb9e47349687300ade9",
+    "mention_text": "Future Frequency",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d3d1f5e3cfbfe3bf1eca4696ed6d872ee225d74272e8dfa5c6353ecd041d74f7",
+    "mention_text": "Dré Guazzelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11b44c75a7b6566efcebd5ca128a7cb140cb83bda2a9618e13bb186853700432",
+    "mention_text": "Cubixx",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2022c30c1c2bdaa54fcc811c6edd852cd9f48a5ea85a3fe4d67c83c8bb74fc1",
+    "mention_text": "ALEMANHA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eaed4bc8ddcf452ed5b14075dac9617f5c0f5c4c18ee010d3a78c6f26e398420",
+    "mention_text": "Montagu e Golkonda",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11472864f36c579ec2ecec5183fd3974597e0222ea7771635ad713ccc3d6356d",
+    "mention_text": "Symphonix",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c2b2c8b61439b8124721da18f975a5c84ead4a906010ddb22f393e1616f848c",
+    "mention_text": "PISTA SÃO FRANCISCO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "971d8f76aab3a180767a35821c613870905e3247efc9802cfabbe2215550d2c1",
+    "mention_text": "Carlos D Heart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f42ee31e775b05cc022423660e7988a7b12b3ba0ca6c5e5579f315a3075da117",
+    "mention_text": "Mayara Leme",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5a0da1faf1a2a5a7ea583608968f9c0d32d47ceeea8c9d5f67a0b50d1df2072",
+    "mention_text": "Ramilson Maia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2727193d1da4834efb443a93c64f1db09c8c593c65841bff2e217945d5a0ff4",
+    "mention_text": "Janaina Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c95549038aff9c9228ebed4b8f18716589ae3627b0b74dad87ff2b6950e0f0f",
+    "mention_text": "Kaleidoscopio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9af7a6f87ebce54b82d2e15e82d5eecb1fdf0ea51f4d30bdc54ec2898a884ad2",
+    "mention_text": "Vitor Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69ac9a462fe274f311e7da52e1e35d6e9460fd10257f1dc3baba45aa19de75f3",
+    "mention_text": "Jason Bralli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b0c187cf6df1e7d6b9a84b9c159438f9f76000007ef7fb4abc67860ca0aaadac",
+    "mention_text": "DJ Andy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e30c72b982fc5f9f2fa7e47ebd46b9d4cc7021233b06acf5d1d59326c907d163",
+    "mention_text": "LG SANTA EFIGÊNIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a94ea25ddbc3a0deb2da8260dff04497f0bbcdb37d14f8bfa1e4237672fda5c4",
+    "mention_text": "Thaide",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bc8f31ccb367d890771a0841763e1ba0ecb014d503e9d4b9028456de6f20340",
+    "mention_text": "Breakbboyz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f73be59433e7cb5b191bffb38c786faf79a07abbbc76eec6a2fe9ae2ed3e0026",
+    "mention_text": "Dj Moretti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9916156fab375bdc18b4396efcd5e8b6bbc63a10a2bc2086c1a49a86d4448073",
+    "mention_text": "Gabriela Electra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "176de5306589e3eeebf055a69d2d61d0367a4096cb2e66451887463e50883755",
+    "mention_text": "Dj Claytão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c47ff5a453f0866195d9407254bc96131701e5abd1eebca172d8a2f1b6730cc5",
+    "mention_text": "Allstar Brasil & Battys Girls",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48f60197c6c6e1fd81cbefc71ed921ceaea7701a48fc7dad2c89621f3304912d",
+    "mention_text": "As Minas & Magic 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b913790a5b33cb65667c4450c8a540445f8961155962b8589a14a81316012bb1",
+    "mention_text": "Dj Typa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bc03a863cd74e033dee36048f76ef80005e6f756279da674fcc741479478135",
+    "mention_text": "Dj Katatau",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9b1d42682cbe606bd2a9b8acd8af20d208afa34df9c2ec51f3b3e7ce246dbad",
+    "mention_text": "Dj Marks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c54fbfe97c3aaf279e93dab686a4cef02c83bed3ac446a41a6192228616c119",
+    "mention_text": "Dj Cinara",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5509c066424f9618494b532fd4d1d7d24e72bc97f98188c4aa3363394fb4aa0f",
+    "mention_text": "Dj July July",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d36c60e3532754ae39a8633d5f64ed88ccb90d41ebfee90a6a243fe0e30ad55d",
+    "mention_text": "Dj Alex Music",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "255f40563670fc15601d3f2599e2f9bb93a7a56b59f0a75a8bb389786df581b4",
+    "mention_text": "Dj Raldy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fac69891f0a72bc92f87c4a8e4f01b14eb5cabb535392e6aa9b5ca0c9ae8b204",
+    "mention_text": "Dj Cainã",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2031d09df54563e365dc39d2d138f1ad9b132d2504a1a79564f5226a35e1f47",
+    "mention_text": "Dj João Gilberto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f3fd519011c529a5f9d6263caa373bd45e0676a38b13c3e03e2b8f0dc14bf2b",
+    "mention_text": "Dj Kula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "375c130daaf4f24260b8fc069be5eb98dc91174fe0b947f6300d50438d93da31",
+    "mention_text": "Dj Magoo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0fb0efaaccac20cee32100bcd97685fdab4dfe9ec3a7c9ee0321333925824ead",
+    "mention_text": "Dj Nego everton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "881e65dbe39e3bcb6314c893948647cee6b912255a9762d1ea5dd45430ecd5e5",
+    "mention_text": "Artex",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fff6ed58761ca7d7e112286afe46a41263b747a8e6e5e84eef70bd8c9a6079c",
+    "mention_text": "Familia MV (Mateus Verdelho)",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b070207b77243acdf53f27edc71ee96513be501cc1259334e6c7f1c3b66f3295",
+    "mention_text": "Mateus Verdelho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8482274325d61bff555f53d61990602761ce71aeabaa362b6b8f38668d245c27",
+    "mention_text": "Angel Keys",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "682f162136a99bc8b5765019ff0a442a52f266f97722e45eeaf3e6a66803b427",
+    "mention_text": "PARQUE DA LUZ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5c19eed33bde0af29b1d4635214de27db9466e0fe6a6721401333533448cc7df",
+    "mention_text": "Samba Lenço de Mauá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fe33f46efa39ccb282169f8d386b6de1dbe3d986b384194197fe482a1d71ea7f",
+    "mention_text": "Mauá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "54fb93a4bddcf21818df07921bf8027491aa938bb62be11f08ab0e28b020fd34",
+    "mention_text": "Samba de Bumbo de Pirapora",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aefc7646414506ff6bcd0a21fd2d3df364065b7f8981d5568ea8e1474cf5b93a",
+    "mention_text": "Pirapora",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e83891d1262cc55a018db6bb296c4b1429a7079faa1a44bf1ad2736994466cb5",
+    "mention_text": "Jorge Amaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0bd5664205e5c81b0d828633169963db813f775f0e1016f4bd039b0dabe8334",
+    "mention_text": "Nego Fugido",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "768087b63b6be356a89f474c485ecf758eebff12cb6c5a22c9212d81f40027d8",
+    "mention_text": "Samba de Cavalo Marinho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5644567fe43a3131dca94955b6f8a1cdea224f7db1cd2e23e1b78b4142e2c272",
+    "mention_text": "Escurinho e a banda Labacê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0bb7d7490c11de74473dd2d346a5abf0f7ba222fa6dd5d5a503355778efb8c84",
+    "mention_text": "Ciranda Tupinambás",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c9b081a47a54112ea82dee20ec54a2762654409f19893ab90b8276f61d475863",
+    "mention_text": "Banda Cabaçal de São José de Piranhas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b16323a57aae8fcc9a2583e58849a115041868a1f4ef235c2b3d3d382e546f7b",
+    "mention_text": "São José de Piranhas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f8baa6480a666f48e132582e30cad671772cda7efe71e748888f8176e7bf946",
+    "mention_text": "Oliveira de Panelas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1a275b4cbd8e576d3af8df66b895bc726ce0d60eb5aeefd8b14937a6d9202df5",
+    "mention_text": "Geraldo Mouzinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf68180b21fe755cef470dbfedb03d883c1ca4241dd916578de0e715a86e4369",
+    "mention_text": "Moçambique de São Benedito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "acfccf14a2c55e7ce3d80627d07799d0dd9fe61e9b0d11eed3e378f2a74920ee",
+    "mention_text": "São Benedito",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b98e1e9c22cbec039ea511b625cd2ad457381c3ef430b0236c3a3bdea19b294",
+    "mention_text": "Kolombolo Diá Piratininga",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "060ceed699e36f0189646f6ccdf9136849acf8d82436dfe1a74998ce2b9239a4",
+    "mention_text": "Jongo de Tamandaré",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69c3d518d02be5ebf24b2671272ca791205db2b83c28f0dddbc0af568b73a9a7",
+    "mention_text": "Tamandaré",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bb7a9f65166d91fdb8fe5396dd89b2d55e3b391b475b06b3d03a99e993d125c7",
+    "mention_text": "Maracatucutá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3656becb2276932298ff6c979e32b57117d600829ea089b5476bbcd67521e875",
+    "mention_text": "Sebastião Marinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d781aa488ef6b65c66d83b42353c835b33711ce6d0f42cfea809cd4c80a64adf",
+    "mention_text": "Mucambos de Raiz Nagô",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8f27650df473496ba55213f91c0604b6754f81fc0771f0688560d20c01b10a0",
+    "mention_text": "Jongo de Piquete",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd415de5ea60b92028739a2cde3d76cee05fbace024eb5ffdce57e2cf56c902c",
+    "mention_text": "Piquete",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77fc37c4c1b0039732844fa19ba94b7ba9b840503333ffeb7c5e34a72e94fce8",
+    "mention_text": "Inimar Reis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a310191728fa729f3f3376e99ffdc26c395815ddb04e5daeac6a39e2f1c0d38",
+    "mention_text": "ORQUESTRA DE BERIMBAUS DO MORRO DO QUEROSENE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "92d1e2a7f550b170e332baafc95b84530a79a94efde93076c861d397a488ef1e",
+    "mention_text": "MORRO DO QUEROSENE",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3018346abd72cb240125781f067a9b09f5b85f8ca963f12a831ea95575ede344",
+    "mention_text": "Bloco de Pedra de Maracatú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "296a8332c4f65cc452559de7c7e1d4f827fe52cd1a646a7143faf298234b8049",
+    "mention_text": "Valdek de garanhuns",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "688185d69baa314a11c8ec90d16235072059796f166388282b18aef10fb9b9ef",
+    "mention_text": "garanhuns",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e1d89de11fbb2f192192475d565110654cbc0c155024f91e9c0c167995d69b28",
+    "mention_text": "Ciranda Tupinambá",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b754e4a8a1f0540d078ce157d45105d876259e8ba8526ef7a1cf0352519bf6dc",
+    "mention_text": "Chico César",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf7c41ab06183e64e803f20d702b4ba45eca16e04c2e298169a7fd169ea1fc61",
+    "mention_text": "Escurinho e Banda Labacê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a51a9516a9439a743d7a0381b4c11c11c68ded4b87612982bd08a199169588d1",
+    "mention_text": "PB",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "84a0ecca0743f9378bfd8115f96de4ee0afdedf28de8b07c5a347f5dfc874963",
+    "mention_text": "Banda Cabaçal e São José das Piranhas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0fb6b646efccdca5da146d840dce6030d0290d7dfa436786561f76f3d89cfea",
+    "mention_text": "Panelas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "da7d375d214a7acbcd772eba1971344ee7af17f228e049da92b6ca5507bd6763",
+    "mention_text": "Geraldo Mouzinho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0a47b7c055e784e20bb7c5c4978181743af82d0064ddd01c38a57b2a9ca191c3",
+    "mention_text": "Caju e Castanha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2312f7ddf4fb920f122466bad74d0dc8d3b5d0db29ff569ee1496264bdd672e4",
+    "mention_text": "Jongo Dito Ribeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58a6a45226ff04c6570d81f48d13ff102f6dc4bc4c556b4bc146114bd9b2e4cf",
+    "mention_text": "Tamandaré",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "986c4c27e0c5928dc7dc634534ef610e66fc744f4f9639ef2ad35bb06995f3cd",
+    "mention_text": "Batuque de Umbigada de Tietê",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd249ec4f55a9d8b648d0a673a98414416112976a9858d8143e5606ce05c6f41",
+    "mention_text": "Tietê",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b408b3446f00498abe98d887a304bff5615bbf7ed7c2f03962d5d3361d7af344",
+    "mention_text": "Batuque de Umbigada de Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68d8cb8c51bcca924f0e660f2658fd5a8e444185303dac67f7ade7a717577ccf",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "041945b353d014a1ab0e418784dda07e4cb7f5ac867326d1945719c723446550",
+    "mention_text": "Batuque de Umbigada de Capivari",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edf3ac7c122a749be97f7025bcd0bd58065c1e7dae62812be2e8085fa6686bb0",
+    "mention_text": "Capivari",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75a4596ff21f536adaefde0d8fa60e7e33e2833980819ff8f2b2337ec2e28819",
+    "mention_text": "Grupo Cupuaçu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "905b646f3394aef2de98cbf6b8b78c7b0ef2edd9901b75ad9053670ba36bf680",
+    "mention_text": "Grupo Babado de Chita - Gestinho Sonoro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd18575a939adb1832ba3289e57e22075e9dd7dddd54bb59e06ea0cccefbe414",
+    "mention_text": "Favoritos da Catira",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b750ce383bad55101bb9d054201b9e3139196a40587bacdad404d8a15b1dfacf",
+    "mention_text": "Cido Garoto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "880a49b8d004631fc0a85679cabd649a3febe0fa5b8f82f9d19545a7ad0dc366",
+    "mention_text": "Samba de Roda Garoa do Reconcavo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a207d0e7cdec8d5b9dca46d81e733c79b5b89de8272ffde37cb4136ed9a17bc",
+    "mention_text": "Ile Aláfia Maracatú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "735e366f7d8e0ba29fcebc6a1861b0b869713b960d3a3829fda45d0d2fa89e1d",
+    "mention_text": "Sambaqui",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f42e06392187d07719cc2a7294a8e8e355baf948cefc1da3593cfa512beb3c3d",
+    "mention_text": "CORAÇÃO DE JESUS",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b3e99ec8e0cd72626eb7e46e65c89eb753f1ed83a7fb8d789c319bf28908002",
+    "mention_text": "Flávio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7bdaf93bfe069f7095216f0205bba423b14f7dbf2750ef72f882545540674e8",
+    "mention_text": "Andrea",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92471ad8ee0f3c9116d72eb1c2087e6083ed58ac1304f719122873ac0d1faf1b",
+    "mention_text": "Madame Taratatá",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23907a39b19c559f71a51c4d66095a507fa251dcff6fb91feb479835ab3956a9",
+    "mention_text": "Afrobase",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1cd372fd06a2af22d91b300497084a096b5bcf1a82b112e353eb34768b77efa9",
+    "mention_text": "Zezão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "377cc18e66b22009dc2fdf0d3072cb4de9f938bdfadda5307653f09109027848",
+    "mention_text": "MUB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05ea4c2e56a02aadeac8b3f6ea9fc1eae97e744e077f41cf9b65bac17f2248ae",
+    "mention_text": "Makubando",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a53b5a996595296df938482856460c90e17830932423978f9ead321e7547cb35",
+    "mention_text": "Nanny Soul",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c9fc2953aa6e32f7c958bed37493fd9fc77e2013cb0ba787ab2eb7b7ff538b0",
+    "mention_text": "Drugreen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d5697eaecf5cdbc9d422c0947e79311d27fac61e9cc851019414193e92a1f20",
+    "mention_text": "Causa Comum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7990e4b2e2e447beaf560297e875666e333d4fcc020f4a389dfccd996ac56be3",
+    "mention_text": "Engrenagem Urbana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0e84afd7c7e4767a241dab4942e6ef9883b75552ac25f4ef3db88879aa6416c",
+    "mention_text": "Chimpanzé Clube Trio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d287dd618474b13c553dba181dd1003ec8561ffa359d1ab035c3292edb5de837",
+    "mention_text": "Circo Teatro de Tubinho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2508f57eaaeecd780400961c6714eb4712900215525ff203726d20e854fb14f7",
+    "mention_text": "Palhaça Rubra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59961d60c6596352d52ba52ecbabbb3de822265d21a5a367a8300fedb9c3c626",
+    "mention_text": "Banda Lábios",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2655c298d5eb9cb4e19e4361cce95d7c9c915297a052f1fde20d6d62b304a3b1",
+    "mention_text": "Samba de Bolso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7c129d3c17c97e13c298606b20420d1cc4753e6c3bce0471bc6cff668e4d5a08",
+    "mention_text": "Mão de Oito",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7eec30f60a9986c2a4cd44603316248c02d7f21430876b60b3d1624dbeecb722",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  }
+]

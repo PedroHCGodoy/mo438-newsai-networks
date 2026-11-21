@@ -1,0 +1,438 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d2266179a17bb3724b06e625468593d3161f51566a20b72df9326121516ec99d
+
+TEXTO:
+O século acaba entre a macaca e o computador
+
+ANTONIO CALLADO
+COLUNISTA DA FOLHA
+Enquanto não inventarem um computador que sofra eles não sossegam. O objetivo é o que os técnicos estão chamando a criação da perfeita inteligência artificial (AI, como se abrevia em inglês) mas fica sempre faltando alguma coisa, que é o sofrimento que acompanha ou até determina a inteligência não-artificial, humana.
+Quando Garry Kasparov, o campeão mundial de xadrez, perdeu uma partida para o computador chamado Deep Blue, ficou danado da vida. Exatamente como quando Karpov, outro campeão enxadrista soviético, perdia para Bobby Fischer. Kasparov tratou de transformar seu despeito em paciência, analisou calmamente o jogo, descobriu o truque de Deep Blue e ganhou outro dia a partida definitiva. Se a IBM, que montou Deep Blue, conseguir introduzir humilhação e inveja em seu Frankestein talvez acabe por ganhar de Kasparov.
+Está na hora de informar ao leitor que não entendo rigorosamente nada de xadrez e que só andei lendo o relato de tais jogos quando, anos atrás, o craque que fazia tremer os campeões russos era esse tal Bobby, americano meio genial, meio doidão, que desapareceu inteiramente do mundo do enxadrismo e do mundo em geral. Como bom excêntrico que é, Fischer nem exibe suas manias nem fala em suas tristezas. Deve andar chateado com o prestígio da tal inteligência artificial de Deep Blue, e, queira Deus, um dia desses sai do seu eremitério, que não sei onde seja, e desafia o computador para um combate singular. Talvez só Bobby Fischer consiga pôr Deep Blue em lágrimas, alegrando, assim, toda a estranha seita dos informáticos do mundo.
+Essa comunidade, cada dia maior e mais metida na vida de todo o mundo, não passa da velha cibernética criada por Norbert Wiener meio século atrás. Acho que a cibernética era mais moderada e científica, mais de cabotagem que transatlântica. A informática é espacial, sideral e não anda atrás de novas máquinas e sim de um homem novo. Quer fazer um enxadrista que não perca de Kasparov nem de Bobby Fischer. Quer fazer um sábio, que, se perder do homem em algum terreno, será uma desonra para a ciência.
+Não que venha a ter alguma espécie de "alma", coisa que os homens imaginaram grudada em si mesmos na fase pré-científica do seu desenvolvimento. "Alma" é palavra obsoleta, conceito abolido. Mas o novo homem informático terá conservado seu orgulho, isto sim, do qual necessita para progredir sem cessar. Antigamente, nos dias em que fazia muita asneira e caía em depressão e temor ele falava na tal alma, mas era pura conversa.
+O primeiro macaco que Darwin viu em sua vida foi no jardim zoológico de Londres, em 1838. Aliás, era uma macaca, uma orangotanga, graciosa, enfeitada pelos curadores do "zoo", e que tinha sido apresentada, vestida de seda e cheia de balangandãs, à Duqueza de Cambridge. Darwin olhou, numa espécie de êxtase científico, aquela peluda senhorinha que só faltava falar inglês e atendia pelo nome de Jenny Orangotang. Vai daí, o tratador de Jenny resolveu fazer uma brincadeira. Tirou do bolso uma maçã, que ofereceu à jovem "lady" símia, que lhe estendeu com graça a mão, para pegar a fruta. O guarda fechou a mão, encolheu o braço. Jenny, incrédula, adiantou mais a mão. O guarda recuou mais a sua, com a maçã. A educação e o orgulho de Jenny ainda resistiram um segundo. Mas quando finalmente a maçã voltou ao bolso do guarda, Jenny, como se diria mais tarde num certo país tropical, rodou a baiana e soltou a franga. Deu um berro, um salto, atirou-se de costas no chão levantando a saia e rugindo, às lágrimas.
+Na melhor e mais recente biografia de Darwin, escrita por Adrian Desmond e James Moore, duas coisas ficam claras: que ele jamais esqueceu o ataque de raiva de Jenny Orang e que sua idéia da seleção natural não é a que engendrou a idéia hoje chamada de darwinismo social, isto é, a de que o mais forte esmaga, por sua própria natureza, o mais fraco.
+Darwin queria, isto sim, que os mais aptos prevalecessem, por serem mais fortes de espírito e não de muque. Não existe prova maior disto do que o horror que nutriu a vida inteira pela escravidão dos negros. Viajando no navio "Beagle" ele esteve na Bahia, em Pernambuco, no Rio, e, invariavelmente, seu encanto pela natureza do país foi em toda parte manchado pelo tratamento dispensado aos negros -o que trazia à sua mente os crimes dos ingleses contra os escravos, na Jamaica.
+Na Jamaica daqueles dias, o governo colonial inglês, diante de uma explosão de revolta, tinha feito executar 400 negros, açoitar 600 e derrubar mil casas de suspeitos na rebelião. Isto evocava Darwin na Bahia, ao constatar que um fazendeiro, para punir negros acusados de malandragem na sua ausência, ia mandar para o Rio todas as suas mulheres e filhos, para lá serem vendidos como escravos.
+Não era nem entre os poderosos ingleses do governo de Sua Majestade na Jamaica, nem entre os fazendeiros brasileiros, que faziam sua própria lei em relação aos escravos, que Darwin via o grupo humano dos que deviam sobreviver e comandar. Não eram esses os mais aptos. Eram apenas os mais violentos e selvagens.
+Quanto a Jenny Orang, registram os biógrafos que Darwin mais de uma vez sorriu ao pé do berço dos próprios filhos, quando se revoltavam, esperneavam, se enfureciam com a ama. O problema, já que éramos todos filhos de uma macaca, era, pelo amor e pela educação, ir entregando cada vez mais o mundo aos mais aptos a se humanizarem.
+Desconfio que a sociedade que está se firmando neste fim de século não agradaria muito a Darwin. Ele tinha desejado, do fundo do coração, que Jenny Orang evoluísse e se civilizasse. Mas virando, ao longo do tempo, gente, e não se transformando em máquina escravizada e escravocrata. Porque o computador vai sempre servir a meia dúzia de corporações e deixar sem emprego os que tiveram menos chance e menos acesso aos meios de dominar a nova ciência.
+Darwin seria sempre a favor de Garry Kasparov, ou, se o encontrasse, de Bobby Fischer. Deep Blue ele enfiava num navio negreiro e despachava para a Jamaica. Ou para uma dessas fazendas brasileiras onde ainda permanece o trabalho escravo.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ec3dfff13f7fad2926c02ad14e9c2dbe0c311fa603aea99d6cf1fdafe1559c82",
+    "mention_text": "ANTONIO CALLADO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ecf4b1c19628af9e53b7b809002068c691338b9a4635e0be292d2314154eb78",
+    "mention_text": "FOLHA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6231c26045e9e868f6cfbc972553fe16177c9b41f4b23196936e8f48f8b0320",
+    "mention_text": "Garry Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "502c9d51ddb590b8b7d414cc2af2976776966578ed0b2b895e150a728b3de7b6",
+    "mention_text": "Karpov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a6bdcb48ce0886d1cdd61fd3125efa8b64dc762d0289eca5c96c8a6277bb514",
+    "mention_text": "Bobby Fischer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "beef3283098195f38c0b19559a065860708c7f111f1f494eea6b7f1f35742a36",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a95c8ac96c09f91d7f3e6d3f74925f39c6fb38c57c0e3dc5d08f6d0cead787bf",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "033cea9d1098bf7c1493395f1aac3f5222fb9573c5c6a67a1c12cc3187463534",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fca62975928c08f2c75029b122c7f0446f225e4c693ff87f3de3d9943ffc84d3",
+    "mention_text": "Bobby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f1814ae839ef6155f8493061be11999f1e2e589bafee445d5f213228df97d64",
+    "mention_text": "Fischer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6bc3ac429efa70a19c5cce46c50c8b4f97b8e083e3845ed1152a611d54ee9fb",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ae782ff36f27bc12b4fd483b4cc3a9d59f213434ac2604a693dcfa00318c1f8",
+    "mention_text": "Bobby Fischer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5904d0a065f24fc7065bbc7bfc1160d223e93e5c85bc7407bb202c650ddb9482",
+    "mention_text": "Norbert Wiener",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c1238032234cc51a6b9b6eff41441ed1a77d4ece8a8bb6fa56d415763ed640c",
+    "mention_text": "Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b1a98f4f4fd7b5cae9a7f82199b17e03522e6592480506606fcd788186b4203",
+    "mention_text": "Bobby Fischer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0f2cc02ffc09e04386be254f7d06a861fdfec83b45d0f5f998c33b22e5384c8",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbb710a017208e0b3aa24b23de039bede8e4a2292d45530ba550524106034ae1",
+    "mention_text": "jardim zoológico de Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d1601b9a1b3c504a6cd65158f1aeb6eba7316ea999c30856ce267249f2c90792",
+    "mention_text": "Duqueza de Cambridge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b00a43cd0518ed7c6299aa1519848f64ced375b6f74407c6e4695ad66b58322",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b59afd265d1459e6c573c5d41a1005787be070d665174dedd96090a93711546d",
+    "mention_text": "Jenny Orangotang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5bee39c9098fbb6e5fd1068fb1d1f2417692e51a5cc28abb0b92291f3875e826",
+    "mention_text": "Jenny",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd38993f5e27648b660108e61a59cdf4d062145755a58e2e1c31df96ab9fe5f9",
+    "mention_text": "Jenny",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d37816b70afbf4ab4b9e797bcb89ce1d3d13bcc854cdee3f9294202e8864ba2d",
+    "mention_text": "Jenny",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8f6696374e8ab8b6f1ad4ef6b4caa320b4ddc33c100c61149a3a0720ac54f69",
+    "mention_text": "Jenny",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e833460b59555b5bc6d664358bb727e1bd68419f1fe14724af30821a1dc10e4",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42308ce1aad1365bd631a7e9b181647b20a4d0138e33c6308db218a643dc98d5",
+    "mention_text": "Adrian Desmond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a325dfd0b0a3dc63d103c83eebbca9a3d567b3eab32786da077a74d4b83a4168",
+    "mention_text": "James Moore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "878587bbcac52bc0dd29a30345f3e8bfa57c8ec8979e1e40ef5d1ecc44def49f",
+    "mention_text": "Jenny Orang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9ffe2a200cfe584a7e27176220559bb3cb5c364d6a2baf32171f3e482d6b78e",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "899f333bfec5a70f168a7b61f0b98a200f33e7fd165486ebfee65576e2432ba3",
+    "mention_text": "Bahia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff0918651b26b8895c367a46dc30ac157b3efcc83b7a25e62d600f66910a2e08",
+    "mention_text": "Pernambuco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7546bb1ebb02eb60eade158caf40fc05a45de3390d873a3db698011d35c7c666",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f19cb93bcb7012c88562a790a2f23ffccdf3b6285e0e5c13ae57e0b426e9b1f2",
+    "mention_text": "Jamaica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53d6ccc3d9887fd344edc1aa843ac6a617477a1ff8fb4b151f15ac1d3f1d7148",
+    "mention_text": "Jamaica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee1ad89461d0b14529ea3d83e36e99e09ab68c0f377478306c6857da0cb86d50",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "047f839f41677db6e65e212a06e367d767a5ab4ec26a0bb547990189b86a27d2",
+    "mention_text": "Bahia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa1715554cca52ad734b3a9219383b4fd6b3a5c0186c44d02b2e0ed84617e4e4",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a61fffa28225ce92a32ef5df2249ddd7db4075cb5ad2b3afa306ed2bf396d156",
+    "mention_text": "Sua Majestade",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "414ba487fc90237155222b522012116dc71edfe2e54803e55801e95f23701467",
+    "mention_text": "Jamaica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0c52cf0b052941f4319291452d5976f0cafefca576fa33e6d4450d2519f3214",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4361cb07191e69c26af75aeb10a3701c70e1d6835f7166dc787b212afa137e5f",
+    "mention_text": "Jenny Orang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "500cc4bb2fac3c63f97563d04ac6dae22bbba40eac1aecfcb7a35a7e4f0b3db2",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8cbc52482699eae6ef86e9732dd796ac3f393154b5e01b0cdfd5fb86217904a3",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c75c8a05e4604f50de566f48d2d9e1921ac05b97fd077289089c22ea97df8b3",
+    "mention_text": "Jenny Orang",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8ad2fde94ed2ad8af0e308f8b1b4dd6c032d48931b53fe875e03939d874cd7c1",
+    "mention_text": "Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3af2b1b6c8f04d95832fc3cbace3453b69ec6759c464e0e3f04fe438cc89ee29",
+    "mention_text": "Garry Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b440f9fcaf8be23bf2c81a8c3e82e3bdccc136655174e26cc77f99b56c378582",
+    "mention_text": "Bobby Fischer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d57b610a5dc7f6d5b4a5baf656b7688f78cb3331a3c124871e19e65b8e81045",
+    "mention_text": "Jamaica",
+    "categoria": "LOCAL"
+  }
+]

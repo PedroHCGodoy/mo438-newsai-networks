@@ -1,0 +1,364 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: b5f7ede6f68bcd6f4b019558b3d807ea7de094884248e2f39851c1da711127bd
+
+TEXTO:
+Revolução na indústria avança com conectividade e inteligência artificial
+
+Roupa que monitora a saúde do usuário. Geladeira que faz compras on-line ao notar que o estoque de alimentos está no fim. Embalagem de remédio que avisa quando venceu. Carros, aviões e metrôs que dispensam motorista, piloto e condutor.
+São previsões para os próximos anos, com o avanço da chamada indústria 4.0.
+Apesar de o país ter caído 22 posições no índice global de inovação em 2016, a expectativa é que o tamanho do mercado acabe empurrando o desenvolvimento.
+"A indústria sofre efeitos da crise, com redução de financiamento à inovação, mas é desafiada a avançar. É uma imposição para competir", diz Rafael Lucchesi, diretor da CNI (Confederação Nacional da Indústria).
+Conectividade, internet das coisas em todas as fases da produção, impressora 3D e inteligência artificial estão em uso em especial nas cadeias de biocombustível, automotiva e petroquímica.
+Nelas, já se notam ganhos de produtividade, prazos mais curtos de lançamento de produtos, maior flexibilidade de linhas de produção e impacto na capacidade de as empresas se integrarem em cadeias globais de valor.
+"Os desafios ainda são muitos, até entre segmentos com maior grau de uso das tecnolo­gias", diz João Emílio Gonçalves, gerente de política industrial da CNI.
+Entre eles, ele cita ampliação e melhoria da infraestrutura de banda larga (essencial para o sistema), aplicações das novas tecnologias entre fornecedores, aspectos regulatórios e formação profissional.
+Com a Mobilização Empresarial pela Inovação, sob coordenação da CNI, o objetivo é buscar alternativas para resolver desafios, com políticas públicas, investimento e estratégias que de fato transformem a indústria.
+Com 900 robôs nas fábricas de Pernambuco e Minas Gerais, o grupo FCA (reúne Fiat, Jeep e Chrysler) já produz modelos com conceito de 4.0, como o Fiat Argo.
+Na linha de produção são comuns exoesqueletos (estrutura biomecânica usada para ergonomia em operações de maior risco), impressora 3D e smart watch (funciona como relógio de pulso e controla a produção).
+"Em cada carro são rastreados os dados das peças montadas. Há um controle maior de qualidade em tempo real", diz o italiano Pierluigi Astorino, gerente da FCA para a América Latina.
+Ao conectar a produção de freios ABS em 11 unidades no mundo, a alemã Bosch foi uma das primeiras a usar e fornecer tecnologias para a indústria 4.0.
+A integração entre as linhas foi planejada há sete anos mas só a partir de 2013 os softwares ganharam algoritmos que permitiram torná-las mais inteligentes.
+"Se o tempo de uma máquina passar de 10% do previsto, é dado imediatamente aviso ao gestor. Antes, só se veria a perda de produção no dia seguinte", diz Julio Monteiro, diretor da Bosch.
+A linha de freios também para automaticamente nas fábricas quando são detectados problemas. "Se há defeito em um lote, o sistema avisa às demais fábricas, e o componente é descartado."
+SUSTENTABILIDADE
+No setor têxtil, os avanços miram ainda processos mais sustentáveis. Em Santo André, a fábrica da Rhodia, do grupo Solvay, criou o primeiro fio têxtil de poliamida biodegradável do mundo.
+"Roupas com esse fio desaparecem em até três anos, se descartadas em aterros sanitários. As fibras sintéticas levam até 70 anos", diz Renato Boaventura, presidente da área de negócios Fibras. Caso das peças íntimas, cujo descarte é comum.
+O grupo aplica cerca de 2,5% do faturamento mundial em inovação, pesquisa e desenvolvimento. Com processos digitalizados, reduziu consumo de água, valor, energia e custo em 10%.
+Com a manipulação de nanopartículas e microencapsulação de ativos, a Nanovetores Tecnologia (SC) criou processos para aumentar a eficácia de produtos e permitir novos tratamentos.
+"Conseguimos colocar um ativo, uma vitamina, um óleo essencial no produto sem misturá-lo ao creme ou em contato com a embalagem. Isso faz com que o cosmético não perca vida útil, além de aumentar sua eficácia", explica Betina Zanetti Ramos, diretora e sócia da Nanovetores Tecnologia.
+Quando encapsulado, esse "revestimento natural" protege os ativos e potencializa a sua ação, reduzindo de meses para dias o prazo para o início dos efeitos.
+Indústrias de cosméticos, dermatológicas, veterinárias e têxteis já usam roupas com tecido com microencapsulados que hidratam o corpo ou repelem mosquitos.
+Nas farmacêuticas, a inovação ainda está mais focada nos produtos do que nos processos, diz Jair Calixto, gerente de inovação do Sindusfarma, que representa o setor. "Há espaço para a indústria 4.0 avançar no controle de dados. Hoje, parte dos dados repassados à Anvisa ainda é feita em planilhas ou até manualmente."
+*
+INDÚSTRIA 4.0 OU PRODUÇÃO INTELIGENTE
+O que é A quarta revolução industrial integra a produção das empresas a partir de sensores e equipamentos conectados em rede e conecta os mundos real e virtual da cadeia produtiva e da economia
+Como é A internet é a plataforma de intercâmbio; ela integra um número ilimitado de dispositivos, a internet das coisas, ou IoT, na sigla em inglês
+Como funciona Máquinas e insumos "conversam" ao longo da cadeia com escala e flexibilidade do processo de fabricação, que pode ser feito sob medida (customizado)
+O que envolve De desenvolvimento de produtos a simulação das condições de produção e pós-venda. O processo industrial passa a ir muito além da produção e distribuição de um produto
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "5f9de526c0efb018e07f2826bfcb9ced5dd1fc2e396d2275c69f3b84cf7eea01",
+    "mention_text": "Rafael Lucchesi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee248ba49b1ad7b49e459881e000afc90c181b486b55fbe6676c7eaf8142656c",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7a65621cad1610ae1df9877155b7ce96fbb963cbb4b7b4db6ead8e25c847926",
+    "mention_text": "Confederação Nacional da Indústria",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0a573dcfe44cc2ee4554e978f2b1ff5676a1b3be2c69a9cecd036aabc639ae9d",
+    "mention_text": "João Emílio Gonçalves",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8208ca00557750e3a15dd89a8af7f8745180c3ecc7107e8d75216ac020c6a66",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "411fb40432b493c83b0c391b5cd875a3ac55c4807bee0388f9f656d5bdca84f6",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "175caaed096c23db81ff6d27e9d7e9f7e2df856c95323051cdea4792fd44a8a9",
+    "mention_text": "Pernambuco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a75092beee179055b8cbfaf87479b6967f022dd86507f2473f20a98f3f9a6f63",
+    "mention_text": "Minas Gerais",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5eb1b23cd1392ecb64e2dc321bef9d294c2a1552955c77a3f0133d9d6d59e797",
+    "mention_text": "FCA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e4d7ccc1a903c1432b0ef556172f740560fcd5b1a2a4108493c8a6d920fa74e",
+    "mention_text": "Fiat",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9a1c442bf320f1440b4467e0eb7a34035fcc09380fb833eb70ea9452974bc99",
+    "mention_text": "Jeep",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f82259882f39a2b928b23213ba48b53f3d34e667ca0e0f97d2b281558b8ecc3",
+    "mention_text": "Chrysler",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44f0a2ec90fdc985a0cfe873baa3df18db2520b9f07e85e3ccc302c4857a3ec3",
+    "mention_text": "Pierluigi Astorino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b6171ce697239134632673a96dfea17448d0c01c2af87b8f1729e53c95fd5f6",
+    "mention_text": "FCA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc95f59d74ba1712ef9e7114d9c7cd6591eb83e046d70806bdc5722637ef4b80",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a18a632b53aac580fb56c3d1335c1067c5092ec5141b220a6fe23d8ddfecf92f",
+    "mention_text": "Bosch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce99fcd6084f7e5181b8da1fcc2e212698ca619f9bf75acdce4566499fbc3fa4",
+    "mention_text": "Julio Monteiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73ccd4cde8b96571479cd650264af27643789505dcb6fc3cc5175e469a3ee010",
+    "mention_text": "Bosch",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbd6908658492786c08a5a2b763ccda5479138f6572de33ded880a0eaa879e67",
+    "mention_text": "Santo André",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2834ec5be951407421e757290ef3861f4edee0d5339a9da85438118573d916b8",
+    "mention_text": "Rhodia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72baeb7ad2891e3b8452fa5753430dd7f9f7609dd8567849861367e823881590",
+    "mention_text": "Solvay",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e559355c46428c1207c4475ede2eba54e2384ab79efdac65451f033e47d16fdc",
+    "mention_text": "Renato Boaventura",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2c2c56782a4685997a9f5e03fdd3235945be509375939c0c94dfd76ef3059f4",
+    "mention_text": "Fibras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f216b20dff5bf1da6a08506d2e5844906b782a329902f85b237ebf09e046ff8",
+    "mention_text": "Nanovetores Tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f5550c102d2a4d2b855f759cd8c79e6b375570cb58cfce866679706c1147d29",
+    "mention_text": "SC",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "84282258c0cb53f552630460a37abffcc1f9ec36328e3d625a79fa8fa2351b4d",
+    "mention_text": "Betina Zanetti Ramos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ce2673421f7a49637422844110d17909a0fa471e4bc4b55e92a5fd9f8509900",
+    "mention_text": "Nanovetores Tecnologia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff7abd1b2dd5088edf46c65cc592b655ce5d92b7270eed97ec541e6c5cca6b38",
+    "mention_text": "Jair Calixto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d93a51e805bd9602456b6d703dabab9bfb292d76e8c4ab0537c86019c3cf0a8",
+    "mention_text": "Sindusfarma",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0dd832dd8ee9c9a9821d7460efa8b683f3fba0fef80a090c8fb73f72bbe9c522",
+    "mention_text": "Anvisa",
+    "categoria": "ORGANIZACAO"
+  }
+]

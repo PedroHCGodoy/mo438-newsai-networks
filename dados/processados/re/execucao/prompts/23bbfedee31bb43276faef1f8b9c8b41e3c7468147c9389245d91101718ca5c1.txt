@@ -1,0 +1,408 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 7a578b4da1c65fd4b0d00b4bd695b06286ad5a856d5166c04347e6088444f5b5
+
+TEXTO:
+Anima Mundi começa com programação voltada às animações em realidade virtual
+
+Com o olho esquerdo, Vaysha vê o passado; com o direito, o futuro. Por isso, nasceu sem chances de viver o presente. Quando é pedida em casamento, por um olho ela enxerga o proponente quando criança; pelo outro, quando idoso.
+Essa é a história da animação em realidade virtual do curta “Blind Vaysha”, escalado para o Anima Mundi, que começa nesta quarta-feira (1º) e vai até domingo (5).
+Dirigido pelo búlgaro Theodore Ushev, o curta permite que o espectador se sinta na pele de Vaysha ao alternar o olhar entre esquerda e direita.
+O filme integra o novo espaço do evento dedicado exclusivamente a animações em realidade virtual, ou RV.
+Fernanda Cintra, diretora executiva do Anima Mundi, diz que a ideia é que o espaço dedicado a isso se transforme, nos próximos anos, em uma das categorias da competição.
+A nova proposta do ciclo de animações dialoga com a expansão de um universo de desenhos criados com essa tecnologia, como “Cycles”, da Disney, que será lançado em neste mês como o primeiro curta em RV do tradicional estúdio.
+Um estudo do Goldman Sachs realizado há dois anos estima que o mercado de realidade aumentada e virtual vai movimentar o equivalente a R$ 131 milhões até 2025.
+Hoje, há estúdios que se dedicam integralmente a animações em RV e realidade aumentada, como o Fable Studio, com sede na Califórnia.
+Presente no Anima Mundi , uma das criações deles é “Wolves in the Walls”, baseada em um livro infantil de Neil Gaiman e Dave McKean, que aborda temas como o enfrentamento do medo.
+Em entrevista à Folha, o diretor Pete Billington afirma que o recurso tem se mostrado cada vez mais presente, pois “faz com que o espectador esteja próximo e se sinta uma parte da história”.
+Nem todos os vídeos selecionados, no entanto, tratam de assuntos caros às crianças.
+Em uma das opções do catálogo de RV do festival, a crise dos refugiados é retratada em forma de animação. O curta “We Wait” mostra a jornada de uma apreensiva família ao cruzar o mar. Nesse percurso, compartilham seus medos e experiências passadas.
+“É uma possibilidade de tratar de um assunto sério sem chocar tanto o público”, afirma o diretor do Anima Mundi, Marcos Magalhães, que organiza o festival desde a sua origem, há 26 anos.
+Mais
+Corinne Brenner, coordenadora de produção do estúdio Vrai, acredita que o despertar do interesse pelo gênero tem a ver com a possibilidade de interação entre o espectador e o cenário artificial. A produtora em que ela trabalha é especializada na criação de conteúdos de realidade aumentada e virtual aliada à inteligência artificial.
+Para quem está à frente da produção, diz Brenner, realizar uma animação em RV se traduz em trabalho triplicado, já que é necessário pensar nos detalhes das animações nas três dimensões.
+A possibilidade de utilização dessa tecnologia vai muito além da indústria cinematográfica. No mundo das artes visuais, ela já é uma figura bastante presente —e polêmica.
+Um caso célebre foi o do museu Whitney, em Nova York , onde o artista Jordan Wolfson criou um mundo virtual em que aparece espancando um sósia seu até a morte com um taco de beisebol.
+Outro episódio que perturbou os fãs de arte aconteceu no New Museum, também em Manhattan, com uma performance de seis bailarinos, sendo um deles um holograma.
+Em São Paulo, experiências como essas podem ser vistas no File, agora em cartaz no prédio da Fiesp, onde a maioria da programação é dedicada à RV.
+Numa das obras, Martina Menegon provoca a plateia ao construir um cenário em que silhuetas femininas nuas parecem flutuar. Usando óculos e controles manuais, o público pode interagir com as mulheres, esticando ou arremessando seus corpos.
+À época da abertura do evento de arte eletrônica, a organizadora Paula Perissinotto disse à Folha que “poderia ter tido uma exposição só de RV, mas o público ainda não está preparado para isso”.
+Mais
+“É um recurso que tem possibilidade de transformação, já que, ao se desconectar visualmente, você entra em um outro mundo, que mexe com todos os nossos sentidos”, acrescentou Perissinotto.
+Não se espante, porém, se essa experiência sensorial causar enjoos. De acordo com Cristian Cunha, coordenador do curso de animação e realidade virtual da Escola Britânica de Artes Criativas, em São Paulo, esse é um dos atuais desafios dos desenvolvedores de software que ainda precisam ser lapidados.
+“Isso acontece porque os óculos são ligados a um computador, que, se não tiver uma alta potência, pode rodar o programa com o número de frames por segundo inferior ao indicado”, detalha.
+Ele lembra que outro desafio é criar uma narrativa em animação em que a pessoa tenha um campo de visão em 360 graus e não perca parte da história que está sendo contada. A interação, por enquanto, é limitada aos sentidos da visão e da audição.
+O professor conta, no entanto, que há estudos sobre a inclusão de outros sentidos, que possibilitaria até provocar sensações de calor ou frio, mas adverte que esses cenários podem se tornar mais interessantes do que a vida real. “É como no filme ‘Avatar’, em que um paraplégico é transportado a outro universo, onde passa a andar”, compara Cunha.
+Anima Mundi em números
+Veja abaixo alguns números do festival de animação, que começa nesta quarta (1º), em São Paulo
+1,5 milhão É o público que o festival recebeu desde o seu início, em 1993
+11 mil Filmes de mais de 70 países foram exibidos ao longo dos 26 anos do festival
+1.805 É o número de filmes deste ano, que registrou um recorde de inscrições, com 45% a mais que no ano passado
+405 É o número de filmes nas mostras oficiais de 2018; eles representam 40 países
+108 Dos 405 filmes na mostra principal são obras brasileiras, de 12 estados
+6 Competição do festival se divide em seis categorias diferentes
+‘Animal Behaviour’ O curta canadense venceu o grande prêmio do festival, no último domingo (29). A animação recebeu R$ 15 mil e é candidata a disputar uma vaga no Oscar
+Memorial da América Latina, CCBB, Cinusp e CCSP São os locais que recebem o festival de animação, em São Paulo
+A jornalista viajou a convite do Festival Anima Mundi
+Anima Mundi Qua. (1º/8) a dom. (5). Para a programação completa, acesse: www.animamundi.com.br/pt/
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "32aa4f789ee6036da806d917806f2b00aafbd426a9f8b0c5cb0fe4ede563f024",
+    "mention_text": "Vaysha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44272e81908f066671e28283be99523f9cf0cc1146adb49fd43fc11f3b9af39a",
+    "mention_text": "Theodore Ushev",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0604e53df282aa5b723ee09889b88e429209ff05db7cf2986e68b1e8c6daf938",
+    "mention_text": "Vaysha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34d43c7f904d655754d9e71afb1bc201697a463628bee7cf905d592ed93c9d83",
+    "mention_text": "Fernanda Cintra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92f9a8ec4705aa7efc1619c0fa29c922925048e8515d6b6411896a06a5b028a0",
+    "mention_text": "Disney",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "621422810a27323e80305c3db282b439526181d5b9f9c162287bc3f8f88969a8",
+    "mention_text": "Goldman Sachs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7de2d026a382e9b08d2ef980147578ff2c117a4c06ba901c294d53ea15a41bdd",
+    "mention_text": "Fable Studio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d6fc2aa3992a58ed968205b4f07b44579fe21cab71d96db74212096ea408d665",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a975983d63aa2355d93c10e450635561dd7c29d85aacf3409417ce86c4f062d",
+    "mention_text": "Neil Gaiman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fccc60fee1e51922b4aaa0f8a1d651d02a43a907293e75cff5012f505cc89d0b",
+    "mention_text": "Dave McKean",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2087dc68bb955e713f583f61d36a6080888b8266a2b450ba3fa705c48fead7c",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23b2edf8e0e6c7e6a386d05375771e8c08902c6136ec715959ea885f20b20da9",
+    "mention_text": "Pete Billington",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "877de7e8a5026006a690401c7c8dc0594f10b2deecc1c09409a6f951eae0e36a",
+    "mention_text": "Marcos Magalhães",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a04c18a4337bbde5909f9d5082db9267e1f9d8644fc7fdbb7709b405e3fd12b5",
+    "mention_text": "Corinne Brenner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfc8b6e6328f04bb9821a106d44b935c9f993e043980f16e886648c3752014c0",
+    "mention_text": "Vrai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "87fb7fdbe839d7c322a4e111cff6d367c419638a68bdd159ac041334f6c33d15",
+    "mention_text": "Brenner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "94ddb531384afcb3b10ef7525b89e7cd0a4cd9c95c3de0f5755ba0f174203d66",
+    "mention_text": "Whitney",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "562d35df4603d834662a36352562f78f5d932e2499fa532eb4fb170cf8abb711",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "931443c267be914a4b8f8185c73798af09405e8540beea663e131558afbda3d6",
+    "mention_text": "Jordan Wolfson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6f3d3dc5a913b8192fe08e175ba1638d416cd9de20663b3eb30ed85004105548",
+    "mention_text": "New Museum",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "086d4dfcf151d8464e38138e86d783273be6607475433e7e37b151c61920f3a8",
+    "mention_text": "Manhattan",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0965340f157816f7b80a5c862458027948dac97b9440f37604aac68f8c72122e",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "85ebedecc5ea83fc122ef7a0a4c2c22ebc7524050acd9f14195462f7cbdc158d",
+    "mention_text": "Fiesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41bf23fe501bfa9dd57b0145f9e01d8ab0ffcd5eb502291362813fda064530b9",
+    "mention_text": "Martina Menegon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "db1ece0e5c88b8211726be5f8e444d955dbd841f2effcaa1831633c385e2b1f1",
+    "mention_text": "Paula Perissinotto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "16a9e1a16f62e4fe5933da534fd457d31ea8970c79952970d874c1f417408d1d",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21e3122be3e47999ea88264305f4955f71b3efd95cc0251a7bf7d10459d78c4d",
+    "mention_text": "Perissinotto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2945b56fbbc7e7224a377d742e6254b9e132367e57038f10bfb632013b61178",
+    "mention_text": "Cristian Cunha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e896b9f727820546bc4d52377572ae3645ec5d336cf141c553321334c3eea55",
+    "mention_text": "Escola Britânica de Artes Criativas",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f7989c9e7b2ec880310f586f5248109400cd2c8dd528f8875b63736308f98e41",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01ce280cad24dc7a686748741a48bdb4dd65271b41d0a83c68f4547709f0055f",
+    "mention_text": "Cunha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f580b7e93c2d0e0aa83e6566cf6a237b59a762718e94bc87f5f7125e5c8fcc1",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ff73082d6797d8af97be3a635b7676684321e911302c0099ca3445ce96084431",
+    "mention_text": "Memorial da América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f00d23dbf19bf01bfc25d3ff88933da516ae05e9c666a5d54c9bfc4b0214f925",
+    "mention_text": "CCBB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c6212da6a62911e301df0842e611f51f6754f4fdce7379c3b3fb900b579b95a",
+    "mention_text": "Cinusp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e37d091523cce061bb96f9ac008ca7517bdbce7d716a8eb5efe47beff0af88d",
+    "mention_text": "CCSP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a91a533f33cfc90f467c519b8643aa60b8c31e8fba3d0588e125db353326d5c7",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  }
+]

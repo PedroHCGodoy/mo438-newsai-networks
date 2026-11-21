@@ -1,0 +1,352 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d212562d6e47086fc5325529f7e9345a0433fd26ee32f5797d6bf32ffc2dbfba
+
+TEXTO:
+Máquinas se atrapalham com tarefas que os humanos acham simples
+
+Em filmes de ficção científica como "Ex Machina" e "Chappie", robôs se movem com uma destreza impressionante –e muitas vezes malévola. Eles parecem confirmar os piores temores de tecnólogos e cientistas proeminentes, como Elon Musk, Stephen Hawking e Bill Gates, sobre o possível surgimento de máquinas autoconscientes dispostas a fazerem o mal à espécie humana.
+Hawking disse à BBC que "o desenvolvimento da inteligência artificial completa pode significar o fim da raça humana"
+Calma lá. A Agência de Projetos de Pesquisa Avançada de Defesa (Darpa, na sigla em inglês), um braço do Departamento de Defesa dos EUA, promoveu recentemente o Desafio de Robótica em Pomona (Califórnia), com um prêmio de US$ 2 milhões para o robô que apresentasse o melhor desempenho em uma série de tarefas.
+Uma prévia dos trabalhos apresentados sugere que, por enquanto, não há motivos para se preocupar com o aparecimento de um Exterminador. Na competição, os robôs têm uma hora para completar oito tarefas que um ser humano levaria menos de dez minutos para realizar, como abrir uma porta e entrar em um quarto.
+"Nos últimos cinco anos, houve um progresso extraordinário na percepção das máquinas", disse Gill Pratt, gerente do programa da Darpa encarregado do Desafio Robotics. Avanços em hardware e software de reconhecimento de padrões propiciaram aos computadores melhoras em termos de visão computadorizada e compreensão da fala, segundo ele.
+Por outro lado, disse Pratt, houve escasso progresso na "cognição", ou seja, nos processos necessários para uma verdadeira autonomia. "Sem uma pessoa, essas máquinas não conseguem fazer praticamente nada", disse Pratt.
+As complicações na criação de robôs móveis capazes de imitar as capacidades humanas estão levando os especialistas em mecatrônica do mundo todo a repensarem seus objetivos. Em vez de tentar construir robôs autônomos, muitos pesquisadores começaram a pensar no desenvolvimento de conjuntos formados por seres humanos e robôs.
+Ken Goldberg, especialista em robôs da Universidade da Califórnia, em Berkeley, defendeu que o mundo da computação deveria abandonar sua obsessão com a singularidade –a noção de que computadores irão superar seus criadores humanos. Ele propõe um conceito que chama de "multiplicidade", com diversos grupos de humanos e máquinas resolvendo problemas colaborativamente.
+Há muito tempo, os pesquisadores que estudam a inteligência artificial observaram que tarefas simples para humanos são grandes desafios para as máquinas.
+"A ideia intuitiva é que quanto mais dinheiro você gasta em um robô, mais autonomia você será capaz de dar a ele", disse Rodney Brooks, do Instituto de Tecnologia de Massachusetts (MIT) e cocriador das empresas iRobot e Rethink Robotics. "A verdade é que o contrário é verdadeiro: quanto mais barato o robô, mais autonomia ele tem."
+O Roomba, da iRobot, por exemplo, é autônomo, mas a tarefa que ele executa –aspirar sujeira– é extremamente simples. Já o Packbot, que foi projetado para desarmar bombas, é mais caro e deve ser controlado por pessoas à distância.
+O primeiro desafio promovido pela Darpa, em 2004, envolvendo veículos robóticos contribuiu para despertar mais interesse pela inteligência artificial. No desafio de 2005, um prêmio de US$ 2 milhões foi entregue a um grupo de pesquisadores da Universidade de Stanford, na Califórnia, cujo veículo derrotou outro em uma corrida acirrada.
+O concurso motivou o Google a iniciar um projeto de carro autoguiado. "Tínhamos uma tarefa relativamente fácil", disse Sebastian Thrun, que liderou a equipe de Stanford em 2005 e mais tarde iniciou o projeto de veículo autoguiado do Google. "Hoje eles estão fazendo as coisas difíceis."
+Sua visão sobre a relação entre seres humanos e robôs foi moldada pelos concursos. "Sou um adepto fervoroso da ideia de que a tecnologia avança complementando as pessoas, em vez de substituí-las."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "2a7e4566dda38106ad5bf953415d7af68572155cafaf2d5fdab3a72f774f76b1",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d91c5f0a832d6a9588642473266732a80a272751144d60d45eff97cc7c95c6f",
+    "mention_text": "Stephen Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06a6c33ee4428ef9a64b0e7d2fcd78d9172f74ac4626b0a34735bd2b37df4e9d",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "729a1a3d55b20198b79ce70591cfc1323db06856159d86a508154e4b4dde252d",
+    "mention_text": "Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d9f669de02541f5c73c88a069fa62561d138fa76329d07d6604314a050df2a0",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72c35a415b53d66c3b9adb684c6e01c7bb7c490fe0e1d457d9a95365692d1f60",
+    "mention_text": "Agência de Projetos de Pesquisa Avançada de Defesa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90a058dc2e069ae0567424c1fed5c8652ed094a8d351892f08169aa772609d43",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53bc2e68ea3fceeedfc4767fa7d1f1090358acc52f86447945b6be8cca8f4fe1",
+    "mention_text": "Departamento de Defesa dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c4061cda51ddef3c4764ca50cfbdf8abd14e88ee77fbee76f0f298fe00b4cb8",
+    "mention_text": "Pomona",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "029b51d36a6148be9d826a2b83da6153bd963e96b1c07b77a692ed538c48df3a",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee17b80798998ddf9eaef90556bc1c554423c7b6a41bd3a55d55ce2cb77be9f0",
+    "mention_text": "Gill Pratt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea5e1816e8964425b80ee2ff806322434d9b929fda0babc634c031c7423ef9ec",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5f09e701e4563e9faba5f331424f0b0584c940301184276fb54dde80f39ee18",
+    "mention_text": "Pratt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa8a3e92286b53e5ffb44441518f9c6baf1bf756f98d2abf613307e52369925f",
+    "mention_text": "Pratt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64885c99bb7744c256ea8f57614b017777167082adf654deed3d46455def1c1e",
+    "mention_text": "mundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "732d6bd3d2fff29c553a57d98390556c3526cef5ad4d4c0d44e8f1f0b5533358",
+    "mention_text": "Ken Goldberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e39386bae48d33c6c2cb4a3d403f1cd9589c1e5aa966dec47d49f60a1bc694cb",
+    "mention_text": "Universidade da Califórnia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68dd1f06beeafdf6aa288845cf2b4837f61e5f25519c68a90735103bf65f2d70",
+    "mention_text": "Berkeley",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3885763550ba2a6b9b9672dbc01c6dae8a002f36403b2f262ded055fcf1e46ef",
+    "mention_text": "Rodney Brooks",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e5528bab935649adfba9c663674b6c445a50a983bf822e794c58b71442d17bfc",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45c30707bda187a360213d475b2506a7a6529442a0e05a0c9bfb02ac232bcfdd",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3c0f3dda319aaf1efd89c4daeaa53464139de53ccb8cd166bf4e0b4e90ca407",
+    "mention_text": "iRobot",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54f98792077adc95ec9edc94c56d717c877ad58bd66b6c4acff1de96fbffeb36",
+    "mention_text": "Rethink Robotics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "711417b6e5a744f633ea2729c3b88ce398093316dde339a53d2ef667830188e8",
+    "mention_text": "iRobot",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0e2f8c6158df1bc2a5e07d96ec73c4fbf368a7babc4753b757657ca208dc1f0",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0d6ebc16a25ca5fe7ea2c48e289dbb517bfee1f36a3a8f7b2e7738650ec1ab5",
+    "mention_text": "Universidade de Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18642b4060209624dd1a49e24db02f4d055bf16d3f02817b575161d744a4d977",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d484716392278cca8753900a5aaedc9d7e0ff958ef886f149db046a70058b9e0",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3da99a55ade49ea4c424b882a041f36a7b87ce782b13f008e29daaf4af192a12",
+    "mention_text": "Sebastian Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68bd1fe1a4692bdd45ba6cad901a41caab979fb03c8ae711fe9f044624c11198",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fcc766a93b9c23b42aa34817e054c8dac583f2304166a3f621144a4392ef4e3",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  }
+]

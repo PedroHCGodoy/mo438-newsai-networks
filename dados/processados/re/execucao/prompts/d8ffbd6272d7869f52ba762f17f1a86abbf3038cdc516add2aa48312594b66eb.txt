@@ -1,0 +1,438 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c7656d7f81361c86f9924a8f4550ae2092a6e3c941ecd95a679f3822928c53c0
+
+TEXTO:
+Cápsula idealizada por Elon Musk ganha réplica em São Paulo
+
+A cápsula de transporte idealizada por Elon Musk, presidente-executivo da Tesla e da SpaceX, patenteada pela empresa americana Hyperloop TT, ganhou uma réplica de 12 metros de comprimento e 2,7 metros de diâmetro no Welcome Tomorrow Mobility Conference, evento que reúne startups, investidores e especialistas em mobilidade até quarta-feira (31) em São Paulo. Com óculos de realidade virtual, visitantes podem viajar no interior da cápsula. A experiência dá apenas uma ideia visual do que será o futuro modal, que a empresa pretende implementar comercialmente em Abu Dhabi em 2021.
+A Hyperloop, cofundada pelo empresário italiano Bibop Gresta, também investe no Brasil. Em abril deste ano, abriu um centro de pesquisa e desenvolvimento em Contagem (MG), onde quer criar uma alternativa para o transporte de cargas em cápsula.
+O investimento na pesquisa e na operacionalização será dividido com a Fapemig (Fundação de Amparo à Pesquisa de Minas Gerais), que destinará R$ 13,5 milhões para o programa em quatro anos, e com investidores privados. A empresa colocará R$ 13,5 milhões no centro, e diz que só aguarda o financiamento para iniciar a operação. O sistema da Hyperloop tem como objetivo principal transportar passageiros em cápsulas. Elas funcionam dentro de um cubo de baixa pressão coberto por painéis solares. A cápsula ganha um impulso inicial de energia elétrica e se mantém em movimento com energia magnética. A velocidade pode chegar a 4 mil km/h, embora o limite permitido para a segurança e conforto dos passageiros seja de 1.221 km/h. Uma cápsula poderá abrigar de 28 a 40 pessoas. A primeira pista de testes está sendo construída em Toulouse, na França, onde percorrerá um trecho de 5 quilômetros. "Em 10 anos, tudo será completamente diferente na mobilidade”, disse Gresta em palestra na segunda-feira (29). “Precisamos de tecnologias que ainda não estão aqui.”
+Além da "cápsula de Musk", outro destaque do evento é carro 100% autônomo desenvolvido na UFES (Universidade Federal do Espírito Santo). Com financiamento de R$ 1 milhão do governo federal desde 2009, o projeto acadêmico colocou o Brasil em posição de destaque no domínio da tecnologia, embora seu desenvolvimento industrial e comercial dependa de grandes montadoras dos Estados Unidos, Alemanha e Japão.
+Em uma escala informal de 2016, que mediu a necessidade de intervenção humana a cada 1 mil milhas (1609.34 quilômetros), o projeto da UFES apareceu em oitavo lugar, atrás de nomes como Telsa, Nissan, Ford, BMW e Google, que hoje tem a tecnologia autônoma mais avançada do mundo. "O desenvolvimento do Brasil está entre os melhores do mercado, mas as montadoras investem dinheiro onde têm mais engenheiros. A Volksvagen vai apostar onde sua marca tem 15 mil engenheiros, não 800", diz Alberto Ferreira de Souza, coordenador do projeto, que nasceu no Departamento de Informática da universidade. Segundo ele, a tecnologia autônoma do Google tem necessidade de 0.01 intervenção humana a cada 1609 quilômetros; a capixaba precisa de 50 interferências na mesma escala. O projeto iniciou há 10 anos e sua tecnologia já foi testada num trecho de cerca 70 quilômetros entre Vitória e Guarapari, praticamente sem intervenções (99,9%). O automóvel precisou detectar semáforos, placas, pedestres, além de reduzir ou aumentar a velocidade em rodovias ou estradas de terra. O foco da equipe, que conta com 20 engenheiros e cientistas da computação, é “entender o cérebro humano”, para que a tecnologia baseada em inteligência artificial possa lembrar do passado curto para tomar decisões e começar a interagir com o motorista. Assim, poderá avisar porque reduziu a velocidade ou precisou parar. Souza diz que o programa poderá fechar uma parceria com a Vale para o desenvolvimento de um caminhão autônomo, que ficará restrito ao pátio da companhia, para uso interno. “Estamos abertos a parcerias. No futuro, teremos que pagar royalties por uma tecnologia que está sendo bem desenvolvida aqui”, afirma. Os Estados Unidos e a Europa debatem a regulamentação de tecnologias autônomas. Aqui no Brasil, houve uma audiência pública para debater o tema na Câmara dos Deputados, e uma conferência do Inmetro para discutir a segurança jurídica e tecnológica de veículos inteligentes está marcada para novembro. O  Welcome Tomorrow Mobility Conference está na sexta edição e a organização estima que 3 mil pessoas visitem o WTC Events Center, onde é realizado, durante três dias. Idealizado por Flávio Tavares, da GolSar e do Instituto PARAR, que atua na profissionalização do mercado de frotas, a conferência debate alternativas para o futuro da mobilidade e conecta investidores a empreendedores.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "e4698bffc9cb1185973944bbcd53c27d32b8cb9cb5ff770ee9df6560a2469a90",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a64624d9697e9e53639ce145024de80a3ccbe40be62e050a14dd20ef47ceab6e",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b3ca0f557f0f21f7aa496a1f481b82b1643fa5766144e0de79465e21ee59ec03",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7bb3997b8b8e025cce2359bd82512d0905e9e846eab151a7a089cc3a05326309",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9eb46f222f5d585859bf8dcd058d2df114c502d50509f47896f4ce3daee6e110",
+    "mention_text": "SpaceX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd8c6d96f479bbd4a901e0340e4d5c24ca849c8ad32d6ed786213eb07ad6bd98",
+    "mention_text": "Hyperloop TT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7420f9b121f1ebdd98d71faba028dd3cd56beab16ef9271edca06504e3310284",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4f73e386bc01a544f8980866b823e61c1cb05290e8261c4d4a65491f18e8a72e",
+    "mention_text": "Abu Dhabi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f4dbd133e3b3b706642fd1b1172e3e8553e745e4aa254baec4b0a0c23a46964",
+    "mention_text": "Hyperloop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff10b4b33a5a0b6e32fad58782e974ea82feaa6c25e49d71a9d44e0e4069cf98",
+    "mention_text": "Bibop Gresta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fd5a0de57b8961a6013575cacff5d0d7b606da7db580696c1695559cc679f5b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ad6514b8b3a0c77d166ec4acafe75e3c4054ce4c8736626e57f2347a0a3de458",
+    "mention_text": "Contagem (MG)",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "917fc02bc226873e5a502579fab0af87e51cf4b873fe9e41d9fd027df9ca4ea3",
+    "mention_text": "Fapemig",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42599729367d0dc51de7b2969790c29d549d5003239ef6c07afca48bda796c05",
+    "mention_text": "Fundação de Amparo à Pesquisa de Minas Gerais",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67d95cb47c95c8145a8f256d585e0fd494ad344bd9298d1fcce6f3821090e3d2",
+    "mention_text": "Hyperloop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a94d59ad3f688edffec68806c2c2f46fe995eddd2bd8adf68fae3b438acc41b6",
+    "mention_text": "Toulouse",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b5f34af0fc99995d3e4ad5933e657808ee87a7e623f0fc3be6765754045e44d",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aac84e85819dfc947600aa7dca8a3f697456dd3d045a767a53284027375dbcf1",
+    "mention_text": "Gresta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e827c8bd3b04a48247be241925d22d2fcb1906d57fafe069f5943202cb7bc9cf",
+    "mention_text": "Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bde0615873a85b039c9fbdd254094faa57da127e25be7fa07e9f875d3ec71ca",
+    "mention_text": "UFES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efda614785eeb498586415f2629dafcfe04eaf2e2895bd63e78a57cca098b24e",
+    "mention_text": "Universidade Federal do Espírito Santo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0daf802b70d22d54b7c11bb2cd138306a17cffd5bcc61f2e2d300982aa3c7363",
+    "mention_text": "governo federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07e46ade5cc99410353bf18fbab48f49967dfd2567b2f7285b5f58cdae5fa3fc",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "154055087ddbcf680617ee235721b28fd5a9b0f7935242be7823ee62c0bbcc6f",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34a9e04a039a179fbd55e848bd48e62d502245bb061f56b64a976b544ae88eaa",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6dc6e9c9a7c9ab31d955a416f910ed7216039da5aa7c913ea98ab6f0f0b499a6",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "aa741939df5cb1292220c02b9790e60430e1657e078f9a633f3806fb00fcfa0c",
+    "mention_text": "UFES",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56ebf0ae781e7d6fe7920c3ca4c44bccec793a316fc1197426d4836f2114b90a",
+    "mention_text": "Telsa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "adc37cd2f8c5d1f6d70a68e1baa440c981d38a04762e5cb896325c99756f790b",
+    "mention_text": "Nissan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "976eb6301570c2a15f76f30794e0e89b161979495238674cf43a0ea37a813d27",
+    "mention_text": "Ford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e0ab4cd472ddd3c6136a8e553617fa2aa24b0ff0d274cbd8824056d7c88c8c1",
+    "mention_text": "BMW",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "843d048c1113e5ff0f8489c5d2853fd03d4a8cda00190d16c0ce35dfa6cce72c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e1249ac17900fb85f3e4fc50ee10d5ed40c0f63c0ce03caecb83962f5998a81",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "74cee8dc79f4964aa66f07d164f1c1bad55370d695fd4eca49f2f7115ff74ffc",
+    "mention_text": "Volksvagen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9280d8946016aa67f7ab2034d018272366f1f444a0051d957de78e8fe3449dc6",
+    "mention_text": "Alberto Ferreira de Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f21359ebbe27d96668443277c044342a8779d98b331d31a2082aa9ee91b4360",
+    "mention_text": "Departamento de Informática",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "933a8c8830c822e59846519db22d45e9f78eddde1c178dcf4f728c83a52d4e8d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ae66d1acef4808029bc1f9db1421dc0735eb34259b1c9d30bdaaf9fcbe78f49",
+    "mention_text": "Vitória",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "41fcb4d4734098044f81300bcdac96b0ff5fc1d7f3845508fd553865824dbc41",
+    "mention_text": "Guarapari",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a8761eddd4ae62bd8cff77757663d710b976c6d945337b1aa0a65c844b53d91e",
+    "mention_text": "Souza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "57cae9ca853d36e5049c4f6b91cb6f5d924acf7527c7e63bee703a3eb6c6bcd6",
+    "mention_text": "Vale",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e77266375f516ba73ac7c22835606e42245d988a832e8aeaeab5a5dc0b1e01e3",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "597c86d99c17f5dd9a3be92bfb0620a2aff95438fa3695a9dc6681ffab55d990",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c730f842c264d1b3e72b78b8f61f52092fcba1eb03cdc2df1d5af8b5dbafe56",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11406d3e3446c4fa4ae42d824d972053bc0b5ebcdc90e7fee692243bd565990e",
+    "mention_text": "Câmara dos Deputados",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05c825dcd225e2280797d35f4b7109abb9244296d6ab67764be9231eaf3e0774",
+    "mention_text": "Inmetro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f84e30a067849db7e4589e0f23a80d3953efb42406a4a0baddf04e0fd51ec099",
+    "mention_text": "WTC Events Center",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2bad5deb9ce50eb6805e5e80bf98c8e7d92e3c22903036c3b0ad36f7a0c921d0",
+    "mention_text": "Flávio Tavares",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "235e92cf0d79fce7f0c4f9de560529dd1626184bb3f8cb88c5f3c28cab37b70e",
+    "mention_text": "GolSar",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f652c4b8d61a3daacfce4f28e7110a958b88e8d43ad1ddaddd5c22628fca2ed",
+    "mention_text": "Instituto PARAR",
+    "categoria": "ORGANIZACAO"
+  }
+]

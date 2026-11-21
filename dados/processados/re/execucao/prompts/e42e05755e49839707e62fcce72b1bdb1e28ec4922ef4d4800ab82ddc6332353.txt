@@ -1,0 +1,479 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: fda211ed1bebe864d18f60a009ed8d90447886c688e60e7c89fe7036e4d13e1c
+
+TEXTO:
+Internet Archive lança serviço com vídeos de 21 emissoras de TV
+
+Tudo o que foi dito em programas jornalísticos de 21 canais da TV dos EUA, nos últimos três anos. Grátis, on-line e com sistema de busca. Esse é o recém-lançado TV News: site com 350 mil programas atualizado a cada 24 horas e aberto para ser pesquisado por qualquer pessoa.
+Análise: arquivos digitais esbarram em 'muralhas' e direitos autorais
+O serviço integra o Internet Archive ( archive.org ), instituição sem fins lucrativos criada em 1996 pelo nova-iorquino Brewster Kahle, 51.
+Pouco modesto, ele trata o portal como a reedição da Biblioteca de Alexandria, em referência à mítica coleção egípcia de livros que teria sido incendiada pelos romanos.
+"Nosso projeto é muito menor", diz Kahle, em videoconferência com a Folha . "Mas, se o objetivo da internet for construir a nova Alexandria, podemos chegar bem perto."
+Guardião da web
+O Internet Archive possui toneladas de arquivos, além de registros históricos de páginas da web --uma "máquina do tempo" que é o serviço mais popular do site.
+Kahle diz que pensa grande e leva em conta o bem comum, princípios aprendidos durante um estágio no Laboratório de Inteligência Artificial do MIT (Instituto de Tecnologia de Massachusetts).
+Em 1982, graduado em ciência da computação e engenharia, começou a trabalhar com bancos de dados. Assim criou a Alexa, empresa de análise de informações que vendeu à Amazon, em 1999, por US$ 250 milhões.
+Quando questionado sobre quanto investiu no Internet Archive, Kahle limita-se a dizer: "Milhões". Há outras três fontes principais de dinheiro: usuários do site, a Fundação Alfred P. Sloan --criada por um ex-presidente da General Motors-- e a Fundação Hewlett, de William Hewlett, cofundador da HP.
+IGREJA DA INFORMAÇÃO
+Uma parte do dinheiro foi gasta com uma antiga igreja em San Francisco que virou sede. Na entrada, estátuas ocupam bancos de madeira que antes serviam aos fiéis. Funcionários com mais de três anos de casa têm direito a uma escultura de seu rosto.
+"Nosso QG abriga principalmente pessoas", diz. Elas ficam em um salão com piso de madeira, sem baias separando seus espaços de trabalho --o fundador fica em uma sala com porta de vidro.
+"Mas também temos aqui parte dos nossos servidores." Na parede da igreja, em um recuo adornado por um arco romano, um computador preto com luzes azuis exibe o logotipo do Internet Archive.
+Outros países abrigam servidores. Um deles fica, inclusive, na cidade de Alexandria. No Brasil, há um centro para escaneamento.
+Trata-se da biblioteca do Ministério da Fazenda, no Rio. Como em outras coleções parceiras, livros antigos são escaneados para depois serem postos na rede. "Enquanto conversamos, estou olhando para essas obras", conta Kahle, referindo-se a um censo rural da Bahia, de 1920.
+É assim que Brewster Kahle idealiza o acesso à informação no Internet Archive: rápido, integral e on-line.
+WAYBACK MACHINE
+O projeto mais ambicioso e que atrai mais visitantes ao Internet Archive é o Wayback Machine, espécie de radiografia do passado da web. Por meio de robôs, o site varre grande parte das páginas on-line e guarda cópias --24 horas por dia, desde 1996.
+Hoje, é possível acessar pouco mais de 150 bilhões de sites antigos. O intuito, diz o fundador Brewster Kahle, é preservar a memória. "A internet é um registro de nosso tempo." Páginas que impedem a varrição por robôs, como o Facebook, não aparecem na ferramenta.
+O Wayback Machine é uma das divisões do Internet Archive, que separa seus sistemas de busca por tipo de arquivo. Há textos, vídeos, música ao vivo e, com o TV News, programas jornalísticos da televisão. No total, são 6 milhões de documentos.
+Inspirado na biblioteca visual da Universidade Vanderbilt, em Nashville (EUA), o TV News é pioneiro ao disponibilizar jornalísticos de maneira organizada e on-line.
+"A Vanderbilt é a avó dos arquivos de TV nos Estados Unidos", diz Kahle. No entanto, o acervo da universidade, gravado desde 1968, possui apenas um sumário na rede. Para assistir ao material é preciso pagar uma taxa para recebê-lo em DVD, pelo correio.
+A experiência foi importante para definir legislação em relação a direitos autorais. Em 1972, a rede de TV CBS processou a Vanderbilt e foi derrotada. "Desde então, podemos disponibilizar os vídeos da TV, desde que o acesso seja público", explica John Lynch, diretor da biblioteca.
+ANTIGUIDADES
+No caso dos livros, estão à disposição somente obras em domínio público segundo as leis americanas --ou seja, volumes com mais de 70 anos. Por meio de convênios com bibliotecas públicas e particulares, o Internet Archive financia a digitalização em troca de acesso às obras.
+Desde 2010, outra iniciativa, a DPLA (Biblioteca Digital Pública da América, em inglês), negocia com donos de direitos autorais uma forma de acesso gratuito e on-line a ao menos parte de todas as obras lançadas nos EUA.
+"A ideia final é realizar uma aliança de associações privadas e fazer uma biblioteca disponível para todas as pessoas", explicou o historiador Robert Darnton, diretor da biblioteca de Harvard e principal mentor do projeto, em visita à Folha em maio.
+O processo de escaneamento de livros é custoso. Primeiro, é analisado o estado de conservação da obra. Em seguida, deve-se escolher o formato do arquivo para, então, começar a digitalização.
+Além da complexidade técnica, o custo é o principal empecilho para o aumento do número de bibliotecas digitais no Brasil. "À medida que surgirem softwares gratuitos [de digitalização], a tendência é que haja mais bibliotecas", diz Fernando Modesto, professor do Departamento de Biblioteconomia e Documentação da USP.
+Na própria instituição há um centro de escaneamento de obras antigas. A biblioteca Brasiliana surgiu a partir do acervo pessoal do empresário e bibliófilo José Mindlin, morto em 2010. Por meio do site brasiliana.usp.br , já é possível acessar e baixar parte dos livros.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f926ea5f377c2e40349cd6c82d72574f40313974292b40d7213ac889ca8548fb",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "918a9e3d58b3793e53fb38e232199fd7d5c14d6dffb6e4d3caab31d50f2cf703",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "58c970fd3ef03b293f30c7249de10e62ccb46cd7647d222ba9af595fab4d051d",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93b549dad48c977b94bfd3549ce8fa400aa9d669f08347cb7f3b3b5ace5628b2",
+    "mention_text": "Brewster Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e12e2eb9f29650ef4ca344371b0e7cfcb0898f409bd16872692481d7fb9a3da",
+    "mention_text": "Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fb1e49f063c14249c36b4c88f1bec5baeacb8c7b4cadefafa6b1d703766d8ba",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "106f37dbf84d6190f12e3a9ee9b7c20430c8ef3d69091615146b79107955939b",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc1a2f122e4e5c6aa08a3129b950cf3d11e4e3c4f1bd8e3eb5cacf9ec5ce3d63",
+    "mention_text": "Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3e85c02f3c2c21ccfde48ac48849319f1d5c00046c7f34415e66c6583aac7465",
+    "mention_text": "Laboratório de Inteligência Artificial do MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "02f832510f61962550e90f45c3956d84baa9244fadc168d2583ec8e6a8e9cc2c",
+    "mention_text": "Instituto de Tecnologia de Massachusetts",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9f6195a1e8d66218596dc134bbda23b71a059a228b9e0f81fa15b7108447be5",
+    "mention_text": "Alexa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b8d5f319e65cad0e2ee036aecd9cff920f6c0d4736b84490c52538308a7b66a5",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88d28a18b74dc975868df3f11a731d102453fc6c718fd392c181de0c9f477c0e",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c70cbbdf6cea05d27a1c9e229140f68b88a0adcd536a7049efc1899341e3ed5c",
+    "mention_text": "Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ad46fbd5e57ec63768776d25f6f2c8d5d7a7787911dedb75fae2af0d744663a",
+    "mention_text": "Fundação Alfred P. Sloan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cdaac8f8c4b3ea0ce34b193e9f3c34c28e09a0eaf95b45f84a574d60b777a8de",
+    "mention_text": "General Motors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f497c333dbebefe6f09e5c5fc42fa797164e935a255d1a807a8756f217413600",
+    "mention_text": "Fundação Hewlett",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "948962882131788b50c3b930620b30f31f075734e2856ea2473f01bae1152ec9",
+    "mention_text": "William Hewlett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "55fac0c3c87156897ea3ca38fecd8abc740263efd64b1fffa4f0aad21ab76865",
+    "mention_text": "HP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6548b0db6010bad159270153251a3e49d6a192a87e7da6a1046cf2495e3345c",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "785baaaceb331370d3a2f774dc6a09f94ade304b8615db071442c9fb97f1ac27",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a314931ced8e7db3a45cc85bc2b2b0ad8dc1bc0c51f7123838d8e0457e3f2d00",
+    "mention_text": "Alexandria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2df67b1dbf7d523f8d3b9c564d34b208daae549c53a08e255763eb66a4554424",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf4e39863984fec537841cf752d14e72c71e94f77df5982eef81a81a7ec454ab",
+    "mention_text": "Ministério da Fazenda",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b78d98f1fefc1ee5fce8ff3174e43c068550088fe373ba6f891d6202431e848",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb1d3a5055a59fe408fdd3b4d974ad8d3020a45b9e73fe8cc1df5904d80d8937",
+    "mention_text": "Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44de25f3734d3281af27785864f36b60a879468f2caa9222f1e9edf0ee891d6b",
+    "mention_text": "Bahia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2dc8716f769052d5ce390e476833aedac00a42247f06e088a79812ddf7ffea3",
+    "mention_text": "Brewster Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6bca809144dcdac3eb85f6e7aaa6a98b6534dbf8a23b1001b1f026a28398072",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8021867c82597d08abd06dda7c7acc0407e1c941846699c2c379ed8c58436e8c",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "340ce5147c004b54dd188f535fe7d9c79ec65d08dce71355692e91c70968ff1e",
+    "mention_text": "Brewster Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1c9569a46ea04cc40e04b332d6f364f340076a1d8e90351d40bcbc55d0658fa6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21de1e4f6b984daaec33d1e1a6fa0900875258fd755ffa1b3a46c6e46806ab49",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ddc81c1d77c8f3e74dfcdc8660a3bc4da44530f1f06771cf695bce4ffba547e",
+    "mention_text": "Universidade Vanderbilt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c4b433d0a9005555be2b780c65c06110ab47073bf2539938bade1fc407999f0",
+    "mention_text": "Nashville",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "939376943154eda93dc17014391199295ee9ccd39bbb08fb4ce78a47629526e9",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a53ebff142892e6bfcdf49e63b968168bb85f72112840d176b912d1e4d805d4",
+    "mention_text": "Vanderbilt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b57d715848bb6c1fee03c7ea92e05f28424970f7d0ea4f59a001a6486db0477",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7458eaec15f60fe3dcd79d3de902b4d4af8c031be1042a6019483ce2af1eea84",
+    "mention_text": "Kahle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c40c1ea508a0062f4b849a17cdddb345c8093e6b8b8f16a6c477008fd6e9c4e",
+    "mention_text": "CBS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f68b4b378b88e7f8eb8c4d81a5db04279632219f559359daea28c7b156feb9c",
+    "mention_text": "Vanderbilt",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "161932f290bf44a3be463e139bdc1a6d89a45b58cbd839d929ee8c78d38f42be",
+    "mention_text": "John Lynch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38849f86de5059e40d79593a824f4e55fb37b46d3a1a0b744a015f569b6eda90",
+    "mention_text": "Internet Archive",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3dad6342ced3730c58e4da74c1d74c30872e529e65f63e8b91ed93f0c1b49928",
+    "mention_text": "DPLA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a75a494ebd0f2be6312ed5411e70d7085161bd8e50ef59631a3cd678ff0e8247",
+    "mention_text": "Biblioteca Digital Pública da América",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e70493a7c2eb9d3e927f6206e2b55a330d1f9db02fd2d9ee1a62753f5ad6cd52",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "76027994c90eb35b17a9c7642d9e5ac10810c8ac61acb28cb448be8fb9475743",
+    "mention_text": "Robert Darnton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d33fdff9a73f4fedaacee0993446200536bbc246e2ad9576a28069f0a3feb63",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf2a2c11e482c60337d56b4e8890dc36a553a6c18578e3c82b4b45498d885b30",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ec9c3b886999ce0867c6c739d7f3db37747467212c0fedb59f51fefa51b4cc9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0a63feaa83477649ddbadebefb9490ee73fc5461b45ecb34a95792aa9834814f",
+    "mention_text": "Fernando Modesto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85346ab0104718e26ad48922f329c22838df3e918e83a4bdd2cd1963e2f234e5",
+    "mention_text": "Departamento de Biblioteconomia e Documentação da USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b0c41b73e5af2351fe8ef8eb8b152aef29e51a021018b7985617c0a2fbbe1b03",
+    "mention_text": "José Mindlin",
+    "categoria": "PESSOA"
+  }
+]

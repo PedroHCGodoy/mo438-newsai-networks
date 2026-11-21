@@ -1,0 +1,918 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8c9ba3f43e6a5e82e65a6ca38e0e1ba0f63a191c8aaf7e40f6d1821c7ba52cb7
+
+TEXTO:
+Folha de S.Paulo - Ilustrissima - 'Think tank' do futuro - 06/05/2012
+
+Comunicar Erros
+CIÊNCIA
+'Think tank' do futuro
+A universidade que quer moldar um novo mundo
+RESUMO
+A elite do Vale do Silício criou a futurista Universidade da Singularidade para formar líderes e buscar vencer desafios como a falta mundial de água potável. Sua visão utópica de um "mundo pós-escassez" contrasta com as máquinas de guerra dignas da ficção científica e o atropelo de questões éticas pelo capitalismo high tech.
+CAROLE CADWALLADR
+TRADUÇÃO
+CLARA ALLAIN
+É o primeiro dia de trabalho na Universidade da Singularidade, e um holograma acaba de fazer o discurso inaugural. O próximo é Craig Venter, pioneiro do sequenciamento do genoma humano e criador da primeira forma de vida sintética. Mais tarde, veremos duas pessoas paralisadas da cintura para baixo vestindo exoesqueletos robóticos ficarem de pé e andar.
+Antes disso, porém, o cofundador da Universidade da Singularidade, Peter Diamandis, nos dá as instruções do dia. Nossa tarefa, diz ele, é escolher "um dos grandes desafios da humanidade" -por exemplo, a escassez de água potável. E então bolar uma ideia "que possa impactar positivamente a vida de 1 bilhão de pessoas".
+São 9h30. Somos uns 50, e a sala foi divida em mesas: educação, pobreza, água etc. Diane Murphy, a assessora de imprensa da universidade, me indica a mesa sobre "alimentação". "Por que não senta no lugar do Ashton Kutcher? Ele vai demorar a chegar."
+A Universidade da Singularidade não parece uma universidade comum. E não só por acolher gente como Craig Venter, Kutcher ou o músico will.i.am, que, num debate, faz uma pergunta sobre levar a universidade até o gueto. Os cursos não são reconhecidos oficialmente. Não há estudantes tradicionais.
+A Universidade Stanford pode ter sido o berço de mil "startups" -empresas iniciantes de tecnologia em geral relacionadas a grupos empreendedores- do Vale do Silício e de grandes inovações, mas a Singularidade é criada à própria imagem do vale: altamente conectada em rede, alimentada por um coquetel de filantrocapitalismo e dotada de uma consciência quase mística de seu próprio destino.
+Ela é o "think tank" futurista de elite do Vale do Silício e seu braço que se conecta com o mundo: o Google e a Microsoft vieram para a aula inaugural e doaram dinheiro, a Nasa cedeu o espaço para o campus e uma frase do cofundador do Google, Larry Page, enfeita o site da universidade: "Se eu fosse estudante, ia querer estar aqui". O objetivo é "reunir, educar e inspirar uma nova geração de líderes que se esforcem para compreender e utilizar tecnologias exponencialmente avançadas para fazer frente aos grandes desafios da humanidade".
+Seria melhor tratar tudo à moda britânica: ironizar. Ashton Kutcher, o ator mais bem pago da TV americana! (Mais tarde, li que ele vai representar Steve Jobs no cinema e desconfiei de que ele possa pensar que é de fato Jobs.) Um bilhão de pessoas! E Diamandis é o tipo de empreendedor que encara qualquer parada e que nós, britânicos, tendemos a ironizar e evitar.
+Metade das pessoas na sala já fez realmente coisas que tiveram impacto positivo sobre 1 bilhão de pessoas ou mais. Não só Venter; há também Vint Cerf, um dos pais da internet -trabalhou no Arpanet, antecessor da web- que hoje é o "evangelista-chefe da internet" no Google. E Sebastian Thrun, do Google, o homem por trás de uma das tecnologias mais recentes e perturbadoras: o carro que anda sozinho.
+E há Elon Musk, cofundador do sistemas de pagamentos on-line PayPal e da Tesla Motors, que inventou o carro elétrico e está trabalhando numa nave para substituir os ônibus espaciais. Reid Hoffman, cofundador da rede social LinkedIn, está na plateia, além de Troy Carter, marqueteiro da estrela pop Lady Gaga.
+Ao fim do dia, chega Buzz Aldrin, celebridade genuína. Todos os cientistas querem fotos com ele. "O que você acha da Universidade da Singularidade?", pergunto a Aldrin. "Sou do tipo do sujeito que realiza muitas coisas", ele responde. "Mas venho para cá e penso: 'Uau, preciso fazer mais'."
+CELEBRIDADES
+Apesar das "poucas" realizações de Aldrin -ele foi o segundo homem a pisar na Lua, pilotou 66 missões na Guerra da Coreia (1950-53), já fez um dueto com o rapper Snoop Dogg-, ele não deixa de ter razão. A ideologia da Universidade da Singularidade é justamente essa: fazer melhor. Sua fé no progresso é tão enraizada que o lugar ganha um ar retrofuturista, com carros voadores e propulsores a jato dos anos 1950.
+Até o nome soa como se tivesse saído da ficção científica. Talvez porque tenha saído mesmo da ficção científica. Singularidade é um termo que o cofundador da instituição, o escritor e futurólogo Ray Kurzweil, emprestou de um ensaio de Vernor Vinge, autor de ficção científica. As definições variam, mas o termo costuma ser interpretado como o ponto em que a inteligência do computador supera a do homem. Nas bem fundamentadas previsões de Kurzweil, isso se dará em 2029.
+Kurzweil é um homem genuinamente singular. É cientista, inventor -desenvolveu um dos primeiros sistemas de reconhecimento de voz-, autor e trans-humanista: acredita que, caso consiga se manter vivo até que a tecnologia necessária seja inventada, poderá se manter vivo para sempre. Mas é conhecido sobretudo como futurólogo: previu a fragmentação da URSS, o crescimento da internet, o ano em que computadores derrotariam os melhores enxadristas humanos, o e-book, o ensino on-line e dezenas de outras coisas.
+Pelas suas contas, 89 de 108 previsões que fez em 1999 sobre como estaria o mundo em 2009 se mostraram corretas; já outras 13 estavam "essencialmente corretas".
+O que está no cerne das previsões de Kurzweil é a lei de Moore, segundo a qual a potência de computação dobra a cada dois anos. A regra foi observada originalmente por Gordon Moore, que em 1965 cofundou a fabricante de processadores Intel e previu que a tendência se manteria "por pelo menos dez anos". Ela se manteve pelas cinco décadas seguintes, e não se sabe por quanto tempo ainda valerá. A potência de computação tem crescimento exponencial: o que é um vira dois, dois vira quatro, quatro se torna oito, e por aí vai.
+O programa-padrão na Universidade da Singularidade é um curso de dez semanas que custa US$ 25 mil (R$ 47,5 mil) e em 2011 teve 2.400 candidatos disputando 80 vagas. É a versão Vale do Silício de um MBA. E a demanda é tão grande que a universidade começou a promover minicursos "executivos", como o que assisti.
+"Empresas de bilhões de dólares estão nascendo da noite para o dia", diz Peter Diamandis. "E empresas de bilhões de dólares estão sendo fechadas da noite para o dia." Ou, como me disse Mike Federle, executivo-chefe da "Forbes": "Os CEOs estão desesperados para aprender essas coisas. Todo o mundo está tentando prever o que vai vir a seguir."
+"A potência de computação por dólares se multiplicou trilhões de vezes desde os meus tempos de faculdade", diz Kurzweil em seu discurso inaugural, proferido a partir de sua casa, em Boston, tendo sua cabeça projetada em 3D na sala, em uma imagem holográfica.
+"Guerras, crise econômica, nada tem impacto. A potência continua a crescer exponencialmente." Antigamente, a saúde avançava em progresso linear, mas "virou uma tecnologia exponencial". E o mesmo que aconteceu com a impressão em 3D se dará com "o mundo das coisas físicas".
+Nosso problema ao visualizar o futuro é que nossas expectativas são "lineares, não exponenciais", diz Kurzweil. As coisas não vão mudar de modo incremental, vão mudar explosivamente. E foi isso o que captou a atenção de Peter Diamandis -ele leu o livro de Kurzweil, "The Singularity is Near" (a singularidade está próxima), durante uma caminhada de aventura no Chile- e o inspirou a criar a universidade.
+Somos sete em nossa mesa. Devemos pensar soluções para alimentar os 7 bilhões de habitantes do mundo. Me pergunto o que Ashton Kutcher diria. Sem constrangimentos, o meu grupo começa a dar ideias. "O que acham de carne artificial?", propõe Mike Federle. "Poderíamos fabricar um bife agora mesmo", diz Robert Hariri, médico que fundou uma empresa de biotecnologia especializada em tratamentos pioneiros com células-tronco. "Mas ele nos custaria US$ 20 mil."
+O tom competitivo combina com os executivos-chefes e é um dos princípios que norteiam Peter Diamandis. Ele estava aprendendo a pilotar quando alguém lhe deu um livro sobre o voo de Charles Lindbergh sobre o Atlântico, realizado em 1927. Ele descobriu que a viagem de Lindbergh foi precipitada por um prêmio.
+Essa teoria o levou a criar o Prêmio X, que começou com um incentivo de US$ 10 milhões para a primeira pessoa ou empresa que criasse uma nave espacial tripulada, reutilizável e para particulares (Burt Rutan e Paul Allen, cofundador da Microsoft, ganharam o prêmio em 2004, pela nave SpaceShipOne). A Fundação Prêmio X já lançou muitos outros prêmios, sendo o mais recente o Prêmio Qualcomm Tricorder, também de US$ 10 milhões, pela invenção de um aparelho que possa ser segurado nas mãos -ou "tricorder", como é chamado em "Jornada nas Estrelas"- e seja capaz de diagnosticar 15 doenças.
+ABUNDÂNCIA DE IDEIAS
+Antes do almoço, já ouvimos Craig Venter sobre seus planos de criar biocombustíveis: ele acredita que um acre (cerca de 4.000 m²) de algas microscópicas poderá produzir 10 mil litros de óleo por ano -um milharal da mesma área rende 18 litros. Venter acaba de receber US$ 300 milhões em investimento da Exxon para converter isso em realidade.
+Andrew Hessel, docente de biotecnologia da Universidade Singularity que quer criar tratamentos contra o câncer com código aberto e distribuição livre, diz que a biologia é a próxima tecnologia exponencial. O código genético vai se tornar "uma linguagem de programação", diz ele. Estamos no início de transformações maciças: o bio-hacking do tipo "faça você mesmo" já começou. "Os vírus estão chegando primeiro", ele afirma. "Vírus são fáceis de fabricar."
+Enquanto isso, Vint Cerf fala sobre a "internet das coisas". No futuro próximo, afirma, aparelhos vão conversar uns com os outros. "Você vai estar no supermercado e receberá uma ligação da geladeira dizendo 'não esqueça o molho marinara'."
+A tese de Diamandis é que em pouco tempo vamos ingressar num mundo "pós-escassez". Esqueça o esgotamento das reservas de petróleo. Quem vai precisar delas quando temos "15 terawatts de energia do Sol chegando à Terra a cada 15 minutos"? O desafio é apenas como atrelar essa energia. "E estamos cada vez melhores nisso", diz ele.
+Não é só isso o que nos impede de mudar nosso comportamento não sustentável, apontam seus críticos; é que, como diz Craig Venter, esta tecnologia é bastante trabalhosa. E às vezes não tem resultados tão bons quanto se esperava.
+Diamandis tem um arsenal de aforismos que mais parecem vindos de um "personal trainer de vida" ("a melhor maneira de prever o futuro é criá-lo você mesmo"; "se você não pode vencer, mude as regras"). Mas ele também tem o dom de resumir uma ideia em uma imagem. Uma de suas frases mais conhecidas é que um guerreiro massai munido de um celular tem mais capacidade de telecomunicações do que o presidente dos EUA tinha há 25 anos. "E, se ele tiver um smartphone com o Google, tem acesso a mais informações do que tinha o presidente 15 anos atrás".
+Diamandis pode ser um showman, mas é um showman que é levado a sério por algumas das pessoas mais inteligentes e mais bem-sucedidas do mundo. Há duas semanas, lançou uma empresa -com o respaldo de Larry Page e Eric Schmidt, presidente do Google- para extrair minerais raros de asteroides usando naves espaciais.
+O segundo dia de nosso curso de três dias termina com uma festa no set de uma rua de Nova York, no estúdio da Fox. Dois paraplégicos se levantam de suas cadeiras de rodas para andar pelo palco em exoesqueletos robóticos, e will.i.am diz o que pensa sobre o dia que passou: "Mudou toda a minha visão da vida. Mas estou preocupado com os nossos centros urbanos pobres. Acabo de ouvir que a minha sobrinha vai ser menos inteligente do que o celular dela. Tivemos uma geração que quis melhorar o seu saldo bancário, não o cérebro. Eu quero inspirar jovens para serem cientistas e engenheiros."
+Peter Diamandis cresceu no Brooklyn, filho de imigrantes gregos, e sentiu-se inspirado pela missão Apollo a tornar-se cientista, tendo se formado em medicina e biologia molecular e obtido um Ph.D. em engenharia aeroespacial no MIT (Massachusetts Institute of Technology). A Universidade Singularity não é a primeira universidade que ele fundou. Aos 20 e poucos anos, Diamandis criou a Universidade International Space (universidade espacial internacional), que já formou uma geração inteira de cientistas da Nasa.
+É por isso que Buzz Aldrin veio para cá e que outro astronauta, Dan Barry, leciona robótica na Universidade da Singularidade. (A grande previsão de Barry diz respeito ao sexo robótico. "Você acha engraçado, né? Mas também sou um médico de reabilitação, e o sexo é uma necessidade humana básica que os robôs poderão suprir a deficientes físicos, viúvos, idosos. Isso vai acontecer. O melhor que você tem a fazer é aceitar e entrar nessa onda desde o começo.")
+VISÕES ASSUSTADORAS
+A aula de Barry inclui vídeos de robôs ainda em desenvolvimento. Se você acha assustadores os aviões não tripulados, é porque ainda não viu no YouTube os quadrocoptores autônomos múltiplos (veja em
+bit.ly/nanoswarm
+). Ou o avião não tripulado em forma de beija-flor, que paira no ar e pode entrar por uma janela, o Big Dog, que mais parece saído de "Blade Runner - O Caçador de Androides".
+Mas nenhum desses robôs está sendo desenvolvido para ajudar a levar refeições a idosos de cama ou fornecer atendimento paramédico paliativo. São máquinas de guerra e, em sua maioria, estão sendo desenvolvidas com recursos ou apoio da Darpa, a agência de projetos de pesquisas avançadas do Departamento de Defesa dos EUA. Até Dan Barry, que comanda sua firma de robótica, lança um aviso: "Não vejo um final nisso. Em algum momento, os humanos não serão velozes o bastante. Então você fará os robôs serem autônomos. E onde isso vai dar? Em 'O Exterminador do Futuro'."
+E não são apenas os robôs, nem o fato de que escolares vão mexer com DNA. "Ninguém quer que o seu filho seja o primeiro da turma a criar o vírus Ebola", diz Venter, e completa: "Que é um genoma bem pequeno." Mas também não parece existir um modo prático, que tenha sido idealizado até agora, de impedir que isso aconteça.
+Na apresentação de biotecnologias, ouço uma voz britânica se manifestar e fazer uma pergunta sobre regulamentação. No intervalo, bato um papo com o dono da voz: Simon Levene, investidor especializado em tecnologia. Ele me diz que está aqui "porque não existe nenhum outro lugar tão multidisciplinar quanto este. Estas coisas estão mudando tanto, e tão rapidamente, que é quase impossível se manter a par delas". Pagou US$ 5.000 pelos três dias e achou barato. "É bem menos do que um MBA. Já fiz um MBA em Harvard, e acho que já devo ter aprendido mais aqui."
+A tecnologia é assombrosa, diz Levene. Mas ele compartilha meus receios em relação ao tecno-utopismo do Vale do Silício. "Há efeitos colaterais potencialmente letais, não é? Toda solução tem consequências não pretendidas. E há questões éticas e regulatórias muito reais a serem levadas em conta e que estão sendo simplesmente atropeladas. A questão é que não confio no mercado para fazer isso. Mas também não confio no governo. É preciso haver uma supervisão regulatória ética internacional. Há um poder enorme prestes a ser liberado. A Darpa não está aqui para se divertir."
+Em sua palestra no TED, em 2011, Sebastian Thrun mostrou seu carro sem motorista -desenvolvido para um concurso da Darpa-, quando o carro já tinha andado mais de 300 mil km na Califórnia. É uma tecnologia que vai mudar profundamente nossas vidas.
+Ele também fundou e comanda a Google X, laboratório ultrassecreto de projetos especiais do Google, de cuja existência a maioria dos funcionários nem desconfiava até o jornal "The New York Times" publicar um texto sobre o assunto, em novembro. Ela está criando protótipos de "óculos Google" -óculos de realidade intensificada-, que vão levar a internet para os globos oculares de quem os usa.
+O que me parece ainda mais transformador é o que Thrun afirma estar quase chegando: dados em volumes maciços. Sobre tudo. "Acredito que, nos próximos dez a 15 anos, os computadores serão capazes de captar a experiência de uma vida", diz ele. Cada aspecto de nossas vidas vai existir on-line, para sempre. A memória, a coisa que define quem somos, que nos torna humanos, que nos distingue intelectualmente e nos dá um senso narrativo de nossas vidas, será "terceirizada". Esse mundo, diz Thrun, "não está muito distante".
+Diamandis então pergunta aos cientistas quais são suas previsões para os próximos cinco a 20 anos. "As capacidades de inteligência artificial serão indistinguíveis das capacidades humanas", diz Thrun. A maioria dos empregos deixará de existir. "Haverá uma explosão na arte e na música", prevê. Para Dan Barry, nossa definição do que é ser humano vai mudar. Os robôs estão sendo ensinados a sentir emoções. Vamos começar a nos relacionar com eles.
+A singularidade está próxima, afirma Ray Kurzweil. A menos de 20 anos de distância. "Eu disse que chegaria 30 anos depois de 1999. O consenso, na época, era de 50 anos. Hoje o consenso é de mais ou menos 20 anos."
+O mundo está mudando de maneiras que nem podemos imaginar. A Universidade da Singularidade está olhando para os problemas sob uma ótica diferente. Diamandis nunca fala em superpopulação nem em recursos naturais limitados. Fala em "3 bilhões de novas mentes entrando on-line" nos próximos anos. Essas novas mentes são uma oportunidade, ele insiste, porque "o ritmo de inovação é uma função do número de pessoas que estão se comunicando de fato, e esse número está explodindo com a internet".
+A íntegra deste texto foi publicada pelo jornal britânico "The Observer".
+Comunicar Erros
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "151506294d6632aa333b290dc7543fdf80d9cefa20f6aab006c6fb13f95ed716",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23d0a12e6cf5112508deead93971b660cf60b265a7a9fead8e622144a89bd8be",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf27c5c7753a790b9c8f6ddfae1e87cd10640866bc7c35d04879afdf0b2a3bc5",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bab88a2c013637ae0b78c846e88d86213d03b2b4104c966029c0002b6daae889",
+    "mention_text": "CAROLE CADWALLADR",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f409c4681866da649187d00125290aca9d766b60cd2bcd76540c9dc65cf66d88",
+    "mention_text": "CLARA ALLAIN",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "88699fe447929b0ef9166590ce8e9411f707a056bf951fcbe55852adf6082d36",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "955758ae82cace2d9b3fa009c7e33c99fe62eda2cf5277aba30a9363f3f62586",
+    "mention_text": "Craig Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb18c6214cd63e8798b57046dbe0ac84db3a752c68a17387474a49ed1bbbc09e",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07e26aa73b1cb7fa672e207897b142a333deea3c7d66651e5fd4b2090f24561f",
+    "mention_text": "Peter Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "734ba9c621756e3b61c63f2fa00225486570bcc248f390bac64c289965a2538f",
+    "mention_text": "Diane Murphy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b15d151bdff8c8d00bd66394afa940b536dcf2c58b4599031f6241a9a95fbdd",
+    "mention_text": "Ashton Kutcher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82b7abf9c87286f2aa43f08a824972c3b70401647a386223e524b32fad5d8f87",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e6fe07d861c83d39f68d6e362d35db4fec4a50bd889ca95f2d7643e3fee200c3",
+    "mention_text": "Craig Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8d76374d135a4414b0b976b2ed16dc642167e4f1ba3ab7ca033850f391b3700",
+    "mention_text": "Kutcher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e6363a329909d433cbcf3595538a35da7ecd8118e15b661997d881718e19e4e",
+    "mention_text": "will.i.am",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7f23d841777629ee2e24468682718773e72eafaefb2cf5b19d6cf0988d92fa7",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2a68ca320548c9a96d225adc4dc1c0e464a60892c9003692a1e9d721d5f30d6b",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a8658756d8d6e2f356da1dce347fc76bb0673c0e12aa308f462edabec68d7c8",
+    "mention_text": "Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5ef0193c9884c9972e856592d5a8478189b8b8ea13c80fbb11371f1946024442",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "95579427b0d5bbe18f13eacf84422e24f6e187cddd1267e63f4b8965dd39598d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9ecf7b05ef9ad916e4e69708eb4b5d3d60bc0f586170a3128402b09c9b738db",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b47895d19d70e4b1447af576a9e97f5c223c908b839250cf02fbeb05eaa72cb7",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca278c3ccf692e2d2492480d49dfd1de228360129d2358f8c1b086951eb90f8e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "872ad5e2413d447d5e39e2138945afc45972df4070c4e2be7c42bd021dbda6b3",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ef5e1b2bce554123fcf026f5994c7c5e4c357a5f3617ddf38f1333222dc6662",
+    "mention_text": "Ashton Kutcher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c2e73b2dfe2e2c31456816dd266fa1534d0910a0b38b852d9a70cfcb8ad437f",
+    "mention_text": "TV americana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d5b028579712069518364cbe3ed4a0db333c9c3449b1d5f984ec1ffc60ed30d6",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "555fe79b53bd166c8535b32fd284113820b58924aec3e8a24794e6b0955a8536",
+    "mention_text": "Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e8a6e31bd08802fed6d945d9049b0b6b966ff1d3517b4bbf0ee06136c51f8bae",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a803165c63f26e106ea32f93ca30024e68c2839df8eb3c00048a676e575e1b6e",
+    "mention_text": "Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b3543cbd5363babb6aea9fe0420c61ecebc9afbe9052a02a1c1079c6243e850",
+    "mention_text": "Vint Cerf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd1c9d581aab590494bef191aded04594c9c3331d2befaa8df7d66443df646cd",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "975bdbe7fdafe376166a2fd55f52dca603946a81b8d3664e15c5afa248966f73",
+    "mention_text": "Sebastian Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43907b0126bf6a1f46e9f972328b9bc4ce385b7eae977dfaa5413450c9550dd8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e9940f9dce36a64085dbb6fca1b83c67c0b9da35ff94660bd7d5f6e039bf27a",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "174943ccc19b2a2fcbffdb5304362d985c46b3891d6f17f5232ef6239dced7c9",
+    "mention_text": "PayPal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82f0dc33cf3efe4927f3b38ecb952c2a1e5dc7bdbbecea7f3623d06930a65d70",
+    "mention_text": "Tesla Motors",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ee4868806fb39fab7b52c7af8559e7fea966d83cd44a07e288043b90ef2031b",
+    "mention_text": "Reid Hoffman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2866c195c618b2cbdacd97351ad84429fa6cf9ac4257af9a3bbd6739a381fa6f",
+    "mention_text": "LinkedIn",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "347fadafcc2796f95782403d2a25fb092a589312b8a75f716ee71573d3bdbf1b",
+    "mention_text": "Troy Carter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08ce0c693ad3ce0150fc6e890f7fd48ad210fbb7d85a25c38b6f9fa0cdf39ded",
+    "mention_text": "Lady Gaga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "caecdcf992ce076fbed144f367454edeea351f1d1870a64785a0b02c48ea6b20",
+    "mention_text": "Buzz Aldrin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0faabee2f8b2105592521004eca9a81b15e159ffa16ce701997732aa6ad537c5",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31d3ec72832e6382f7433aee5233cb059b3d194a84d4dd775b7702871385732d",
+    "mention_text": "Aldrin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2c24e2b0bd6d89fab9c4aa50cd2bd4f82090333d61f067d775699f2ddec76ac",
+    "mention_text": "Aldrin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4cc95e8dbd1140b846fe29e4a83ae9566a4babe7f2c10d49a42a5d8f4f79ee43",
+    "mention_text": "Lua",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "809e36737bb7af906477dbdc8e36334bca1e5a90730abfeaf16c29b0b878f250",
+    "mention_text": "Snoop Dogg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9751902c72ace5d8dd5f717a824496d2e234a5692eb808432acd703e91d0132d",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86a050663ee32dcd360d9856cf9d94fd41a347661406744694472d98b3bdf408",
+    "mention_text": "Ray Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91fc722b121032b53c351cfd2878615a6170abbe05909a6dd88f2634bdd8d8c2",
+    "mention_text": "Vernor Vinge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1185e839208c75ea0d11522217c892d9f7b3a1253c2d23f7a820fc706e112225",
+    "mention_text": "Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50b3930882437f2fccd1eb5d0bacc215f47a964bf404bacce64089b7442826a7",
+    "mention_text": "Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b2202404db3870250baa0f9b6192c3d7b9e0ec11e74ae13b6debc83a58c67074",
+    "mention_text": "URSS",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "356e328b92ce6ddccf9646f4bbc92e6493a059b918a177f5c07f21e379c1a410",
+    "mention_text": "Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "32f36d9cfd21a7de2753336ebebc5683989decfd635d53f6d44ba9efcb24fe99",
+    "mention_text": "Gordon Moore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c4d2dc398395efa19888e1afbd0d95471ad919ca84931be29bfd79cb63f15f5f",
+    "mention_text": "Intel",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9390250b8f11855d66b96909d2cb7144d074cb125b6b445d313ff3296176b134",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a72900322f40a812f4dd87efeae548b23f494200e3dacc32a911170312fcee56",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e344b1451eecacf8ccf6443b7eaa58cfc88d84ef82ca2726ae3359995a302c94",
+    "mention_text": "Peter Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bf36f7a1a742e23f3a87f8603680d02520957e5736c6c6200a74d0390b72539",
+    "mention_text": "Mike Federle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dbbfad43634099fa8828a6bcabc8002aad797fa0f632871fdc62f26ae65bc5fb",
+    "mention_text": "Forbes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "34f05b3dd7618701c2d660b9c8b5f572c01e6f66bac4d4df655068d2eb000fce",
+    "mention_text": "Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "660e370d60b670d21a22bb28d0b3c7eeb3f71d2616e83e32b95caafcf431c327",
+    "mention_text": "Boston",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e3c3b80787c3de8b8246b67c8814844ea5d30c50461090e5f80f1137c59e409c",
+    "mention_text": "Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d90a9c12379871a96a104c2cd6ebfc555d3ddd966993e8305002b7c1f1cd26cc",
+    "mention_text": "Peter Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc94690d78b81d8be5596d69b7781755b59c3bbd9b621a26eba5da111101c5f2",
+    "mention_text": "Chile",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cd76cd58e2abb3b8737f94f395ee5f945271ab4b21adeff585220d3ee7567d0c",
+    "mention_text": "Ashton Kutcher",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "731c2a3248cf88b069242975b9364c90e287fd96ab0036ab6b8d06d2b520a138",
+    "mention_text": "Mike Federle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7dc10e98b0f53189ac0c8ae07e5df1ca1b253954697c7fb5090e32716474879",
+    "mention_text": "Robert Hariri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c2fd3e88e2356d02cd6da3dadf538a8e5ab2d3c11f125e389941a50fa7e77f42",
+    "mention_text": "Peter Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad349a0a1f8c67a3f5ff7f88031c57cab382a6781c1576ce1b853d10a8c70f12",
+    "mention_text": "Charles Lindbergh",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "48bc78dd74c217773fd9b557508658b9f602c69db60e6b64991d8b1bb4759ca6",
+    "mention_text": "Atlântico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fcf7d7995e3ff3b09c5ae2b69e8a3f34e3c582c3c5ce407039d8779ac6e08598",
+    "mention_text": "Lindbergh",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c65b3a858dba18782eba92b3177b0125b8a98714a59854a1fe74d9c8be5169cb",
+    "mention_text": "Burt Rutan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d208e27e95d41767e6908f3088082871f2c33d6cf87ffad4716781200d41c5fa",
+    "mention_text": "Paul Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01bc795b5f373d95f0d20ea0d73903da79208f369559c7b290eefe3e0eb61e44",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0621b7f19b1fb93dcf439fa3e2cee31184ad2b2b83995fa3b8817e7abbc052c5",
+    "mention_text": "Fundação Prêmio X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "515dce64bb7d20f9205e4e0353755fe8e378a56b4b9efa3e811bf1f9961ba887",
+    "mention_text": "Craig Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3c99123344d522da1125832b2f3f39a777078fe7c38c6b06f5cebb3a4888211",
+    "mention_text": "Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6bb401258bd9b055b5f1433632e5b3b543eccd436e956538b6d6d7eb379f4b94",
+    "mention_text": "Exxon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f52d1b9c118008095688ba9eeaf9a07eb0b0a5e94a0a455a92f3af97f63301ab",
+    "mention_text": "Andrew Hessel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0472da98f08b880909eaa42f30044613b8a14763e36b0ce789f31097ea9e3f5a",
+    "mention_text": "Universidade Singularity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5149edb6ef17fbe447feb6ec347e24af9f9617ad35906bf8331ad98c6d4509d",
+    "mention_text": "Vint Cerf",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "573633bfaf99773ed0ffd31ab5f4b89214d1515aa0e5c8ba519314d995505e81",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "861a6a45fcae9769fa52cf6f367fb275cc1871fdb15987d03b3019c772a59ab2",
+    "mention_text": "Terra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8bc1844d6ebdb3315e93bc5fdbafb9647f1aba6d3b96e23f9fa2d56c21dbf953",
+    "mention_text": "Craig Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e53315dca44123a513588810c1247a4931c988c450c7837c2522a496a56f8f9c",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebd1b85a448c8d25290f5f7bc280206f869459654be07c6cc6e329a29aa155e9",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34a11b9b9878220fe9f94a6bc264c92abeb2e56a1ba0627be07004a97d59c906",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "704269ae679e743263e31db2509fc1e801634450f85d441f48709200cb0c33f3",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "715729e22724bb3ff3b43db15a1985bbb3acbd2fcf72d501b88c1dddaaa16a73",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c58aa090f1eda928aaea566cb51f4a6fffd2723337bb2adc3c0ec65d80f56677",
+    "mention_text": "Eric Schmidt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dfaf38b7611066de77202480a4cc34922936ab024fb121b3ed80dade27071bd8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa5101d1a45681c8452bd83d663b56863c9d32c7539d9d86fc3d0f35832e6765",
+    "mention_text": "Nova York",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a605ff03b213f54d96a40e8ead2afff9d7dc256b167d36b73bfe5240b8ba7ab1",
+    "mention_text": "Fox",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d6f245679bf79c30e16645bb804e57e1b3eff1bac6175b8bae930dc0bec9557",
+    "mention_text": "will.i.am",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad107a594666ef669c89fb0c62e25bd3264901d551a4cfedacb25bdb2b38fd9b",
+    "mention_text": "Peter Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6a3f5e2d221beaec520433805254667f7a83118c0a2091496ef38be4ee406a8",
+    "mention_text": "Brooklyn",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "761d2b785fca41019c39ba20d5d175d269eafab3cc96313d1d0556621107b5d0",
+    "mention_text": "MIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b32c321155d8d06e917c56fd2907a0098fed68c98e86023d081806221446ee2a",
+    "mention_text": "Massachusetts Institute of Technology",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "850f1228f12f09e8ea69c2710dbce82fac99db76b85b060fcf275a3a87e1fb15",
+    "mention_text": "Universidade Singularity",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6db211926f3f1671c8cad4c2b3615219955af6300037d074ea69397d683fd65a",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "121271577ef94b56b6a432c09bfc1931774187318a9ebccb31cba11876e20438",
+    "mention_text": "Universidade International Space",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a54951e5c5ce802b0f9a5957583d643d864e56dc6e0e45a84231759b89048e1",
+    "mention_text": "Nasa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "382d17d7ee8bbccb62b815119fc3b624f123b2c1a7019e8168881b6c0211d60e",
+    "mention_text": "Buzz Aldrin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e30696f4a4bc837543a9256490dec64a842868c5f698f6dd23178d8ee73273f",
+    "mention_text": "Dan Barry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f04a6a72fb9a4633945900e44387cd8ccc8541618afc38182d801c8b9b9a4d70",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af6007844db31f255517bd0b07d91e3367cffcbe341a5fe4905d3460384bc36a",
+    "mention_text": "Barry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3fd5b9df08d1b12a0bcc72e39f66df696be430cc6b254f3ac7a6be889f8decd0",
+    "mention_text": "Barry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce2f9df53f05228167d8373c5569300fbc93afb7f8ca6ca5dd54a315b0ce2cfd",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3392fb59de62a36c4fd81fb86ba4e7645012c2f5bbeb8298bcf9b6e38a2620bd",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2922f7ef5b04991cb8027727390e85b498ce690b2c38ca7f6a32fb657fcd1adb",
+    "mention_text": "Departamento de Defesa dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c1f935c375aef7027833f3e8a70361629a5e49b35399f17e1820dc346f1f1393",
+    "mention_text": "Dan Barry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d08aec03a45e86868bfae194a75e124f74ff5cb5df840c864d18f53618e2ff49",
+    "mention_text": "Venter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f4bac6b39467d422061640d323daa33c3432a7da6ed62e8bb69cbab504b0742",
+    "mention_text": "Simon Levene",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "367994d4bc5ec069f192545593ca56fd98e8465bdd1519eca467caae31a329ad",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a93e3a25ea32bfcfab853aed13c8238daf8ce2a9c6526b95fbc8326dbdfc743d",
+    "mention_text": "Levene",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b8f62ff629da0a99af3e117242f0cd9ce41358db2d1d4b43f419fe4a8cb5b44",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7dfa66df4e1c002c9387bbe39622320e9de90ba0e86a714a886d0fd90f7c0640",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d20226a5446a7e5a787aaba52f5b063c8857449779725d7192eae5bed46c2e75",
+    "mention_text": "Sebastian Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47b1a1925c85dd9e60dbd629a6184c2f7bdd62e5c0d822db94cd7583a15e4fa9",
+    "mention_text": "Darpa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1dc3448e20c26cdb6329fda95c532769bd7d267e90075acf86188b5d5988d38",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "132924a8da4e5fd2c3c07ea73247ba5b91f6ee3c586cc6d2bde55f4c658f93d5",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "af8294e8905bb3071e80dd33950444490d35cdc659b1da2e34e312f881a771ca",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "742b9581fabb17da5b8527de68e4ac9ac82f5e4b4d219b868e62347b1d155918",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfe6f59543099e65e783b2c670c0ea7b43eb9ee600480f3a0fde9264ea89425e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90c50f2080516ad05dd3cb02f5bb312ce5704da484ed6e25aa8e8b7b08ce95e5",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "09055e16a26b2c2adfe6f5a666b2882b3ca492e149ce79502a1635f70da36ca0",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b9b8010b3818271c45a094235a53cb87995b5b7b8691c95b22210209dbd29aa",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7534ba5e583040023588b347efca06355e315ff2aa7bfc9b79de6cabf0a0683",
+    "mention_text": "Thrun",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "12e8b87c48bfdcc13437417a1910c233a0dc3d63ba641a2372ea9128c54f311d",
+    "mention_text": "Dan Barry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45a04c803ff350610bb29a58fff7757cb27b74d1dfd8eecc176bec947449c26a",
+    "mention_text": "Ray Kurzweil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c58822ec1d9d97395ebe1f6b042f2130426e0b8f1091439a3d944101654a0840",
+    "mention_text": "Universidade da Singularidade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fdbfa3286990b4677143a53a16b7ded82c0ef732b988ea05b572b23be0aa0e4f",
+    "mention_text": "Diamandis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b4e1820a9568f04b36e1de62d039624059c93b6c9c21b0d0970bd6a0e0407d8b",
+    "mention_text": "The Observer",
+    "categoria": "ORGANIZACAO"
+  }
+]

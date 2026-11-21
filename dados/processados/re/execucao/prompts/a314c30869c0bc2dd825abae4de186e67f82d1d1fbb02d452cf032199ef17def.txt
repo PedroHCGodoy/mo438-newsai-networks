@@ -1,0 +1,337 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 4ca82902e532da6d242c1f88dcfd2f96affb0bb05c2085c2736397fae9b24ab6
+
+TEXTO:
+Folha de S.Paulo - New York Times - Procura-se um simples alívio - 03/09/2012
+
+Comunicar Erros
+Lente
+Procura-se um simples alívio
+Atingimos o pico das montanhas de dados e da complexidade tecnológica? Estamos velozes e furiosos demais?
+Parece que estamos dando uma respirada coletiva, recuando e reavaliando nossas vidas complicadas.
+"Todos desejamos simplificar a vida, mas não sabemos como", disse ao "Times" Marian Salzman, da Euro RSCG Worldwide Public Relations, América do Norte.
+"Invejamos o tempo em que tínhamos só três canais de TV para escolher. E invejamos o homem de terno cinza que sabia a que hora o trabalho começava e terminava."
+"Simplesmente", "simples" e "simplicidade", juntamente com "fácil", "honesto" e "claro", são as últimas palavras-chaves do marketing no mundo todo.
+Os anúncios de Glacéau Smartwater dizem "A simplicidade é deliciosa".
+Comerciais do McDonald's descrevem "a simples alegria de um café da manhã completo". E a Coca-Cola está vendendo 13 bebidas cujo nome começa com Simply, todas anunciadas como "honestamente simples".
+A marca Simply é "uma opção fácil para consumidores quando suas vidas estão tão agitadas e complexas", disse Allison Higbie, diretora de marketing do grupo para sucos e bebidas.
+O aplicativo digital Siri do iPhone foi concebido para ajudar a aliviar o peso dessas vidas agitadas e complexas.
+O sistema ativado por voz pode marcar compromissos, enviar e-mails e textos enquanto você dirige, acordá-lo delicadamente de manhã e às vezes fazer piadas sarcásticas.
+Mas, como escreveu Nick Bilton no "Times", "ele frequentemente entende errado o que eu digo. Às vezes, é totalmente inútil. Com frequência, responde com a mesma frase repetitiva."
+Gene Munster, um analista de ações na Piper Jaffray, submeteu o aplicativo Siri a mais de 1.600 testes de voz.
+Ele descobriu que o software compreendeu solicitações 89% das vezes, mas só conseguiu responder acuradamente a uma pergunta 68% das vezes.
+Várias pessoas disseram a Bilton que retornaram ao serviço de ditado simples do iPhone, que é mais confiável justamente porque não usa o software de inteligência artificial do Siri.
+Talvez seja mais fácil depender apenas de você mesmo.
+Um pouco de intervenção humana ironicamente, às vezes, pode superar as vantagens de inovações complexas.
+É o que alguns em Wall Street estavam considerando depois de vários erros recentes nos pregões que expuseram os riscos de corretagens rápidas e automatizadas, que não dão tempo para pensar.
+Os especialistas da Bolsa de Nova York ou os fazedores de mercado da Nasdaq foram amplamente substituídos por corretores em alta frequência que usam computadores capazes de comprar e vender milhares de ações em nanossegundos.
+Uma das corretoras mais importantes de Wall Street, a Knight Capital, perdeu recentemente US$ 440 milhões em 45 minutos, depois de instalar software defeituoso destinado a acompanhar um mercado em evolução.
+"Estamos todos compreendendo -nós, participantes do mercado, e, mais importante, os reguladores- que rapidez nem sempre é melhor", disse Duncan Niederauer, presidente da NYSE.
+Talvez eles devessem seguir o conselho de Kristin van Ogtrop, editora da revista "Real Simple". "A simplicidade é o novo luxo", disse ela ao "Times".
+"Em um mundo onde todo mundo é ocupado e há muita incerteza, isso é algo que não tem preço."
+ANITA PATIL
+Envie comentários para
+nytweekly@nytimes.com
+Comunicar Erros
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "923150d2cbd0d3d99d69ee9b4a434f90d61a10b4384d855e236a51f14c03fa22",
+    "mention_text": "Folha de S.Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9d64c41d98a1000029816107b3b7a071fceea64e0b679bbb5957d7a0d8285649",
+    "mention_text": "New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e25ac1be1189d4abb67e75025d89be2f2f291cab9d5509e6b8dd58d1d9070f8f",
+    "mention_text": "Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24ef740670e385590f3e2c786d6a389c7eec0538a6301dc7e5f4b73695eac83e",
+    "mention_text": "Marian Salzman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c1954b24576781951159174155e0634363125557c4e090e4db053e14be0126e",
+    "mention_text": "Euro RSCG Worldwide Public Relations",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5705ace7c52d026af21f97b88c7c6fd01751202662ce947f9122cfa2dda3fc7c",
+    "mention_text": "América do Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "235e6f7c090b5663409da07521747794734463cd5a318ed201bb613d90fc5e8f",
+    "mention_text": "Glacéau Smartwater",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b1acb1fed9854a18b9cb60c5e2bb14b488eb89d16c079cac34da1fa47a252ea",
+    "mention_text": "McDonald's",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6247798d02043ebddc30af5e16a854716d08bf6788ab80afe6ae921b611c75c7",
+    "mention_text": "Coca-Cola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7b37a31fb085d50290ed3d814f6211f615ea9f8cfd49c4de0e0dd42a28b273a",
+    "mention_text": "Allison Higbie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "813fe8948b57c1910fe4895286f68a4be9619178d4504a0fc4506405048454a5",
+    "mention_text": "Nick Bilton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51727ab0b74a2a7cc36e3f289036da62d4641dd94824b670a11f319adac19a61",
+    "mention_text": "Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e1c6b3474965f453f0b6636b60c5ab34354d7148ce48c4797eeecb1bdd7ce1d",
+    "mention_text": "Gene Munster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d67245435e1fb81b207246dbeac5378167ef2a3e90c6450e7db42ec0f9d8adf4",
+    "mention_text": "Piper Jaffray",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "119c5dbcf7a94e269ce302eaff7af3a638e5f92c713ef7ce0b3dff8c6f72263b",
+    "mention_text": "Bilton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9946471bc1e31e22f3d27c297489fc56ce3ac2d9c1b585972b1f03e6da7fff33",
+    "mention_text": "Wall Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d3d998af762c912db5ed91abfe1e313c4686f3d8393cc38227ce516ed1a4e1ae",
+    "mention_text": "Bolsa de Nova York",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e68dda26fe44ccf984f170af9efc03f6056edebef8c8d4dd038111c28ca14d1b",
+    "mention_text": "Nasdaq",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c3bac5717adb9573c130e5261790c772781d963dbc6f0a6ca62943768035186a",
+    "mention_text": "Wall Street",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd85f9e687e468ef0ec2f1cb0674ec8a12365e94198b125da33f11597e4c36b1",
+    "mention_text": "Knight Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e282673a6273b42b6d525db4766e3ee2b34f64b0cfd3d607f880ccaf18bbf67c",
+    "mention_text": "Duncan Niederauer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "617afbd0de76c5c7ea1fd51ab1e2beb270dbfade234d1d3eebeada8142717e4d",
+    "mention_text": "NYSE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29118f7e1466d4833a244528a79d8223b51f3b23bde5483f7841cbc5901264f1",
+    "mention_text": "Kristin van Ogtrop",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "49a0ec5accf0f8ca7bc6bfc8332eab00e62316a1e0128d3704aa97836fde9402",
+    "mention_text": "Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e2ab1161469cae02b8e6e5ad6ff47917eeaae4850216e6306955b02db0d6f7f",
+    "mention_text": "ANITA PATIL",
+    "categoria": "PESSOA"
+  }
+]

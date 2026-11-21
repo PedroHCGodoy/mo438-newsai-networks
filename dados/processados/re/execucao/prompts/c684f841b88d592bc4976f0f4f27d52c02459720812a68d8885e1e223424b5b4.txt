@@ -1,0 +1,407 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 52c6ce8f63d827bc27a3b04e081a6b000f421adfdf69b4352c81007221c86e11
+
+TEXTO:
+Inteligência artificial já cria roteiro, compõe música e pinta quadro
+
+A ideia de que a criatividade é exclusivamente humana está com os dias contados. Hoje, existem inteligências artificiais capazes de escrever roteiros, compor músicas, desenvolver videogames e até inventar receitas.
+As novas possibilidades oferecidas pela tecnologia geram receios inéditos de substituição por automação entre os profissionais da economia criativa, que engloba atividades como cinema, design, música, gastronomia e artes.
+“Eles se imaginam ‘blindados’ porque não são trabalhadores de chão de fábrica. Só que a inteligência artificial vai impactar todas as profissões, inclusive essas”, diz Ana Carla Fonseca, sócia da consultoria Garimpo de Soluções e especialista em economia criativa .
+A inteligência artificial pode ajudar o processo criativo de três formas. Ela pode ser usada como um cardápio de opções, caso da Angelina, criada pelo desenvolvedor britânico Michael Cook para produzir videogames e combinar suas melhores versões.
+Outra possibilidade é a filtragem e organização de dados, como fez o artista britânico James Bridle em sua instalação “Five Eyes” (2015), exibida no Museu Victoria & Albert, em Londres. A obra classificava as mais de 4,5 milhões de peças do museu segundo parâmetros usados pela Agência de Segurança Nacional dos Estados Unidos para identificar ameaças terroristas.
+Por fim, a inteligência artificial pode criar experiências novas. Um exemplo é o quadro “The Butcher’s Son”, do artista visual alemão Mario Klingemann. Laureado em setembro com com o prêmio de arte digital Lumen, o trabalho tem ares de pintura, mas foi produzido por uma máquina ensinada a replicar retratos.
+Klingemann é um dos artistas residentes do Google Arts & Culture , uma das iniciativas da gigante digital que combinam arte e tecnologia. Além dela, há o Project Magenta, que une machine learning e música, e o Google Deep Dream, que modifica desenhos e fotos a partir de algoritmos de reconhecimento de imagens.
+Pesquisadora sênior do Google PAIR (People + Artificial Intelligence Research), Fernanda Viégas esclarece que, apesar dos avanços, as inteligências artificiais estão longe de alcançar a sofisticação do cérebro humano. “Conseguimos correr, pular, cantar. Não existe inteligência artificial que consiga fazer essas coisas com competência.”
+Mais importante, os robôs dependem em última instância de instruções dadas por pessoas. “Se sabem desenhar, é porque lhes mostramos uma imensidade de desenhos”, diz.
+Mais
+Os desenvolvedores de inteligências artificiais dizem que o objetivo não é substituir artistas por máquinas. Eles defendem a colaboração entre ambos como uma maneira de expandir os horizontes da criatividade humana.
+O aplicativo de geração de receitas Plant Jammer, por exemplo, tem dois chefs e uma inteligência artificial (batizada de Eddie, a Berinjela) em sua equipe. A conversa entre os cozinheiros e o robô tem levado a novas combinações.
+“Nossos chefs tendem a cozinhar os mesmos pratos”, diz o dinamarquês Michael Haase, 35, fundador do aplicativo. “Se eu pedir uma receita com brócolis, eles vão preparar alguma coisa com avelã, romã e azeite de oliva. Se o Plant Jammer sugerir que acrescentem mostarda, eles vão por um caminho diferente”.
+Os criadores do robô roteirista Benjamin concordam. Para o americano Ross Goodwin e o britânico Oscar Sharp, o diferencial da plataforma é justamente sua falta de coerência narrativa.
+Pesquisador do Google Artists and Machine Intelligence (AMI), Goodwin diz que as inteligências artificiais têm potencial de modificar o processo criativo, como foi o caso da fotografia digital há alguns anos. “Você sempre pode tirar uma nova foto. Da mesma forma, quando falamos do Benjamin, não há custo para produzir grandes quantidades de texto”, afirma.
+O Amper Music, criado em 2013 por um trio de compositores de Hollywood, é outro exemplo da tendência. O software produz trilhas sonoras em instantes a partir de acordes gravados em estúdio. Basta que o usuário estabeleça o clima (romântico, alegre, animado), o gênero (rock, pop, ou cinematográfico), e a duração da trilha desejada.
+Segundo o cofundador do programa, Drew Silverstein, 30, a ideia é que a inteligência artificial poupe editores e produtores de vídeo de passar horas à procura da trilha ideal em bibliotecas de músicas.
+Mas as trilhas artísticas, em que o processo criativo por trás das canções é valorizado, ainda teriam um lugar cativo na indústria midiática. Na prática, ele próprio, compositor em filmes como “Uma Ladra sem Limites” (2013), estrelado por Melissa McCarthy, não perderia o emprego.
+Para a portuguesa Mariana Pestana, uma das curadoras da exposição “The Future Starts Here”, que ficou em cartaz até novembro no Museu Victoria & Albert, em Londres, a história mostra que a insegurança gerada pelo desenvolvimento de novas tecnologias não se justifica. Mas é preciso tomar cuidado com a tendência à uniformização de gostos que elas podem trazer.
+A curadora cita plataformas como o Instagram e o Airbnb, que inauguraram padrões estéticos para fotografias e para decoração de imóveis. “No início da internet, havia a promessa de que qualquer pessoa teria espaço para se expressar”, diz a curadora. “Hoje, como as ferramentas estão concentradas em um grupo pequeno de empresas, elas provocam uma homogeneização.”
+Ex-curador do MAM-Rio e atual responsável pela curadoria do Prêmio PIPA, de arte contemporânea, Luiz Camillo Osorio argumenta que a dependência das inteligências artificiais de grandes volumes de dados também pode culminar na repetição de padrões conhecidos.
+“Uma máquina jamais poderia inventar o ready-made”, afirma o curador, referindo-se à estratégia inaugurada por Marcel Duchamp em 1917 ao exibir um urinol em uma exposição. “Um robô não deslocaria o mictório para o interior do museu. Agora, deslocará mictórios para o museu, pois acha que isso é arte.”
+Se os robôs vêm ganhando espaço em atividades humanas, por outro lado, seu desenvolvimento também oferece oportunidades de trabalho. Afinal, inteligências artificiais como assistentes pessoais precisam de roteiristas para redigir suas falas e desenvolver suas personalidades.
+Jonathan Foster, 50, tinha uma carreira consolidada como roteirista e escritor quando recebeu um convite para trabalhar na Microsoft, produzindo conteúdo para a plataforma de jogos Xbox. Após um tempo na função, foi encarregado de liderar uma equipe de 30 redatores e roteiristas responsáveis por escrever as falas e formular a personagem da assistente virtual Cortana.
+O americano vê um futuro promissor para profissionais criativos no campo da inteligência artificial e cita como diferencial o fator humano que podem agregar aos projetos.
+O jornalista brasileiro Renan Leahy, 39, também migrou para o campo. Atual gerente de conteúdo para a Cortana na América Latina, ele aconselha profissionais criativos que queiram atuar nesse ramo a não ter medo do novo.
+“Ainda é uma área incipiente. Descobrimos no dia a dia o que dá certo ou não”, diz.
+A inteligência artificial tem aberto portas em vários setores. A empresa de recursos humanos 99Jobs abraçou a tecnologia para selecionar aspirantes a vagas em empresas como Itaú e Natura. A criação dos chatbots dotados de nomes e personalidades humanas envolve uma equipe mista de profissionais de RH, tecnologia e criativos, entre eles redatores, videomakers e atores.
+Apesar das iniciativas, Foster acredita que a arte continuará a ser o domínio da expressão humana. Para ele, a tecnologia é uma espécie de “pincel superinteligente”.
+“É como um elefante que pinta um quadro. Todos acham fofo e alguém talvez até compre o quadro. Mas, no fim, é apenas um elefante”, afirma Foster.
+Angelina A inteligência artificial gera milhares de videogames e mistura os melhores resultados para formar um novo jogo
+Plant Jammer O aplicativo usa um mapa de sabores desenvolvido por chefs para sugerir novas receitas
+Benjamin O robô parte de uma base de dados de roteiros de ficção científica para produzir novos textos
+Amper Music O software, que ainda funciona como plugin para edição, combina acordes gravados em estúdio e cria trilhas sonoras completas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6c60f41507dbc29b7263bcd042e3406dc55c129dde0f8b399c3b8e48f8303630",
+    "mention_text": "Ana Carla Fonseca",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "19d0b06a87325e41ba57d6417865212d5962d80c9380f547294504ee081b962c",
+    "mention_text": "Garimpo de Soluções",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd583227072b3cfbe3d9cbaad5c1b451ab5bc060172d116034691183c45941cf",
+    "mention_text": "Michael Cook",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "133adaab2bcbab2dcf918f23ae4690b4043a2f37856c5700a2f45a0291a096de",
+    "mention_text": "James Bridle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3892052c0fe07afb18a19717c8a3c25f4e9a38c9548fba17ad243b07c187894f",
+    "mention_text": "Museu Victoria & Albert",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a83c77ae6c77258c20508377e7f61f53645d0a9325d5e59fec8e7bb9263aa132",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f4cb393266c3dcdc7e54981b4873dd54c5d58496d52f3ee9876470a9b922cd65",
+    "mention_text": "Agência de Segurança Nacional dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5e1f81c4f3670ca7c332e2e977b5333eeb902b3179f53d2b7218bb53d0ec968",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5755d8e8adf9181b61c2a371694e6650980b201739caffbc5b048d9242a581a7",
+    "mention_text": "Mario Klingemann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ebf343e9f4362bc2e26c9699123c453ded2a902b4aa2e6d4a7ed2e006f187948",
+    "mention_text": "Klingemann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f468dac866b0c938b19c75fbe36420ecb7a82cfd3c465d36d752b45c1cfb2dcb",
+    "mention_text": "Google Arts & Culture",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8553bdbd2f8983f238fa095ef13136e6eece61c0f3f3c50cb75f534968284c2c",
+    "mention_text": "Google PAIR",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2152cfa61a6e22acde0bb527ead2d75268b797d2c70c09ef0cb729ac83f1cc0",
+    "mention_text": "Fernanda Viégas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4af85881e49575291b65b2cc8a1a01703a437427e5ce0a7243674c93b1dda876",
+    "mention_text": "Michael Haase",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dea1f96239d5d5cbf8ef79585e76a16b26d882d4941ddb8cfa89ec433622d53c",
+    "mention_text": "Ross Goodwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d74fc595749fb584d21690edaa0b2a5cddf969a750d493ed60c292b992d28e2d",
+    "mention_text": "Oscar Sharp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd9b755ddf70ac88f49bae3ae762d476afc49b4bd54382d1f2788d2c3548fbcf",
+    "mention_text": "Google Artists and Machine Intelligence",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f1204f504948a032f576ea5aecd900ceb6824b4cecbd02ea57d387b06665231",
+    "mention_text": "Goodwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e2123166795c2020602eb06398c355e702bdfad9166ee856c252fbf28fe3d84",
+    "mention_text": "Hollywood",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "beb6d455df2e2ba721cd6ba11d3ac930c869adfa002d180b3f1e782673e5ab1c",
+    "mention_text": "Drew Silverstein",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aab655d505f1048e581622a86de321f72ad4f582fbd0e847382e9bd45d540f24",
+    "mention_text": "Melissa McCarthy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "233c68b5f7ee4c054e96fb2e1b9f36712610a9a0f93fb7aeb79b86e29cbf3932",
+    "mention_text": "Mariana Pestana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d37c7632d66010edd6c547fcef57acf2dd7512f44226c1fbefbc15fe723f5cb",
+    "mention_text": "Museu Victoria & Albert",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8cad9f93ceda32fcdadbee0c80bcaa4add86998babeb5005c0b982c5fb9ba35c",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb8584c959666e0c396d6020c422741e1129f4f7f6b51bd138fd7863b567b0cc",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2f8078ebc572c8ebde55f7dda89e6e62cc7f00376804eea7607793172f01763",
+    "mention_text": "Airbnb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb4b370db2b01bfa152a8cd625648d94ab46f440d1abd6ef42281104209644b0",
+    "mention_text": "MAM-Rio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1f1754733c69a150061975b2d94c512bf85c02e0a24d40b42e338fdad16b7f6",
+    "mention_text": "Luiz Camillo Osorio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77a27b807a3928093dd491e29c9dd33c67bc2f5b50facedd450f95809dbe77ab",
+    "mention_text": "Marcel Duchamp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e6310348beccb63e9339a6fa4de57e9061aca36f056606c92b2c035e2498def3",
+    "mention_text": "Jonathan Foster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "38d525d3e3fd4c660556018dd1a6ffce0ab3b225d4d0180bf2dc4c450798436b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d1d6974dc71d4a945a194ea0a909c96069428e52384dd7d4d3148b5f7769b19",
+    "mention_text": "Renan Leahy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44806de1c2c5c2ea5f95675f7043359f99ef50ee6406d5e25c3a607ea25dadb6",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0331c2a4e3b27c4459b96281327ea33b03d307898cfa2e06111eb03845798a2",
+    "mention_text": "99Jobs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6ee6117b477fee6f216b02d23e918e385f969631b6259613be2f639f1a88122",
+    "mention_text": "Itaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce6b87f4f3adfcc79cf57ebc4be94d9e7205e3b65b873247e7a5f17676f40d04",
+    "mention_text": "Natura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ae05f5482c3106bde0fa9304de2e31cfee11f4522c55442f877befddc4c4a343",
+    "mention_text": "Foster",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "18ac501410e2342b252630a1a7720bff662dd3e1fc10bf79a7f19b6473aabdba",
+    "mention_text": "Foster",
+    "categoria": "PESSOA"
+  }
+]

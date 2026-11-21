@@ -1,0 +1,390 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 7377dfeb754201bda90c0cc54c22fb700d3e9bd5ca07de4fbd4249a890a8e8d7
+
+TEXTO:
+Matemáticos ajudaram a ganhar a batalha do Atlântico
+
+Detesto admitir, mas matemáticos não costumam ser pop. Atores, esportistas, cantores, líderes religiosos, até alguns políticos o são, mas, para os matemáticos, é muito mais difícil que se tornem conhecidos e apreciados pelo grande público. No entanto, há exceções.
+As crianças francesas do início do século 20 colecionavam figurinhas de celebridades da época, entre as quais Henri Poincaré. Vinham nas caixas de chocolate Guérin-Boutron e o grande matemático era a figurinha 469. É comovente imaginar as negociações ansiosas no recreio da escola: "Você tem o Poincaré? Dou o almirante Makaroff e dois reis da Inglaterra pelo Poincaré!".
+É difícil conceber isso nestes nossos dias de Neymar e Cristiano Ronaldo
+Os outros exemplos que vêm à mente são figuras cuja trajetória de vida foi marcada pela tragédia. O genial matemático indiano Ramanujan (1887-1920), protagonista do filme "O Homem que viu o Infinito", morto aos 32 anos na sequência de problemas de saúde que o perseguiram durante toda a vida e que estavam muito ligados à pobreza.
+Outro é o americano John Nash (1928-2015), matemático, economista, pioneiro da teoria dos jogos e celebrizado pelo filme de grande circulação "Uma Mente Brilhante". A pesquisa notável, o drama da loucura, a incrível cura, e o trágico acidente que causou a sua morte e de sua esposa. Tudo compõe uma história além do que a ficção poderia ter concebido.
+Na época do filme, o jornal "Corriere della Sera" perguntou a um colega italiano se a matemática poderia ter contribuído para a loucura de Nash, ao que ele respondeu que sim. Quando questionei se ele acreditava mesmo nisso, o colega matemático respondeu: "Claro que não. Mas o jornalista acreditava e ficaria desapontado se eu respondesse outra coisa."
+Outro matemático conhecido do grande público é o inglês Alan Turing (1912-1954), considerado o criador da ciência da computação e da inteligência artificial. Em seu trabalho "On computable numbers, with an application to the Entscheidungs problem" (em tradução livre: "Sobre os números calculáveis, com uma aplicação ao Problema da Decisão"), publicado em 1936, propôs um modelo simples –que atualmente chamamos "máquina de Turing universal"– e mostrou que tal máquina poderia calcular tudo o que um ser humano pode calcular.
+Os primeiros computadores modernos (programáveis) foram construídos uma década depois, com base nas ideias de Turing.
+Foi com essas credenciais que Turing foi convocado às instalações do serviço secreto britânico em Bletchley Park, em 1938, para participar na tentativa de quebrar o código Enigma, usado pelas forças armadas alemãs, especialmente a Marinha, em suas comunicações secretas. Esse importante episódio da história da Segunda Guerra Mundial é tratado em diversos filmes recentes: "U-571", "Enigma" e "Jogo de Imitação" –mais recente e que destaca o papel de Turing.
+Vamos deixar bem claro: esses filmes estão cheios de erros históricos e omissões tendenciosas.
+Não foram os britânicos os primeiros a quebrar o código Enigma: foram os poloneses que, inclusive, construíram uma cópia da máquina codificadora Enigma e a forneceram ao serviço secreto britânico depois que a Polônia foi ocupada pela Alemanha e pela União Soviética. Quando os alemães substituíram por uma máquina mais complicada, o trabalho do serviço secreto polonês deixou de ser suficiente, mas continuou sendo extremamente útil.
+E o Enigma não foi o único código importante quebrado na guerra: o matemático sueco Arne Beurling (1905-1986) quebrou o código Geheimfernschreiber, considerado ainda mais complicado que o Enigma, e foi assim que o serviço secreto sueco ficou sabendo com antecedência da operação Barbarossa, o plano dos alemães para invadir a União Soviética. Apesar de oficialmente neutros, os suecos repassavam informações aos aliados. Mas o líder soviético Stalin recusou-se a acreditar que o amigo Hitler se voltaria contra ele, e não preparou o seu país para a invasão.
+Além disso, todo o brilhante trabalho dos matemáticos em volta de Turing teria sido em vão se não fosse o heroísmo dos marinheiros britânicos (e não americanos, como quer nos fazer crer o filme "U-571") que caçavam submarinos alemães para confiscar máquinas Enigma e livros de códigos, necessários para recalibrar a decodificação a cada vez que os alemães mudavam as configurações das máquinas. A tarefa era perigosíssima, pois os oficiais alemães tinham ordens de afundar as embarcações com todo mundo dentro, em caso de captura: mais de um bravo marujo britânico afundou junto em sua tentativa heroica de coletar o material.
+Dito tudo isto, Turing realmente revolucionou o ataque ao problema do Enigma. Uma das suas maiores contribuições foi uma máquina eletromecânica chamada "bombe" que permitia analisar rapidamente as possíveis configurações da máquina Enigma usadas pelos alemães. Isto era crucial para poder interpretar as mensagens enquanto as informações ainda eram úteis, pois os alemães mudavam as configurações o tempo todo.
+A descoberta do código Enigma foi importantíssima para neutralizar a ameaça dos submarinos alemães, contribuindo para a virada da batalha do Atlântico em favor dos aliados e salvando milhares de vidas. Entre elas, as vidas de muitos brasileiros: entre maio de 1942 e julho de 1944 os submarinos alemães afundaram 31 navios com a nossa bandeira, causando mais de 1.050 mortes, o que obrigou o governo Vargas a declarar guerra à Alemanha nazista.
+A condição de cientista respeitado e herói de guerra não livraria Turing das amarguras que a vida lhe reservara. Condenado por "atos homossexuais" em 1952, Turing aceitou um "tratamento" de castração química para evitar a prisão. Cometeu suicídio por envenenamento dois anos depois, dias antes do seu 42° aniversário.
+Em 2009, o governo britânico apresentou desculpas formais e a condenação de 1952 foi anulada pela rainha Elizabeth em 2013.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4936f6f61f41d372673290c52d18371e953601968bf11ffe86a3ea89738f07c4",
+    "mention_text": "Henri Poincaré",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5d89e84b4d163412af7aafa54a548327e43818e2aa764e62255989a0d6bbbd3",
+    "mention_text": "Guérin-Boutron",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e63e4bcfd8c1bc81afc12d1491cc04fa7a97b48d732cb02129921f21839ad213",
+    "mention_text": "Poincaré",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97b0cde79b56520d8e9e0cd9e3efb12faaf022aa900ba7890a284ad070399d34",
+    "mention_text": "Makaroff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8627e588e5d04bdddbc22a32b6cca36c1aebb2f442c8f9e39eb2f301eeba2707",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "af94e6520f1db54f9d770ad573949b41843efbd4cd2a22d1d6f24877d9d4f5cc",
+    "mention_text": "Poincaré",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eccd30ff6fb4f04e857649af2021224268f394c47ac185920976da4c2e415487",
+    "mention_text": "Neymar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "659bef608da7c8b3b82fdd839b7245562589d70748389d379df9f0d99746dfa0",
+    "mention_text": "Cristiano Ronaldo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7f0b481891959b34761ba95818b844cec3ef29837e017ea5f251e799e999876e",
+    "mention_text": "Ramanujan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7b01e3e62d896c0e567025e3dacb7c2ee2023ec938398efaa084c9845d5295c",
+    "mention_text": "John Nash",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c3d01aa5879c7628b1d016ef91eb417e85f0edc3459408da967487bea1c5af5",
+    "mention_text": "Corriere della Sera",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "100a76ee7bc8053d9ad6610062bd0ec0598167b4d320f10202a52b30c12c600e",
+    "mention_text": "Nash",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "962387e2fab31430f8c37003ea6a5d9ed37b0d962c6769f81f1d15921719bf88",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5aab156ed255922ca6c2e6cb43330644ac641f27fd187face0e8b15fcab52d8c",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0640250371c53d63076a62cc77206c4e60e8ddb0d5fc66685880fba1cf61c064",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1acf8c7f440c76edad570bfae5b3477a0319612086bbd36bab88721a0df36ef9",
+    "mention_text": "serviço secreto britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f506feca1ae80d281f7da1215a7c29d8617adf52307f9c05abdd074e4c7c7bb3",
+    "mention_text": "Bletchley Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bcd56fd37b33dbd3ffe73712633148e15338c61a590c50b71e2f4426be62ed38",
+    "mention_text": "forças armadas alemãs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c35aa1c77bc49e9706b00479829abf7bd62c0c54178fab35b47bbc0008d308f9",
+    "mention_text": "Marinha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fce155d7cca3c6575f110dd3a6bd5814eacb9fae261865369b3397163ab60135",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ab461d2a3d636c71d299f625ba125b86a0285314ac63fdfbbfd2c5c1277dbf6",
+    "mention_text": "serviço secreto britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "26ca5b84f51a8c016e58a5c7be1f787718485d35f8666b0371df637fd21c4969",
+    "mention_text": "Polônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "130d35e23d78e547b82c264d36048f26ef483b8da859f346e5b4498f93e50c52",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5821d8d7d0a46d9d1c08105985a7f81ebc137f03eef7ccbca352b90c716a76d0",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c28730a24fab246b06b257c9498be4034925b5b2a4bbab1f3d84c97a6ea8a940",
+    "mention_text": "serviço secreto polonês",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89a6db1bdc51a223393b82ef27d36c48494df422c7d6487fbbf61e53c1b3eec3",
+    "mention_text": "Arne Beurling",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1672e5bd1a6bc427f6682c574f855bbfb25b3808e11a215701aadd8ce49258c3",
+    "mention_text": "serviço secreto sueco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62d38bb15b76fe116b2cce979d4a03112f54baa87b5577f3efbd641fa35d96ef",
+    "mention_text": "União Soviética",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9bb485905130edf6fbf0dcde55124ecdb9c7b9bb68d311ba8c9589fe453abd22",
+    "mention_text": "Stalin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44030a6176f35ecd08a4db22261dbbbdd888f2e8c303a0b0fa61b3143bc8e93e",
+    "mention_text": "Hitler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91c29f3e453082cf7f87616c9dfac3760dcac630c37e49e6b3bcfa9ea5cf5bc7",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9bb59e1eef9cf39b7633799193e07573744daaf8a58789b519723100e2035815",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a97621495b57779e371e0c2d8951b213cc5d104e1d962bbc9c4cb821b8bde3d5",
+    "mention_text": "Vargas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbd2734ab6089dc4bb5dc5043e6a6f0c3a0fd405d00559a52438aa0b838d8320",
+    "mention_text": "Alemanha nazista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08c8923ee0f8d7050961291a0dfbfc98ee3204808f7c3144126d14261de25a41",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20831c202106d2e9e329c81588a5d9d9eb6c6f440ac64fbb2dbc8b53ed9f6364",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d545f7d0cc71ed375fcfc02a120d6172746378f1f8adb838fb2b79588ec5599",
+    "mention_text": "governo britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0e40f3a9dca7493292496ae7387f010a631f2bd5394eaea147898fe8f0362e31",
+    "mention_text": "Elizabeth",
+    "categoria": "PESSOA"
+  }
+]

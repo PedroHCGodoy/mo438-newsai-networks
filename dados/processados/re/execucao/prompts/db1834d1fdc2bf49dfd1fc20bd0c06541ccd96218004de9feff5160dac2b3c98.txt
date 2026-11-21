@@ -1,0 +1,325 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e9902fb60fcff37ff46b29270a8f2446a90e06ad34cfaa8ec88a26ea2c85b6ef
+
+TEXTO:
+Crítica: Livro usa vida de inventores para explicar revolução digital
+
+Os computadores dominam os dias atuais, travestidos de celular ou de tablet, e a cada dia que passa fica mais provável que você já não esteja lendo um texto como este no papel. Mais do que levar a um progresso, a computação se tornou agente de mudança, tornando-nos mais produtivos, conectados aos outros, informados, educados e entretidos.
+Walter Isaacson, conhecido por escrever a biografia de Steve Jobs, destaca na sua nova obra, "The Innovators" (os inovadores), uma série de inventores, ajudando-nos a entender o que permitiu à tecnologia chegar ao ponto atual em termos de computadores, softwares e a internet.
+Sua narrativa reforça a tese de que a inovação nas ciências exatas ocorre intimamente vinculada às humanidades. Por causa disso, a história é iniciada com o retrato de Ada King (1815-52), filha do poeta Lord Byron (1788-1824), que viveu em um ambiente de criatividade que permitiu a concepção da ideia do Frankenstein –o homem-máquina.
+Utilizando esse contexto, o autor mostra de que maneira visão, entusiasmo e colaboração convergem na mente dos inovadores. Demonstra que construir um ecossistema adequado é crucial, não existindo um gênio que tenha trabalhado sem ajuda de outros. E King se torna referência por se entusiasmar com o assunto, e agregar em sua casa os principais gênios da para construir esse ambiente.
+O VALOR DO MEIO
+O livro é fruto de pesquisa bibliográfica e de entrevistas do próprio autor. Trata-se de um caleidoscópio de cerca de 300 pessoas, grupos e instituições, narrando como a cultura hippie surgiu no Vale do Silício e transformou a região no grande celeiro mundial de inovação tecnológica. Isso graças a forças socioculturais que criaram a atmosfera adequada, a partir da união indústria-academia-militares.
+A obra é bem linear, seguindo uma cronologia histórica e enfatizando principalmente passagens de sucesso. Evidentemente, somente quando chega mais próximo às décadas recentes temos melhor ideia dos assuntos e nomes tratados no livro, sobretudo quando diz respeito às máquinas.
+Ainda que a inovação seja um trabalho em equipe, o autor elucida como ações de personalidades emblemáticas como Steve Jobs (Apple), Bill Gates (Microsoft), Sergey Brin e Larry Page (Google) potencializaram a capacidade disruptiva em suas equipes,permitindo atingir novo patamar de inovação. Porém outras figuras importantes, como Jeff Bezos (Amazon), tiveram poucas menções no livro.
+Também são abordados os embates de ego entre os inovadores. Interessante notar que muitos deles nasceram em cidades pequenas e só depois de adultos foram atraídos pelo ambiente dos grandes centros.
+A obra não é apenas dirigida aos aficionados em tecnologia ou computadores. O grande feito de Isaacson foi conseguir surpreender com novidades esses entendidos ao mesmo tempo em que escreve de forma abrangente e acessível ao leigo.
+A ironia da narrativa é ignorar a evolução da tecnologia 3D e dos games em 1990, exatamente a mesma que trouxe o computador para próximo da minha geração. O capítulo sobre videogame não avança na era pós Atari.
+FUTURO
+Nas últimas páginas, é apresentado o dilema sobre a capacidade de os computadores terem uma inteligência própria e substituírem os humanos.
+A discussão não poderia ser mais atual. A IBM, responsável pelas mais reconhecidas experiências em inteligência artificial, vai manter uma divisão do supercomputador Watson no Brasil em breve. Por causa disso, em painel da Campus Party 2014, debati o tema com o presidente da IBM do Brasil, Rodrigo Kede. Lá ouvi a provocação: seria possível existir um call center sem humanos? No estágio de evolução em que nos encontramos, ainda não é previsto tal cenário, segundo o livro, que explora as ações da IBM no tema.
+Enfim, quais as lições deste livro? Um ecossistema é vital para a inovação e precisa de atores como o "venture capital" (capital de risco) e das iniciativas de governo. A criatividade e o sucesso vêm da colaboração. E um segredo máximo permanece: o mundo só é limitado pela nossa capacidade de imaginar.
+-
+THE INNOVATORS - HOW A GROUO OF HACKERS, GENIUSES, AND GEEKS CREATED THE DIGITAL REVOLUTION AUTOR Walter Isaacson EDITORA Simon & Schuster. QUANTO US$ 21,34 na Amazon (R$ 52,23, 560 págs.) AVALIAÇÃO Ótimo
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "20360dbf8e7f8c78908607b258dee01c2da1bb3c763cdcfd7242537e796584a7",
+    "mention_text": "Walter Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb233fb5abb02a6dcb6fed29537e8687b8b5c650de90f4c22efbad959ef55d16",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f76bc24ae9fa031d3e92bb19f47e4e5202abd9f8f866ab81eda9012cfe9cdae",
+    "mention_text": "Ada King",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f28fa4ad0df47856de3db3bffb6d26434ef22fb76d1bfce5195623a6d347e180",
+    "mention_text": "Lord Byron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "942a37458ce8b02a600ceb84c2a84c5fa5a6517751765a64c99a57d76801d173",
+    "mention_text": "King",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2eeb7044cdd345c1525828557efb52ff7e969b059e05eafc31d5d8595480b8e",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dcb44b995de88f0a00b8dab1090d502f8a05d66602cd8df8fa3276b8120aa0e2",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a72e2d85e50dd9599995603e00290686bdfe3a7c0da62601a870bc13694a1577",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e53759b691ee343eb5e970ca1e45203ff37b341efd859881c4fede915f2dc076",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fc3e7971e199abab0e55dd3bf58927146166a1ee6a4fcbe05e859f303f24c0b4",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a039adb7c3f3114628de0fa519da80d926b1ff9d9a0a1f6447dbab7842f63bb",
+    "mention_text": "Sergey Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5228e488fa3a0354afbabda82d0dc4f28d5b7e6bc67878bc2def4c861355b080",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9dae048a28d3525d171e9b386a8f3e54b09bde83bdcc7a73069114e31b0d6ebb",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c665d5a99d4bc036a129a2349bf526bc0820045118877eab1f3474e2218ec37",
+    "mention_text": "Jeff Bezos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34218f86677bcb5b8229a605199b4f97f6e508aa94b4c4c526afd59b55dc4955",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e9d1178715624dc8b3ba88284d3eefe429031167ba4dc3ae65d7d845cbaf544",
+    "mention_text": "Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "120aa6dbf3f397c34bec1de27aaef89afec7e9ffdcb1bce6a5988d610a6a3408",
+    "mention_text": "Atari",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2515e50a2d8511279f359136b7c91cb8b4f49cfde8aae9ec8520f1db51ee80f0",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d06287b5fd0349d429aefa76334b6dbc999435b23f84c7bba269196c541e421",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0cd4d1af201e46a29d4fa435160c186e080d0f82e03161b545de0bd98aba7508",
+    "mention_text": "IBM do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f0778b63c756902345012c249c916987024345684f183417b4ae7791cad4c37",
+    "mention_text": "Rodrigo Kede",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf1f73a80649f51ef53621914e452e38da9f3539245879ac4e4a475d066704aa",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e462f2194b79de02af95b58b1cbf36ea074cab571f9f8c1980c79bcc558f36ce",
+    "mention_text": "Walter Isaacson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7892a95acce43fb68ea85ff17441aff5dd9f87e55da3132aa745ef411bf8082",
+    "mention_text": "Simon & Schuster",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9da4d7d6de0aade80af76fcc66217e3dddeb27764c603ea059edf900f9969f7",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  }
+]

@@ -1,0 +1,416 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 8cdd6e94a62bdad2326a25e9ce930ebdf01f467e5cc96b004c2c86a2e8884d06
+
+TEXTO:
+Aos 23, brasileiro desponta nos EUA com projeto de segurança no trânsito
+
+Se precisasse enviar um currículo, o paulistano Lawrence Lin Murata, 23, deixaria o selecionador boquiaberto: aos 20 já dava aulas na Universidade Stanford (uma das melhores do mundo) e, aos 22, criou uma startup que, menos de um ano depois, já está avaliada em R$ 9 milhões.
+Mas Law, como é conhecido, não está à caça de emprego. O jovem trabalha sem parar nos testes da ferramenta de inteligência artificial criada por ele para melhorar a segurança de pedestres e motoristas.
+O escritório da Newton Technologies fica em Palo Alto, cidade localizada no Vale do Silício , região dos EUA que reúne as principais empresas de alta tecnologia do mundo. Fazem parte da equipe de Law um ex-funcionário da Apple e um professor do laboratório de mobilidade de Stanford.
+Tudo começou quando, aos 15 anos, foi participar de uma feira de profissões no Colégio Bandeirantes, em São Paulo, e não sabia muito bem o que olhar por ali. Até que viu uma sala com uma fila enorme. Se havia tantos interessados, pensou, devia valer a pena a espera.
+Quando chegou a sua vez, conversou com o professor José Olavo Amorim, diretor do departamento internacional da instituição e responsável por informar os alunos sobre os processos seletivos das universidades estrangeiras.
+"Para mim, até então, a Universidade Stanford era coisa que eu via em filme americano. Eu mal sabia que era possível ir para lá. Quando entendi, fiquei obcecado, não conseguia parar de pensar nisso até o fim do ensino médio."
+De fato, se atualmente muitos estudantes dos colégios de elite já planejam fazer a faculdade fora do país, há oito anos ainda eram poucos que ousavam fazer o SAT —exame de seleção dos EUA que funciona nos moldes do Enem, com as notas sendo utilizadas por variadas instituições.
+Mas, por lá, o conteúdo cobrado é bem diferente. Além das disciplinas regulares, as universidades consideram o perfil do inscrito, como participação em trabalho voluntário, esportes, olimpíadas acadêmicas e capacidade criativa.
+"Quando o Law me contou sua história e vi o quanto ele era criativo, inteligente, articulado e com senso empresarial, já sabia que as universidades americanas ficariam interessadas nele", conta Amorim. "Faço isso há muitos anos, sei quando o aluno vai desabrochar."
+No caso de Law, dois pontos devem ter atraído os selecionadores de Stanford, Yale, UCLA e Dartmouth, as quatro universidades dos EUA em que ele foi aprovado: o menino de 18 anos era poliglota e empreendedor. Fluente em inglês e espanhol, comunica-se bem em japonês e mandarim.
+O lado empreendedor havia aflorado aos sete anos, quando criou um banco para ele e os irmãos depositarem os trocos de lanches comprados na escola —com direito a regulamento e informações de cada usuário.
+Quando foi chamado para Stanford, fez da própria aprovação um caso de empreendedorismo: criou um programa de crowdfunding para levantar recursos para bancar os gastos de curso e moradia. Ao saber da história do menino, um empresário doou R$ 80 mil, sob a condição de anonimato.
+Law fez valer cada centavo. No segundo ano, montou a CS+Social Good, a primeira organização de Stanford com o objetivo de usar a computação para causar impacto social —uma das ações foi mapear remédios próximos ao vencimento em farmácias e hospitais e mediar contato com instituições que distribuem a medicação a quem precisa e não têm condições de adquiri-la.
+Por esse trabalho, Law ficou conhecido em todo o campus, foi convidado a dar aulas sobre o tema na própria universidade (virou professor de Stanford aos 20 anos) e ganhou um prêmio de excelência acadêmica ao final do curso, no ano passado.
+Hoje, o projeto se tornou um movimento internacional presente em mais de 14 universidades, incluindo a USP.
+Recém-formado, Law continua criando oportunidades de usar a computação como recurso de bem-estar social.
+O programa de inteligência artificial que desenvolve em sua startup propõe o uso da tecnologia para ajudar a sanar um problema criado pela própria tecnologia.
+A ferramenta de mobilidade urbana usa dados de smartphones para melhorar a segurança no trânsito .
+A partir de informações como se está ou não chovendo, ela é capaz de analisar a probabilidade de acidentes . Além disso, uma assistente virtual combina dados para gerar alertas de voz em tempo real que ajudam motoristas a dirigir com mais segurança.
+Em fase de testes em locais como São Paulo, Cidade do México, Los Angeles, São Francisco e Chicago, o software deve estar disponível ao público no início do próximo ano.
+"Os acidentes de trânsito estão uma das dez maiores causas de morte no mundo . E é a única entre elas causada pela tecnologia que inventamos. Todas as outras são doenças. Isso não faz nenhum sentido para mim. É algo que podemos e devemos mudar", afirma Law, categórico.
+A crença no "data-driven transportation" projetado por Law mobilizou investidores acostumados a farejar os bons negócios do Vale do Silício e, em menos de um ano, a startup já vale nove vezes o montante inicial.
+Professor Olavo Amorim nem se impressiona. "Fico feliz, mas não surpreso. Quando o conheci, percebi do que ele era capaz."
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "460600b063f4e418ef18727905e9ac781c77578891c557d7c507495831862b0e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b3f5d6607851a3ec18aaf35b9d4c1998a56369cfc41b7c7b4f94d00ed830ee7b",
+    "mention_text": "Lawrence Lin Murata",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5dc1dbb954be22ee2eb21bd380dd30332980b5c52e80e87834cf50496dd1244a",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78caa44b3a6f2ee0b419e24bbd2afd025e5e13d8997a3ff57c067813dc69b2ab",
+    "mention_text": "mundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ea02d9dc1d73adc00e4c9a741907c97111a3f98f0b6e0dc58831797047177ab2",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11988d0ce526c55ae451bc2a4c6dd515c50bb8bb3886697b7fe9c61f982d26cc",
+    "mention_text": "Newton Technologies",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bb326af6f5f9745862ae2e447dcbe0b98a11a0830b3010f4e0af6131083ee39c",
+    "mention_text": "Palo Alto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "838be551cdb5ca5ede3f810a1def2c4de2846038d6e713f69752818319ba24c2",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "45ccdab6e7428333f9c38ac2c158f781bbb8dca2545fa4f26f56a4a1f1f5c7d6",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1c62a93e8c0ed7402c128b30df9e4140cb0e78b898e0202fddcd00c7937664c",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d50b4c675e21544d2c18b19c501bc530af897db6e12c768fe106a41c438fff49",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b8409bfd639183acbd3387d1321f423731d685282831ef762f0a4977e462e87",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08ddff4a7d13752b384a0014f4cb954c52c8f7b5f2c250f53ab771b3a00d47dd",
+    "mention_text": "Colégio Bandeirantes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0b56f2695ce9b242df22de5acf566827b5fac6c609fa853bc4dd2a4ae026a6a",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f51e83244cb826af32f685fd105bf094b84eb25d77734cc445abe4ad1fc4527d",
+    "mention_text": "José Olavo Amorim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ddec63d83f77cf5ffbc9923afe0c1cc8f18e7500561183820e4577192d45aaf",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7211473523c25d5c02e5781c7ecafe5338c2f9dd985cc7be5f6f6a66e8442a09",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eb3285b050572f2bddebbd64b31c306ba64e5c61c9caa5086deb827608e6127c",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f3a99b2e60882f208dd4c27076437094ecccfe8ce32670f2b371f01f423a307",
+    "mention_text": "Amorim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e9ae334ee89e10ee6e861c6c25c66468812cf3da19137ed69e3ed87301158499",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "737542e3ca0c13762b867d40531fa9d10680850f6cb30dea88acddd97008cd50",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c944df1e222a0c39ace493c3a6e7424bef0a3e7a072213b04f3f07a98eaf5913",
+    "mention_text": "Yale",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69e17c743a85917c64f97b598e1794f28f09cb3d91de91697eb54eb48b55f6db",
+    "mention_text": "UCLA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddf72ba1a59bf91b40c5fce880d71b3199f9a3629931a68e58fc5bde60c34071",
+    "mention_text": "Dartmouth",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0765da0a7dbb9507f6878d9a4e73dfe3b78f38b2bb0e263f39eaf2d3ea60bb10",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8105da4305e6f32d9de34aed55624b9ce240708182f5a34d39f3dc647e0e4327",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e53bcee221f4f2915569c3f4570ba8f553953b79413029a87b7dc566f578e5ce",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "774ad43816babe9f65d1870481e40e1c6dc2157ce68a47be59ba67d94902a0fe",
+    "mention_text": "CS+Social Good",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "374cd270aff9109fdf294bcb0ac421ca9b87efe464e77bd0ffaccf1023ae0e6e",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7677aa88d82aa2c029625d2cfe33d65d4852a01a760f6b2260bb59b5ceafdee8",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "baf807cf6faf44dc799e85b4d6bbf5ae6b0c74c3900b4e8458d3a5ba8299ef73",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a569260a486261a9c2e927cc846561a2babba7a208eacf0a7eb4ef90477f8efd",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56da2439f5feae62323f30398997464b281d9b4b8ed153865fe90252d4945219",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a8e624fb00328d2872647363ce770fe477b51db8d12627d582a1e9d738e9d251",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5970be3017978dc4366c3e0d9c02e01c16a7d6cabae458676bae4eeef3e06fb9",
+    "mention_text": "Cidade do México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d1112a96a84f8bf0b457637c50fd549957ec3f2b821a2dfcbca60dde82f96baf",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77274da256b16ed97432b3b79ad7fd0ea81074845f79897a49d7d2d5614d432f",
+    "mention_text": "São Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed3f49ad27e98d2efba73303823adcec2ccdb930e55fe78faa59ac9fc911cb99",
+    "mention_text": "Chicago",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d316c6998ea3ae28c06fe524cf466d11478d02d9632eec382620409e96376d0f",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c70ceb2681d6d59885300fa9d8559331da886710e524f025176300e7e404683",
+    "mention_text": "Law",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "273fda5a16d258f3d24a2a89ac226b06d03f2f93630a1e762ca7b081f82b54e4",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "27571654bd5e772df3d7e8881dba5ec96571fdb86a3ae7cd3bcac577115f3e88",
+    "mention_text": "Olavo Amorim",
+    "categoria": "PESSOA"
+  }
+]

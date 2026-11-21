@@ -1,0 +1,644 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d4d521970cf801eb84a3d8d6ef471a977c50dc3b73cccf4e94a7b7c65e15f717
+
+TEXTO:
+A atualidade do pensamento do historiador de arte Aby Warburg
+
+RESUMO Texto trata do legado de Aby Warburg, historiador da arte alemão que será tema de colóquio internacional em São Paulo, dias 10 e 11. Autores comparam o trabalho do intelectual com o Google Imagens, que opera segundo uma lógica iconográfica, e sugerem que a hegemonia da palavra pode estar com os dias contados.
+*
+A obra do historiador da arte alemão Aby Warburg se manteve desconhecida no Brasil até recentemente, apesar de ele ter sido uma das figuras mais influentes em estudos de imagem e arte desde o começo do século 20.
+O quadro começou a mudar com a edição de vários de seus trabalhos e de obras inspiradas neles, além de um súbito crescimento do número de estudos acadêmicos relacionados a seu pensamento.
+Em meio às comemorações dos 150 anos de nascimento do alemão, São Paulo sediará o colóquio internacional "Aby Warburg e sua tradição" (dias 10 e 11 de maio, na Pinacoteca do Estado de São Paulo, com inscrições gratuitas no local). Warburg, enfim, chegou definitivamente ao Brasil.
+O pensador produziu uma obra volumosa composta de ensaios, conferências e fragmentos sobre história cultural, filologia, mitologia e imagem, da qual o núcleo mais conhecido é sobre o Renascimento, reunido na antologia póstuma "A Renovação da Antiguidade Pagã" (Contraponto, 2013).
+Sua obra influenciou grandes nomes do pensamento ocidental, desde aqueles que o conheceram, como os alemães Erwin Panofsky (1892-1968), Ernst Cassirer (1874-1945), Carl Heise (1890-1970) e Fritz Saxl (1890-1948), além do inglês Kenneth Clark (1903-1983), até os de gerações posteriores, como seu conterrâneo Ernst Gombrich (1909-2001), que desenvolveu sua carreira como pesquisador e diretor do Instituto Warburg, em Londres.
+Ecos warburguianos se fazem ouvir ainda hoje em sua terra natal (nas formulações de Martin Warnke), na Itália (por obra de Carlo Ginzburg e Giorgio Agamben ) e na França (via Georges Didi-Huberman e Philippe-Alain Michaud).
+Há um elo entre os trabalhos de Warburg, desde sua tese sobre o pintor italiano Sandro Botticelli (1445-1510) até a obra monumental do final de sua vida, o "Atlas de Imagens Mnemosine": a tentativa de compreender o que as imagens transmitem de bate-pronto, sem submissão à elaboração verbal ou intelectual, sem inscrições linguísticas ou culturais específicas.
+É o que ele denominou "Pathosformel", palavra que mistura o grego ("Pathos", paixão) e o vocábulo alemão que significa fórmula.
+A "fórmula de pathos" é um gesto, expressão visual ou imagem que qualquer ser humano pode reconhecer em qualquer tempo, como o pavor de uma pessoa com as duas mãos à frente da face e a boca aberta, o rosto contraído.
+Mais: também macacos entendem, pois sua expressão de pavor é idêntica. Trata-se de algo mais universal do que a humanidade, como mostrou Charles Darwin em sua segunda obra magistral, "A Expressão das Emoções no Homem e nos Animais" (Companhia das Letras, 2009), de 1872, sobre a qual Warburg escreveu em 1888, ao iniciar o doutorado: "Finalmente um livro que me é útil".
+BANCO DE LIVROS
+Filho mais velho e herdeiro de um dos maiores banqueiros da Alemanha no século 19, ainda na adolescência Aby (diminutivo de Abraham) abriu mão das prerrogativas de primogênito em benefício do irmão, Max, com uma só condição: que Max jamais se recusasse a comprar um livro solicitado por Aby.
+Graças a esse pacto, ao longo da vida, Aby viria a formar uma "biblioteca de Alexandria" de livros antiquíssimos e novos sobre aspectos da cultura humana (leia mais sobre esse assunto no texto " A ciência sem nome de Aby Warburg" ).
+Fascinado pelo Renascimento, passou dois anos em Florença estudando a arte italiana desse período. Foi quando escreveu a tese de doutorado "'O Nascimento de Vênus' e 'A Primavera' de Sandro Botticelli" (1893), que quebra o entendimento consagrado até ali de que a pintura e a escultura são imagens estáticas, como ensinava o escritor e crítico alemão G. E. Lessing em seu clássico "Laocoonte".
+Warburg mostra como os renascentistas recuperam da iconologia grega as técnicas de expressão do movimento (por exemplo, nos cabelos e roupas esvoaçantes), superando o congelamento sepulcral que caracterizou a arte da Idade Média, sob estrito domínio católico.
+Outra característica de sua obra já presente nesse primeiro trabalho é a recusa à leitura simplesmente "estetizante": a expressão dos gestos não é apenas uma técnica pictórica, mas o veículo que recoloca no centro da cultura europeia o paganismo e a sensualidade antiga.
+Warburg não foi apenas historiador do Renascimento ou da arte. Estudou mitos, imagens contemporâneas, discursos e ciências arcaicas abandonadas pelo pensamento ocidental.
+O principal sentido de seus estudos e da obra que deixou pode ser expresso pela busca de aspectos universais da cultura humana, em que os gestos expressivos dos gregos e do Renascimento se destacam pela função comunicativa além da língua, que desde Babel separa os homens.
+É o que faz em outro de seus trabalhos mais conhecidos, sobre o ritual da serpente dos índios hopi, no Novo México: Warburg enxerga lado a lado a cobra ameríndia e a que ataca o Laocoonte, personagem da fábula grega retratado em famosa estátua romana encontrada no início do Renascimento (o ensaio faz parte da coletânea "Histórias de Fantasma para Gente Grande", Companhia das Letras, 2015).
+Se para os índios ela liga a terra ao céu, podendo chamar a chuva, para os gregos é uma arma do céu para punir alguém na terra; para a gênese da cultura judaica e cristã, a serpente rompe a aliança, no episódio de Adão e Eva. A universalidade não tem bem ou mal.
+NÃO CARTESIANO
+Os estudos de Warburg ganham relevo em todo o mundo, neste início do século 21, pela capacidade de romper com padrões cartesianos de pensamento sobre as imagens, o que se revela fundamental para sua compreensão em um tempo marcado pelo paroxismo da linguagem visual ou, como chamamos, "Era da Iconofagia" (Paulus, 2014).
+É o que tem aproximado as ideias de um homem nascido há 150 anos das análises sobre "big data" e do processamento cibernético de imagens. Warburg morreu em meio à criação do "Atlas Mnemosine" (http://warburg.sas.ac.uk/collections/warburg-institute-archive/online-bilderatlas-mnemosyne), que viria a se tornar sua obra mais conhecida. O nome faz referência à deusa grega da memória.
+Trata-se de um conjunto de 63 painéis em fundo preto nos quais ele fixou cerca de mil reproduções de imagens: peças arqueológicas, elementos de rituais religiosos, sarcófagos, obras de arte renascentistas ou modernas, ilustrações de livros antigos, anúncios publicitários, fotografias de jornal...
+Quem compara o "Atlas" ao Google Imagens (que armazena arquivos visuais, e não palavras) fica admirado com a maneira parecida como os dois justapõem seus resultados, organizados em eixos que expressam, pela proximidade, a semelhança –e, a partir dela, estabelecem a hierarquia de pertinência em relação a um primeiro objeto.
+A imagem é processada e apresentada por uma lógica iconográfica, que não se subordina à expressão verbal. Pode ser pensada, consumida e comunicada sem tradução linguística: homens e macacos reconhecem e reagem a gestos expressivos de emoções em frações curtíssimas de tempo, muito menores do que as da resposta ao verbal.
+É o que revelam os estudos de neurociência, hoje muito intensificados pela corrida em busca da inteligência artificial.
+DE ROMA A MANET
+Quando olhamos o "Atlas Mnemosine", a princípio parece não haver relação entre um relevo de mármore romano e um quadro impressionista, separados por 2.000 anos de tempo e história.
+No painel 55, porém, Warburg destaca como matriz uma cena do "Julgamento de Páris" (o momento em que o príncipe troiano é convidado a escolher a deusa mais bonita, iniciando a saga que vai levá-lo a fugir com Helena e provocar a guerra mais famosa da história) encontrada num sarcófago antigo.
+Ao lado, uma série de decalques da cena realizados no Renascimento, por Rafael (1483-1520) e outros; de um detalhe marginal desses esboços salta uma imagem com os contornos exatos da célebre pintura "O Almoço na Relva", de Édouard Manet (1832-1883).
+As mulheres que escandalizaram Paris eram ninfas, como o pintor destacou ao preservá-las nuas (imitando a representação grega), diante de homens de terno moderno.
+Como esse, há outros painéis que tratam da genealogia antiga de imagens atuais, como o 39, sobre o "Amor à maneira antiga", que explora a representação de várias expressões que serviram de base a Botticelli para compor "O Nascimento de Vênus".
+Um discípulo contemporâneo de Warburg pode levar essa evolução até a imagem da modelo Gisele Bündchen desfilando e encontrar em seus trejeitos ecos de "Vênus".
+Há outros quadros que refletem a migração de imagens e símbolos entre culturas diferentes, como a astrologia mesopotâmica, incorporada antropofagicamente pelos gregos, passada por estes aos árabes, que a despejariam de volta na Europa medieval.
+Outros painéis são dedicados a retratar emoções fundamentais, como "o pathos do sofrimento" ou "pathos de dor", nos painéis 41A e 42, compostos de imagens de seres humanos submetidos a grande dor: o Laocoonte mordido pelas serpentes, Adão diante de Deus, Paulo no momento de sua conversão, Cristo crucificado.
+Foi para ressaltar a coincidência entre o pensamento do iconologista alemão do início do século 20 e o buscador digital do século 21 que o crítico de arte Ben Davis perguntou recentemente no título de um artigo no site "Artnet": "O que Aby Warburg diria do novo 'Experiments' do Google?".
+Ele se referia ao projeto lançado pelo Instituto Cultural do Google que se dedica ao estabelecimento de novos sistemas de processamento de imagens, até o momento sem função comercial, com vocação entre museológica e "big data" (milhões de obras de arte sendo processadas), mas que logo poderá apresentar resultados práticos em outras áreas.
+Essas "Experiências" estabelecem relações entre imagens que são inexplicáveis verbalmente. Mas as conexões estão lá: elas se justapõem por semelhança, uma primeira se junta por parecença a outra, que está próxima; esta a uma nova, com a qual tem certa harmonia, mas que já se distingue da primeira –e assim vão se distanciando, ou transformando, até surgir algo completamente improvável de início.
+As imagens mostram ter vida própria.
+BOA VIZINHANÇA
+Não foi só no "Atlas" que o iconologista alemão trabalhou o confronto com o pensamento dominado pela dimensão verbal. Também o fez ao criar a Biblioteca Warburg para a Ciência da Cultura, que ele deixou com cerca de 40 mil títulos ao morrer em 1929 e que hoje supera os 100 mil volumes, em um prédio de quatro andares construído para ela em Londres.
+Ali, os livros não são dispostos por ordem alfabética de autores ou títulos, mas pela boa vizinhança, como ele chamava, um indicativo da relação entre eles para desenvolver o conhecimento sobre seu tema.
+Mais difícil para os bibliotecários, melhor para os leitores.
+A mente humana se encadeia por associações imagéticas que não se submetem, por exemplo, à ordem alfabética do nome dos autores ou das obras: um estudo sobre mitologia árabe (não importa o nome do autor) pode suscitar a leitura de tratado sobre a sociedade islâmica ou o clima do deserto, seguido das "Mil e Uma Noites". Essa é a essência da "boa vizinhança".
+Ao definir a imagem como porta de entrada da biblioteca, Warburg expressa a convicção de que no princípio eram as imagens. O verbo, que nos últimos milênios dominou a humanidade e ordenou seu pensamento, é um momento da evolução da mente.
+A julgar pela explosão de imagens a que assistimos hoje, trata-se possivelmente de uma hegemonia decadente: da imagem viemos, para a imagem retornamos.
+NORVAL BAITELLO JR ., 67, professor de teoria da imagem e cultura na PUC, é autor de "A Era da Iconofagia" (Paulus)
+LEÃO SERVA , 57, ex-secretário de Redação da Folha, é autor de "Um Tipógrafo na Colônia" (Publifolha) e pesquisador no Instituto Warburg, em Londres
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "8d67468f5c6a6ff956426e2dc37fb9bb8f0566b046d43afad26073edd68013ee",
+    "mention_text": "Aby Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4bd4b6f5122f041a8b6ca248574456be1855c94f27496e32b04ccab71e7e0216",
+    "mention_text": "Aby Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7b6513dc04c3b96172a7ad772e6a6c67b8b229e9f9474a63702482c3fce9714",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b4ac7f0e5a4f3e0e155bb386e2599efd1edcb8870eeafb5cdf25daebc595bce8",
+    "mention_text": "Google Imagens",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da451be01c3640597bdd7f0f7823c08585dc1f7c7c5dd8fbfe17231ef9b5534f",
+    "mention_text": "Aby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60b15691d85b1a21fd1a89e291227cbe339a5f2a9c3b0d7d74d30d34818dd8cb",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b021069e2c84c05997f1684bf3c162cb4850c2932e9a717a728c510067b49ca",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "222549a0c96ae5990e5c18bc8c5546301bca26ec0009da00d2e6f16c22bc7eb0",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "968c5c4a2e9625363c7eb14547cab40c64db72819958bac6a4b199da4b9b0da0",
+    "mention_text": "Pinacoteca do Estado de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f393a09e8cb87f6485ac7a59aa0b82e5a4de4bbedafe693f66ac5bd8e6a6ef3",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c26f0222b4341f2ec02621cf253d3ba14e9ae676293f1c12afccb5c3d6fe98c7",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "00de1faca57a54945a40b1923653a95b84baee31ab7991108cc4a3fdcd3e1b1e",
+    "mention_text": "Contraponto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24184272f5b5c69e1cc7cec10123d5c22965c93f80a145afbe1190cfdce3bd75",
+    "mention_text": "Erwin Panofsky",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "047e7c553222d464789893ea4c253f9f70163fea7f3d149edc171d851348bb48",
+    "mention_text": "Ernst Cassirer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91ba682c4f4ef531635f4e4e87e48f7530f86aa7b1989edb5af59585064ec80b",
+    "mention_text": "Carl Heise",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "344ffac14c4826f76f6ad41bad1d9a195b5afa48bdfa6a055224585476090394",
+    "mention_text": "Fritz Saxl",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7dca52906d58bc1c4f77c535ecfcb5c16b90b7e4a61f856eed3eafc8a380c3a",
+    "mention_text": "Kenneth Clark",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29f8c256e021a7c0c4f886c549ff71b8b8d8bd8ff7d6184f23a41f2667c8747f",
+    "mention_text": "Ernst Gombrich",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05918d31b8491663cf04f5f6ad33c036ba372ede7dc48e466ec2996b66198f0d",
+    "mention_text": "Instituto Warburg",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9d362399741cdd9f22b536bb77bfcfd3ce49124b37548871b8c93c86cea5980",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9866b8edd5d95b79abe8e093f947a914ea19ba1cca184fdf8527814634ea6fbe",
+    "mention_text": "Martin Warnke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7e61fe59f59f393d377c0516a4f074fb30610d51f1fc3421fe26d5552f17f82",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7c69cfa457847bfc66117ac36f0cda27c95f80970c2993bb7556f4e547fd6550",
+    "mention_text": "Carlo Ginzburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3398ef98e44d26c247f65000144e34341c5dd74ae1b82bffe1d3862bc07db753",
+    "mention_text": "Giorgio Agamben",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3ef289b5b01384a71a3430d851d915bc13c15608ca62f75897856beb659134c6",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08b2df57f3626d891b6760084b79e8baedb018eb008595b7e3cb373ebb0083cc",
+    "mention_text": "Georges Didi-Huberman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fed3a1e5b96d580fd68d543f5b01d849d9d5f5fcb140e97de226a2fd3d59fce",
+    "mention_text": "Philippe-Alain Michaud",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11232c83ee573a3bbf6282311344f93b250720f793ee8918703304fc91349b54",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da5b75315c5b67ad57f409e863dcb2495cd834c0991ea95e3e88f4607757e9f1",
+    "mention_text": "Sandro Botticelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2f35af675170a0e6f5626dda9ff4291157807b4ec798dd7e7db46578a7f09fac",
+    "mention_text": "Charles Darwin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe9c1e98b3c8e48a6548213988e802e3eb8837d3f880cc958204733f0cf29bf4",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "127f04988543c80414aafa08d88791854d4fa0095ca03d837310bebc9841b4ad",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5040e5425cc957b967481e7f4b61ab68b4786b82b37f9aed88ba68bee4efc63",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "75eb85ac461a02472d637fa681a202baa5870c732b8800f7df48fc34f8f6ae69",
+    "mention_text": "Aby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6c60092f4b657280a4583c43518c31c02c891ffc1d3caa9341380b5652fd49a",
+    "mention_text": "Abraham",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b750a300e4c8949cb01f6f80f11f9bdb83f9a9aa72f29b1d23a3ff86fa1e9e1",
+    "mention_text": "Max",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec55b0e785ef80a63403ca8a201e0604f4067477f6086c818ee0f9a0db909db6",
+    "mention_text": "Max",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2033b1a819782653c7fcc0839be2740081613e01b9ed80e937cd5bf294a6782a",
+    "mention_text": "Aby",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0618dc155b87acb1c99f23f76797b1912cd35fd1087d3b6096037ce91bd489dc",
+    "mention_text": "Florença",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "50187ec5a882de3f625fe9e342a45f858985b9c0886ace3fd7032f2799ddfe93",
+    "mention_text": "G. E. Lessing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b72c6cbfa49eb0b92e4918aa895cc4e7f4945474bd046a756a7a65b2c900f3a",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b9917ec8e92b32f185c32539a6ebced2c6e8cdc8c703129fd0b156188f49d84c",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9210ba27ece7803593a572e780773f4eb624d4176af88fe9e4b4b47655506cf8",
+    "mention_text": "Babel",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "986a80fe82d74a135801bba919b2bad25bc9f87d52c216dda9259f355c5dc8eb",
+    "mention_text": "Novo México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "448f2cf228744456a68da04b57141cb5028def219b865e2f37326e72d0c36087",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d1e9a3dd73024e0dc617155ea48be7c17aaf2905a25be6345867b8b9008df6e",
+    "mention_text": "Laocoonte",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f227e319d25e575cf453aa2ac06c2a04a88bdf32184111e9daf5730c114e2a8",
+    "mention_text": "roma",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "78166ad2fca868f3ba8d34eb9903ea0cd3b770ae52f9c3b517d144fdb3044af8",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e331b1835476abceb939d1ccf64ac416cc3bbc11208bfef6c16856db0c32926",
+    "mention_text": "Adão e Eva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a3a8d1132e22cd9e18087745d4fc1c94b87d182b2cdd45082569b654011d4c5",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "586f1194c95085f530221de7de8fe03352b312f4e9aa826d49208d1df2eeffc7",
+    "mention_text": "Paulus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06116fe586bf7fe575dc7a093990b955e7842ba88d7123647b25a968c9ec9bbd",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2517b17d4e0701360c6d7424c7ec77684afc58e512947aa33e1b3a8064e8ed3",
+    "mention_text": "Google Imagens",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dbd49094e69959e137048b6a4c434bad4b1d725c1ee944a6bed00645ccf9b332",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c3e8388d82003d0561f2ac8d985e3b113924edb3372c0e49961a7497909ff89",
+    "mention_text": "Páris",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d45ce550a10261a9ff3cec7d72b8c0c7550de694aa4054fe69b95241cf0b6ee1",
+    "mention_text": "Helena",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa544a7aef9bd7d70e7f9acd327f0f5a2cf70f771f5ed2aa6d880df7dcc1dcbe",
+    "mention_text": "Rafael",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b69307e3d5318124ac00688ade1dcc232dca547515d24900ab045083c29c639d",
+    "mention_text": "Édouard Manet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bde386a5bf7431d34504b073ec0c63e070f603473c2d496ddac8e5fbfe137342",
+    "mention_text": "Manet",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c78f629f6d5ad9b54e68da8df6a07b8980c751ffc60336d869b9b9db486b164b",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3b5f51bbe6d9983d12d21cd9ec9b32ad0ee73e7fb7413b3e5abcbeeb91773b59",
+    "mention_text": "Botticelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aeb86c01e8d713cc80c83dc6a4a89a7e6068550acedce9d6c1f9aef40d547a84",
+    "mention_text": "Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d27c38d3bb297f207ca034f3c095a1f161f142981d138675a2a4ac6ab797407a",
+    "mention_text": "Gisele Bündchen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5f8564e3a87b5e3aeb4d9987f01cf14095a6236225660172b671a0c88d147797",
+    "mention_text": "Vênus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85ee6a9944a6fbe52e71b230e29f3f5939877baf6673d664b032fbd9078661bf",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b0594060aeedede17c5e93a23ca3582287ea8f6021a3b808b68011e4fe2393e3",
+    "mention_text": "Laocoonte",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa5637e92c4cfeab8e308ba7e69b8be412bf0f101f81b6d6687f73c2b42c3562",
+    "mention_text": "Adão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3d5b8da51adf7e68666af267cfe8c0b37264adfe2e7629fd324c1b70b78af2e",
+    "mention_text": "Deus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0d3f9300cb1659fdb8f65e01e5ef75b6217c21548ac12c68eb06606f6bf76f3",
+    "mention_text": "Paulo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dbfcabddf777b5d7932846a09d103ead4761164fdf29871b9367c6b271ed54a5",
+    "mention_text": "Cristo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3505b99cce3cb0d0e950844d445791e3a768b44cfb8047496024a0f60130efa",
+    "mention_text": "Ben Davis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af11584c0268fcef030106989b04312a2bfdb9283dc268142aa59c64c14cfbcc",
+    "mention_text": "Artnet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28b187692e2ceb2e56e0995dd08fdf79f21d6ffddc13c785de9b4b69246f4b81",
+    "mention_text": "Aby Warburg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d67288267dd7f1f39f3260b0b3a627f544cdf1a0b4417955fe328531515a3503",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d10c1f61238e2bae16652e0f6ee2c6d5562dc5e8004c419995b6b13b6f876896",
+    "mention_text": "Instituto Cultural do Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb84c3131b752cec90f1bd1b61bcf78a78fa1a4f22cfa2e724f13b45386d7252",
+    "mention_text": "Biblioteca Warburg para a Ciência da Cultura",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f6a417ec17ffef5d64e13b0f5a4ab7f5ecd91133eb12592ca6f0b523946098a",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4d68dcceaa2bef59de9fbaefccdb4cb101da6e182e424b13a5ac1d152c058002",
+    "mention_text": "NORVAL BAITELLO JR",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "629a1cd3f9610a7a008dcb7b253ce2841d6a05cb12b546fce47ef629ab7e3bd5",
+    "mention_text": "PUC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef75d80b5a94f594a0fe6cfd29cbeb5f88e08c1158630f9922a46bd8b97a2f23",
+    "mention_text": "Paulus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "322d5f8ef14e1faff2c9d4dfe4cce1db2814bd7343a2d456dfc3079c5e822967",
+    "mention_text": "LEÃO SERVA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5fb42f3ca7a172ed2f133973bcb4899d2a0cd0cd307ab5148d34183d1b8345a0",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  }
+]

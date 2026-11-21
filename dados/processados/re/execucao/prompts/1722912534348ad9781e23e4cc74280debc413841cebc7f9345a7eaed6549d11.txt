@@ -1,0 +1,515 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a72edd01dc6387f8b2ee8f7c654f078e463a66044ad7da18cdb1f24e7b7e795e
+
+TEXTO:
+Mercado Aberto
+
+Mercado Aberto
+GUILHERME BARROS -
+guilherme.barros@uol.com.br
+Novo recorde de importações sinaliza desindustrialização
+O recorde das importações 
+em março é mais um sinal de 
+que o país caminha, ainda que a 
+passos lentos, para um processo de desindustrialização.
+A revisão dos números do 
+PIB já havia dado sinais da desindustrialização. A participação da indústria no PIB baixou 
+de 36,6% para 27,3%.
+O economista Antonio Corrêa de Lacerda, da PUC-SP, diz 
+que há outros sinais que mostram com clareza esse processo 
+de industrialização.
+Entre eles, a qualidade da 
+produção do país. Cada vez 
+mais, a indústria produz para as 
+áreas de minério de ferro e petróleo, por exemplo, que são setores menos sofisticados e de 
+menor valor agregado.
+A principal razão para isso é 
+evidentemente a valorização 
+do câmbio, mas Lacerda diz que 
+esse problema poderia ser contornado se o país adotasse uma 
+política industrial.
+O ministro da Fazenda, Guido Mantega, está preocupado 
+com esse problema e deve se 
+reunir nos próximos dias com o 
+novo ministro do Desenvolvimento, Miguel Jorge, para os 
+dois discutirem uma proposta 
+de política industrial no país.
+Segundo Antonio Corrêa de 
+Lacerda, ao contrário do que se 
+diz, a economia brasileira é menos fechada do que se imaginava, ao se analisar os novos números do PIB.
+Se for levado em conta a corrente de comércio (exportação 
+mais importação), conclui-se 
+que houve uma queda (de 
+23,9% do PIB para 21,5%) e, 
+portanto, a economia seria 
+mais fechada. Mas não é esse, 
+na sua opinião, o principal termômetro para medir o grau de 
+abertura da economia.
+Ao se debruçar sobre os números, de acordo com Lacerda, 
+percebe-se que a relação entre 
+importações e a produção total 
+da indústria subiu de 16,9%, em 
+2002, para 19%, em 2006. Isso 
+mostra que a economia está 
+mais aberta, especialmente nos 
+setores intensivos em trabalho, 
+como têxtil, vestuário, calçados 
+e móveis, que são os mais atingidos com o aumento das importações e a concorrência com 
+a China.
+INTELIGÊNCIA ARTIFICIAL
+A segunda edição do Salão Internacional da Robótica e Inteligência Artificial, que ocorre em São Paulo, entre os dias 
+11 e 15, vai fazer, neste ano, demonstrações das aplicações 
+dos robôs na indústria. O objetivo é apresentar exemplos a 
+empresários e, com isso, aumentar os negócios. O evento terá a participação de empresas de robótica como Comau, Kuka, Roboter, Motoman e Adept -essa última chegará ao Brasil por meio da feira. Haverá lançamentos de equipamentos 
+como o robô Quattro, um dos mais rápidos do mundo em 
+manipulação de pequenos produtos. "Queremos mostrar que 
+eles são acessíveis para a indústria", afirma Eduardo Branco, diretor da feira. Os valores das máquinas expostas variam de US$ 19 mil a US$ 100 mil. Também haverá um Salão 
+de Robôs para receber o público comum, em que serão encontradas máquinas capazes de distribuir bombons ou desenhar, por exemplo.
+NOVO CARGO
+Após cumprir quarentena, 
+o economista Nelson Rocha 
+Augusto, ex-presidente da 
+BB DTVM, vice-presidente 
+da Anbid e membro do 
+"board" da BB Securities, em 
+Londres, e do Banco do Brasil Broker Dealer, em NY, 
+volta à iniciativa privada. 
+Nelson acumulará a função 
+de sócio-gestor da Governança e Gestão com a de presidente do banco Ribeirão 
+Preto. Nos dois cargos, o 
+executivo terá de preparar 
+empresas brasileiras para a 
+nova realidade do mercado 
+com a possibilidade do "investment grade", esperado 
+para o final de 2008.
+CRISE AÉREA
+Em relatório final da auditoria sobre a crise aérea do Natal, a 
+Anac afirma que "o "overbooking" [da TAM] não se revelou como 
+causa primária dos problemas, agindo apenas como causa secundária, de pouca influência". Segundo o relatório, a "causa determinante" foi uma conjunção de fatos que ocasionaram o cancelamento de muitos vôos. Marco Antonio Bologna comemorou.
+RECORDE
+A indústria automobilística brasileira fechou o primeiro trimestre com 493 
+mil veículos licenciados e 
+deve superar os 500 mil hoje. Igual marca só foi alcançada em 29 de abril de 2006, 
+mostrando que o setor continua aquecido. Nesse compasso, o recorde de 2 milhões será facilmente atingido.
+SOCIAL
+O Instituto HSBC Solidariedade vai abrir amanhã 
+duas novas seleções para investimento em programas 
+sociais. Será R$ 1,5 milhão 
+investido em 20 projetos.
+MESA DE PÁSCOA
+Os ovos de Páscoa estão 
+recheados com 39,2% de tributos, segundo pesquisa do 
+Ibet (Instituto Brasileiro de 
+Estudos Tributários).
+MOUSE
+A Oi Internet lançou uma 
+oferta para que os clientes 
+possam estabelecer conexão 
+sem fio com modem Wi-Fi, 
+pelo serviço de acesso à banda larga da companhia, o Oi 
+Velox. O objetivo é ampliar 
+os clientes dentro das residências e criar a fidelização.
+ALTO LUXO
+Não é a Daslu o principal 
+alvo do novo investimento 
+anunciado pelos grupos 
+Iguatemi/W Torre, um 
+complexo de alto luxo com 
+um hotel, um shopping e 
+uma torre de escritórios. 
+Apesar de ficar ao lado da 
+Daslu, o novo shopping vai 
+competir com o shopping 
+Cidade Jardim, que está 
+sendo construído pela 
+JHSF. A Daslu é encarada 
+como um complemento do 
+novo complexo. O grupo 
+Iguatemi acha que a Daslu 
+sairá fortalecida com o novo 
+shopping.
+com ISABELLE MOREIRA e JOANA CUNHA
+Próximo Texto:
+Tarifas bancárias sobem até 15,94%
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "84bf8e8d9a96b6242acc9c3e1ba77e0bb1889a046f9a3f5ffde0802812b3e05f",
+    "mention_text": "GUILHERME BARROS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "300543948197be7bf1d524b807598a15a9878aa4d1ffd4beeb163bc034b873f0",
+    "mention_text": "Antonio Corrêa de Lacerda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e9cc2890632e02dfd77da59abca0de87522937364fc31b0d8421db430e31de0",
+    "mention_text": "PUC-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8365c3f3e31c0dc41fb774d1fd975a29cd7ffdc18030e30065240e6865acb54c",
+    "mention_text": "Lacerda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3c4ba10d968ef9885d50d8a7702862966da6e04141aea3e982bd47930b8500e8",
+    "mention_text": "Guido Mantega",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f034d0ce1be17ff28da9d7a03143e0a04747aaeb77399630191968569a75cf8",
+    "mention_text": "Desenvolvimento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32026010f989314bec1b8c899f1e4bbb3a9d58225d85425523a7e3c309128979",
+    "mention_text": "Miguel Jorge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d816ece26792c77250dd97d6bb724199829697d38ef0455879ba63449cbfac6",
+    "mention_text": "Lacerda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5bf95819257d861b96bd6fc14c762c559c1096b389a0294097a830e1a9ec011",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5db72f6db24d6cfc2f3d219da30b661c718606a15aa4e13c5e3bf43fe48281d1",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "66bb6f599e97681db6ea911804b4b6caa9ea378f82a408906b4e9c02cb782a0e",
+    "mention_text": "Comau",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "145d84e44b8540b0b4150cd79f095df9b1a46f848181813c5171e97b6876b034",
+    "mention_text": "Kuka",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "096f669977dff91669d68652909c0f3668655c82344208f22e6782b566fe254b",
+    "mention_text": "Roboter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10be13fb60b69f70a57d25f670787d51fe743da3832f075e8f48ab0d9286d5b3",
+    "mention_text": "Motoman",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "afb441163205524ab089123f35c1ca25d0695a8d61976eef6e9de11896416be7",
+    "mention_text": "Adept",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "169f6abae042ebbef2e03bb38909216d56bcd9f7b54d9cf548d1919a14daa927",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "68b333eb6af6f5dbe7adbff313c56483363ef654af001b1423534217256dda5e",
+    "mention_text": "Eduardo Branco",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02a8d87c0601e4689959a79d067cd919dc5670380c32924547023e1fedf084c7",
+    "mention_text": "Nelson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "915bc8e32969fe50cb304efb5f21936cba9defd84365e1221f4b8fd71a930209",
+    "mention_text": "BB DTVM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84fb2776768e3cc0ada40322433d6b7df8aeb4af133f5d28717cf60b64a75391",
+    "mention_text": "Anbid",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "accbefdbe337bbb94c4eeaa44b11feab2bf09b440916d88d300bb1ffcb3286a1",
+    "mention_text": "BB Securities",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33d7f61be840daba0d7d23adb6929189612d84669623c1d36bb37ae1746e2ecc",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "792e221e8646bc23d1aa59e1fcb1fbcd9770b227731f1f5f62588cd4e020a45b",
+    "mention_text": "Banco do Brasil Broker Dealer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1b2527c7ce7a273f1245cca194e968009830a9aa22bb910c948786edf0130357",
+    "mention_text": "NY",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "331f011d4b2c9efc26131b81c8aa5721917e5943dd9912d24018a17ff009b5b6",
+    "mention_text": "Governança e Gestão",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6a8895b976974f55fd62dbda01c84d9b245bfdf090ff43f77abaf6cecaaf2b70",
+    "mention_text": "Anac",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a76bb177b5832205a556c649c2b2a9cb1e054b310e1366ad7a80aad333816110",
+    "mention_text": "TAM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "95eedcb12695445e43a73495e864cf3bb1c5fafe7035b529bbe17bdce190cf04",
+    "mention_text": "Marco Antonio Bologna",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77ecabae05d565aa33e2c022ab81e48abe8abca81742916eb346a46d3603369c",
+    "mention_text": "Instituto HSBC Solidariedade",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cffb6e1f5a84ad9be137d1acd495d902c7eebe43a8033744f61e80fd87042527",
+    "mention_text": "Ibet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9780ef85ea11629928d90687ac1671f1a1a5015ee56450fa991b804273cd3685",
+    "mention_text": "Oi Internet",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cdb47fa04deebf845c6b188eec4d1c799c1d8a796371037302204d8f17114e01",
+    "mention_text": "Daslu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90e0b83bac66ead43a99a33d55eaf0a9988fc5fbfd186dd33ac16d5ce1d192de",
+    "mention_text": "Iguatemi/W Torre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a31154c275a13b61ce4d35385a6f89cf1c135b544cebe078b789532f23fe300d",
+    "mention_text": "Daslu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf9bc26e8951366f088c2c53d38c91fca4450215ec402518552f933522c0077b",
+    "mention_text": "Cidade Jardim",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81f7a50a9ed8e81d48e83e23f56dfbd74a725004dca11f2058127b6bf9d1cef5",
+    "mention_text": "JHSF",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb19778e7c18fb723cb42e7dbf287a33bc661836c476b0bc40ac4aadd44a5056",
+    "mention_text": "Daslu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "445e0c027f198f968e70603ec292df8359b6dca219010703bfcd3484fd011e73",
+    "mention_text": "Iguatemi",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd6b684f4219efe8a5eb27abfa20ebf1893097aafb59b6c30f88670fb3b4c5de",
+    "mention_text": "Daslu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "478166b379570d1af93f7f82d5c5be7cb6ce0ba2b286a3d03c21194773b06420",
+    "mention_text": "ISABELLE MOREIRA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce7946b40786740c509020909391fec83808b1874efa5d7fa93a5d41df43f548",
+    "mention_text": "JOANA CUNHA",
+    "categoria": "PESSOA"
+  }
+]

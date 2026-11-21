@@ -1,0 +1,1367 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c6a51ea2bc420cad4ad2b762a291570b19574326ad2e447d2fd855a22232e892
+
+TEXTO:
+Festival com Karol Conka e exposição fotográfica de Claudia Andujar no IMS são destaque do dia
+
+O festiva Batuque, que acontece neste sábado (15) e domingo (16), reúne nomes como Mano Brown e Karol Conka no Centro Cultural Grajaú. O dia conta também com o festival Garota Vip, comandado por Wesley Safadão, com a participação dos sertanejos Zé Neto e Cristiano.
+No Instituto Moreira Salles, abre a exposição de Claudia Andujar, composta por 300 imagens da fotógrafa conhecida por lutar pelos direitos indígenas.
+Nas salas de cinema, acontece a mostra Cine Doppelgänger, na Casa Guilherme de Almeida, que exibe sessões duplas de "O Som ao Redor", de Kleber Mendonça Filho, e "Trabalhar Cansa" de Juliana Rojas, após a exibição, haverá um debate.
+Mais
+Veja outras dicas para curtir em São Paulo:
+Cine Doppelgänger O projeto de sessões duplas exibe “O Som ao Redor” (2012), de Kleber Mendonça Filho, e “Trabalhar Cansa” (2011), de Juliana Rojas e Marco Dutra, e realiza debate sobre a relação entre uma obra e outra, comandado por Joyce Pais e Alexandre Matias, idealizadores do evento. Casa Guilherme de Almeida - R. Cardoso de Almeida, 1943, Sumaré, região oeste, tel. 3673-1883. Sáb. (15): 11h. Grátis.
+Além da Telinha - Especial Superman Comemorando os 80 anos do homem de aço, o evento exibe o filme “Superman 2: A Aventura Continua” (1980) e episódios das séries “As Aventuras do Super-Homem” (1952) e “Lois e Clark - As Novas Aventuras do Superman” (1993), todos seguidos de bate-papo. MIS - Av. Europa, 158, Jardim Europa, tel. 2117-4777. Sáb. (15): 11h. Grátis.
+Batuque com Mano Brown e Karol Conka O batucar de tambores e o resgate das raízes africanas são as bases do Festival Batuque, realizado no sábado (15) e domingo (16), no Sesc Santo André. As batidas ancestrais ganham vida por meio dos beats do seu lineup, que reúne grandes nomes do rap. Os destaques da programação são a curitibana Karol Conka, que fecha o primeiro dia e apresenta canções do novo álbum, “Ambulante”, e o líder dos Racionais MC’s Mano Brown, que toca seus maiores clássicos acompanhado por um DJ. Sesc Santo André - espaço de eventos - R. Tamarutaca, 302, Vila Guiomar, Santo André, tel. 4469-1200. 2.400 pessoas. Sáb. (15) e dom. (16): 17h. 360 min. 16 anos. Estac. a partir de R$ 5,50. Ingr.: R$ 12 a R$ 40. Ingr. p/ sescsp.org.br.
+Mais
+Alceu Valença O cantor e compositor pernambucano percorre várias fases de sua carreira. “Anunciação”, “Belle de Jour”, “Táxi Lunar” e “Coração Bobo” estão garantidas no repertório, que também terá homenagens a Luiz Gonzaga e Jackson do Pandeiro, que influenciaram sua música. Sesc Bom Retiro - pça. de convivência - Al. Nothmann, 185, Campos Elíseos, região central, tel. 3332-3600. Qua. (19): 21h30. 90 min. 18 anos. Estac. a partir de R$ 5,50. Ingr.: R$ 9 a R$ 30. Ingr. p/ sescsp.org.br.
+Mais
+Amelinha Parceira de Fagner, Belchior e expoente da Jovem Guarda, a cantora interpreta músicas como “Frevo Mulher”, “Foi Deus Quem Fez Você” e “Carinhosa”. Centro Cultural da Penha - Lgo. do Rosário, 20, Penha de França, região leste, tel. 2295-0401. Sáb. (15): 20h. 60 min. Livre. Retirar ingresso com antecedência de 1 hora de antecedência.
+Mais
+As Bahias e a Cozinha Mineira Comandada pelas vocalistas Assucena Assucena e Raquel Virginia e pelo guitarrista Rafael Acerbi, a banda reúne canções dos álbuns “Mulher” (2015) e “Bixa” (2017), que passam pela MPB e pelo pop, como “A Isca”. Sesc Pompeia - comedoria - R. Clélia, 93, Água Branca, região oeste, tel. 3871-7700. 800 pessoas. Sáb. (15): 21h30. Dom. (16): 18h30. 80 min. 18 anos. Ingr.: R$ 9 a R$ 30. Ingr. p/ sescsp.org.br.
+Mais
+Frejat O cantor e compositor, um dos fundadores da banda Barão Vermelho, faz show em formato voz e violão que reúne músicas marcantes de sua carreira, como “Codinome Beija-Flor” e “Amor Pra Recomeçar” Theatro Net São Paulo - R. Olimpíadas, 360, 5º andar, Vila Olímpia, região sul, tel. 4003-1212. 800 lugares. Sáb. (15): 21h. Dom. (16): 19h. 80 min. 12 anos. Estac. a partir de R$ 14. Ingr.: R$ 100 a R$ 180. Ingr. p/ ingressorapido.com.br.
+Mais
+Garota Vip São Paulo Comandado pelo sertanejo Wesley Safadão, o festival ainda terá shows da dupla Zé Neto e Cristiano, dos cantores Ferrugem e Léo Santana, e do DJ dJopin. Pq. Anhembi - sambódromo - Av. Olavo Fontoura, 1.209, Santana, s/ tel. Sáb. (15): a partir das 20h. Ingr.: R$ 220 a R$ 270. Ingr. p/ ingressorapido.com.br.
+Mais
+Simone Encontra Ivan Lins Com direção de Zélia Duncan, a dupla de artistas interpreta músicas clássicas do cantor e compositor carioca gravados pela cantora baiana. “Começar de Novo”, “Antes que Seja Tarde” e “Bilhete” estão garantidas. Credicard Hall - Av. das Nações Unidas, 17.955, Vila Almeida, região sul, tel. 4003-5588. 3.873 pessoas. Sáb. (15): 22h. 100 min. 15 anos. Estac. a partir de R$ 60. Ingr.: R$ 120 a R$ 300. Ingr. p/ premier.ticketsforfun.com.br.
+Tom Zé O artista, grande nome da Tropicália, faz show para comemorar os 50 anos de lançamento do álbum “Grande Liquidação” (1968), que tem músicas como “Glória”, “São São Paulo” e “Namorinho de Portão”. Sesc Pompeia - teatro - R. Clélia, 93, Água Branca, região oeste, tel. 3871-7700. 746 lugares. Sáb. (15): 21h. Dom. (16): 18h. 90 min. 12 anos. Ingr.: R$ 9 a R$ 30. Ingr. p/ sescsp.org.br.
+Mais
+El Niño A ópera oratório do compositor americano John Adams que conta a história do nascimento de Jesus pela perspectiva de sua mãe, Maria, é executada pela primeira vez no Brasil com a Orquestra Sinfônica Municipal de São Paulo, o Coro Lírico, o Coral Infantojuvenil da Escola Municipal de Música e cinco solistas, todos sob a regência de Roberto Minczuk. Theatro Municipal de São Paulo - Pça. Ramos de Azevedo, República, tel. 3053-2100. 1.523 lugares. Sex. (14): 20h. Sáb. (15): 16h30. 60 min. Livre. Ingr.: R$ 12 a R$ 40. Ingr. p/ eventim.com.br. ​
+Orquestra do Theatro São Pedro Sob a batuta de Ricardo Kanji, a orquestra encerra o ano com o violoncelista pernambucano Antonio Meneses e repertório que mostra a transição entre o período barroco e o classicismo, com peças de Carl Philipp Emanuel Bach e Wilhelm Friedemann Bach. Theatro São Pedro - R. Dr. Albuquerque Lins, 207, Santa Cecília, região central, tel. 3661-6600. 636 lugares. Sáb. (15): 20h. Dom. (16): 17h. 60 min. Livre. Ingr.: R$ 30. Ingr. p/ ingressorapido.com.br.
+Última semana
+Andy Texto: Gero Camilo e Victor Mendes. Direção: Gero Camilo. Com: Victor Mendes e Gero Camilo. 80 min. 12 anos. A peça narra a trajetória do humorista Andy Kaufman e a aproxima da história da cadela Laika, primeiro animal a ir para o espaço. Espaço Parlapatões - Pça. Franklin Roosevelt, 158, Consolação, tel. 3258-4449. 95 lugares. Sáb.: 21h. Até sábado (15). Ingr.: R$ 40.
+Mais
+Cárceres da Consciência Texto: criação coletiva. Direção: Samira Lochter. Com: Guttervil Guttervil, Fabrício Castro e João Gevaerd. 85 min. 16 anos. Em um mundo distópico controlado pela inteligência artificial, três humanos são cobaias de um experimento que pretende determinar até que ponto a música pode estimular lembranças. Espaço dos Satyros 1 - Pça. Franklin Roosevelt, 214, Consolação, região central, tel. 3255-0994. 70 lugares. Sáb.: 21h. Dom.: 19h30. Até sábado (15). Ingr.: R$ 40.
+Confissões das Mulheres de 30 Texto: Domingos de Oliveira. Direção e interpretação: Camila Raffanti e Juliana Araripe. 70 min. 14 anos. O espetáculo narra as diversas questões que perpassam o universo das mulheres de 30 anos. Sexo, casamento, trabalho e outros aspectos são abordados de forma bem-humorada. Teatro Folha - Av. Higienópolis, 618, terraço, Higienópolis, região central, tel. 3823-2323. 305 lugares. Sex.: 21h30. Sáb.: 22h. Até sábado (15). Ingr.: R$ 50 a R$ 70.
+DezEncontros Texto: Alessandro Marson. Direção: Wendell Bendelack. Com: Ana Carolina Dias, Carlos Bonow e outros. 75 min. 14 anos. A peça narra os encontros entre um homem e uma mulher  que se conhecem em uma festa e, apesar de não se envolverem em um relacionamento amoroso, continuam a se cruzar pela vida. Teatro Shopping West Plaza - Av. Francisco Matarazzo, Água Branca, região oeste, s/ tel. 150 lugares. Qui. e sex.: 21h. Sáb.: 21h30. Até 15/12. Ingr.: R$ 70 a R$ 80.
+Enquanto Chão Texto: Solange Dias. Direção: Rafaela Carneiro. Com: Caio Franzolin. 70 min. 12 anos. Usando técnicas do teatro documentário, o espetáculo traça um paralelo entre as comunidades de Patrimônio (MG) e Canela (TO), para mostrar como a busca desenfreada pelo progresso pode destruir tradições. Espaço Cultural A Próxima Companhia - R. Br. de Campinas, 529, Campos Elíseos, tel. 3331-0653. 60 lugares. Sex. e sáb.: 21h. Até 15/12. Ingr.: contribuição voluntária.
+BA-TA-LHA O projeto, que organiza batalhas entre dançarinos de diversos estilos, coloca em confronto o Núcleo Pé de Zamba, de frevo, o Chemical Funk, de locking, o Lords of Krump, de krump, o Fabulosos, de passinho, o Symbios Tribal Studio, de tribal fusion, o Bollywood Brazil, de dança indiana, e a Cia. Anderson Couto, de jazz. Sesc 24 de Maio - R. Vinte e Quatro de Maio, 109, República, região central, tel. 3350-6300. Sáb.: 18h. Até 15/12. Grátis.
+Claudia Andujar Conhecida por lutar pelos direitos indígenas, a fotógrafa suíça naturalizada brasileira Claudia  Andujar ocupa dois andares do IMS Paulista com a mostra “Claudia Andujar: A Luta Yanomami”, que tem abertura marcada para este sábado (15). Com curadoria de Thyago Nogueira, a exposição apresenta cerca de 300 imagens, além de uma instalação e documentos que retratam o cotidiano do povo ianomâmi. As fotos foram escolhidas dentre um acervo de 40 mil obras. IMS Paulista - Av. Paulista, 2.424, Bela Vista, tel. 2842-9120. 145 lugares. Ter., qua. e sex. a dom.: 10h às 20h. Qui.: 10h às 22h. Até 7/4. Livre. Abertura 15/12, 11h às 20h. Grátis.
+Festival Red Bull Amaphiko Pela primeira vez fora da Red Bull Station, a terceira edição do Festival Red Bull Amaphiko será realizada no Centro Cultural Grajaú, neste sábado (15) e domingo (16). Criado para apoiar o empreendedorismo na periferia, o evento oferece uma oficina sobre como tirar ideias do papel no sábado, às 14h, e outra sobre audiovisual, às 17h. Centro Cultural do Grajaú - calçadão - R. Prof. Oscar Barreto Filho, 252, Parque América, região sul, tel. 5925-4943. Sáb.: 11h às 19h. Dom.: 11h às 21h. Até 16/12. Livre. Grátis.
+Feira Fora da Curva A feira de arte impressa e de publicações independentes oferece a oportunidade de conhecer pessoalmente uma seleção de artistas, editores e coletivos que produzem trabalhos autorais. Jardin Plantas e Flores - R. Gen. Jardim, 490/494, Vila Buarque, região central, tel. 3151-3789. Sáb. (15): 11h às 19h. Livre. Grátis.
+Feira Jardim Secreto Com curadoria secreta, a feira, que visa apoiar produtores independentes, tem 180 expositores locais dos segmentos de roupas, decoração, infantil, pets, papelaria, cosméticos e orgânicos. A praça recebe também uma turma de DJ’s e diversos carrinhos de comida com opções veganas. A edição, especial de Natal, oferece programação infantil com oficinas de brincadeiras. Pça. Dom Orione - Pça. D. Orione, s/ nº, Bela Vista, região central, s/ tel. Sáb. (15): 11h às 20h. Livre.
+Mais
+Festival das Artes Indianas O festival oferece aulas de ioga, apresentações de música e dança folclórica, karaokê e espaço gastronômico com comida típica indiana. Outra atração é a feira com produtos  naturais, trabalhos com henna e artesanatos. Espaço Lira Paulistana - R. Topázio, 258, Vila Mariana, região sul, tel. 95465-3104. Sáb. (15): 14h às 22h. Livre. Ingr.: R$ 29. Ingr. p/ bilheteriaexpress.com.br.
+Teatro Infantil
+Bailarina Texto e elenco: Sandra Vargas. Direção: Luiz André Cherubin e Sandra Vargas. 50 min. Até 3 anos. Primeiro espetáculo para bebês do Grupo Sobrevento, a peça conta a história de uma mulher que recebe de presente uma caixinha de música com uma bailarina. O objeto traz lembranças de sonhos esquecidos e abandonados. A montagem é destinada a crianças de seis meses a três anos. Sesc Consolação - 3º andar - R. Dr. Vila Nova, 245, Vila Buarque, região central, tel. 3234-3000. 50 lugares. Sáb. (15): 14h e 16h. Retirar ingr. às 13h. Grátis.
+O Balão de Zé e Zeza Texto: Talita Cabral e Rodrigo Régis. Direção: Talita Cabral. Com: Talita Cabral, Rodrigo Régis, João Rocha e Lígia Fossa. 60 min. Livre. Uma corrente de vento atinge o balão que leva Zé Gabriel, um baloneiro, e seus amigos. Eles caem em um antigo circo e se encantam com o universo de malabares, palhaço e bexigas. Ao mesmo tempo, Zé encontra Zeza, artista do circo e novo amor do aventureiro. A peça é encenada com bonecos e sem falas, com música ao vivo. Sesc Parque Dom Pedro 2º - tenda da arquibancada - R. São Vito, s/nº, Brás, região leste, tel. 3111-7000. 200 lugares. Sáb. (15): 16h. Grátis.
+Diário de Mika Texto: Elizabeth Mendes e Rodrigo Maiellaro. Direção: Rodrigo Maiellaro. Com: Rodrigo Maiellaro, João Pedro Bierrenbach, Tamiris Santos de Lima, Gustavo Maester e outros. 60 min. Livre. A peça é baseada no desenho infantil brasileiro homônimo exibido pela Disney. Mika é uma menina curiosa de quatro anos que aprende a lidar com as novidades do dia a dia. Ela recebe a ajuda de seus brinquedos, que ganham vida em sua presença e assumem traços de sua personalidade. Teatro Dr. Botica - R. Domingos Agostim, 91, Cidade Mãe do Céu, região leste, tel. 2251-5775. 240 lugares. Sáb. (15): 17h às 18h. 60 min. Livre. Ingr.: R$ 60. Ingr. p/ ingressorapido.com.br.
+Natal Mágico Direção: Billy Bond. Com: Bia Jordão, Clara Jordão, Ana Luiza Ferreira. 100 min. Livre. Produzido pelo italiano Billy Bond, o espetáculo musical investe em figurinos sofisticados e em efeitos especiais para narrar a viagem do Papai Noel, que sai da Lapônia em um trenó, ao encontro de uma família no Brasil. O bom velhinho vai realizar os desejos de todos, desde conhecer as princesas dos contos de fadas até os super-heróis. A montagem tem acrobacias, projeções em 3D, técnicas de ilusionismo e cenário giratório. Teatro Bradesco - R. Palestra Itália, 500, 3º piso, Perdizes, região oeste, tel. 3670-4100. 1.457 lugares. Sáb. (15) e Dom (16): 11h30, 16h e 20h. Qui. (20): 16h e 21h. Até 23/12. Ingr.: R$ 50 a R$ 150. Ingr. p/ uhuu.com.
+Mais
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "da7139289367c2c40cff8bc549c1e5514bfdcd4c6942721b78327be067cec5df",
+    "mention_text": "Karol Conka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "260632523bd01062eb7e4c1aed43c8ed1ed34ba8157ddb008eb3b4e6dd00c256",
+    "mention_text": "Claudia Andujar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d1e10d9b0a87b913b6aec92fb2d5e792f6121b8eca0ef97cdfb97a085d354837",
+    "mention_text": "IMS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f6667aa2fbc431791dba773e2d57062b30888405b05301e3b3fe0673b115cd3",
+    "mention_text": "Mano Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e8c01ef77d94f0cbeaf63b9b90e2a3df831f0bd268094e6fe9316834314b423",
+    "mention_text": "Karol Conka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a16a9f2c91306931a8f15c3409715e5700c2dbbfc8b20e76541fbf587eb79874",
+    "mention_text": "Centro Cultural Grajaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfcf34ba051c462dc1df5ded9b186e66e17fe1c707449d20bc1eeaf5fa2694f9",
+    "mention_text": "Wesley Safadão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f73eac78a7d17e016ea66eb071f9138670098ada7128a8e0f9d92ff4e28f2f42",
+    "mention_text": "Zé Neto e Cristiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85f30a69fa25b9f90739f26233a1a9dd8fee205d4b783e2ad8a92a4d29a36785",
+    "mention_text": "Instituto Moreira Salles",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0fb755730d605ab86e811a89ee3ccd5ab1c9616e1204953a1c9dda4a035ea0c",
+    "mention_text": "Casa Guilherme de Almeida",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc30bf8cb4997da4d13f9bf6ca07ba213b4a5db34b97dc705582252f18a5689c",
+    "mention_text": "Kleber Mendonça Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d2ad3c3eacd9bd715664dfd83e6d91307abb9cf6de8a09460651516a31b576c",
+    "mention_text": "Juliana Rojas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d0ea82db074c101ef86484f2cb1dab84268a4a508fc8c79427d65d981077bd4",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e34f59243eb45e3ae9e8f01cb68a9050afabfd62aff55bca1efd50fde80c3b73",
+    "mention_text": "Kleber Mendonça Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "718713157f0582236519d726e7290f6979d13361d37502b4c4f4845566bb9e8e",
+    "mention_text": "Juliana Rojas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b74ad6bb764759df47246c11ed4feee260c5cddabc05241ea87dccc3214b9e8f",
+    "mention_text": "Marco Dutra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66ecbf2fe4ead6c1875d55c34da53794cdd5af83596abd995b6b66e2e3bf459e",
+    "mention_text": "Joyce Pais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9456420ba01168f26e2f5edaffc80a7b71f5bbf79ea618c593dd782d204bc060",
+    "mention_text": "Alexandre Matias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f3c7fb02cd061a563a90e4c1a0fa958299b7e0e18f47eac765efbf23c20d94e1",
+    "mention_text": "Casa Guilherme de Almeida",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74fd73567c817725e685f0a5d9a28149d1456b7e95eb2134792a47d8a06bb2a2",
+    "mention_text": "R. Cardoso de Almeida",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "db12cb5517865519383bc93d24118411ec64bdeb7061b52dffd9f981c123561f",
+    "mention_text": "Sumaré",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be912bfbb06796884c61453c0c46769d3c63bf5be6bf917dcbe0da8edf16fd5c",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0c55025aedee20d67d53fdc5ee1b9f9ae950956db9b2b3b25cd9267933c5d71",
+    "mention_text": "MIS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c69d8a501c2682ee08f0862f5cef227edfbd1a6a8bc053a5df56f9cacbfd4d2",
+    "mention_text": "Av. Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6cadc31bb9ffe81f8918cbe3156f0834bd53d13dbfbd93bcb19da1e81772b36c",
+    "mention_text": "Jardim Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31c9568e583f02f2b6bae3ff4641e66051298597744d45155b5e8e8fee0ad4af",
+    "mention_text": "Mano Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b81c8f4680a8d7ed2c4827359de9046bc4246ba0f0b7c9252c27aea41fe130ed",
+    "mention_text": "Karol Conka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4867d7f8acc12a785ddfa01ecd2d9eadf23dd9abfb5f5ee7dc8b3a4b67ef032e",
+    "mention_text": "Sesc Santo André",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18200b848b6b737e4f2168c43329149e728953ccc298868edeb2e70ccb901bdd",
+    "mention_text": "Karol Conka",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33588644dd0c2e5a865036b1ccfe84499ff84ebb4a77494d4b329bce61b1131f",
+    "mention_text": "Racionais MC’s",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd97450bd6a62801cfd4c7e63737296c22c2c51ebdd3f6d982f0c21de903da00",
+    "mention_text": "Mano Brown",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d4db463eae13221183a80eda5cc852399ccddffc6e2d625eb91840bd50df665f",
+    "mention_text": "Sesc Santo André",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8cfafeddd16322e6b55c06efdf5364b96267667d8d993684ccccf3e8efdaef22",
+    "mention_text": "R. Tamarutaca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "524cc30587b73111e5d2ccdd23ee6196dd4a93d25d4e91fbcad0687f66695859",
+    "mention_text": "Vila Guiomar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "88548eedfc8a1ea09bc45d94688fcdf7c1d606e31157444e84753e3651cbfb87",
+    "mention_text": "Santo André",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b71db1fa451b65b90ffcf644bf96beb2dcb4a2609816151b9e0efbfd8a70348",
+    "mention_text": "Alceu Valença",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc305d8f94332ab131ad25aed22a0aec866ea2c6aa49aa6faa4503c69658fd17",
+    "mention_text": "Luiz Gonzaga",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd24348eb7470a9daed3b015b2b6ea06bf8899f78adee6f03a7f4b15d3cc0a11",
+    "mention_text": "Jackson do Pandeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "362e642a055acd681a9313e16119475e66504af1ab3bebe82ab47ff6cfa0b854",
+    "mention_text": "Sesc Bom Retiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "04a74e8f0ce91061008a19d85e04c43d057d8b2c54719437a9b31513e09e1f69",
+    "mention_text": "Al. Nothmann",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7dacb2aaa244294f347c43ade666703de1a40ea4f252784b3706c36ad3abc798",
+    "mention_text": "Campos Elíseos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dbfa58641d90bc6193ab0425703ed895e0a3608e3dc4a9da1b2eb22393b248f2",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f17b2600f3dec3259029d63394e0222521abb91b78188438bd4d772667d2f1da",
+    "mention_text": "Amelinha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d6284dd7a4a65fada8723c616b5ec0570342769c405e82772f02b8f92b453788",
+    "mention_text": "Fagner",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "112015116fe7735543591173292ce98436eb63153447adae8446506697f7c331",
+    "mention_text": "Belchior",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3fe286d5eeb6a94038184d8d48754e90e35631d084b57c1d5a251f4e86162acf",
+    "mention_text": "Centro Cultural da Penha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e4acd634bf74cefb74dd6ad100a2cde6435957188ca96cd695bc28a7301e77a",
+    "mention_text": "Lgo. do Rosário",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "214ce8ea4bf323fc2a47fa758031ff8f4e8fd96f822b7a33d10105de3174fee6",
+    "mention_text": "Penha de França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d076ecf6f33cd2b238523e80bd553082d60fec2f0ec262b459f16a912382379",
+    "mention_text": "região leste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2046dbd1a669e9bde3be31f0ea99fa685d83669708604964504676021fb4088",
+    "mention_text": "Assucena Assucena",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c99816810ad40e03c67a9c55b73bc732880c6eb3aa70e940971fb3976df5399",
+    "mention_text": "Raquel Virginia",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4302eb670ce6e6e12a82e8c7ff4aee7d53a0ef9169a7d3de9dbcef06934177a9",
+    "mention_text": "Rafael Acerbi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51166e34ab90659a5e3ef10126b816d4804f10f459367a1d8b094704d50cbf2c",
+    "mention_text": "Sesc Pompeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5adedc6a55131f990d8c1fafdf3f1473c5fb8facb92a6c5754bd4ddebf61ae02",
+    "mention_text": "R. Clélia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d0f699f39a3fbfe55dece36432d0c08ddff4f07e0f91968a0a105b4990b4d6e8",
+    "mention_text": "Água Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1e5b61cc42ec9a08987f20bbd1a9b63722161e3456a202076977913a13a2af17",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "389c0af95358abb308562108126e5741355b811ce21c1194f35400f382342f3a",
+    "mention_text": "Frejat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d203dd43cef6f891421a81fa538c73525c3805235ffa7cfed6a9b3c0b2977f6c",
+    "mention_text": "Barão Vermelho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f398fe424d4b31fccb71e39b842f62f900d454b984b2758bc06da67bb0ab0c12",
+    "mention_text": "Theatro Net São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3f74cec8788deabbea4d245383f600b0a1336f048dcca9b66de722353b3a65f1",
+    "mention_text": "R. Olimpíadas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d2c36c654a0b6f7d629ee9185dbc9e0fc701c397fe9eb970ebe3f8cc75f0d907",
+    "mention_text": "Vila Olímpia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc002fa602d7e26d20c08113d9334975ccc4b0ab24539d4a01063ae4726a6299",
+    "mention_text": "região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8eb84a7f6bd295df063c89c381f05b7898686f3da816acf97583d6ad29186a22",
+    "mention_text": "Wesley Safadão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66dcae51b0c5bf75c29da50cb6931c0c261da4f76831e65dc7388385ff835722",
+    "mention_text": "Zé Neto e Cristiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "971cdca9a179da710c67cb8c6fb9e4ce8d5f4ac11648edf4625a919deef4c8ba",
+    "mention_text": "Ferrugem",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d299de418d406f2dae153f07e0e8c4950e8c6a1c9007d35ad725d8fb6e4e9ad",
+    "mention_text": "Léo Santana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "93f484c3cbf6d276c16f6e425f9f5e0d387aaad658af800e66c26c11dea02c73",
+    "mention_text": "dJopin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df320f4fbf0b32bb39a436d87c6ef7912d9093bf95e1ad68ab4e6187093f2ee5",
+    "mention_text": "Pq. Anhembi",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f25fd55851600d7a8f1bc74b7f50ccdd3e94945a549e1d7e4206f3d7d95689b",
+    "mention_text": "sambódromo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0e79ed715e0e99867c7db1f36423a9fa530dd8811c6e26b3d6b8748183a98eb4",
+    "mention_text": "Av. Olavo Fontoura",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc8e938364417ec8dadda8f59879ebb39362a84baeb63639358c1ae4861d5e3f",
+    "mention_text": "Santana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1412edc6e0697345a1f85236f9733f51d18ec4be344025a2af5d016883ed0a9d",
+    "mention_text": "Simone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e316ca7b3a71ed039deecabd615c9f5484315079e0e78aea55b651ea25327e92",
+    "mention_text": "Ivan Lins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1884579150fa6e606bb3677f25f920b820d363413767300b3b6c0da092333ddd",
+    "mention_text": "Zélia Duncan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9865b9237e240a217cb612681283aaa6e364157bf56d2cc606e6f19c5c572ada",
+    "mention_text": "Credicard Hall",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9131a9f9fc2af9c712d236f17636f67fa430fe695fd9e7349eed310e1abca0b4",
+    "mention_text": "Av. das Nações Unidas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0155e005667cd3f61e741ec695fe161b937d7cda15a89feba986cb1f57f981e4",
+    "mention_text": "Vila Almeida",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc4aae68f7ff2ff02fb5bc21332f06114558dbe294f92199faa5bef221beee95",
+    "mention_text": "região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "823e2e17aa924de925cf86371ad4a8d001a23bd46d53e60d5f2ab070ca580088",
+    "mention_text": "Tom Zé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb53b873b12c98c38a7d8a1abcc3dd17981321bf3e8b461577f8e6f79672f4cc",
+    "mention_text": "Sesc Pompeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "60bf93a0d1b735463a8e4fbcbf3ac76f78eda9a81df6d544d08e80f41780ff78",
+    "mention_text": "R. Clélia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f22b04a9e8c2b765fdeb66b176d17b4d752150d1b09711538f48b757fafd0a7",
+    "mention_text": "Água Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "856880bbd6007f49da78920da20f23515031b1d0790f7ba4ec6bbecdbf528519",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0bd8db738d183e504b7c5b7230c3141e84089f4a6acc2dc518ef60216d83526",
+    "mention_text": "John Adams",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f424a2b53c84f9f6ef270f9054475c9e37390f08732d0021d9fa7a1b788483bf",
+    "mention_text": "Jesus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5119dd5eca2dc61897c1cdd3b150679e532cc86e3c36450bef4c99f683a66657",
+    "mention_text": "Maria",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "244002a8af891d2ad0592ba8d33068895e3ffd1611ffce75ed1e47a89367049c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7d71e150bc8074ecc62d217bd2fec860d1547510fd89cf32b320efd54768e48c",
+    "mention_text": "Orquestra Sinfônica Municipal de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b604a5fd458476c455d0e21a34dbfecdf7e1f8bde225d492d16c3dab716d49ba",
+    "mention_text": "Coro Lírico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8fa7f580255f7dc73152b507cadd838d794b22c8bb781dab146b6135dd72ea9",
+    "mention_text": "Coral Infantojuvenil da Escola Municipal de Música",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f024e1459069785e38768a7072c023b01ec038c388cffa00b47725464e2b5653",
+    "mention_text": "Roberto Minczuk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b7e8cb6ce48d6c314e51d2cbdab1bc1702cf5a6dff96e8964ea3f1f106b8bf7",
+    "mention_text": "Theatro Municipal de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee4a5114c678289b0c8c6dd140c8d43ed205b8e724987f62614fc37aa6a5e090",
+    "mention_text": "Pça. Ramos de Azevedo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a11123f21dc41563929de6df7599f3c5e05756bf6fd4ef08b70c65ecb890f16f",
+    "mention_text": "República",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "15d91389dff43c1856d65f1ee1e091cac2b8ddc836cc53b3db89f98f9a6580ac",
+    "mention_text": "Theatro São Pedro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19f6322ccb365a330e75f699706599df818525e67e7e4f9a64f9766734ebe019",
+    "mention_text": "Ricardo Kanji",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "234deeb925bcd7a1a36ec957bea0edfca3cc014061c56b0789f7f707a3a843e3",
+    "mention_text": "Antonio Meneses",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14d8cad6ef988ac30f60cfbc08577f1c11756886ea042f95534504026cd5fe13",
+    "mention_text": "Carl Philipp Emanuel Bach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ab05d84de85d2d8f26d090f5c7b2f7cc59ca5ec2a38af0ca1de851dd479ad34",
+    "mention_text": "Wilhelm Friedemann Bach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97466650ef4d14a1a4b56300aeb72d78db618570c4f88405446ad99b0ce87d8b",
+    "mention_text": "R. Dr. Albuquerque Lins",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "769c23f6483087a202cd2cf02a34f8eefe38e4cae0d129a0bf3924681a2738cd",
+    "mention_text": "Santa Cecília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "837f95324030b0b78b40d3c01386cebf9fec9c8008caa81633e62a5e692f1dca",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "91d0a0a1e4bfc1f4c0af75c7f4ffd5171b1f7f307a5a2e7ed387c8d77774c4a7",
+    "mention_text": "Gero Camilo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4a688bef767d933994b75e45919034073adfc20407af4f177bc35bb8a9a14936",
+    "mention_text": "Victor Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "45405a0d1a0d7c423591f2d7a09c4bb5e3072c5313be7c946746883d5ea2d30c",
+    "mention_text": "Gero Camilo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "baefaf3c5d21ead0e694ebd76044ef37c5037eb32d7c6f9a86e70f43e1073e48",
+    "mention_text": "Victor Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7521ddaaf19a05eef2946998fc299800306890a8a1df46d309749df8d4d80f8",
+    "mention_text": "Gero Camilo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "048cf1d92406ba367175af64f45bc961283ecc296cb879a7256a069f3c267757",
+    "mention_text": "Andy Kaufman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a075c35d4cf4c458660132699fe92c2d2a23c1f5ed47bfb564fc960132a5787c",
+    "mention_text": "Laika",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14aec76bd6026d091a7806e62c549c8eb104de7c2d047a42864c86f1cde96253",
+    "mention_text": "Espaço Parlapatões",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f5a5ce8ea5f3e642f0db85c79142ba0f650fcd5f67cc8431ca8dad6af9f4e3bf",
+    "mention_text": "Pça. Franklin Roosevelt",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "55d9fcb95c4f2883d23c6bb3d4dc46a1ef539fcabab58005ed3c946dc864fc3d",
+    "mention_text": "Consolação",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1205c98c0ea5c5ad56c688f7bc24400315bca9dd331448619d681f34632c0684",
+    "mention_text": "Samira Lochter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cf8945b34b19f99b5ad384ebe750f6b3aacee9f897cab565c86aee9c95d6493",
+    "mention_text": "Guttervil Guttervil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a2312a2f1989dbc589cd233a93c4b2eb98bb29654115cf759923647cead8dafc",
+    "mention_text": "Fabrício Castro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "abbc4e80371b1ce11548eaa0a4ba4eecf8be7be3eac206d7ddfe0cba297caa4c",
+    "mention_text": "João Gevaerd",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4478ec37db346b919e8eaf50858c20179977bcd4bc8c3c015dab1db5c234eab1",
+    "mention_text": "Espaço dos Satyros 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a27ab3372327e6abdad155bdf98c4234a1a2812460cd3f4258a96c42173d9c08",
+    "mention_text": "Pça. Franklin Roosevelt",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "95780f44eaec229f5c7861e6b21273e11130c595c0f312cd3563722d5e33e949",
+    "mention_text": "Consolação",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6c617b1631abf340bf9d2f22c736cdefa0e0f51aa32f8269358e32e40d550422",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "654e3a0a6ef40f2924c6fbec001ef04646dc79fde566bebdb0ceafd1b4eca4f9",
+    "mention_text": "Domingos de Oliveira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f290a4119503824c4a7f78d61ee4ff6cc9c3b699cc2d3d626cd79ccd89c44e5",
+    "mention_text": "Camila Raffanti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36d31cb74e90c55495aa5a1995c3741cb44d3da576686ec6e0cb20a5ac68afb6",
+    "mention_text": "Juliana Araripe",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6789171d8a63c3fb4ee51600931a77867c53fcf4d0ed181b988b1866180ae0f",
+    "mention_text": "Teatro Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb0c18bae6a2270257b184625be822502f0e2f7b558ab7d8dcd30f9b76f8a6eb",
+    "mention_text": "Av. Higienópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "26346f23f260341d05da5be22cc669f61d43261b4844b9af12f76364cacee934",
+    "mention_text": "Higienópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd2c7e64a567d1efad6b0a7df4797668b269fd958be5c7aa18e1362b9616eb6b",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f084815896d100036c0861658f7ccbc85d7c1ebcd7f1717cb1da2df3cd5b646",
+    "mention_text": "Alessandro Marson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd2ab8ae8566ae7ee45d92bde1a1133ab43e7249b273bfc9e4cce056ea122fa3",
+    "mention_text": "Wendell Bendelack",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f92bfe95dbc30376b4d5dbf86568609f7e3abd19d09a453f07ebd308c22b13f9",
+    "mention_text": "Ana Carolina Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5c046a597224700816924e6e1ba161ac1d0333d4b7da72927295b618ee5f03e",
+    "mention_text": "Carlos Bonow",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82b43bc11ea1535352968d0c29ff3a27aceca391dae834d1fdde9c80769f546a",
+    "mention_text": "Teatro Shopping West Plaza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d11ca3ccbb5cd553c66c727e47a50e5b455aa36b525f0eda9ac89e99ccb20a6",
+    "mention_text": "Av. Francisco Matarazzo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cf798aac21a5c1d483c4ff085a5203e5b409cd75ff9e6b01fadbaf1ae989a5bc",
+    "mention_text": "Água Branca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "15b57eafdbfb56a34bc8e7f53b846759b666903d1f6dd5d7bbb4bcd9fa34a7f2",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30a428cde212b3bdafa369ceda665ad7a1c7b6b5886f0027821084e291e83168",
+    "mention_text": "Solange Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f5bc6da5ee4c79c1ef306074480aa237157fcdbd0e0e37c027e8f0f7b7733976",
+    "mention_text": "Rafaela Carneiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a4b0b03eeb3912ac103a12a858c94bce40cd48b27c4358ef2902e614a3334fe9",
+    "mention_text": "Caio Franzolin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb5ad5931ba84e5d189d69a2242cdefecc91caa67f8e108f492b5fbaac371454",
+    "mention_text": "Patrimônio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c179b51d01756ec3659bdff7e4dc3db4f2165644ae482941ed8ee1c0786c2ddc",
+    "mention_text": "MG",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30468c4cc9f8a03b3df8124258f2d4e194164073594c774b23a3d09acfc550af",
+    "mention_text": "Canela",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8920068d68551cb40e5e454999fb919e6bf6de71fc8a4c09b87c478c4c98588a",
+    "mention_text": "TO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "25b8947c368ca8414ad53429df4f8091c36beee6e56c4fbc9c7ef5ea4f9f7e2d",
+    "mention_text": "Espaço Cultural A Próxima Companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6bc5afa294c2df14475e069d968a1065f65a53283d5aeb9ad148cce78d86b661",
+    "mention_text": "R. Br. de Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39f10d2d99dfde5c36bac01482fae34838b5b56cb4c6cdd1e4305a7b7f51827a",
+    "mention_text": "Campos Elíseos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9860471308f916aa9a838a4d21c8a5b29d032fe7230b4d365c131f90018ab74",
+    "mention_text": "Núcleo Pé de Zamba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "db10962da04c2cb8a0969195cc47ce4a368e97ad9b39af88276ee14c01a2c783",
+    "mention_text": "Chemical Funk",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2822b99bd7027cc40d1ad43b5b96feac3c3f80647cae31c56f2aae4d2f9a0f9e",
+    "mention_text": "Lords of Krump",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "88364ed7859535bcb691e4b7696a51758850761445393a68089caa41966b993b",
+    "mention_text": "Fabulosos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24f193fb1736b1e2683e83efdadbf27bea23231101153012508549ba1d021a0a",
+    "mention_text": "Symbios Tribal Studio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "df621434038c8314cf3e81abe878fed074578c42efa89cbeb86a0e8b750d37e1",
+    "mention_text": "Bollywood Brazil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8b7cc5618656bb04117cab21ee9591cdde7362388d6ae3ecbfa91df156ec2a40",
+    "mention_text": "Cia. Anderson Couto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dfc81b54bd55a27eb90fa2833549d441600e461e90db7d35f74b10b0251e5128",
+    "mention_text": "Sesc 24 de Maio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "722c14c3285ecaceb030ccdb512b0edb36dd498f8a8ea6fc702c716385279c8a",
+    "mention_text": "R. Vinte e Quatro de Maio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70383f135490f3b69ac086a5989fb6e3ad4b6a3ec9576b4755252efa687cface",
+    "mention_text": "República",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4430364e4a4df543d1d09197297c923a7024da6a1d75d29c50840668b5c21a9a",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f50abd5bfd384e86c7ec0a6cc4b34f8b8450c5cf0603d6610d31379fe7efb73c",
+    "mention_text": "Claudia Andujar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e930bb30c83784bf0de2a2a2abba5c55c129aabf1c6e0b1ac6ed46b009099e3c",
+    "mention_text": "IMS Paulista",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67fa9861ae184859c6a19d4000ad014869ca3048d90cef5b10f6251cc055a61f",
+    "mention_text": "Claudia Andujar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90969309a194c8821761d495789ba6eaea81f0343c889f2b19ab7a4926ffa126",
+    "mention_text": "Thyago Nogueira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e15e25889baedfc94924879291ec45645ea672ac6a207dfdef3a15b7c93ada6",
+    "mention_text": "ianomâmi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5c225a0478c90666a21a5d509821dd5bfbcf610c178feb92aa228b82343cdb2b",
+    "mention_text": "IMS Paulista",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "818ef0cddcee9c98b25233cbe4f29320e792ccd89a14bdb8ac7ae23bd3f595da",
+    "mention_text": "Av. Paulista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "faa4c3f1f20c95f19df5c6288fd6388935aab7f19a2eea83240643cbbdf0eba4",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0b6d2ad162f01878cd521d65703c1b361a36c23053c1c60ac996caa815f4db1f",
+    "mention_text": "Red Bull Station",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f5ec96750d2e3b5026e0f996d9ecc57d729012ff47af9353a9282f4f3b1d9c5",
+    "mention_text": "Centro Cultural Grajaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01ed9270e9e6777665cf24698abd084b0fde82ee6d012258ebaa4cf63a4de342",
+    "mention_text": "Centro Cultural do Grajaú",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8298fd71e9b330b217b8bb1d8a6b2bd6abb95436fb5e57da26c951ea34db0ce4",
+    "mention_text": "R. Prof. Oscar Barreto Filho",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e19e37cb9d5b770f7da07fd7e274d0629b2c988f97cc792f406b27f40fab7f8",
+    "mention_text": "Parque América",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a999e555ef7fca857da2c4ba3ed178ee4bd7cf872752eb6f67fde1165b54eb45",
+    "mention_text": "região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc9246b43541ea0e9e6b4fa884ea00c1a602cbece949e8e8c139858d815dbed6",
+    "mention_text": "Jardin Plantas e Flores",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b30a1aec50570bcbe3c139419fd2ac9bc20c1fc0102f6bdb0f537efb95182bc1",
+    "mention_text": "R. Gen. Jardim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "165f5e23da0268677d7b2546fa0a6a385d49dece1f6b75c01ed8adbe5f9aa086",
+    "mention_text": "Vila Buarque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e627dcf60f0043f5bd0e358f28a267133c0d4a1233a62f2ba6a87892ac38c7d",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "143a438caaef1e0a7518fb239cca21e2a841620029b3ed7192f54af57961cc8a",
+    "mention_text": "Pça. Dom Orione",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "73d704a0c664cc960688952c87b367511b99d2c264b0de1d85dcf26d1128b22b",
+    "mention_text": "Pça. D. Orione",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2abdb933eb4d58c4f8e8723aa903129008da96e08deaf7c33e8f270d17e7b4f",
+    "mention_text": "Bela Vista",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47c1d7ac4b538f2316c3156adeab2d90659e8d85423678c3d6a1de29c642f15f",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "00e565b2093a7617b1a1c8d36c3513056d86477e8401bc5836eeed3b039ac5f3",
+    "mention_text": "Espaço Lira Paulistana",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eeb5858a1e00ebd7f58e2831d4a85016a4df55960b84133cda24f2bb0c9e9b51",
+    "mention_text": "R. Topázio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "11a435db0154a3f5f1c3b65e15af697c7319e0d502a3ef8ccded539df74b93ce",
+    "mention_text": "Vila Mariana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef4027ddcb0154154815ce2d65efde06b362690492097e86a97412e023bc1f38",
+    "mention_text": "região sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1405fe27d9808efa33a5d20278fcc0d30ec9dc158136737d39d4ddbd28e643c",
+    "mention_text": "Sandra Vargas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e74608462ccd29b37ccda1a784cbaa11d76ba3a4e6c25ffa466accd31451ad3",
+    "mention_text": "Luiz André Cherubin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a30f62c6795ffe4ba617545e3cd5a233e7ddec8ab13f9c8215d9a836397690f",
+    "mention_text": "Sandra Vargas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37956382985c515bef8a0461ab16c9bae9e3209451985939821cae0281c11d24",
+    "mention_text": "Grupo Sobrevento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1ab3823db5e424ce5acfb1d9a93e0132b002aba0eba6e7d88f62a6bc612b0b18",
+    "mention_text": "Sesc Consolação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf2320382f3f0c3bdb4ef2333a9d0c6641c16ec5474e03041ff3a8d784823d24",
+    "mention_text": "R. Dr. Vila Nova",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "60df1b7f9fe69b95d124dd7430f24b9a32fa90a591722dc6a57451705d5d5cc0",
+    "mention_text": "Vila Buarque",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "581aa5156eef99b0bac619f02a8446b760896225060d83bc638d86ce8c686931",
+    "mention_text": "região central",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bccad4c06eb943b984f29e23c10c4735c6ab5ff2bbc9bcf369aaaa001099de45",
+    "mention_text": "Talita Cabral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccc26d352d2ae4f2454c529912f744d18ad6acd88cb6cf46500403b7d26c6eaa",
+    "mention_text": "Rodrigo Régis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d460a58907ba1556d1485d41e7dbeabbfdb3fc4c8512dd79de1d9f61f10b2d3",
+    "mention_text": "Talita Cabral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90de80a9011b71e33f167ab0ad447397fa65cb6f14572408849b10acf73c1db0",
+    "mention_text": "Talita Cabral",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4acf93a5358874ed84e92aa3f44fe8bb6165f7297912f863a5b1ecadbc294fae",
+    "mention_text": "Rodrigo Régis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d5f5e8c5f2ec90eb6f16dea73c6f0835775de14d082dfc987b92fb1b2d4d445e",
+    "mention_text": "João Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "492dbc8e9a712353da82efa7c49d553419fdc4d9c1fe14af59415eab2a1d7743",
+    "mention_text": "Lígia Fossa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac55f130b5a3fe557f3ce1ab5f7b0aa379913053e02a76424daf981ad8ea8514",
+    "mention_text": "Zé Gabriel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e4b1fbca729686ec3d03ec6420ae3664591ffcd11c086c2fbc7cc4b5414ce8ca",
+    "mention_text": "Zé",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc1e0cf1a08e4a090677780bf086343d727061fac79bd16714ddda29982bf283",
+    "mention_text": "Zeza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0c79af0fe95f36b69cd0e6d760800a0fbb907a4252ff89af739d536acaba2c3e",
+    "mention_text": "Sesc Parque Dom Pedro 2º",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27c45f520d136a044ee8e0a66558164f15b630edad6d13936225785f0fd27a19",
+    "mention_text": "R. São Vito",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc5e20b6c9d27f0cd799d7a0363944e4968857272e5148fefbe90d6825cc9e12",
+    "mention_text": "Brás",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cdfbe592fdd19d93f6b3bc40524e4926e8d2c96adef2e37bbd4c9d0eb18fd47f",
+    "mention_text": "região leste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9db1ec92e66f60b69ce5c29636a4525fad08ba37fdd7875d475cf726c776adf5",
+    "mention_text": "Elizabeth Mendes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6129f765c2e5e81887c85cd6f7e06e88379c020c4fed435778a0c9119f560cdd",
+    "mention_text": "Rodrigo Maiellaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "159758d3525b4b8a7e7b1763629a9306b517a02d1ab873d00a83a913e79f1989",
+    "mention_text": "Rodrigo Maiellaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9392ef5740315469370a6f5845acbc5a1e57277faf69d38a37692612dd1ce554",
+    "mention_text": "Rodrigo Maiellaro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9e76f864ae8395f4b71fa6a8ce5b39f9c644df00e2c2aecac64ff3c0faa22d17",
+    "mention_text": "João Pedro Bierrenbach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b7a674c9354c7d768fbc9486c0c5cf9d7e40d5c832bd94094b937590fb6f6cc",
+    "mention_text": "Tamiris Santos de Lima",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2a35564be0cf7c73937ddf1c4e7862612e4a80a47af38acc242e74ea547a12e4",
+    "mention_text": "Gustavo Maester",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c160562d11b78c7e87ec8acfa4dfd24d038a1b3ea6adce52ed4a7bf7fb0aec71",
+    "mention_text": "Mika",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1987b400be8546b317392390098c89238673aeb1b8143d2ef22dc9aba60055d6",
+    "mention_text": "Teatro Dr. Botica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6afc15fdaf92fee13ff8da588ff551e708073f6506bebd1a6fe77b8b7c0af53f",
+    "mention_text": "R. Domingos Agostim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ca4d8bb389e76ea90a4e9cfe152ef677fb22a5a43e6fe5cac30f12c2dd40124c",
+    "mention_text": "Cidade Mãe do Céu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e2618e88eb8a55b92a21f9bb56c2339269da93b505ec14b5751dfc9004f5f711",
+    "mention_text": "região leste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "85f1f820791c860153f01daeb901ad0b05b53c9e362ced50c5d466e0fac24c27",
+    "mention_text": "Billy Bond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92bffe3bd430a1508a4941c97c09f8f84549dda6717af0b707235ac8c406047a",
+    "mention_text": "Bia Jordão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7bcdfe4ee598f055a4783c264dfcadb574823ab00791791088685011fa6a6e5",
+    "mention_text": "Clara Jordão",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab3d94f42c9429f5a27d54dfb93aa4200b562ca9265a5640737e14822e965d56",
+    "mention_text": "Ana Luiza Ferreira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ca02bceec4d0fb9ceeef1e9f2b97104f83b52c9c1a6ff394addc03cb530002bd",
+    "mention_text": "Billy Bond",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "90da6baff03ecc8b042c2517105edada8c7147cc55bc352abd26638952fb01b6",
+    "mention_text": "Papai Noel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9aa4fbbb36075bc9007b3dc5742d7b31adb6367a234ffc2699f42c848e0023d0",
+    "mention_text": "Lapônia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3d7d1c0973fa2818566d31a08dc2a4ffc8ac0cb4d7df23d54bf5f7893b9b44c9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "efd20ca5c4ad64490e4a89b704d1f21cfd07f6aaecec00f063562a75f2700f3c",
+    "mention_text": "Teatro Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6ca8a5b2d4442130b57034dd01dc0ba437232bda62e2bd5ec58b2c1d0d34e90d",
+    "mention_text": "R. Palestra Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87fbbef69d2f24e9f198770490b1bd6dd18b4105926bf472cd47ff8160278ccc",
+    "mention_text": "Perdizes",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c719b05c7afb6fc56873227a824de0b3573db937d05061299847efef3afe979b",
+    "mention_text": "região oeste",
+    "categoria": "LOCAL"
+  }
+]

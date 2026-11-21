@@ -1,0 +1,722 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e14bca7905178cc6742a37cf2a2b1f641f2083743f058555f4b8e92377f00ece
+
+TEXTO:
+Paul Allen se dizia intimidado por Bill Gates e teve forte atuação como filantropo
+
+Se a história oferece apenas uma oportunidade para que alguém faça diferença real, Paul Allen aproveitou a sua ao máximo.
+O cofundador da Microsoft, que morreu aos 65 anos nesta segunda-feira (15), não exibia o carisma e a garra que fizeram de Bill Gates a principal força por trás da ascensão da produtora de software. Por ter deixado a empresa em 1983, antes que a Microsoft tivesse anunciado o sistema operacional Windows, ele não esteve associado aos anos de domínio da companhia sobre o setor de tecnologia.
+Mas sua percepção aguda quanto às mudanças da tecnologia em sua era, e sua impaciência quanto a dar forma ao setor cuja ascensão ele antevia, foram cruciais para colocar em movimento o mundo de computação pessoal onipresente em que hoje vivemos.
+A parceria com Gates ganhou forma quando os dois ainda estavam na escola. Eles se conheceram como membros do clube de computação da Lakeside, uma escola particular de Seattle na qual Allen servia como irmão mais velho para Gates, mais precoce e mais esquentado.
+O relacionamento deles —criativo e antagônico— se estendeu até os anos iniciais da Microsoft. Gates, esforçado e pragmático, e Allen, a parte mais cerebral da dupla, inicialmente se complementavam bem. Mas o relacionamento deixou marcas em Allen, uma pessoa mais sensível. Ele posteriormente descreveria a cultura da Microsoft como "um ambiente de autoflagelação", por conta da agressividade intelectual e inflexibilidade de Gates.
+Em "Idea Man", o livro de memórias que publicaria posteriormente, Allen se descreve como um sujeito visionário e não muito prático, que se viu progressivamente alijado da companhia que ajudou a fundar. Ele descreve ter sido pressionado por Gates a ceder porção maior do que considerava justa, de sua participação na companhia.
+O ponto mais baixo do relacionamento surgiu quando ele flagrou Gates e Steve Ballmer, o principal executivo de negócios da Microsoft, discutindo como reduzir sua influência e sua participação acionária na empresa. Allen deixou a companhia pouco depois.
+Mas ele passou longe de ser uma vítima. Ao deixar a Microsoft, teve o bom senso de não vender suas ações ao preço medíocre que Gates ofereceu, e em lugar disso apostou firmemente em seu ex-parceiro.
+Gates fez da Microsoft a empresa mais temida do setor de tecnologia, e enriqueceu Allen como resultado.
+A revista Forbes estimava sua fortuna em mais de US$ 20 bilhões (R$ 74,6 bilhões) no momento de sua morte, o que fazia de Allen a 21ª pessoa mais rica do mundo. Ele nunca hesitou em alardear essa riqueza, comprando um iate que descrevia vaidosamente como o quarto mais longo do planeta.
+Colocar essa fortuna em uso determinou a segunda metade da vida de Allen. Entre outras coisas, ele comprou equipes profissionais de esportes —um traço comum na elite dos negócios dos Estados Unidos.
+Allen descreveu a aquisição do Portland Trail Blazers, um time de basquete, como culminação de uma paixão pessoal. Já a compra do Seattle Seahawks, no futebol americano, foi "um dever cívico": reconstruir o estádio do time foi a peça central no projeto de redesenvolvimento urbano de uma área crucial da cidade.
+Como investidor, Allen passou por alguns desastres, entre os quais os US$ 8 bilhões que ele queimou para construir um império de TV a cabo, sobrecarregado de dívidas. Em lugar de se enquadrar à ideia popular de um visionário imerso em um dado ramo da tecnologia, ele demonstrava interesse eclético por diversos campos da ciência, perspicácia quanto a avanços com resultados práticos importantes, e a disposição de apostar porções consideráveis de sua fortuna.
+Um resultado disso foi seu apoio a Burt Rutan, um dos pioneiros da exploração espacial pelo setor privado. Com dinheiro de Allen, Rutan conquistou o Ansari X Prize, um prêmio de US$ 10 milhões para um projeto privado de espaçonave que se tornou modelo para muitos prêmios de tecnologia subsequentes.
+No começo desta década, ele formou nova parceria com Rutan para o Stratolaunch, um veículo aéreo para lançamento de espaçonaves cujos primeiros voos de teste devem acontecer no ano que vem.
+Seus projetos filantrópicos e investimentos nas fronteiras da pesquisa científica incluíram a criação de novos institutos de pesquisa para estudar o cérebro e a inteligência artificial.
+Allen doou mais de US$ 2 bilhões (R$ 7,46 bilhões) a organizações sem fins lucrativos dedicadas a promover o avanço da ciência, tecnologia, educação, meio ambiente e arte. Entre as organizações de pesquisa científica que ele bancou estão o Instituto Allen de Ciência Cerebral, em 2003, e o Instituto Allen de Inteligência Artificial, em 2004.
+E embora parte de seus projetos filantrópicos tivessem alcance mundial, como sua paixão por impedir a caça clandestina de elefantes, boa parte de seu trabalho pós-Microsoft se concentrou em Seattle, onde Allen se tornou uma força transformadora e apoiou muitas das principais instituições culturais da cidade.
+Ele restaurou o velho cinema Cinerama, equipando-o com tecnologia que torna a sala ideal para ver filmes de ficção científica, e contratou o arquiteto Frank Gehry para projetar o Museu da Cultura Pop, fundado por Allen em 2000 sob o nome Experience Music Project. O edifício exótico, ondulado, tem em exposição itens que revelam as obsessões culturais de Allen, entre as quais guitarras que um dia pertenceram a Jimi Hendrix e a cadeira de comando do Capitão Kirk na série de TV "Jornada nas Estrelas", da década de 1960.
+Na década de 1990, ele adquiriu terrenos no bairro de South Lake Union para ajudar a construir uma versão do Central Park em Seattle, mas a população da cidade terminou rejeitando o plano em um referendo. Sua empresa, Vulcan, então converteu os terrenos no complexo que sedia a Amazon.
+O Google e outras empresas de tecnologia também abriram escritórios no bairro, agora revitalizado.
+"Ele tem um papel definitivo naquilo que definimos como Seattle hoje, uma cidade que gira em torno de tecnologia, imóveis e uma cultura local com visibilidade internacional", disse Margaret O'Mara, professora de história na Universidade de Washington.
+De todos os seus investimentos, o controle de equipes de esportes profissionais foi um dos mais incongruentes. Os donos de equipes esportivas, gostem ou não, sempre atraem interesse, e Allen geralmente preferia evitar a atenção da mídia.
+Mas aos 35 anos, em 1988, ele adquiriu o Portland Trail Blazers e prometeu manter o time na cidade, uma das menores entre as representadas na NBA. Ele muitas vezes viajava de Seattle para assistir os jogos da equipe, em companhia de sua mãe. Logo depois que Allen tomou o controle do time, o Trail Blazers teve um de seus melhores períodos na liga, chegando às finais da NBA duas vezes em três anos, e perdendo nos dois casos.
+Na metade da década de 1990, Ken Behring, o dono do Seahawks, um time de futebol americano na cidade natal de Allen, estava considerando transferi-lo para Los Angeles, porque não havia conseguido obter financiamento público para a construção de um novo estádio em Seattle. Allen foi instado a interferir, para manter o time na cidade.
+Em 1996, ele adquiriu uma opção exclusiva para adquirir o time de Behring até julho de 1997, e a exerceu, tomando o controle do time por US$ 194 milhões (R$ 723 milhões).
+Allen decidiu construir um novo lar para o time no centro da cidade. O Seahawks se transferiu para o CenturyLink Field em 2002, e Allen gastou centenas de milhões de dólares atualizando o estádio.
+Ainda que falasse com a mídia raramente, sua presença nos jogos era frequente —às vezes erguendo a bandeira "12", que representa a torcida— antes do início da partida, um ritual do Seahawks.
+Uma das empresas de Allen também detém participação no Seattle Sounders, uma das equipes mais bem sucedidas da Major League Soccer, ganhadora do título da principal liga de futebol dos Estados Unidos em 2016.
+Não está claro o que acontecerá com os times de Allen; os detalhes de seu espólio não são conhecidos. O Seahawks vale US$ 2,58 bilhões (R$ 9,62 bilhões), de acordo com estimativas recentes. Poucos clubes da NFL e NBA costumam mudar de mãos, e por isso qualquer venda deve atrair ofertas substanciais.
+Paul Gardner Allen nasceu em 21 de janeiro de 1953 em Seattle, filho de Kenneth e Edna (Faye) Allen. Seu pai era bibliotecário e sua mãe professora. Ele deixa uma irmã, Jody Allen.
+Três anos atrás, para celebrar o 40º aniversário da Microsoft, Allen postou no Twitter algumas linhas de código para o primeiro software produzido pela empresa. No topo, se lia: "copyright 1975, por Bill Gates e Paul Allen".
+"É estranho ver um trecho de código que você escreveu 40 anos atrás e pensar que isso levou a Microsoft para onde ela se encontra hoje", disse Allen na época. Ele parecia genuinamente admirado.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "d07ee893b591ae1f6467b956574fce72120db070ca9e72f008050a056e6b0386",
+    "mention_text": "Paul Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e0468d354fa2980f5a4b442013a1ff36a6d5eb9062590a520541e7436ef30f2",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64a70dc39a14ae67aad0766d817f11856f38802172a4f9b76e378f475116ae10",
+    "mention_text": "Paul Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f6b90988f4446048be91c9361506c8b440fcacd9f58dd472c66066c253dd7eed",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08fc7cbb86f8fba37c5818f2a9d0ac5fb173a0b5a706e7fde5ea31c0dfed708f",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43d7bdac9b960fb89909de902516dfbeed43edbbe14a6ecfee314cb6b3e1fd6c",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c3b70e3d95522d3e3f9f5189c7ce48f000a5aa9c4e72c8a5f3534d6a3978d2f",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec1f818b06b83bef1abcac0ab68265767e45f10f28e25f442b7771221f56644e",
+    "mention_text": "Lakeside",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f6d2b12a0464073a4e410f0d461c593c086e24b277d76d3b6149e91fc03a8535",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d4a8989341dd2d3022c5574d88180c6b4f1ab9d8119073e72fbd2fbf38aace59",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3d7999b7901a35c0cecc8e6cb1b898a2d1a8907179c694e1728df7ab1a4bf106",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1465dda4b1648a87fd30db8eaf6f3a3855b996f48bae444506532c38b95a064",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3db991946e2297d25c005be4c40d4c026ef6f42be4bf93f34f5fbfe5283d4bc6",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a95c897f59cdf6187db6aea53ea88d5f764bc749895bc9950101055cce657c76",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f17e3b7d0bbe7e182b01661fe191ee44aed67a6f47a5ee3b7fb8592df2b88926",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42f6035c42802717fc672c32abf4ef7dd63eae8457aaa1a44c41bbaeb4d2fcad",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17fcd4d8399e639ef632f694454bd7967e1a10c61beba9fabda05b82564f21f7",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64c97a6624339634f8fd9384f33f2af934c373be9cb56a888579cb969bd334e9",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "660e5411984a87c93a133bf4fec5630106cd60c2da01963adeb8c8c0d7558248",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5d98d8a7361970eac7c209620a223642de8e7421925d3dadeb332914d686e95",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0fa18c52aa7d46b670310d2c6fd652b637a659be8cdf02a87ab39e5041f39fc5",
+    "mention_text": "Steve Ballmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3dc108c28d99efd7c3de1bdbf8f4223d274ab9fbd91afa5c1ec4c9cac247ca5a",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68fd1d7a246ee8d4c574d0da202aa62127983f6d8b0ce9dc921a8bf17f184ec8",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "127841a5ec2f257667a7df22cc35dd73741cc9c161e071ec9e066bf566cc0277",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8e7dae4abd763210ea10bb9ed6693a2e4797f20f8e42e3589294d9487ca4c3d",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c918339af7efb92357e610074ab942b9548686143d81981ba02c0b1b80070c77",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad2ee950cbf39fffd8287fa470fa2d3b4e51e8cc879ba1bd721003caf0c3cfe5",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aca71ba9a887917fc32a12a61bc9a9c19bf509713906171f2d64a5c4f12b42a0",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "634585a9464d98a664ae0119ad11692ffa3a827435887343b88e96db6e9ede27",
+    "mention_text": "Forbes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eaa82101c69ba38089c15a6f8eda1314074486a6ca928aa8a40b66f3ed75472e",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91884039d8f90cc9354201cb57366c43431e82829059801b68880a60df33a909",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de7d20c8878ce70046ff23eda2e122ed895b6331f7e0448c44fb53305b50c81d",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "050a18451b511c77a2ea215e70babf164659890ead312d58fc7c79582c457eea",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0a3daa2cfea60559e6fef9c96744d4688a08a98b97afd79388a4400acd753d8",
+    "mention_text": "Portland Trail Blazers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b07adf8a0ef2409cd0153e1f8088699e9edb34c62a73aacd732db3533c327648",
+    "mention_text": "Seattle Seahawks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "598a8b5d0cf05a25980bd9b2cf949a90912ec51aaf0925f68a50b1f2f65eaff5",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "82fec75c60e3728e22a1a43febbac8c1c3d6d6a680d24c206046cd787313cd1c",
+    "mention_text": "Burt Rutan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36bf5de7cd6bb23dcee4b1c99df5caa562c56a9a9a6366e75f6022359e7f104c",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af3168113284df72444bc0f990f2d5d0516de754d11f8af0e7f6042c65d985be",
+    "mention_text": "Rutan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d22caa243d0b52acde65471ab66972080c5bb81ea5f8c166d9b7446043abf51e",
+    "mention_text": "Rutan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b176ba044cd45b13071a682ab579e468db4b2895939986dc0d036422b09b426d",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "72e2858cc00c538eeb720be97fb243a35eb4ca6fa369ec33fc9762be00943cbb",
+    "mention_text": "Instituto Allen de Ciência Cerebral",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0708eea3e19a27ea0478696cf738f5f190f822164c1028f06394db57b5c1b6b7",
+    "mention_text": "Instituto Allen de Inteligência Artificial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ac668479f26b83ef304dbaf5181f7501b6fd5ff923840998427490fb1fca4d8",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3c013db53753bb4520fd49844c3dfb77fe3e3a5a9e20e6a686d5a44a08a7869",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8f7efcfcff0b3bcf495d07799315b7c9569ccb0fc2637cf0fd3379393b026637",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f2e8b81b213ac4ccf6e48690a2a77217d4fb0c77b1213ca4e7f842a9207953d3",
+    "mention_text": "Cinerama",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e053d5e22288740f1044077eaffa8bb6c40c7bd3c7cc2a06ba49d3b4f56eb10",
+    "mention_text": "Frank Gehry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36df33a2e4e6a888da2088457e81f13cdd8e5bcbed227e9dd2453b70bfe8b64e",
+    "mention_text": "Museu da Cultura Pop",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01036f94bb3125e70315c9265c2a18c1406fef2103dc98a580f25c242bf5daa8",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b19a6758d332e68664c5c778522d420f9175fd82efdbb84ce9d6217fe7f3f654",
+    "mention_text": "Experience Music Project",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5137f33027337fc6ff18be2e816ac8681c263089edd5a4ed298c2045bcdb22db",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d16e49c044640cb09d3b9a3c2b0a7db9f40401b6742f72a2b1f805c8c8229bf2",
+    "mention_text": "Jimi Hendrix",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3a18b73cc51c612b5d77821c178c1f18b23f5efa8dd41585f32e3edf1dc50e85",
+    "mention_text": "Capitão Kirk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f7a48fc85c3689b9665ca550b2f6aca8424ce8b1e84302dd960c413f420e835a",
+    "mention_text": "South Lake Union",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b0e6b8a01ae3123bfed7ec49a11a958ae1108285288396a0ee5acbbbb8993aa",
+    "mention_text": "Central Park",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d2eff3289e71692b58732792327b24452d30ff4800b9157a180b00aff47b073",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc25f663a71c633ce99431d1b670697fbf4f5c01ad19cc73c70734f7e2b11ee0",
+    "mention_text": "Vulcan",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "57bc14afe9bab9cf24b1d36b36acbf8fa1220f90d0683ffbf15fad74134f107f",
+    "mention_text": "Amazon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36e4d4a77fe8dd328989e497d08ce57ca109f00c6d11178d0b53fd67fe7125ca",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d93529497b50ad7ac8b9b3b96de1f4f02758d4124d4f9b64fbd2eb0eed6be023",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bd18cacba336235f6559aa47cc8131a404755e78dc65e39163f3d7ca4f051fca",
+    "mention_text": "Universidade de Washington",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f2cf3505fc776cc7b0ee435d9d274bfb393fd5d771c63b7d926990ab3455b59a",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c1df35df95689a773a8f76e48b17f4aef15871d9123263fce7f3fba31fb3825a",
+    "mention_text": "Portland Trail Blazers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a1d9ccb0be39b763818c49f483f16664f0b99085fa986d095751c4e5321c801e",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4778a6edfc4f8592deb7a05c4f7f87e0d4079e09e91272ec001666c2fac27517",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "582fea508e8d05e7396139cbe2c95a3e66bdf811411d231a7425bebc5d9490c2",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "710995e2c6f7258a69ef078db8b4dd4d11a17e798d590721b584254b2d7a9a6d",
+    "mention_text": "Trail Blazers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2168006885164c844a59bd8d0ccd7f318d31328add940c04ce9e851d593bbee",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e66c1acdd385036589622c98b80bcfaed4d23947aeb9d3357b911723588d4abd",
+    "mention_text": "Ken Behring",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d2f9137ec9fc72011765306a09b081d4484572f5fc92b553a1d5de579523883",
+    "mention_text": "Seahawks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "edc90f7a862cbbdec502f755f3e2a1f49c6d9b0657f705d394b362a5dda409c3",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9548a6c54dbbdd63b4f616eba1953eb3b4a07517d447ea4ddad8e9169bb31688",
+    "mention_text": "Los Angeles",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "23f2ba0cc9b7b2dd41fad7edf026c06773f2812120a231a9e9807f89b3351a5a",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0a92985576891705a0fcac17279bc46cc265cd715cd1569823b2eefc96c9b52",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e997d7c756fdc5f52b8f63bdb7feac41c1b806855ba7aa0922edb58e2906ebde",
+    "mention_text": "Behring",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61f5193de11ed7f00e83a1b79094a3873df941970a68363ba80e4ab5782ce8d5",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "614e41f67c1b919c96b7998d1c697958284de670bb77881411e941f01f67d484",
+    "mention_text": "Seahawks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bed6fa4be1b0f10a5ff820aace6c56a369143089ad1c5efbb35cf119d9392ef8",
+    "mention_text": "CenturyLink Field",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0aa3f89d698556e5aa0c01ed9c77012fd69880e9ddcd6bebadb71d6612d201f6",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2cff0fba9de0e1f88df413088af042ae86f322a6b9c5fee0d090d32710e58a73",
+    "mention_text": "Seahawks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fac13df3e003ec75d31abf7151e8a916bee95b6a141a3535af590c338c50220",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b01a3745c798599781d3adc0a5ec4542f0417785eccd369a210ac5b887473e80",
+    "mention_text": "Seattle Sounders",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c98d2255466c88144512f1601c083848c3a67b1e1ea3c5b2ced504c2b8ccb67",
+    "mention_text": "Major League Soccer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a647e8c15a8d6f3a89739c03a56629c07b9e6872d1cbac45124c809e196dd0e0",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2e52747e72cf062707447e9b49bd175924743c1e687f58935d35c1a13293186f",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ce3071db81137168841392db358a9bd471773f5caef8aa5da69b2b5dcc1d0cde",
+    "mention_text": "Seahawks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "18e9fdbd2edecf3452494c01c38891435414f6628f6edc73e3ed4430c41f524f",
+    "mention_text": "NFL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d784519b3bfa4d1f62b8049a74826ff98c813d2fee58e63712e26663a1d16adc",
+    "mention_text": "NBA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7d55938751ff67ba88fe4b24fbcbdce4251ae9ff3a645bab45c18b30fad1607",
+    "mention_text": "Paul Gardner Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8003a5dbd58627e708cac2e294866a437a79c942beae17fc2a2130866fc95b09",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f592788a47d67b8cc20a76a1c7cde64d1537508c8c62f2f085706f0378aa4e5",
+    "mention_text": "Edna (Faye) Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "81bc03d46548860d43f3845c09b15edbaf56d166969b7e7050c0a11a2e5d84ea",
+    "mention_text": "Jody Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3cf761ebff36ca5473baa0ca01155d6d92d0e993c4bac0960311d5c8d2e125b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09a0c19dff2f7fed66c532b7db3ade8ca6cbfefa1445b1e7a9b5b15c537004b3",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "391dae5ee229c7a7d8b84a3e985b6a966e2438c4ece28f1cee3cdb013cda8f6b",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "308d9efbc5568713569e147f7aa4d9c7085e05bbead2d8b457674aa64191ff59",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec700b8319bfb5c3a8207a7a6aac3d2d206b4122efe27cb05255f5f346987554",
+    "mention_text": "Paul Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3390b69bf0143187cd1bc04f65fa7be56b81aa61834f79134750a9c8d833b4c",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d7e071b3a963a4db5143e82ec1dd81acb839c671a6bb871a8a66ea40206363d",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0fcef1d8b735c3b539efcec05e1ffb4bf42228d9f21021c24e7dda008bf6045d",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

@@ -1,0 +1,601 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 49e6dd192f64f29d52e2bf8cb4981a44357de1c550af002722404e51cd1f3095
+
+TEXTO:
+Zuckerberg se contradiz sobre interferência russa em eleição; veja checagem
+
+Mark Zuckerberg, o executivo-chefe do Facebook, está depondo no Congresso dos EUA nesta terça (10) e quarta-feira (11), respondendo a perguntas sobre o fracasso da rede social em proteger os dados de milhões de usuários e seu papel na interferência russa na eleição presidencial de 2016 .
+Aqui estão algumas afirmações de Zuckerberg, assim como dos parlamentares, cuja veracidade verificamos.
+“Nós fizemos mudanças em 2014 que teriam evitado o que aconteceu com a Cambridge Analytica acontecesse hoje.”
+Não exatamente... A Cambridge Analytica , uma firma de dados políticos, usou informação que havia sido coletada de até 87 milhões de usuários do Facebook vários anos atrás para formar perfis psicológicos dos eleitores. O Facebook anunciou mudanças em 2014 para limitar o acesso de novos aplicativos aos dados de seus usuários, mas foi só em 2015 que a companhia aplicou mudanças para afetar todos os apps da plataforma.
+Quando perguntado quando o Facebook soube das operações de influência da Rússia na rede social, Zuckerberg disse: “Exatamente na época da eleição de 2016”.
+Contraditório O Facebook há muito tempo afirmou que não sabia como agentes russos usaram sua plataforma para influenciar a eleição presidencial até meados de 2017. Enquanto Alex Stamos, diretor de informações do Facebook, advertiu a companhia de que hackers russos podem ter atuado na plataforma em meados de 2016, ele disse que estava procurando brechas na segurança cibernética, e não campanhas de desinformação ligadas às eleições.
+Na terça-feira, Zuckerberg citou pela primeira vez 2016 como data em que a empresa identificou novas operações ligadas à eleição.
+“Você não pode ter uma conta falsa no Facebook. Seu conteúdo tem de ser autêntico.”
+Verdadeiro, mas.. . O Facebook exige que as pessoas se registrem nas contas com seus verdadeiros nomes. Mas o fato é que contas falsas e páginas falsas persistiram na rede social.
+Agentes russos criaram contas no Facebook com identidades falsas antes da eleição presidencial de 2016. E só nesta semana o Facebook removeu uma popular página do Black Lives Matter (Vidas Negras Importam, em inglês) depois que se descobriu que não era autêntica.
+Mais
+“A Cambridge Analytica não estava usando nossos serviços em 2015, pelo que sabemos.”
+Falso . Ex-funcionários da Cambridge Analytica disseram a “The New York Times” que já usavam o Facebook em 2014 . Zuckerberg disse mais tarde que tinha se enganado.
+“Na verdade, a primeira linha de nossas condições de uso diz que você controla e possui a informação e o conteúdo que você coloca no Facebook.”
+Verdadeiro, mas... Durante a audiência, mostraram a Zuckerberg as condições de uso do app de teste que Alexander Kogan, um acadêmico russo-americano, usou para obter dados de usuários do Facebook.
+A letra miúda talvez dissesse aos usuários que seus dados poderiam ser usados para fins comerciais, segundo um rascunho das condições de uso do app que foi revisado pelo “Times”, e que foi mostrada a Zuckerberg pelo senador democrata Richard Blumenthal, de Connecticut.
+Em outras palavras, parece que o Facebook talvez não tenha verificado regularmente para garantir que os apps estivessem de acordo com suas regras.
+O texto final das condições de uso do app de Kogan hoje é provavelmente desconhecido. Executivos do Facebook disseram que deletaram o app em dezembro de 2015, depois que descobriram sobre a coleta de dados.
+Quando foi perguntado se os usuários do Facebook e seus amigos haviam consentido em compartilhar seus dados com o app de Kogan, Zuckerberg disse: “Acredito que apresentamos essa plataforma de desenvolvedor e explicamos às pessoas como ela funcionava e elas consentiram”.
+Não exatamente. Os usuários do Facebook que baixaram o aplicativo de teste de Kogan consentiram em compartilhar suas informações e as de seus amigos ao concordar com as condições do app. Mas seus amigos não estavam cientes de que suas informações tinham sido compartilhadas e não concederam autorização expressa.
+E notas em letra miúda muitas vezes são ignoradas ou mal compreendidas. Várias pessoas que usaram o app disseram ao “Times” que não tinham ciência de que ele coletava seus dados. Estudos e pesquisas mostraram que a maioria das pessoas clica concordando com as condições de uso sem realmente as ler.
+“A campanha do presidente Obama desenvolveu um app usando a mesma função do Facebook que a Cambridge Analytica para captar informações não apenas de milhões de usuários do Facebook, mas de milhões de seus amigos.” (Chuck Grassley, senador republicano)
+Comparação enganosa. Mais de 1 milhão de pessoas baixaram o app da campanha de Obama em 2012, que obtinha acesso aos dados de apoiadores e seus amigos. Os usuários do Facebook que baixaram o app da campanha de Obama estavam cientes de seus objetivos: apoiar e fazer campanha para um candidato político.
+Os que baixaram o app de Kogan, porém, acreditavam estar fazendo um teste pessoal para fins acadêmicos e não sabiam que seus dados seriam usados pela Cambridge Analytica.
+“Compare isso, por exemplo, com uma área como encontrar propaganda terrorista, no que de fato já tivemos grande sucesso empregando ferramentas de Inteligência Artificial.”
+Falta contexto. Quão bem sucedido foi o Facebook em encontrar e eliminar propaganda terrorista de sua plataforma ainda está em discussão. O Facebook e outras empresas de rede social foram criticados pelo Parlamento britânico em um relatório de 2017 por “deixar de retirar conteúdo ilegal quando solicitado a fazê-lo —incluindo material de recrutamento terrorista perigoso, promoção de abuso sexual de crianças e incitação ao ódio racial”. O relatório chamou de vergonhosa a falta de ingerência das empresas.
+Na semana passada, o Projeto Contra o Extremismo, uma entidade sem fins lucrativos que combate grupos extremistas, também disse que encontrou contas de alguns extremistas que continuavam ativas no Facebook.
+Mais
+“Em maio de 2016, o Gizmodo relatou que o Facebook tinha proposital e rotineiramente suprimido histórias conservadoras das principais notícias.” (Ted Cruz, senador republicano)
+Falta contexto. Um ex-funcionário do Facebook disse ao Gizmodo em 2016 que pessoas que trabalhavam na rede social impediram que histórias sobre conferências e candidatos de extrema-direita virassem tendência no Facebook.
+Outros ex-funcionários desmentiram essa sugestão e o Gizmodo disse que era “incapaz de determinar se temas de notícias ou fontes de esquerda foram igualmente suprimidas”. O Facebook negou as afirmações na época, mas o episódio salientou a questão de se a rede social era uma entidade de mídia.
+“Nós já temos uma ferramenta ‘Baixe suas informações’ que permite que as pessoas vejam e retirem toda a informação que colocaram no Facebook.”
+Não exatamente. Enquanto o Facebook recentemente adotou uma ferramenta que permite que as pessoas baixem dados que a plataforma coletou sobre elas, a ferramenta parece estar incompleta. Algumas pessoas notaram que alguns dados estão ausentes, como uma antiga função do Facebook que permite que você “cutuque” pessoas.
+O Facebook hoje permite que os usuários optem por sair de certas categorias de dados, incluindo decidir o que é compartilhado com anunciantes. Mas certos dados básicos sempre serão compartilhados com a companhia, a menos que a conta do Facebook seja permanentemente deletada pelo usuário.
+“Eu não acredito que algum dia coletamos o conteúdo de telefonemas.”
+Verdadeiro, mas... Embora o Facebook não colete o conteúdo de telefonemas, ele vem coletando registros e dados de SMS de dispositivos Android que têm o app Facebook instalado.
+Os usuários de Android que baixaram recentemente os dados que o Facebook armazena sobre eles ficaram surpresos ao saber que a companhia tinha informações sobre todo o seu histórico de ligações, remontando a anos.
+O Facebook explicou recentemente em uma postagem em blog que os usuários podem optar por que o Facebook não colete esses dados.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "12cf49f46292897cfcb4a11e3ed4c3134e8e0336356606d4f13602b738ca1e11",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf592732b7268399791873f476e6ccf44e1827c968120ff5cc06a9827c6173fa",
+    "mention_text": "Mark Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7286d28675a0738f9b2357adde4e33372197f2ef6ee636101bc98d0cd1ac9b0f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "23e026fd33cd2c958f131ce0003ccc09a37cad3379a79a65d528a0c9be94b946",
+    "mention_text": "Congresso dos EUA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d06ee7be8b9a18ea7e6c07cfebfed31fed82cc344d1615a5b7175834f08486e",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c31612702b70ca1360d00a91b293c0c3ce7783d30f6ecf3eee2d88bf6d088f56",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afefa006ceffa9c89c4c07173f5733191576f0dcba1763fa78e0513916aac1db",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42c8d3e83c36e508da599c13a18b06c191d29f5e934af2b1fdc1b6dbf6922560",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8e6bb02b15d611c54c41bc2efb14475b479bcc920eb09665d135287314bebbf",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17133c4c0b0a1a4c55cdf17d3f7d66b9c1b576da96b8cde0973cc54b745b04f1",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "faa17282f8aaccd14dd7cd17d2ab7d7283282f504c309f59c76c666a7e16cc06",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9886c956befbe4f83031c227188589b38fa4071aaf226a264c436b90501b3c2d",
+    "mention_text": "Rússia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7069a46dbb874dcafff110541f9ebab371da7db24df50ee915bed9e7466a4425",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e4a76912e4bfdc1517d7ead0b072a3a613c44fdb15e025d168d5dbada733dd9",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13026348938e0323bf12d00e52f7accc7b1abfc50ead2a71857c7745cb0d992d",
+    "mention_text": "Alex Stamos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4e13370ba96b9529b9d834329815f4a373a67ff2f88bf638172e7894619914ad",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c238a58096cec8f2f094d2a96e23081f0115e0763bc83683df5544bf57117d25",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ec536b4c71038b2f9bf423948b8a48c9bde55058f6de63c3c9a3cffc388d021",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c2e031231a4feb9bc9997904c37dcf519ab011a2c1785a77f2e1d11d4acabf6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84546c107448417ab2fb26e9f2ce0508d70cc61629d79f44d965628125f809e6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "360ce20865eb1ea73911ba7d0a18413732637e4c24264e4579bfb97883afcc58",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "50bf37813bcd500178cafe67eb0fb56f1d24c83739f67d5a72a553e54c55b960",
+    "mention_text": "Black Lives Matter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40148771e805797a4bc890a83adba0075ff0a8995b2ab08cf7ef0987f4ffec81",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d22c2b042028c4baad12863ba688144383f0f74403dd17de1ab473a98245369",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8c7267605cc4fd79424d5239cb6c08d158ec9a39a855874a67c3d28a0dba37dc",
+    "mention_text": "The New York Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98ef38841f1a4dcb1716bebd510429f1f448df63cd442c084239414615b14ea6",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07a3f682eefc65bf6db5b53b5cc49830b81668ac4a19712c3eeb101126c82375",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c71dd59a8778efea6527c6d30fc5c51fe1d79f01c2c864b2925507f7c98b201f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2ef8c5f8ae3d45b250dcb277f0e68dcf5ae3fc761576ef6f448259ba959c7c6a",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aaff6ec5dc88a3fdb2344ce23a9b6a54f0c9ed03dea03b6022c9cf970e01eaac",
+    "mention_text": "Alexander Kogan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bc11c249bb4c0a68c8b7df7b3284d0e02fbaa58b9adce433b95e3198608eb474",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0c3d90d551c7e7c62eafaf68a007fb562cd480111bb4219eea3a63bec675468",
+    "mention_text": "Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f003b51b71038456161a6cb7e995f03c1911fb9785c3c58a2248ff5c0e96052c",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b8fbdceff71feb9eae78081d5c14cfa31a109158f373d6ee7f9ac5f4ace4b31c",
+    "mention_text": "Richard Blumenthal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "217a24f32e913765879e6cca1f9f623679d7d882c64baf1a5034e0289e60dc7c",
+    "mention_text": "Connecticut",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07ec325b0da52fe6a4e742942ff2a8e672aff190e03b21fffe9a172a7d24c963",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8695b8ca8c2a5f7e3fa0a51a1847df3422193ed0ee397e56905f8310871f024",
+    "mention_text": "Kogan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2ad06c766a3342479670cd51ca7ae2c5eeb47d2a4a53561ac00d1d92ec7d7ac3",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e23ce51658f94b64e2432683b3ea0e42d12bf88fff5fc9b4e055368a3b95031",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cb281f16667c8f4d12aa9d8b2335f9429a500255f550b064b58c5368e6762d24",
+    "mention_text": "Kogan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6005b216febe72347aa4a2c4108a6a6b5a8dd695ecdaaab5e3426a906c61de91",
+    "mention_text": "Zuckerberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5a2666ce5bbc1db694dc0cb9eb9ccda1cae9db49d7363557257884ef1ececba4",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "219933de8552c03d85031bb84f3423d9d320e2c53e9a449774e413358531daa5",
+    "mention_text": "Kogan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6091fa0e9cb85a36bde81496d25c2d7ec62aa3fb8d4a2c50e8988f86c2b00556",
+    "mention_text": "Times",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "60764648f84f2ddeaf2c8e981814091a7a6a325ad3a2e9fae60e6365ed85d4d2",
+    "mention_text": "Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ad44f34533408c4f8102d59f45afec18a079e0d8709dddcbaff87f66baf92d1",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "454ae8c7a8b28d7fbe16dd82cf421f01528338814f4189d2f91773b649e20e81",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd45972bb06d007a9dfa0d1817aea7cc422786c2b7500094ada730b111ed9659",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d731f771f4cfe5a6343e143823970cce6006f602157fa918cf201ea62f000f5c",
+    "mention_text": "Chuck Grassley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44c40c47e5c374b294b4ed67c44ff5dc9e605a1c30ba9703934f660e506cdb1a",
+    "mention_text": "Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2e8d524d48c6d55cbbf0ba4aa31640c86a8b9745bda2ac40da7b157282221b4c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8203c250d869a7c707daa9ac6d910d02b30717b1bda583a2ae33f6d30b22cd4",
+    "mention_text": "Obama",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d39d2ae7d11d271f0fc75c0d12e418bac560b87b8f903567360a4fa2669121fe",
+    "mention_text": "Kogan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "357e60738d06e9a2f5ce8b829a458b3c0f29bc5ecfc897c1b31d3f2b100f4138",
+    "mention_text": "Cambridge Analytica",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52e3bd28b041ea92e7fe91a367efcb4a40532417b6b66bb7a1c55bb0bedb77dc",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5fb5136f1217273c68ace6e563ad2645be0a6ff6f5e39215621a9f49f5ee430f",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd1cbd1b4328e1dbf244231c8e2ab60b70e1fef94e956977174dcd98d5940066",
+    "mention_text": "Parlamento britânico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4793975358244854b627a9ce09de692f0ef4408816e572c411c7a8cd27f2573b",
+    "mention_text": "Projeto Contra o Extremismo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5001b228710117952bdf39af11679ef8327268f9e1c64d3c7ef67c327a615d22",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c784fba95fb8e2a88f956443b90bb5d79d2384aacbc4a75de1a1d8094e2649f1",
+    "mention_text": "Gizmodo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1ebc9c7e1ac47e5bb62f2dc6094f0f20448b81166b031ac6e331af8c72bf5b5",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4583fafc15832e9d5f47659e3ea4ff749fcd7205c4701cad5bb7c127a8071c9e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82429c82394f1a60d86b840ed8b84e05e82c400cb216efc00184f0b8cbcb53b5",
+    "mention_text": "Gizmodo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8579f3635a471348c45cb68a733d86e343d00f5dd2c79771b3a6f015aeb61aa0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf0a6555cf002b3c19c86f005eb76644abcd29f42c07253e704106c12bfca066",
+    "mention_text": "Gizmodo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48fbd7448549dc6b812643091a608bddf0acfe57a1996353bad5c20f0c258d9e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "09063cbb24034901f6f07e41ee984ceb04a7d50803cdb7325ebe1282da109c45",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d0bf5759407823c4d226adf92e94bba106cc9bcf6e6ce89ed3da54d60a86119",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c1958d4fa7ac77def24f05908cd5dd767b2a63ea31f5b1123d764a1715acafa1",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eb4996c0be7f4899418a19d293765acc67d40026aa95ffddfc96eac8468ef7f8",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a043da00e7f33ba9c760eacab09435fd9ac4e665897a94a41947c45c2dc38fc2",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a211c4b4aa4df07cbae9b4bcc252f971d5e94515f8c73b94d1fade969aff018c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cf23f3a9fb09ac163d8972729a22f0e7fa960d5bb5be212c6906a784e6adc22",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "30cff4a2f303e712a52ee06afe704c592cd55b8b8c00e06e313242c205aa8696",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "efc968defeb2f8daca23e4cf2b4c3a8757cd2cfdfe8037efce5576c9e4e2ab1a",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e0b30d1f185625e2e67c07a11941a833be80761fd0ad662804c26a67508af19",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  }
+]

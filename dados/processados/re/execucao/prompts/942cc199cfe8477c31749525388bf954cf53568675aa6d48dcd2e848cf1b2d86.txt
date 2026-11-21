@@ -1,0 +1,315 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 508cb3d5aa1c12f47bc007e4d6e458998a7d439996cc5e3a561c9011be2f4792
+
+TEXTO:
+Apps monitoram saúde da população, mas falta de regras preocupa
+
+Dentro de algumas semanas, ciclistas darão a largada em uma corrida de Bruxelas a Genebra, passando por Paris.
+A prova de 1.500 quilômetros dificilmente representará grande desafio para os esportistas mais experientes. O incomum, porém, é que todos os participantes serão portadores de diabetes tipo 1 ou tipo 2, e estarão usando aparelhos móveis que os ajudarão a administrar sua condição ao longo do percurso.
+Os ciclistas terão acesso ao tipo de monitoração remota e acompanhamento médico inovadores que estão se tornando comuns no setor de saúde –com o uso de tecnologia móvel a fim de manter sob estreita observação a condição do paciente.
+Os aparelhos móveis permitem transmissão instantânea de dados médicos, o que pode reduzir custos administrativos, melhorar a monitoração de pacientes e ajudar a desenvolver sistemas de observação e administração de riscos. E uma administração melhor de doenças persistentes ajuda os pacientes a manterem a independência e a se tratarem em suas casas.
+Paul Morton, diretor de saúde da Vodafone UK, diz que "oferecer aos pacientes a flexibilidade e a conveniência de serem tratados em casa é parte essencial dos serviços de saúde de qualidade hoje".
+No cerne de todo os chamados serviços de "saúde-m" está a transmissão em tempo real de dados precisos aos quais médicos e enfermeiros podem agir remotamente, garantindo tratamento instantâneo quando requerido.
+No caso da corrida de bicicleta, por exemplo, a Orange Healthcare, subsidiária da operadora de telefonia móvel Orange, oferecerá serviços em nuvem que garantirão coleta, transmissão e hospedagem dos dados dos ciclistas.
+Cada participante contará com um smartphone equipado com aplicativo que agregará dados pessoais. Um app permitirá que os atletas façam scan de sua comida em nível molecular, para que possam monitorar seu consumo de calorias e carboidratos a cada refeição, enquanto outro fornecerá consultoria médica personalizada sobre diabetes por meio de tecnologia cognitiva e de inteligência artificial.
+Isso representa uma pequena amostra das centenas de usos para apps e aparelhos no florescente setor de saúde conectado. O grupo de pesquisa Gartner estima que esse mercado movimentará US$ 38 bilhões até 2020.
+Karen Taylor, diretora do centro de soluções de saúde da Deloitte, diz que "a tecnologia sozinha não é solução mágica para a saúde e assistência social, mas é um facilitador que não deveria ser desconsiderado".
+Alguns países já estão pensando no futuro. A Dinamarca, por exemplo, vem adotando a tecnologia em larga escala, no setor de saúde. Mais de 90% dos médicos do país transferem dados sobre pacientes eletronicamente, ante média de pouco menos de 35% para a União Europeia.
+A Deloitte diz que o tratamento facilitado pela tecnologia pode aumentar a produtividade das organizações de saúde, propiciar economia de custos e melhorar os resultados ao dar aos pacientes mais controle sobre sua saúde.
+No entanto, muitos especialistas em telecomunicações dizem que o maior impacto poderá acontecer nos mercados emergentes, onde os médicos enfrentam dificuldades de acesso aos pacientes. Serviços móveis podem oferecer tratamentos de saúde confiáveis e de preço acessível.
+A GSMA, organização setorial das operadoras de telefonia móvel, criou uma iniciativa de saúde na África para conectar pessoas a serviços de comunicação móvel e de saúde em 11 países da África subsaariana, entre os quais Gana, Ruanda e Tanzânia. O objetivo principal é oferecer serviços básicos e informações de saúde a mulheres e crianças, com foco especial na nutrição, por meio de telefones móveis.
+Há problemas à frente. Por exemplo, o mercado de aparelhos vestíveis e serviços conectados até o momento não é muito regulamentado. A Comissão Federal de Comércio dos Estados Unidos vem reforçando sua pressão sobre produtores de apps que fazem afirmações falsas ou exageradas sobre avaliações médicas. Apps como esses podem diagnosticar problemas incorretamente e criar uma falsa sensação de segurança –duas coisas potencialmente prejudiciais.
+Os analistas de mercado da Juniper Research também dizem que aparelhos de saúde conectados e os dados que eles geram vão melhorar o cuidado preventivo com a saúde, mas os desdobramentos inicialmente serão restringidos pela regulamentação incompatível e por questões de defesa da privacidade.
+Rimma Perlmuter, presidente-executiva do Mobile Ecosystem Forum, uma organização setorial, diz que "a informação coletada por esses apps e aparelhos é por natureza quanto pessoal quanto extremamente delicada, e isso pede que o setor seja vigilante ao lançar esse tipo de serviço".
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6a7a7f2dc0277bd1995a1ad47f73cba5c50f30b68be3a351456c5485288124a4",
+    "mention_text": "Bruxelas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b5ebac2cc391d95098c4909213d776a3d38fd2e96fe2f6a5053e46c805d5fbcc",
+    "mention_text": "Genebra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e70f325bb51e64999c4e70a189745384617355da61c53c547cc6585376dbbfef",
+    "mention_text": "Paris",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "153e048b91f2383bf0b0563fd488c92e2faf4b43bedef8afa172f29f8b8d83b2",
+    "mention_text": "Paul Morton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0df6fbe35d9b87f7f8ccbec6dbf1118ef1cdb9c7efd04dd355f7c27e11d13ad2",
+    "mention_text": "Vodafone UK",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78bf84a18f919a0b89eeb521d0540454e18dc4ebddaa7791affe1f44e2058875",
+    "mention_text": "Orange Healthcare",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "876097a4da4e9c364db1695489fca1822b48dfe26db36207f181deb18e8a847a",
+    "mention_text": "Orange",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7807d1803ef07c292edf84447d1234693b10f68c8f01958376a7e8aed092e18a",
+    "mention_text": "Gartner",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58a53c3592477aba82a0ba3ed97db554501b49e3da7b2f961f27de9341942003",
+    "mention_text": "Karen Taylor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f0cbd16d6231fd0dc864c22d991ca1789e13c551724785de2a77a208e3656b2",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00057da046ba5fa6ada2420ad35c17583517bcef0c588f946f22f6c1092af950",
+    "mention_text": "Dinamarca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f6af94de2fb9765cd7e398fc4121c0c2898340c1b40a6e16c04bf595fa3d3185",
+    "mention_text": "União Europeia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d92db6070a9c19bfc1d20f3776fc30e6e09919d71223fad208b574bfb02ea42c",
+    "mention_text": "Deloitte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d231d94dffc67273fd6ffac6329a56089ec9381dd43c83e2b4722fe269be25e6",
+    "mention_text": "GSMA",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3c4e624676fce5abc6d9e702d339f7feb429a33bd496af16bf305f083d543c85",
+    "mention_text": "África",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "96fd73e1ca0b49ab6a31c98bb71fed844450d6b094c97e2135d4a56ae60e9740",
+    "mention_text": "África subsaariana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "83774fead14f7189c1aca965166263e7dd7f100bb835e30ad6c1de847c58d108",
+    "mention_text": "Gana",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4e0f95c8781b02116e3bb03ecd6313e8eedb06f6fb4cb7dd896ec1c5f05607fe",
+    "mention_text": "Ruanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "713b467bb5ed1ce06eb61fed63ea2746ceb58566c5ef87523e6b26f64e791aa5",
+    "mention_text": "Tanzânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "09d1480e393f7e7f302cfaece75c3d24335f4050e213dc9c010ab63be7577042",
+    "mention_text": "Comissão Federal de Comércio dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdeb498e5a14c97b623ebd62cfcf4ef10c3054cc2f9063965e7bf0e1300dbbd2",
+    "mention_text": "Juniper Research",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86927c5aeca85dee9fdb522417a6199c6d861a39440ee36badd8b5aaf7fc001e",
+    "mention_text": "Rimma Perlmuter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2fb5fc96fcc45494847983b106e8ccfa5791d0dd75c7de9154da20d895f5d4d0",
+    "mention_text": "Mobile Ecosystem Forum",
+    "categoria": "ORGANIZACAO"
+  }
+]

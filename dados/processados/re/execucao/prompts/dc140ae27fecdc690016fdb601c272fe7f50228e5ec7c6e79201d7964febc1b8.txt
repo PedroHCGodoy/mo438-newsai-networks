@@ -1,0 +1,518 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 527ad1df798b8f7833fa4982ca11fa17b22cbef74c0993a9aa01d1fc5c26861e
+
+TEXTO:
+'Big techs' só se sustentam com poder dos governos, diz autor
+
+Em uma palestra recente num evento sobre algoritmos em Utrecht, na Holanda, Evgeny Morozov, 34, escritor e doutor em história da ciência por Harvard, pediu que a plateia avisasse caso ele não chegasse a uma agenda positiva até o fim de sua apresentação.
+"A reclamação mais comum que ouço é que pinto uma fotografia escura em uma sala escura e nenhuma luz de intervenção positiva emerge. Digo que o tempo acabou e vou embora", disse. Em quase uma hora e 30 minutos de palestra, disponível no YouTube, pouco tempo foi dedicado à esperança.
+Morozov se concentra na desconstrução de conceitos como sociedade digital, vendidos por empresas de tecnologia dos EUA da China.
+Em seu terceiro livro, "Big Tech, a Ascensão dos Dados e a Morte da Política", uma coletânea de ensaios, à venda a partir deste sábado (8) no Brasil, o intelectual bielorrusso não critica apenas Uber, Google, Facebook ou Airbnb, mas a própria contracultura tecnológica americana, cujo ideal de libertação do capitalismo, nos anos 1990, se deu pelo consumo.
+Como progressista radical, a maior – talvez única– saída para Morozov é que as ameaças capitalistas sejam contidas por políticas de governo que equalizem os benefícios gerados pelo "extrativismo" de dados pessoais.
+O clichê de que os dados pessoais são o petróleo do século 21 só faz sentido para Morozov se for levado em conta o fato de que a história da matéria-prima no século 20 é marcada por violência e guerras e pela "derrubada de regimes democráticos na expectativa de assegurar o controle de recursos estratégicos".
+À Folha o escritor fala sobre a conjuntura guiada por empresas de tecnologia e fundos de investimentos do Oriente, mas dá poucos sinais de luz.
+Qual termo incomoda mais: economia compartilhada, sociedade digital ou cidades inteligentes? Definitivamente, sociedade digital. É desconectado de uma forma histórica, econômica e geopolítica de enxergar a tecnologia. Abraça a suposição de que as coisas estão melhorando, de que há só uma direção a seguir e de que ou você se torna digital ou é contra o progresso. As big techs [grandes empresas de tecnologia] americanas e chinesas se portam como as guardiãs dessa sociedade, mas o fato de serem representativas têm muito mais a ver com o poder político de Washington e Pequim.
+Sua crítica, então, é sobre o capitalismo? Sim. Quando você fala de tecnologia, tem que falar em dinheiro, poder, finanças, recursos e capitalismo. O capitalismo não é estático, é completamente diferente do dos anos 1950. Minha pesquisa foca muito em como fundos financeiros determinam a relação dessas empresas com seus funcionários.
+Pode dar um exemplo? O Uber do futuro é completamente automatizado e feito para minimizar despesas. Ele hoje é financiado por fundos de governos da Arábia Saudita, Qatar e Japão. Em 2017, deu US$ 4,5 bilhões de prejuízo. Obviamente é um modelo que não pode continuar, e a única forma de acabar com isso é automatizando. Pode ser automatizado, mas o ideal seria colaborar com a economia local e com os passageiros, beneficiar quem criou a base de dados para gerar a automatização que vai dar dinheiro para a Arábia Saudita e os EUA.
+As pessoas querem a opção de trabalhar no Uber, não veem problema nisso. Preço baixo um dia custará caro. Será um cálculo parecido com o que fazemos com os recursos naturais. Em um país do tamanho do Brasil, há mais poder de ditar os termos. O governo não vai entrar na infraestrutura do Uber, mas pode exigir que os dados não sejam de propriedade exclusiva das empresas, pode usá-los para incentivar o desenvolvimento de apps locais, cobrar uma taxa extra. O Uber não vai continuar empregando brasileiros desempregados por muito tempo.
+Como as pessoas podem ter soberania sobre seus dados? Isso virou um mercado, é para ricos. Nos últimos anos, foi vendido que a única soberania que as pessoas alcançam é via consumo. Se você é muito preocupado com a privacidade, tem que investir. Quero evitar um mundo em que precisamos pagar por privacidade.
+Como enxerga a Europa nesse sentido? A Europa está menos envolvida em transformar os dados de cidadãos em produtos de inteligência artificial, está deixando essa discussão para trás enquanto EUA e China desenvolvem infraestrutura e serviços. No longo prazo, só regulação não contribuirá para a proteção de privacidade. A mudança não virá das big techs ou da pressão de outras grandes empresas de manufatura, mas obviamente do movimento de cidadãos e de planos de governo que assumirem essa agenda e entenderem a importância dos dados no futuro do desenvolvimento econômico e da democracia.
+Big Tech, Ascensão dos Dados e a Morte da Política Evgeny Morozov, ed. Ubu, R$ 49,90, 192 págs.
+Veja livros que se destacaram na semana
+TEORIA E ANÁLISE
+1º/- Scrum , Jeff Sutherland, ed. LeYa, R$ 34,90 2º/2º Rápido e Devagar , Daniel Kahneman, Ed. Objetiva,  R$ 62,90 3º/- Arriscando a Própria Pele , Nassim Nicholas Taleb, Ed. Objetiva, R$ 54,90 4º/4º Marketing 4.0 , Philip Kotler, Hermawan Kartajaya e Iwan Setiawan, ed. Sextante, R$ 49,90 5º/5º Menos Estado e Mais Liberdade , Donald J. Boudreaux, Faro Editorial, R$ 24,90
+Prática e Pessoas
+1º/1º Pai Rico, Pai Pobre , Robert T. Kiyosaki e Sharon L. Lechter, ed. Alta Books, R$ 65 2º/2º A Sutil Arte de Ligar o F*da-se , Mark Manson, Ed. Intrínseca, R$ 29,90 3º/3º Me Poupe! , Nathalia Arcuri, Ed. Sextante, R$ 29,90, 4º/5º O Poder da Ação , Paulo Vieira, ed. Gente, R$ 29,90 5º/5º Seja Foda! , Caio Carneiro, Ed. Buzz, R$ 39,90
+Lista feita com amostra informada pelas livrarias Curitiba, da Folha, da Vila, Saraiva e Argumento; os preços são referências do mercado e podem variar
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "854a39dfa568690d5dc068a962eb091601f0a4a8ee9f4f0979458c73ad7633de",
+    "mention_text": "Utrecht",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f69a2fd498905a4a50b8963395b055987cbfbf7708d7634dd5e9a574201b8a0",
+    "mention_text": "Holanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8a638c552353e6da2f316e3499bd0e3c6fda31b5dbb800549c577f74e3440161",
+    "mention_text": "Evgeny Morozov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e627bf5e819d5329185dccb7dbd58b61279bcdbc0f933e42f9b73bb47077b75b",
+    "mention_text": "Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b47522b51b9c4b16be67e4fd82812ead0df1b54c1c546285e349f19d08f97acd",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f7a9453820beb18af7d37c9c3689070f16194a24e3e08d6982667a02efa2877",
+    "mention_text": "Morozov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a40b144caa03045c65626f45f796c70547b46ce7a199957deaf14a9e78e2657a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4001001852c6de3649217ed7f6105d5f4d137b3a7c64aed977ee22d397053ce3",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "00dbfc095c2eaa0320e2420c4ed8e5f4bdb8f6111afb62cdb1136f0d08ff6cf2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b769b35af110fd4e4be1a90ba26fc6af713e832e3f14aea4474d22ae7fe29f52",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "015ffe7823b828fafe1ffe526135c4b2e3f7514a5400d91865ce5f2a61869a28",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8660e9d4fa55a00b0bd263710ce44677d7512dab8108d37d071ca92c710d80c0",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ac5a3194916874eea59a317975646ca498dcddb1234a2ba1598584a5d6ec64ae",
+    "mention_text": "Airbnb",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4cd02c59ecaa7865eaa1f9ecf2fcecfbf4880038bf89099e07930ca194cee56e",
+    "mention_text": "Morozov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "10c2832324b6f4205b25fbd6a24b325f0ba6c0b06e97f5bff4b82c1544da6225",
+    "mention_text": "Morozov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7bfa7142f0cf30114329e021b84295b7c58ca99dbc4b19c738aedcd3d8a5e9d6",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4038379bbdeada577cd59676fc026e7d24d8ccbbc47e606891a7e10f7442725b",
+    "mention_text": "Oriente",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a5cdb59e8a569fc3cfbeeb9b4471d11e46b35551ddd50974e0bc8ac09c3b84d5",
+    "mention_text": "Washington",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a2fd169bdb3cee2fdd1391fc5be654a9025f2f589d7b14bc405ee20381f3fa23",
+    "mention_text": "Pequim",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4c5550b86e6c072746c21778aae4052a3bf86e1d0a29a6e44356f1e020085cd9",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "07d16650a0e96456d03f0b50655e78b08147a19d63d1aaaeded79370202e1c76",
+    "mention_text": "Arábia Saudita",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "921923fefafa7461b9f1e1f1f01e6a1c8b4d8c791ca3c2cf25ca52a44be7453a",
+    "mention_text": "Qatar",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3a945cf1462efd52fae04134a745b574c401947d7d1b038ddfa5f3065640bfb6",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7202edd3cdb3a341f9aeae2eff028b36ab78e53fba637afd0808aa7c9645a8f8",
+    "mention_text": "Arábia Saudita",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0f5f74aa3254043edaceeddaba24ac5bda69c2523b6c6fa2db4728cd5123e3b",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "51d5265d5ea2aa4a49416e0cf15f24d738a59c7817232a5879eb537dcfe1a5c9",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0fda9724b86ba6322cdfb7e19b97f3ca72ab979a7e337c2c69aa83a9b158c6b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7bf2f8425feb45957069ea2e2bcafe5f64dfd694e2779cc79bbfd81aac55503d",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e3da7fd98d7b459b4638a2343c504320e8bdb1e9fa6fb2ccde954ef37411e7de",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9f29d412e19eb08223bd9d10b2f9c7e20e71d2033f375821dc2f0d29a7c8287",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c505a676c82948129a825173769418fbd05ba96a244bb4a989ac2d306dcdae1a",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "313490f66c5a1599ed0be31141937a505b879db79ad30396dbe97db54029ee5a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dc94debd92d690d1c0b246e9243f155c705017826c699d36a07d8fb59240f4f1",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86a4cf636fedef709cd61743ce1f0f4df688a3e60e970bc9beffaa5e873966ff",
+    "mention_text": "Evgeny Morozov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "22ceada28fe0241f6cc28daa241857d52b0ea76fe079c9033dbecd091eafff7e",
+    "mention_text": "Ubu",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56ba317be50fe5701359d0b7895a09d7d9f79ae7287678f90b595b4920a25b20",
+    "mention_text": "Jeff Sutherland",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5da2cdb22b9b70b2147c0d6090d2efcacd2d9de5d86f8c2d7fc7096f957c18c1",
+    "mention_text": "LeYa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "158d8bba2d517ca6ac2b949f43c8e10fa0c23f651e2a6f3743c416b97a5fa994",
+    "mention_text": "Daniel Kahneman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b3b7d76f32fd9950ed59caac41dea7723da5e9572bb6e58061b45c7e0367b60",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f0a6f5ab12b50f8d795dff28316fdc4b55073ab0f0e8ba1268bded87228e96d",
+    "mention_text": "Nassim Nicholas Taleb",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5302453e4e2998b4b108da36d6162e98e2f21cfedfbf8e206459172bc9550565",
+    "mention_text": "Objetiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f06d8cb7d7e90e0de2fa3f158a74af4783ff29c0e23b16503ce4d4f4c066c9e1",
+    "mention_text": "Philip Kotler",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f976c44eea065e97bac467808018c7eb5edff0a42855f007da211168fd324aa6",
+    "mention_text": "Hermawan Kartajaya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62e421752fb315b1b541d3a4aeb500ef56002e8d7deddeaad0f035626f9d4d87",
+    "mention_text": "Iwan Setiawan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b22323ce0280d03e844507566a11b38ae344aa93a52364f45078b61655c3aa5",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "703c2ee1dff7674178107bca76c68c32f2c133a32531b3282ed8001920ac61c2",
+    "mention_text": "Donald J. Boudreaux",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "01671caf57b0c244fa54d916fdd6753d1fc29321d70aca68a79a2c7968be2de0",
+    "mention_text": "Faro Editorial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84b34f845b192228bfe2c718e7060ac327d2d295a383e5286e76db2746cb9f4b",
+    "mention_text": "Robert T. Kiyosaki",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f49265bad32725855465cc7e58fa4234c847b2aff4a0496253b1b55789ee4901",
+    "mention_text": "Sharon L. Lechter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3471f6ef898f68239bacbee8453b94f0edab1c0924fcaa09bbfd3b8d73a7e5dc",
+    "mention_text": "Alta Books",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1aa8388d3b01629fa2db35cb117b01f3810ffc5b7c33a33079087fca49d14bd8",
+    "mention_text": "Mark Manson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "08d8dc62e2417b94461f515b45c25575834c101557b1ab3633442d1f730c32ad",
+    "mention_text": "Intrínseca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3566b0b7943749c762ba9826c10d3e8970c55f145fd426e62e3dca8fc655e51c",
+    "mention_text": "Nathalia Arcuri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1bb4e640513516c96cea1b9103603bfa07cfa2a80ef122648b574b1a5105f26",
+    "mention_text": "Sextante",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d000abb8ad7199c77f2e207ad4a809ec7b62c7966a816f9b40299584952b21d2",
+    "mention_text": "Paulo Vieira",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3eff33aaa6477cb4fe47801625a2b9a126c448048c494fa02e92ccba4f8de493",
+    "mention_text": "Gente",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8adc687226231cf78772276a501bf6c2626c290e854a531f4e17f50705bc6be",
+    "mention_text": "Caio Carneiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "191cb18207a9bd8823b41eada103ab09b5d8ebc4e68b2f7783c3874a0c963565",
+    "mention_text": "Buzz",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8365e63c8b83c4445a2e1603ada84fd9cf6ff23ea5ca567940562735405b826",
+    "mention_text": "Curitiba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca658ac59f573ec42229d75a8b9599df51f5197fbf19aee50440d2ae9ce67093",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "19f1e72ca66a7f53f1cb763c97897b81053d42a3920efff9035bd9bcfbc28344",
+    "mention_text": "Vila",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9c426916807be53f4cb6658c8302d2d9414cd293e42970055a68a6be2587362",
+    "mention_text": "Saraiva",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ddfd5c897d1f8ffaf87a5ee034ad90942a04f11e4ef8a53c866ca6fcc7d196e9",
+    "mention_text": "Argumento",
+    "categoria": "ORGANIZACAO"
+  }
+]

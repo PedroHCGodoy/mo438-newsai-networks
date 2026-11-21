@@ -1,0 +1,501 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: d796be270d6d20416c5321f1815669d977e7f0a307c813b0b2f4cb73b9f136e2
+
+TEXTO:
+A rádio haitiana de ciência que funciona no Brasil
+
+Há seis meses os haitianos Jacssone Alerte, de 31 anos, e Ludger Jean Louis, 30, têm comparecido menos às missas e ao futebolzinho de domingo no Rio de Janeiro. Moradores da capital carioca há mais de cinco anos, a dupla tem usado o dia das rezas e dos gols para gravar, dentro de um pequeno estúdio no bairro da Glória, um programa online de rádio sobre ciência e tecnologia voltado a seus conterrâneos –o Infotech . "Jogar bola e ir à missa são fundamentais para unir as pessoas", diz Jacssone, em bom e pausado português. "Mas nosso projeto tem missão parecida: ajudar os haitianos a se integrar à sociedade brasileira."
+Nas transmissões semanais, os imigrantes falam de assuntos que vão da história da inteligência artificial à reciclagem do plástico. Os dois também recebem convidados para tratar de temas atuais como energia renovável e internet das coisas. O importante é descomplicar tópicos relevantes do mundo científico para o povo haitiano. "Se for pra falar de medicina, a gente fala de coisas como cólera", conta Jacssone. A doença assombra o país caribenho desde o começo da década –segundo a ONU, são oito mil pessoas infectadas desde 2011.
+O Infotech roda no haitiaqui.com, projeto da ONG Viva Rio dedicado a ajudar imigrantes haitianos pela internet. A página da dupla é uma das dez mais visitadas do site desde a estreia. Os acessos vêm de países que contam com grande número de haitianos, como Brasil, Estados Unidos e Argentina, além, é claro, do próprio Haiti. O programa, divido em blocos sobre história e atualidades e quadros com notícias e tutoriais, rola todo em crioulo –o idioma oficial do Haiti ao lado do francês.
+Dicas de tecnologia e hacks caseiros são os trechos mais populares, afirmam os apresentadores. Em um dos programas, eles ensinam os ouvintes a recuperar celulares que caíram na água. A dica é simples: colocá-los por uns dias num recipiente com arroz. "Teve alguém que relatou pra gente que o celular tinha caído na água, mas voltou a funcionar", disse Jacssone.
+O Haiti, segundo a Unicef, tem cerca de um celular a cada dois habitantes e pouco mais de metade da sua população vive abaixo da linha da pobreza. De acordo com Ludger, o aparelho telefônico é a principal maneira pela qual os haitianos se comunicam e os ouvem. "No Haiti, lan house é coisa de rico", complementou Jacssone. "Meia hora custa cinco reais!". Segundo Ludger, um notebook básico custa entre US$ 450 e US$ 500, um valor alto para a maior parte da população.
+Quando não estão envolvidos com o programa, Jacssone e Ludger se dedicam aos estudos na Universidade Federal do Rio de Janeiro (UFRJ). O primeiro está no último ano de engenharia civil, o segundo estuda ciência da computação.Os dois são bolsistas no Programa de Estudantes-Convênio de Graduação (PEC-G). "É a vida de estudante: simples, dura e cada centavo gasto tem que ser bem pensado", disse Jacssone. Ele chegou no Brasil em 2010, dias antes do terremoto que assolou seu país em 12 de janeiro. Ludger veio poucos meses depois. "Eu estava em processo de vir ao Brasil, mas depois do terremoto, acelerei", contou. Suas famílias sobreviveram à catástrofe. Eles seguiram por aqui e, naquele ano, se conheceram nos corredores da universidade. "O Jacssone foi um grande parceiro", disse Ludger. "Tem que ajudar os conterrâneos, né!"
+Na terra natal, os dois tinham bastante contato com tecnologia - cada um à sua maneira. Jacssone vivia no interior, a alguns quilômetros da capital Porto Príncipe. Os equipamentos eletro-eletrônicos que tinha à disposição eram poucos e primitivos. "Uma criança que tinha 15 anos no final da década de 2000 não tinha muita coisa desenvolvida no Haiti", contou. Ainda assim, a curiosidade falava alto. "Já quebrei muitas televisões, muitos rádios porque eu queria saber o que tinha lá dentro."
+Vivendo na capital, Ludger aprendeu a mexer com tecnologia por necessidade. Ele era moleque quando precisou arrumar seu primeiro computador quebrado. Recorreu a um amigo que cobrou caríssimo pelos serviços. "Na verdade, nem era meu amigo, porque ele me cobrou muito dinheiro para consertar o computador!", disse, rindo. Sem grana, o jovem fuçou o aparelho e o arrumou. Não parou mais dali em diante. Além de fazer manutenção, ele também dava aulas gratuitas de informática no seu bairro em Porto Príncipe e mantinha sua própria lan house. "Eu consertava celulares, computadores, fazia manutenção", falou.
+Os dois haitianos-cariocas acreditam que o Infotech é uma maneira de ajudar seus conterrâneos, mesmo que à distância. Ambos creem que o conhecimento é uma arma fundamental contra a discriminação a que alguns haitianos estão sujeitos. "O preconceito existe há muito tempo e o haitiano que está aí fora tem de estar preparado para o tratamento que vai receber", disse Jacssone. "Quem não está bem preparado, acaba marginalizado."
+O futuro engenheiro sabe que a luta contra o preconceito gerado até pelo medo irracional do ebola não depende só dele e de seus compatriotas. Durante nossa conversa, Jacssone lembrou do vídeo que pintou esses dias no Facebook e no YouTube em que um homem de roupas militares dispara ofensas xenófobas a um frentista haitiano em um posto de gasolina no Paraná. "Ele é um homem que fala antes de pensar", disse Jacssone. "O Brasil deve estar indignado com esse cara!"
+Se depender da dupla que se descobriu radialista, a conexão Brasil-Haiti-Mundo continua firme de domingo a domingo. Para eles, coisas simples como um celular recuperado ou temas rebuscados como inteligência artificial podem ajudar um jovem haitiano em qualquer lugar do mundo, no dia-a-dia ou nas provas finais. Embora tenham batizado o programa de rádio como Infotech, Jacssone e Ludger botam fé no saber que se espalha. "Se alguém sabe algo e não compartilha isso, é informação; se compartilha, é conhecimento", disse Jacssone.
+Foi nesse espírito que o haitiano arrematou nossa conversa. "Acho que o Infotech vai longe, muito longe, e você vai ter a honra de dizer: eu fui o primeiro jornalista a falar sobre o programa."
+Só me restou, além de desejar boa sorte nesse projeto inspirador, agradecê-los. Muito obrigado, falei. Ou como eles me ensinaram depois: "méssi anpil"!
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b92a1fbc8b67ff2ef4217c29236623989bdc92b41245d93b6444a0c0abaf9bd9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b69f8dcabf7abcf94fb01701f4e05049254d2e1a3e2dc69f687986ddc2a5cae",
+    "mention_text": "haitianos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd6fa622ebdb731bce9ce522c9cecdaf79252e5dc80e9faa080b7d9668f4222c",
+    "mention_text": "Jacssone Alerte",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "12a7ae30fe8f111fd157bae7169bcc811bd431917d754c96d07c0320431e3926",
+    "mention_text": "Ludger Jean Louis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c32711960d4d60d5aa052afa10ce5393ee87d15be10a5d9844363848c8832179",
+    "mention_text": "Rio de Janeiro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ec72bfeff71df91a23ec259a0d1d42c19022ccea2e681701473e8a655221d3d",
+    "mention_text": "Glória",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6eff9ecd73dae0de2a965135e5ff8a760078173e6341fd3e6e73ec4680ff31b1",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "77f8ae9bd2c3e725efcd045b66b739ed3c17b690f63632b0976748b9df284d18",
+    "mention_text": "haitiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "24ddc26aff8db57d9872205fb7ab4f7ba28f06ef75879e05cb4e028117300e9e",
+    "mention_text": "haitiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "73577e9ba1cd5001a52df393d46c7968dadd182c3f034b94ed36e13f20270677",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b74d1c2119ae2203351dfa70669305c9b6451f6600135d64038a25e270963a8",
+    "mention_text": "ONU",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17b6a8b27b89945d825687339055eb4f4b3861c47e85e7928c8c0879e354f842",
+    "mention_text": "ONG Viva Rio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6811f8c9a45be44c7e35f77f3cdddd6a31113b5affa4d053064daf3e3af71158",
+    "mention_text": "haitianos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2069e539662d2f9f72c0a22b2411b70781dceb5b620c6887887339448ffee6a0",
+    "mention_text": "haitianos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "02121d42c4aabcdbf8d7cd66335189d068c8aa8161b7c39a64738c3a9b4c0b7d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56645d77d9ebbe99d9d5cdd8111ac77b7e8f8eea2b3784121e118640a998b98b",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "880b38b5f1b17f72d3941fe604bec4618a62489cfb23e53c9090a20a2fb9d993",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d841b9aa4bd18048e1d4547a2c9c1a44810c4ffae8ed7a8fda3d6f9c475065bc",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34e5e43725c964e1f11a571f89677300ac8f4a60bf978853e5c606465cc95416",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ab26ccf17caabf934dfe39744ca2844bcad8d4927b6287ccb11e20a0439736f",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fee383567327784f1e3d1343877838ae0e776aa9b9858ccf90285848f29c197d",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ceac49d2dc0d31fa6738b01d00c92fff3b822e72db9e6ceb077ef5c4f02ec18b",
+    "mention_text": "Unicef",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "06eeb092638b9301285822278ec799baaac47a2b4f1c14630ae109c7fd88b9c7",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15fcc670295663b05597602c4108c4fa02298e6fc2297ae7843d3922782d234d",
+    "mention_text": "haitianos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "44d6126dc5f62aedc2ef392c3d3dd05a76de1fc6436075e5408cec5c5898196c",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec9e3907eeffbae717aacef06fcf941f35e6f6a17d53b6aa79299018999d2a0e",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9d7609e438f5f6b7b72498d4de21f2899f2f507ae934f3aab2db296b6331863f",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa5576e737c1894f3a8340df588632a32062b653679b2d20f4204688652af5b6",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3db8edf52d266c27e529433dfdc9d5b29174fa0544c598260489b22739176855",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7e7e79862b97aebdbe47e2ccf2b57ad4992c227ba988e3da98dc8f40dd9960c7",
+    "mention_text": "Universidade Federal do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7240391da7d2ec74cb8c4e6fb0159672a57604e78948a6cde653611b792ac8d3",
+    "mention_text": "UFRJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a5f2fe29d1e6299ec33d474708a7dc766b92876aece660e7cf249be2337afaf",
+    "mention_text": "Programa de Estudantes-Convênio de Graduação",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d484cfdf0e4de06d0b397759501920414e44c1c71894beea63fcdca86e3be91",
+    "mention_text": "PEC-G",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bc184adf44622c86d2eb8f29b11a589dcaea61a4e7953d86bb00e5b79043428",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ddaa7e4f91d6071805270c1329c4e9110aa1fd51e8440451e19200c7e7d1e36f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d293c1ed1da9c1d961b18fc19d08dc11258ee926faf46d0b1f34e16186294a4b",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "779f1047a47fd7c9a071cf86865239c0f03ef5f78b701ff9adf485c98d94d80f",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8abc8742103d0f3648f92acca29c5cdddd0bf884662b00b871559b2e138a24ff",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "514ea7da738eefa73bdff08de9510a47b7ed82162ea497ee1b91a6dc50194c28",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f58bb75facfc1b7d0bf2082651146ca37249a2b1e2eec6fa6f561dd676fdc091",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c517536162e20c4496f98403f88ccded5180899fc18c6a8128e552b061204a9a",
+    "mention_text": "Porto Príncipe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd7e00ffeaa7bd35f14aea208c88fef7220231a652af30581a2241f94aa686df",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c97793a18c8ab9dd5697969bb598aaaccb00bbf7fdcf78001742a802daff402",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7b163cdf83759ac7c2f38f063cb1ade39d83a0719085c8560b19ca0c7b9fb4cf",
+    "mention_text": "amigo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d506c38a72402ef3f70599e0f144957338e3f0744f94950656e21ee9043cdbe6",
+    "mention_text": "Porto Príncipe",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "61b33a15df25032adcbbce5900fae29efbf593cf14964801f3bbda41b6b947c7",
+    "mention_text": "haitianos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f0158676f2050c200b4c0a8c1e84bdb67a4c3af599c90942a3dc4246f6e6e6c1",
+    "mention_text": "haitiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61a3929842117a9d84e68880f613df280e124af9338bf0febb558b148dce2c50",
+    "mention_text": "haitiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "627e1a715fc488362c6e664f9f2277dfe780d833a7a93ccdc182a45e4ee0f988",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36c6d14cb57cd0eaa7b3e7b33a4be039aaa85996e23893bc86b9361b82b8d3a1",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7a77d49b5261bef0364f0398cc1cd078f2c988224c7f8b7ddd0a961943016aaf",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7542529e93124870d6fe8738d2446247f8a46d30e99b73f96156bd8eb3076b82",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "47bf0547c1efbb2e72c6a84e10ddd476775567f3a6216822f8ed30e8f7d9c5ae",
+    "mention_text": "haitiano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60b5754a32125ba4560b206609629df1a965dd0b40bad3e072006f45456bafa2",
+    "mention_text": "Paraná",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7a5ff06fcc0b4a7e8b36acd97616dfbfb82f8000e5a412e5d19903cc9c335f55",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a0022e4c555cfa2ceadb4afa9c3f34c227951adacde55f786006aec0b0f653cd",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "427543547df594c72fafec484770344c15171c1c0279c329cb98d2e695ef2b0e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "13f7f3b675eb91b3fd2d8ecfb7424a1f4534b38c53d9ea90f62a44642d299916",
+    "mention_text": "Haiti",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b74fe783ae52cae31b06893d95d5cc3d7e011768e061510f3f180191f0513028",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b5e118c8d022822c9936259c11eae72411f2d13431119307f0f5ae803e6f950",
+    "mention_text": "Ludger",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "30131e1e5dedcee7c1899fc02e1986d3c7877815c6baddfb2e9f829b1fc27355",
+    "mention_text": "Jacssone",
+    "categoria": "PESSOA"
+  }
+]

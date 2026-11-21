@@ -1,0 +1,480 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: cb7d3de6bf7cf0fabab7c7fda28dec951deb98367e606409bf6f5af539bf9065
+
+TEXTO:
+A filosofia desmonta o homem-máquina
+
+Ciclo de palestras no Rio e em Brasília traz discussão filosófica sobre o corpo e as novas descobertas científicas
+A filosofia desmonta o homem-máquina
+SYLVIA COLOMBO
+DA REPORTAGEM LOCAL
+A distinção entre homem e natureza balizou, nos últimos séculos, a divisão entre as humanidades e os estudos científicos. Nos 
+séculos 16 e 17, com as formulações de Descartes (1596-1650) e 
+Galileu (1564-1642), essa divisão 
+se acentuou, abrindo dois caminhos distintos na forma como os 
+homens pensariam a si próprios. 
+A ciência seguiria num, a filosofia, 
+noutro. Historicamente, porém, a 
+fronteira entre esses domínios seria sempre tênue.
+Agora, ambas as trilhas se deparam com um novo momento na 
+história da humanidade, em que 
+os avanços da biotecnologia e da 
+medicina oferecem diferentes 
+perspectivas para a reprodução 
+da vida, a diminuição do sofrimento causado pelas doenças, o 
+adiamento da morte. A filosofia 
+tradicional dará conta de compreender esse "novo" homem, ou 
+"o homem-máquina"?
+Entre os dias 27 de março e 11 de 
+maio, 19 especialistas -incluindo 
+professores de filosofia, historiadores, físicos, médicos e outros- 
+tentarão responder a questão 
+dentro do ciclo de conferências 
+"O Homem-máquina", que acontece simultaneamente no Rio e 
+em Brasília, com realização e patrocínio do Centro Cultural Banco do Brasil. O evento seguirá para São Paulo e Curitiba no segundo semestre.
+O organizador do ciclo é Adauto Novaes, que, nos últimos anos, 
+como coordenador do Núcleo de 
+Estudos e Pesquisas da Funarte, 
+realizou diversos encontros, em 
+uma experiência bem-sucedida 
+que rendeu também a publicação 
+de alguns livros, como "O Olhar", 
+"A Descoberta do Homem e do 
+Mundo", "O Desejo", todos lançados pela Companhia das Letras. 
+As palestras de "O Homem-máquina" também serão publicadas 
+pela mesma editora.
+Novaes, que deixou a Funarte 
+no ano passado, diz que imaginou 
+o ciclo centrado em duas questões: "Quais foram as principais 
+intervenções da ciência sobre o 
+corpo?" e "Como os pensadores e 
+os artistas viram o corpo, em vários momentos da história?".
+"Atualmente, estamos caminhando para uma existência híbrida, com a máquina sendo implantada no homem. Isso remete 
+à questão da realidade, que é um 
+problema tanto para a filosofia 
+como para a ciência", disse Novaes em entrevista à Folha.
+Para o organizador, o evento é 
+uma oportunidade de refazer o laço entre filosofia e ciência. "Hoje 
+existem alguns estudiosos que se 
+preocupam em retomar essa discussão conjunta sobre o homem, 
+principalmente aqueles da área de 
+humanas. Os cientistas também 
+passam a se preocupar com as 
+questões filosóficas sobre a existência, pois elas estão vindo com 
+mais força por causa do Projeto 
+Genoma, das pesquisas sobre clonagem e outras."
+Para o professor de filosofia política e estética da USP Renato Janine Ribeiro, é necessário rever as 
+referências que dividiam as humanidades das ciências biológicas. "Usávamos fronteiras que 
+hoje estão sendo questionadas. 
+Existe um novo cenário, em que 
+há uma tendência de mudança na 
+relação entre as áreas de conhecimento e uma nova maneira de 
+avançar nas humanidades", disse.
+A conferência de Janine irá 
+questionar o papel dos intelectuais frente a uma possível realidade em que "províncias inteiras 
+do ser humano, que julgávamos 
+definidas pela educação e pela 
+cultura, acabem se mostrando determinadas geneticamente".
+Jorge Coli, professor de história 
+da arte da Unicamp, usará um referencial literário para sua palestra: o "Frankenstein", de Mary 
+Shelley. "Vou tratar do que chamo de poética do corpo em pedaços, ou poética do fragmento, que 
+tomou força no século 19 e pode 
+ser constatada na literatura e nas 
+artes plásticas", disse Coli.
+"O princípio do desmembramento aparecia nas punições, na 
+arqueologia, na cultura e tinha 
+justificativa racional e científica 
+no contexto das pesquisas feitas 
+na época", diz. "No período, figuras desmembradas adquiriram 
+uma poética própria", explica, 
+"Rodin é um exemplo típico".
+Referenciais culturais também 
+serão o ponto de partida do professor e compositor José Miguel 
+Wisnik, do Departamento de Letras da USP, que falará de "Ocorpo", peça composta por Arnaldo 
+Antunes para o grupo de dança 
+mineiro. "Nela, as palavras são 
+tratadas como corpos, e vou analisá-las à luz dos conceitos de "corpo" e "não-corpo" apresentados 
+por Octavio Paz em "Conjunções e 
+Disjunções'", disse.
+Fotógrafo e doutor em filosofia 
+pela Universidade de Paris 10, o 
+esloveno Evgen Bavcar, que é cego, falará sobre imagem e técnica. 
+Para Novaes, Bavcar "é um exemplo vivo da relação entre intervenção científica e o corpo".
+A inteligência artificial será o tema do professor de física Davi 
+Geiger, da Universidade de Nova 
+York, que defende a idéia de que 
+"somos simplesmente uma máquina, um tipo especial de máquina, similar a um computador, 
+com programas desenvolvidos ao 
+longo da evolução das espécies".
+Outra participação internacional de destaque é Giovanni Berlinguer, membro do Comitê Internacional de Bioética da Unesco, que vai tratar dos aspectos políticos e éticos dos novos avanços 
+científicos. "Como é possível conciliar liberdade da ciência, equidade social e dignidade dos seres 
+humanos?", pergunta.
+A palestra de abertura será de 
+Marilena Chaui, professora de filosofia da USP, que tratará do 
+pensamento moderno (século 17) 
+como antecipação do presente.
+Inscrições
+As inscrições podem ser feitas a 
+partir do dia 9 de março, das 12h 
+às 20h, no Centro Cultural Banco 
+do Brasil (r. Primeiro de Março, 
+66, Centro, Rio, tel. 0/xx/21/ 3808-2020). O número de vagas é limitado. Cada inscrição custa R$ 30 
+(estudantes pagam R$ 15). Aqueles que tiverem frequência mínima (75%) receberão diploma de 
+extensão universitária.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "341d42f2b36b93e62bb2addacd5f70b2d282726bdb83b847824ae58ff988e05a",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ec91d47c3f634599608ee0690d9e6b8b700baa6bda60cd2a6280c5edb4f8569d",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "745a41b0e3abb001b5ba5e3ba2c53ddf8e0f213d09028da50fa38fc764470e7c",
+    "mention_text": "SYLVIA COLOMBO",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd0744163bf10d7ebb27b95b61fc51197bbdab87094cc3053713a5b32a35a24b",
+    "mention_text": "Descartes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d0b713838ec137265205d925e8fb03c13b52c063ed98c60a9966a7fbf43de06",
+    "mention_text": "Galileu",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "672863c9c42cb37f5e14a33c361d404eac64b8b70b7bfa599ef1065fea9099ee",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10ef6b0828756e739f09c5df9cb751b6f974c1fc96f0a1a1f22f07a5197cccc7",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5d6f53ac9b230daa567c2a6ac7b1d8b05dab8667feb0d90af38d93066bf12464",
+    "mention_text": "Centro Cultural Banco do Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0c4284c58c660924d2e173f4ead443f946c0fe665e2d2fbf9ebcb815b96da3b",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0bab2fa6abd1a7d7e9d26ca94639ea7c57fa44c69d03ea35ae5bd84f2169feb",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "03aae1a7b691d33b7983bbee36fd65240aa545d2ca50e9e7e3652aa06cda0c81",
+    "mention_text": "Adauto Novaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d78341f9a609bd751e15cc715f36a811fe1245402cc46883d83fb4c49a36454b",
+    "mention_text": "Funarte",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ca4677140c7d84a8b4a09e8aa9465be8c9595dbb47dc775b301be28f60047c12",
+    "mention_text": "Companhia das Letras",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b5473532053c0795b5344fcbd08f57011dd513cc4a67b54dff79cf557488a12",
+    "mention_text": "Novaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da52d51ffdc3c50f59a6ecb1829d32f0a73d76e99f346884aa2914d2f9fd11e2",
+    "mention_text": "Novaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "56141fcf2a872aa5ca3e7a8e1f845459fca965aa645dd9dc5cff7e72ebeab6a9",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5d900acff624d4242b3d1255276eb69f7078e0f8435975b7a1d9bdcb5fb5a99",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8ea096ee64da3c306abac07933368a1e5a85e334de9b73f15be8eb2915fefb4c",
+    "mention_text": "Renato Janine Ribeiro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "85fd6c39a7541537ba7d8c91b3b1c1b07a80f49e19f1b732550e570c92f67cb0",
+    "mention_text": "Janine",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d027a0d9d39ebd6ec97d57aefb7702b64998148e550695355b43f9909ef94236",
+    "mention_text": "Jorge Coli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2937dd9843922542da4cb9a51ae849396bb2b399d61c3f4248ca0b01042e1f9e",
+    "mention_text": "Unicamp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a627c3bfa5a75f8d02ccfa3ca31dff0581a797cb0fa8159eb6c18582b7f02651",
+    "mention_text": "Coli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aba9ddf1211f8ed583b1097463101c7992cc98f76e073e6b10c84b2315a86113",
+    "mention_text": "Rodin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a088309131aba1ca9c13760701445f4d6181f92ffed4cbea07ec79f985f08c8d",
+    "mention_text": "Departamento de Letras da USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42b6192945e12211034383e1711e57febd46fdc322c8f71f3663bc699adc304e",
+    "mention_text": "Octavio Paz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bf43b329ad4fb7874a2eef70c3467b2d0e0dbf1e49ff6702e9918fa22de93ecf",
+    "mention_text": "Universidade de Paris 10",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2283927befe40403cbf7adfee413c9fccdca8df7b8c3fa9447af7788f66c349d",
+    "mention_text": "Evgen Bavcar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e7b539eb6ea2d0081b760489d4e394acdebf6b591bd1ef88832bafcdf55bd620",
+    "mention_text": "Novaes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e31144a2d4ca142af37f00f2ae71485f583122f16c50ce71d2150e91c90347c8",
+    "mention_text": "Bavcar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7fc3c0816e6fe5cc477b20ff66f0f777c99f35ddfaebd3c74988dfc610619551",
+    "mention_text": "Giovanni Berlinguer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63e0369157e2907e2a6fca49ac2c6b06cb91b631d9b76a739deba5eeeb9ce659",
+    "mention_text": "Comitê Internacional de Bioética da Unesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e875bc282e3932b0762f7424f40336a2b137b7ed90c9a257484e96a463bffab3",
+    "mention_text": "Marilena Chaui",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e1f6e041b08710947ed0cd82b2910cc9df6abac3392ba0c4b1e8ae30eaa39f4d",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4cc4c03570f4e64b1988e267345b1b241d3bc94f35755f2c97ac5dac07e4da6",
+    "mention_text": "Centro",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "400054554d155c721401c6ecc05cf43b449dfa57fc942b8337e0fe5a1749a795",
+    "mention_text": "Primeiro de Março",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a7f46b6e6264784ac7634c89c2c91aa8c665195ced826f51cfb6e4ecefb0161f",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  }
+]

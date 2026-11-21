@@ -1,0 +1,453 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6ea3b18664652d364ed99f94fabdd9a73c77276f8c683f87013707ee975ad047
+
+TEXTO:
+Inteligência artificial é tema de debate no Tuca, em SP
+
+DA REDAÇÃO
+A TV PUC transmite, na próxima terça, pelas operadoras de cabo Net Brasil (canal 20) e rede Multicanal, o debate "Inteligência Artificial", da série "Diálogos Impertinentes".
+Em São Paulo, a Multicanal vai transmitir o evento pelo canal 18.
+O debate será realizado no Teatro de Arena do Tuca, em São Paulo, às 20h. A transmissão será ao vivo.
+Os debatedores são o professor do Departamento de Informática da UFRJ (Universidade Federal do Rio de Janeiro) Ivan da Costa Marques e o matemático, educador e escritor Nilson José Machado.
+O debate será mediado pelo diretor de Revistas da Folha, Caio Túlio Costa, e pelo professor do Departamento de Teologia da Pontifícia Universidade Católica de São Paulo (PUC-SP), Mário Sérgio Cortella.
+A série "Diálogos Impertinentes" é promovida pela Folha e pela PUC-SP.
+Ela é constituída de debates mensais que reúnem personalidades de diferentes áreas.
+O evento de terça também poderá ser captado por antena parabólica, pelo transponder 6A2, frequência 3930.
+O debate será transmitido em São Paulo, Porto Alegre, São Carlos, Franca, Jundiaí, Anápolis, Brasília, Curitiba, Londrina, Umuarama, Arapongas, Campo Grande, Santos, Ribeirão Preto, São José do Rio Preto, Sorocaba, Goiânia, Bagé, Bento Gonçalves, Caxias do Sul, Cruz Alta, Farroupilha, Florianópolis, Joinville, Lageado, Novo Hamburgo, Passo Fundo, Pelotas, Rio Grande, Santa Cruz do Sul e Santa Maria.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "83ef2e5197e8e7127c55c5cce1ca6b6c9faf94f50f13d418b2e10f4324db57c5",
+    "mention_text": "Tuca",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7f5f7415681759856ac2ba628440abe3656f2a8eb3cb718ab9a6527006332c1",
+    "mention_text": "SP",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2920806e9788ba3f2c5b553c861b7ee14b4a51b044a5e6a3826dba96e9b368f7",
+    "mention_text": "REDAÇÃO",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b42010a8b782ef387a8d6193ffad03e0e055e31871118532ec8331b3399f1ca1",
+    "mention_text": "TV PUC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f0d98335680570eab209b4d39d9fd396dbcde5a29d9cd18397f3f221d72a13b3",
+    "mention_text": "Net Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e474f94ed92f9be04dacf808f417753899af008b7794d12191145274acc3ce06",
+    "mention_text": "Multicanal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f8850813616b5a00cf15380dc73748bbb90667d9b44870536f6fb2758740b49",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93500794c86142cc524c80610c5d2f1f0aada29fa4798cad4c9d36620b1f735a",
+    "mention_text": "Multicanal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2784153b4d1f53259e3ce886167b9d5ee6ff217f31eeb9d35aa33b277adeb71a",
+    "mention_text": "Teatro de Arena do Tuca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "42d843d15cec90e04448a5763a065fb67678ec42da635eb2a1f8d4fd9805e3df",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b07f0672ca0ddc38e57634f01da82fd94992f70249645e17fe4482d033d3b69",
+    "mention_text": "Departamento de Informática da UFRJ",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cc2042e77d25ddfbeaee14d57d0c8cc3990fb4e637d8da1cac1f1c7597d88c1a",
+    "mention_text": "Universidade Federal do Rio de Janeiro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2933b19ff1514f9301979e22f52621dd0236aced0bc05657ea4da8b5bb3da7c",
+    "mention_text": "Ivan da Costa Marques",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e79852b858adce014ad90ebf377f33ff098b50f72366a34fd92a78e4c4589963",
+    "mention_text": "Nilson José Machado",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "558e4d7da9deb4c7bb763c8ebb8eabbe0329982a5ae9a9f2e834bd441cf52e2f",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b26d32d73a071c97f881027d46bb0d857a8812a296c8429efe15ea19113748d2",
+    "mention_text": "Caio Túlio Costa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84fc6725c2ed018cfae341b7ca38683d7c7f60c9b188f971f63b1577541599e1",
+    "mention_text": "Departamento de Teologia da Pontifícia Universidade Católica de São Paulo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36612a98e908f965cf119f1e1a9d119d3cb102a6f5829dd12e946be660050498",
+    "mention_text": "PUC-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "56fdad87aa7dec613d9562f9e4204329844928962d79d820fae0d02ceacb45d5",
+    "mention_text": "Mário Sérgio Cortella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4eeccd01a548eb9dee8608488d7227519148f3a61f5f5fa093a2be5f3d9d63c2",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c76af8b1a51aeb8d447498c96510a5e86cd05970a8129a64175152368d194cb3",
+    "mention_text": "PUC-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "736e85a533de66fdb90ffa89d89c192b007477de95692c635826de9bea0712c4",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e078a43fc8212640796df513a9651a521bfba687ea86dc5826c06e8cfc3b6067",
+    "mention_text": "Porto Alegre",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a6b1a051d9c4413bd07d39f479e4cf9fbe67b058b5381b00be0ac8c40fe2f21e",
+    "mention_text": "São Carlos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69df9737005639d629208603d5013eb0f49ac68e45a579499adb92aa6c20f346",
+    "mention_text": "Franca",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e0b460635e6905856e92dab58cb7cb751d31b5fc5daa268c3c74e6b351d19eda",
+    "mention_text": "Jundiaí",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b9cf4bbe0f93e0beac571d7212bc8953b3b4d2e97c7aa30f25de06d0de51c25",
+    "mention_text": "Anápolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "577e6689bd5e68290e7aadfa361e0149e71b52eed7a77b93192330a3f301c5bc",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cfa6a9286ccd772c485f0262b0bdb946f11c34784cb6181ab9ac8ec118ed3bef",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c08ec9a7328281a5a1b93477bc667a72243858da7e1e4173dbc13c58485422d3",
+    "mention_text": "Londrina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9f8f91611595b41001c3f25c09808233bdd3458039423ee3aac57cfb55ca01ad",
+    "mention_text": "Umuarama",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b7ec1dfdddfbd002924c9ab18ede78502461dd96d8b11bbc66e82d8ba96797dd",
+    "mention_text": "Arapongas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e8e16902ca75001a7df9bb8892290f16d19e722879868e2528fb2305f055e568",
+    "mention_text": "Campo Grande",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a37a6dd996836ed01a64f6b138f9fffe4ba9ab9637a1e5f412ce59163bc50f57",
+    "mention_text": "Santos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9eee2b5044649b1a5d1626b2e04f23dd3823b481742af462d22920ecd8fe480f",
+    "mention_text": "Ribeirão Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b6fd23552fd7424151baf38c714861457ae87d92a91066ebb5c2f6873ff96473",
+    "mention_text": "São José do Rio Preto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ef27d602e4cd1cbc650efe51a449264a5eb4c2d6ccfa521dd177cba37180ce7",
+    "mention_text": "Sorocaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "16bfa4ffa2f85f2d2a3dad0dd18c88a014f2ca7b0a2c6396e908bbbce617103b",
+    "mention_text": "Goiânia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "80992d5151cafd4673792de39f8325cb7e6be5f4731d2f0cd3a9726c54d15665",
+    "mention_text": "Bagé",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2ef8a64658177fe740c1cb7f0bbe8aec87507734d7b54569acf82f12a1a843ca",
+    "mention_text": "Bento Gonçalves",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "148bc445c605a12288af98423d8ff3cd23863d20d7190174211cfd1cf28f1c9d",
+    "mention_text": "Caxias do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "62e6afc6428345952e1dbb0b6ee176fd8e0678d7a2a558947c433dc9b6db9c39",
+    "mention_text": "Cruz Alta",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f39f1d03c6e32bdc0cc77fdfd414660942df50837ab5ba7fac6a13975539e3b0",
+    "mention_text": "Farroupilha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "02e4abe3ac9024faa70328a374c9558b111979efb9bec1753cc5ef336c010d16",
+    "mention_text": "Florianópolis",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c246bb9288d4530b92c1d7d70fb84f3a3bcaa532ee84d7bb93753d67dc574ffb",
+    "mention_text": "Joinville",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ea9f0f575f844af1e6b62c4a7374c4763df4ee771541d8ff6e85d06ffba05ac",
+    "mention_text": "Lageado",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "07dfe7cfdab67f1491e570c5f0146859c0fe878e6f1f31c74a2f5c2eac90cc95",
+    "mention_text": "Novo Hamburgo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "01ff15f42fe980f653e4e87a6b2f34d8751248cad148b3cfbaff9b1b47513129",
+    "mention_text": "Passo Fundo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ae09f59f4f134c9412c067e2caf06bbf55f68b110206964e4e0aa46efa2609d8",
+    "mention_text": "Pelotas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87abf3d651719e0c6471aa44eafcc89c4df5f150089cf5deff73b92f5faa032e",
+    "mention_text": "Rio Grande",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "164128ae2c6dbe12cc3dd435f773001fbf19ce3d1800caab2bd3fae5c5bcd009",
+    "mention_text": "Santa Cruz do Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "184122d80ec54b52ef0d89abe425a6fb36f6298a254d714f6c2b19d19e467001",
+    "mention_text": "Santa Maria",
+    "categoria": "LOCAL"
+  }
+]

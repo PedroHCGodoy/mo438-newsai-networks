@@ -1,0 +1,564 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 4f0b515e5a9f8599a464b2aa898cf29dcc0854210a47e314924359c6d157383f
+
+TEXTO:
+Sempre Livre, Risqué, Monange e Colgate são destaques em higiene & beleza
+
+Demonstrar afeto pelo consumidor. Eis o novo desejo das marcas, segundo o doutor em sociologia do consumo e professor da ESPM-SP Fábio Borges. Em processo de humanização, elas se relacionam cada vez mais horizontalmente com as pessoas, de igual para igual, explica. “Querem dialogar, descobrir o que curtem, como se comportam e, sobretudo, estar ao lado delas.” Mais que dominar canais e linguagem, prescinde às marcas identificar temas estratégicos, assumir e abraçar causas, pesquisar mais a clientela. Existem as bem-sucedidas nas tarefas e sobram exemplos entre as que estão na mente dos brasileiros.
+Uma delas, Sempre Livre, é Top of Mind Absorvente Feminino pela sexta vez consecutiva —neste ano, com 21% das menções. A seguir vêm Intimus (15%) e Always (7%).
+A marca líder tem 45 anos, pertence à Johnson & Johnson e assumiu novo posicionamento em 2018, depois de identificar, por meio de uma pesquisa global, que a menstruação ainda é tabu. “Entendemos nossa responsabilidade e iniciamos um movimento para levar mais informações sobre o tema aos nossos públicos”, conta Ricardo Wolff, vice-presidente de estratégia e marketing da Johnson & Johnson Consumer Health.
+Primeiro, foi lançada no YouTube a campanha “Sempre Juntas”, que acionou influencers e contou com a atriz e apresentadora Maisa Silva falando, em tempo real, sobre menstruação.
+Em 2019, além do papo, a marca colocou a missão em prática em “Sempre Juntas pelo Progresso”. Em parceria com a ONG Plan International, destinou 30 mil absorventes e recursos para projetos educativos sobre saúde íntima em comunidades do Piauí e do Maranhão. “Mostra que agimos pela causa que abraçamos”, resume Wolff.
+Sempre Livre reina na categoria, há seis anos integrante da pesquisa. Nesta edição do prêmio, obteve seus melhores índices na região Norte (29%), no segmento feminino (28%), na faixa de 35 a 59 anos (27%) e entre os mais instruídos (26%).
+Apenas 4% dos entrevistados pelo Datafolha não se recordam de uma marca de pasta de dente, e Colgate é soberana. Em 29 edições, soma 15 conquistas, consecutivas a partir de 2005. Neste ano, recebeu 57% das menções. Completam o pódio Sorriso (17%) e Kolynos (8% e extinta há 22 anos). Para estar ao lado de seus públicos, a marca americana quase centenária —tem 92 anos— também se vale de informações e ações sócioeducativas, além de forte presença no ambiente digital, patrocínios culturais, constante veiculação nos canais de TV e inovação. No último ano, com a campanha “Sorrir Faz Sorrir”, arrecadou junto a consumidores e doou 38 mil kits de higiene bucal. Também levou tratamento odontológico a 12 cidades das cinco regiões do país.
+Seu melhor índice na pesquisa acontece entre os mais jovens (70%). Para eles, música e diversidade.
+“O território musical permite mais fusões e conexões entre os diversos estilos”, diz Paula Tommasini, diretora de comunicação e mídia. A marca esteve nas premiações da MTV com Colgate Luminous White e patrocinou o Rock in Rio pela quarta vez, com Colgate Plax Ice Fusion —enxaguante lançado em show de Pabllo Vittar e Mc Kekel.
+Para pais e filhos, anunciou, em parceria com o Google, o assistente de voz Colgate Kids. “Uma interação divertida e educativa auxilia os pais na tarefa de fazer a criança adotar o hábito da escovação diária”, afirma a executiva.
+De volta ao levantamento após cinco anos, a categoria traz Gillette como octacampeã, desta vez com 41% de lembrança.
+Criada há 110 anos, a marca pertence à P&G, uma das maiores anunciantes do mundo. O Brasil hoje é o 3º maior mercado para a companhia, e a operação nacional está entre as dez maiores do mundo. Para Bruno Martins, gerente de marketing da Gillette no país, o resultado premia a busca por inovação, tanto dos produtos quanto do modo de comunicar. “Queremos impactar mentes e propor discussões importantes, que transmitam os valores da marca: preparação, precisão e confiança para performar melhor a cada dia.” São atributos destacados no novo Gillette Mach3 Acqua Grip, cujo cabo super aderente oferece controle mesmo molhado, durante o banho.
+Eles também remetem à íntima relação da Gillette com o esporte. Há meio século investindo no futebol, neste ano patrocina a Liga dos Campeões da Europa.
+No Brasil, o foco vai para o eSports. Desde 2018, apoia o CBLoL (Campeonato Brasileiro de League of Legends, jogo online mais popular do mundo). Também tem como embaixador Gabriel Kami, ex-campeão brasileiro de LoL que anunciou em setembro o seu retorno. “A ideia é estimular jogadores e amadores a assumirem o controle de suas decisões em busca da melhor versão de si mesmos”, explica Martins. Os índices mais expressivos da marca ocorrem entre os mais instruídos (57%), os que têm de 25 a 34 anos (50%) e aqueles com renda familiar mensal de 5 a 10 salários mínimos (50%).
+Estreante na Folha Top of Mind, a categoria chega com duas campeãs: Philips (15%) e Gillette (13%). Devido à margem de erro da pesquisa, foi aplicado o “awareness”, mas o empate permanece (17% e 15%, respectivamente). “Barbeadores elétricos ainda têm representatividade pequena entre os brasileiros, mas o país é um território para investimento e inovação”, diz Adrilles Carvalho, gerente de marketing de cuidados pessoais da Philips no Brasil. Segundo ele, o brasileiro dedica mais tempo e recursos aos cuidados pessoais que a média global. Até por isso, o aparelho elétrico ainda atrai mais por ajudar a evitar inconvenientes na pele do que por facilitar a rotina.
+Em 2017, a Philips lançou o OneBlade, novo método que raspa, apara e contorna a barba. Para anunciar o produto, mirou o fã de esporte em campanhas na TV especializada. Também participou, com uma “barber shop”, do Bud Basement —espaço da Budweiser que reúne futebol, música, cerveja e interatividade. O objetivo era se associar ao estilo de vida do homem moderno, despojado e prático.
+A Philips atingiu seus melhores índices entre os mais ricos (30%) e os mais instruídos (26%). Para 2020, a promessa é lançar um barbeador voltado a homens com pele sensível. Ele terá um sensor dotado de inteligência artificial, capaz de detectar os movimentos do barbear e, por meio de um aplicativo, interagir com o consumidor, a fim de ajudá-lo a manter sua pele lisinha e saudável.
+Os quase 10 milhões de seguidores que Risqué soma no Facebook e no Instagram logo vão espalhar: com 28% das citações na pesquisa deste ano, a marca da Coty é Top Of Mind Esmalte de Unha. Risqué venceu pela quinta vez consecutiva, mantendo sua hegemonia na categoria.
+A diretora de marketing para a divisão de consumer beauty da empresa, Regiane Bueno, avalia que, além de conectados às novidades do setor, os brasileiros reconhecem os esmaltes como agentes de expressão e viabilizadores de bem-estar. “Até mesmo como itens que ajudam a construir ou melhorar a autoestima.”
+Em seu discurso, a Risqué aborda questões como empoderamento e respeito às diferenças, entre outras.
+Deste ano, destaca três novidades: Novos Coloridos, parceria com o fotógrafo francês Pol Kurucz, que explora o poder das cores em tons como o Lavanda Alma; Felicidade em Cores, campanha conjunta com a Coca-Cola, que reúne seis influenciadores digitais para explorar o sentimento; e, mais recente, a linha Muitas de Mim, que celebra a liberdade das pessoas poderem ser quem são de fato.
+Segundo o Datafolha, a Risqué alcança 34% de lembrança entre os mais jovens. O ápice, 40%, ocorre entre as mulheres —desempenho que rendeu à marca, pela quinta vez, o troféu do Top Feminino .
+Outra marca da Coty que se mantém líder no Top of Mind é a Monange , vitoriosa também no ano passado, quando a categoria Hidratante estreou no levantamento. A bicampeã registrou crescimento de três pontos percentuais, indo a 22% das citações, segundo o Datafolha. Seus melhores índices são marcados nas faixas etárias de 35 a 44 anos (30%) e de 25 a 34 (28%).
+Monange, que do fim do século passado ao início desta década foi o “segredo” da garota-propaganda Xuxa, desde 2013 assumiu postura e discurso novos. Há dois anos, embasada por pesquisas junto a mulheres de São Paulo e do Nordeste, adotou o mote “Siga seu coração”. “Foi um insight sobre o empoderamento. Concluímos que 95% da mulher é intuição”, lembra a diretora de marketing Regiane Bueno. Além de pele, a marca propõe nutrir mente e coração.
+Em seu canal no YouTube, que contabiliza 85 milhões de visualizações, mulheres como a cantora Ludmilla e a influencer Thaynara OG contam como seguiram o coração.
+“Empoderamento feminino, inclusão e diversidade têm sido os principais temas aos quais as marcas vêm se associando para relacionar suas causas”, diz o professor da ESPM Fábio Borges. De acordo com a Euromonitor International, especializada em pesquisas de mercado, os segmentos contemplados no Top Higiene & Beleza movimentam no mercado nacional mais de R$ 26 bilhões por ano. A projeção para 2023 é superar os R$ 37 bilhões. Produtos para cuidados com a pele, como os hidratantes, representam quase a metade desse total.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "7d0db6ed1cffe7523fc4578d3a9b0e4862af49b342befb696d8ef46aafbc4839",
+    "mention_text": "Sempre Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28d60e70a75d4f068b14d6141d5f9f27ecd4442ae35d61cda0523c8d46d7efcd",
+    "mention_text": "Risqué",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c8368f3ee3635ef5e3e8bbd011a81ea716d869b735ce058a7788c195b00ef60c",
+    "mention_text": "Monange",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "940a844159a8c4ac64d3e4ffe7df934b0ec5dc9b14f69ea1ed944e2486a77852",
+    "mention_text": "Colgate",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c427be017f9ef16dd4e28c139f7f6b8e2bae16df2464ebc9a9bf34c58887e440",
+    "mention_text": "ESPM-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dea81617f07b07f6c786186299d1352388762ef40d7e7a213c6f9b8ab8942f25",
+    "mention_text": "Fábio Borges",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "34a16e760603ef68dc69dcb115cb58741e348953cebb249776d4f5dcf4d78415",
+    "mention_text": "Sempre Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "219523467e0176f845b3a9324d93de075094f7f757c51ba39dcd665efb6344ea",
+    "mention_text": "Intimus",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c598a3722418dad8c07a526a36759e0a78db66e039972281fe7ac209d74d27f4",
+    "mention_text": "Always",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3a836166213d37bc882bef948e485a8e78e3fe8d24e89ac4c99ca78afc19129d",
+    "mention_text": "Johnson & Johnson",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ba79c1426cd326852c6e7bc996dfe228cec4d383a39ac263673da4e482b621e",
+    "mention_text": "Ricardo Wolff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b592074c877481f2866fe5bcf71777dc6650c8a0079133cda0f2498751c46bc",
+    "mention_text": "Johnson & Johnson Consumer Health",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a26ac63b3a529a98a8d868f45251ff85ea6f5d7d55fedb98765cab17ffe69ce1",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "533ab36a40620eed06a9f5a15c9a183fe410786ba9310866b638cd6e41ae1084",
+    "mention_text": "ONG Plan International",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b970c80a7c66868074fc2f705fb008083f60d9f3d47cfe8b2176ee2ee202c5c",
+    "mention_text": "Piauí",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ab555cfbdc97ccbd3244ce2fc1774d4b7cc73ae3abb454ac0b9b577e813689c",
+    "mention_text": "Maranhão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fe185a37f67f1f4bef229fee2bc314cbde9730ba79352a30b4fb39c963724035",
+    "mention_text": "Wolff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4ead7f200c2c7bdcc8f8ca99d6067e186a3dabce44590d19bd2089dc308e9624",
+    "mention_text": "Sempre Livre",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46006f0e219f4ee2498aa8246bc5085c3472532ebe67de6aa2a567f061d0405c",
+    "mention_text": "região Norte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "920bac59eea5a78541b148ee488f9e8734ede283c8ff9b7236f6d6f6be8b9a0b",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa3189bdefea12869058e041a5fba72a2652dcac69072fadfce6644056fa41f7",
+    "mention_text": "Colgate",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01b6877380ebe577d7bb65916b9ca978cc49c41a99a05738253326558998446b",
+    "mention_text": "Sorriso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45eb23847f1d7010330042af60d4cde3e290cee15727a0bb93d76db831508d62",
+    "mention_text": "Kolynos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11a84eb9772c219bb38cc32e5fa8b628f7b43343458b95a98af2ebfe939d870a",
+    "mention_text": "Paula Tommasini",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91ed0741eb99949af2f634a520ee51cbc5bb845c38de49ba50ec96faa93c1316",
+    "mention_text": "MTV",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6465c88c17883a790e2c4a28372389f0eb7b98755619241bc11d419b5f5a3dad",
+    "mention_text": "Pabllo Vittar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb0d0f4cd093b00369f4738cb5d9e439b412a21c453b29ea6db6c141e38b8a28",
+    "mention_text": "Mc Kekel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "63ee926bde27c753f7e8c99835d6158149f25b492360c16f43e347f1b81053f1",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65fffadb27506aae24021fc1a8eace216e2b5754f9301cef6601725eda2a34bf",
+    "mention_text": "Gillette",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfbb20856146266ff483b12d8cf0aa1fdb492730f5bfafb94272f876f6a09339",
+    "mention_text": "P&G",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ee2af3e45ac5b1e61b8d2a989f00c7ddf2fca197dccd2ec4e65f6e444e2dbdd0",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69196350f6d2572626a15eeb1fd66324c30a5c3806e2defc4f511e8d3bbdc9cd",
+    "mention_text": "Bruno Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1b5efd1f232c45448b087ee69c2b0425f8bf99fbf20a442543d618fe3a1cc296",
+    "mention_text": "Gillette",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ff94bf01cc9034ccbaee910649a1ceda31dce63b3f7591ce107b8be70ef2567b",
+    "mention_text": "Gillette",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f1aa94d4a4a707884892822ea2bd5d1efe977060976d6b2bf5ceba5b7c4966de",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f6f75930ccfeb105f9c0f36024bef043a75425b312cabcd120bda8d748c1ef9e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8384e65f3a012ea60d3cb3ff27d06a6187d80ce375632875cf23732149b9b62",
+    "mention_text": "Gabriel Kami",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42fe8347dab3e4f78ada842d8e06692092e1be98600d0550c2d757cdc8aa072f",
+    "mention_text": "Martins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ade623fac7745df8ad48e0f60c31990eb803a6acce7e600dd2e841e935fabc8",
+    "mention_text": "Philips",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3598f7977585f102403a1d9a2b5cb77ee2a5535d31668b3450f164566d1245fb",
+    "mention_text": "Gillette",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f93dfd6cd88ea33fdc43c12816028ccad8b2348abc3ad441d943a29048d9fe2f",
+    "mention_text": "Adrilles Carvalho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2037017abb7337451390541f00cb2d95cd76a291e69bfc6b3ca96a79adcc889",
+    "mention_text": "Philips",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ae47449f76c8033d1dd315962a25a5f8f2a89c32887d1a8ae0389e4aa120654",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9c692cefcc7d3123e5b57b8d0f414ee41b1a75e9684616e8b928bad246e3079",
+    "mention_text": "Philips",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d5bab3198d0a053b895036b0354f511f5e4d4fe5ec860234b90131bb05d45a79",
+    "mention_text": "Bud Basement",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f045ff0c48c9109409be7febf7fc626a4a61a1b8e2c26f65268fbbcbc4664c1",
+    "mention_text": "Budweiser",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8465da8dcee5f941d50fc22005b9d3520fcf29fc0168ab59f2c33d86f6e6b54",
+    "mention_text": "Philips",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "336e1bbbdccfd69aab714114ec057a5c5dc475387f35415677ed34f4473cea2f",
+    "mention_text": "Risqué",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8810d468558fc771b92290335324722b42963281e1fd51604ecfa627c56440ce",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad5bfc7fd4bc711c6f0d4b9f14d0ad9e4b9c2651c24b5aac603e51f781127d44",
+    "mention_text": "Instagram",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad0059127382ed7da7502a2b161c7dbb4b80455b84b3105d89ddf7e098ef538b",
+    "mention_text": "Coty",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08ba9ef88e6455cb060e50734829d9dd9e736dff57961e3d787c5f570f619e46",
+    "mention_text": "Risqué",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f4d69d07aca5d9fac279732630dbfbdad98a9ade86eaf030122bab2c62c403c9",
+    "mention_text": "Regiane Bueno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1fd30d258adb13d7ec104f124b76ee341c025cc44a9e5f4bca4da19bdbb04e1e",
+    "mention_text": "Risqué",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f38d54204da3b7e4dd29e9715f20e3b6ba82995e5e8bedfa9e5a272c1bc8747a",
+    "mention_text": "Pol Kurucz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d645c0e4c1280ff003f69d8153a9755d82d395c1894d4c3206aa73840eda54c",
+    "mention_text": "Coca-Cola",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d34915443aeb299e6e76830c06aae5b05ca468f62a7f6ab17d820dcca5ce0db4",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a34b0062c627ce700bc0a2cd8880090dc5dcaf94346db777d0ef24ff3ebd8671",
+    "mention_text": "Risqué",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8a50f94a050ba7b7308e5981d8dea3ddefedcdda4561b8a5db064504db2e74e5",
+    "mention_text": "Coty",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5645c45f2907028b6960f3a38bd00fbf03b53fa1427867180378d51b03a8efe0",
+    "mention_text": "Monange",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f16951f0d6a3154fa4854fbd997c4f9d8d6d783b0dec32feac0031f8019b0580",
+    "mention_text": "Datafolha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f49d8cf40ed8529810b08d00406b44cd05d8899e3a1f6148158f212c97c7e18d",
+    "mention_text": "Monange",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a05c66e501ba4291bb7dd15fd6725064cb2e6adf39127bd2155f771d0965564c",
+    "mention_text": "Xuxa",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d3775c35da7f3b5499665f905e4ea37aefee2123aca1a7772429b47cb600b950",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4abcc2292cae9c1b001e059e996e25d6cf6bdb0ac2f23b85fd3dcc512f11beff",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f943043dd4788ffbe214117c727ec023afa284a1a4cd3a79e68d9dcfb903b741",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ded47344c241b65d8300376af428aac08de837d76d78def35a6f3de4dbadd088",
+    "mention_text": "Ludmilla",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d2d73d546154f6e723fb2c53de04a5ed739910a1339a5a1ff284e552ab061a4",
+    "mention_text": "Thaynara OG",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "129eeda29b72f7f65e3437ea9f42daebf88b688b2e3cd259939d2cda0c710223",
+    "mention_text": "ESPM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc316e8489d484a310e2040da3ec02197ae9f120f5496195209df9a815a74d94",
+    "mention_text": "Fábio Borges",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f78deee4c73943401a2e88a1c33d62a7128962f8e526b5822d60c708869c8bea",
+    "mention_text": "Euromonitor International",
+    "categoria": "ORGANIZACAO"
+  }
+]

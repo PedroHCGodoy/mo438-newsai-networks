@@ -1,0 +1,467 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 298505b934bf3ecedc9049ffc6bd4c3d2ff6f0c3bbb421d4e6340e9d7c3435e2
+
+TEXTO:
+Migração para mercado livre de energia caiu 45% em 2017
+
+A adesão de consumidores de energia ao mercado livre, em que grandes clientes escolhem de quem comprar, caiu 45% em 2017, aponta a CCEE (câmara de comercialização).
+O valor de referência para contratos, que flutua de acordo com o nível dos reservatórios, subiu, diz Rui Altieri, presidente do conselho da CCEE.
+"Ficou claro, a partir de maio, que os preços seriam altos, o que reduz a atratividade da migração. Além disso, a tarifa das distribuidoras está bem comportada."
+A oferta de energia renovável está menor, afirma Ricardo Daelli, diretor da comercializadora Electra. Parte dos consumidores livres só pode comprar de solar, biomassa ou pequenas hidrelétricas.
+"Estamos perto do limite dessas fontes, e o prêmio por elas aumentou em 2017."
+A solução será alterar a demanda, diz Sami Grynwald, gerente da consultoria Thymos. "Uma mudança regulatória pode tirar a pressão da procura por essas geradoras."
+Para aliviar a busca por renováveis e reduzir seu valor no mercado, o governo abriu consulta pública de uma lei que permite que mais clientes contratem a fonte que quiserem.
+A mudança teria o potencial para fazer a migração superar o patamar recorde de 2016, diz Reginaldo Medeiros, da associação de comercializadores. As propostas, no entanto, são tímidas, afirma ele.
+"Com o texto do projeto, 30 mil novos consumidores poderão acessar o mercado livre daqui a 10 anos. A nossa ideia é permitir que todos participem dele a partir de 2024."
+Medida argentina deve elevar vendas de eletrônicos, diz indústria
+O fim da obrigatoriedade de uma autorização do governo argentino para exportar eletrônicos para o país facilitará as vendas, mas entidades brasileiras divergem quanto a seu impacto a curto prazo.
+O governo Macri publicou, no fim de 2017, uma resolução que revoga as chamadas licenças não automáticas para a importação de itens como celulares e eletrodomésticos.
+Dos US$ 55,4 milhões (R$ 178,7 milhões) importados pelo país em 2017, cerca de 24% (US$ 13,1 milhões) precisaram da permissão, segundo a CNI (confederação da indústria).
+"A medida demonstra uma integração maior com o Mercosul e impactará o setor de manufaturados brasileiro", diz Carlos Abijaodi, da CNI.
+"O prazo entre o fechamento do negócio e o embarque levava até 200 dias. Sem essa barreira melhora muito, cai para 45 dias", afirma Lourival Kiçula, presidente da Eletros (associação dos fabricantes de eletroeletrônicos).
+A Abinee, que representa também a indústria de componentes, não considera que a decisão tenha um efeito significativo para o Brasil.
+O motivo é que, como em alguns desses itens não é cobrado imposto de importação, a alteração beneficia exportações de países como a China.
+Assistência brasileira
+A operação brasileira da Ricoh, multinacional de tecnologia e impressão, recebeu um investimento de US$ 19 milhões (R$ 61,3 milhões) de sua matriz no Japão.
+A maior parte será utilizada em infraestrutura e desenvolvimento de produtos no país.
+A empresa criou localmente um assistente com inteligência artificial, diz Alejandro Tomás, diretor da empresa no Brasil.
+"A plataforma para atendimento técnico de máquinas feita aqui já começou a ser vendida para os Estados Unidos e para a América Latina."
+A Ricoh Brasil teve um crescimento de 15% nos nove primeiros meses do seu ano fiscal (abril a dezembro), diz Tomás.
+"Além de termos entrado em novas unidades de negócio, como educação, ganhamos contas que estavam com concorrentes."
+R$ 400 milhões é a receita estimada no país
+Anda de lado O Brasil exportou em 2017 4,5% menos tabaco do que no ano anterior, segundo o Ministério do Desenvolvimento. O valor movimentado com as vendas foi de R$ 2,09 bilhões, 1,8% menor que em 2016. É a quarta queda seguida.
+Mesmo com esses resultados, o país mantém a liderança das exportações do produto -detém cerca de 30% do mercado- e é o segundo maior produtor, atrás apenas da China.
+"Podemos dizer que o cenário tem sido de estabilidade nos últimos anos, com uma pequena diminuição da demanda mundial", diz o presidente do Sinditabaco (da indústria do setor), Iro Schünke.
+O ritmo das vendas foi especialmente fraco no primeiro semestre, com baixa de 15% na comparação com o mesmo período de 2016. O crescimento na segunda metade do ano garantiu melhor resultado.
+Bélgica, China e EUA foram os principais destinos do tabaco em folha brasileiro.
+Software A Veeam, multinacional de proteção de dados, adquiriu por US$ 42,5 milhões (R$ 137 milhões) a N2WS, de soluções em nuvem. A operação brasileira da compradora é a sua maior na América Latina.
+Indústria A Grings, de alimentos saudáveis, vai investir R$ 5 milhões para dobrar a capacidade de armazenamento em sua fábrica, em São Paulo. A empresa também começará a vender seus produtos em farmácias.
+Estética A rede Não+Pelo, de serviços de depilação, vai abrir 40 franquias neste ano. Belém, Brasília e Curitiba vão receber o maior número de lojas. A empresa, de origem espanhola, tem 300 unidades no Brasil.
+com FELIPE GUTIERREZ , IGOR UTSUMI e IVAN MARTÍNEZ-VARGAS
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "dfce3c272befb68fb555cd5cae0d7c6bca5106c4cb652d4cf20ec6e0c0b5ccd5",
+    "mention_text": "CCEE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a3d6fde231ad0507a5d025ee8d1fea7e669a2b23237ff8341c0891424c2f6eef",
+    "mention_text": "Rui Altieri",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc2203aeab1833bfffd0ce31a06bd2972caadda95fe26addd6a987b9ede3a275",
+    "mention_text": "CCEE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0b8b60249e846a521e0c50dfa1224bb331fbd6fa872d5a479d274987b50a41e",
+    "mention_text": "Ricardo Daelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "edbc090c2db13f699ce9264ada51f9ea773ec78247dcffda4c9f6045e58bb725",
+    "mention_text": "Electra",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3830d3f61a28900c5dade55d058c13c3527e7e0edede04d547ee9e6b0a744c99",
+    "mention_text": "Sami Grynwald",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb61597d44dea15bb88f64dd7e1b077df7490f8a96dcbb013651bba09c4bdb1e",
+    "mention_text": "Thymos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d21582a2a88c5d35aecbfe349d315a3e9f5659ea15ba071977f9199649f4ce4d",
+    "mention_text": "governo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "24727f130bc7826d99ef23ed542f4303bbab7ceeb97576581df6417dbf128140",
+    "mention_text": "Reginaldo Medeiros",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0796f8e75fff61aa83409be9fa711eaeac102fa1bb965856a351245fa3a2a32a",
+    "mention_text": "associação de comercializadores",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "234adc1eaeceb292d67e8fb07cd4f51a7875ef077fc50f4c143149d884022966",
+    "mention_text": "governo argentino",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "478bb071da35c1327be6b0103c88a26205bec4e7bce80fe68e048508ad6805da",
+    "mention_text": "governo Macri",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "abe86ea01b33ffad0e38f7081378d575624f957b1321da66ce6e4423a78c2009",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2a68d024ab4ea0ce50eba3d04a99a8707e6a02693cb0f79a6727cbd92921bcf",
+    "mention_text": "Mercosul",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f203d5d677352db574ed7b8c6f19c9991e5ff24f11418c3116cf61ef7a5a4b5c",
+    "mention_text": "Carlos Abijaodi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11b53d4f710c4e33d38a8e0478cef7f5d8befd6b6d88290eceb04b62c95e3de1",
+    "mention_text": "CNI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "35a15d6ceebd51cc5251ddccaab292eb13754972de01cc68b94f3cf634ff87b4",
+    "mention_text": "Lourival Kiçula",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bac09438f30fa898b28d36c4f2c455e23f386039ba6e169ce46db13d4f3fd890",
+    "mention_text": "Eletros",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d2929084d0cb61f769af712ac3a64472841354ec9f87a3eec35685dcfcbee87",
+    "mention_text": "Abinee",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "420e7e6caa752bb25f9b9952120fe693847934301f615aed79d1705436b15281",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d8a2a682723441b3b400fc98fc7eaf26cad2c1a682484407bf888381fe7b188",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5d38c91ffc01f3c9b31bf57faac684e11ca97bc6c4349cadd2f58c4c9f2b0d20",
+    "mention_text": "Ricoh",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9eafd53abbc74a3ab6f135b18090470e143038c85b0c474acca8b187a447469",
+    "mention_text": "Japão",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c9456ffa0974d0c1b2a9219cdd15d6073d0f15a1c5d4aa1f50f0d0e2b67d5772",
+    "mention_text": "Alejandro Tomás",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "15e4a416797a58265bfdfa5af0b6d7053279944527dcee3c7ec1332b0e447c5c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8fcd98a8b6d54ae7f196cb00c8cc6b6ad7ca036cfabf98c675f2362cbb4de9f",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "12ee12ce01e4587a8dee8a2c9c8e55d88858864fafd33228e4d78a5b30b01409",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "38bbe8a95a94936db06721b85f544a1f0a66d526600206d9eb10324c9f5f2ee3",
+    "mention_text": "Ricoh Brasil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "28be9146e41b2460f9685e5481babc491d31c0c664e9617c06059e736db406e3",
+    "mention_text": "Tomás",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "35bc0ed4c75ec857f7c28226cdc669529a92b7d96734af5f58f1c09e63161ad3",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c62e8b0d607b35152b0598b434b1e7c97c3cc1df835acbb339d2c6a591be803d",
+    "mention_text": "Ministério do Desenvolvimento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb7deef5364863eb7affd02eab274238c11be529a7c35c1addb60f42260c7906",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dbf39e732915fdafe920c2d1d2941dc0e41e41e4b1f1393d88df2f02985afdb6",
+    "mention_text": "Sinditabaco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "321aa4509d04e0b497892f0e786bc22385858624766b89d3cd04f69afec8c850",
+    "mention_text": "Iro Schünke",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "717079532373e3dea30b9988f9ad6b7727e1ac1dcb46f72115d3fca40ba15627",
+    "mention_text": "Bélgica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bc0d955261eb09647e4c54614602638e0e9182a39cac28b0b0451fe53d986c31",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1d8ec29de4edeefa22cf4bc72757b628538f8e357959392827245a5b6fa3a757",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "26d53cc3f38ae0098354abde9d4b9855b0360921a927afd23fe487418d2d3068",
+    "mention_text": "Veeam",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "17566f1af8ac8b50a02107d8eb10783875cc85413b3a0bdfacc64a6960912e72",
+    "mention_text": "N2WS",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b1a5fd627f5d4c193882b5f976e8694dd96bd5e4f92d128055785eb948ee2f73",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e03c55a1d9abbf4a60108f150aff0be9b1f8dd096a96551a264ce862a23c4557",
+    "mention_text": "Grings",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40d7d412e60c1dee15d62fb3a01347e952067ce338944fbccb7dc76db244eebe",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9b0d544b388e4ccb9f2b5bf4f2e322f3ac99035f643f8ef871b6bc78d73b7f2c",
+    "mention_text": "Não+Pelo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7a945c5a2760b2f7595fa139a867fe75d1b4c868f0108bf12718088a89d12828",
+    "mention_text": "Belém",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "55c8fa10f2a0e89b26e8abcb6a0724a5156629622244cd51cc36798fcb96abcd",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e821c1c0fd560688a7a5fbbe1a64e8230eb27f2b3c59935257770c9a99eb8fbf",
+    "mention_text": "Curitiba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e287976ba388b1c28001183e29b13257dca44eae009bcc217a7f9a79bc96d386",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "412b6543af5a8cea8fc31c8cf9d184a95201fb8674ba6b70cdf6bb4c4666c250",
+    "mention_text": "FELIPE GUTIERREZ",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af56664dae806e1df25b9a1facde71d1822a4aa10f8f9262f83c998a3ddfa5fa",
+    "mention_text": "IGOR UTSUMI",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e2492d62d6c4dff85c1d72d16ca4e135b59c8836d86ef86c87775ab06cfc99dc",
+    "mention_text": "IVAN MARTÍNEZ-VARGAS",
+    "categoria": "PESSOA"
+  }
+]

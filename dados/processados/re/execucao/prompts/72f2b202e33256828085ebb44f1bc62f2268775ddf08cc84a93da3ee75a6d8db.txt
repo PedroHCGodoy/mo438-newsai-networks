@@ -1,0 +1,331 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 17a6ba34dcd2457baedabad8b62f47db4a493447ae42ef57aeffd7db6d638e23
+
+TEXTO:
+Instituições financeiras e start-ups se unem para criar novas ferramentas
+
+O número de start-ups do setor financeiro, as chamadas fintechs, passou de 54, em 2015, para 366, em 2017, de acordo com dados da organização Fintechlab.
+Atentas a esse crescimento, as grandes empresas da área estão apostando em parcerias com as "novatas" como meio de inovar.
+"As fintechs estão presentes em diversas áreas, desde conta-corrente, crédito e investimentos, até mercado cambial e criptomoedas. Isso está atraindo cada vez mais as grandes instituições, que estão interessadas na troca de conhecimento", afirma Bernardo Pascovich, diretor da ABFintech (Associação Brasileira de Fintechs).
+O Bradesco investe nesse tipo de parceria desde 2015, com um programa que permite às start-ups trabalhar com clientes reais.
+O projeto já resultou na contratação de nove empresas. Duas delas receberam investimentos do banco.
+Uma delas é a Rede Frete Fácil, que desenvolveu uma plataforma de gestão de caminhoneiros autônomos integrada ao cartão Bradesco Transporte, para o pagamento eletrônico de frete.
+Entre os serviços oferecidos, é possível contratar entregas, localizar veículos disponíveis e divulgar cargas que precisam de transporte.
+SEDE PRÓPRIA
+O resultado levou o Bradesco a investir em duas sedes voltadas especialmente à incubação de novas empresas.
+A primeira, aberta neste mês, é um espaço de 1.700 metros quadrados em Alphaville, na Grande São Paulo.
+Nele, as start-ups trabalham com equipes do banco e com parceiros da área de tecnologia como Cisco, Google, IBM e Microsoft.
+O segundo espaço será um coworking em um edifício no centro de São Paulo, com previsão de abertura no início de fevereiro. O local será dedicado a negócios baseados em tecnologias como big data, algoritmos, inteligência artificial e internet das coisas.
+"Trabalhar ao lado de profissionais inovadores traz para as grandes instituições financeiras outra visão de negócio. Estamos aprendendo a manter um olhar mais próximo às necessidades do cliente", diz Luca Cavalcanti, diretor-executivo do Bradesco.
+A Visa instalou seu centro de inovação na própria sede da companhia, em São Paulo, em outubro de 2016.
+Nele, colaboradores e start-ups trabalham juntos para desenvolver novos meios de pagamento e criar soluções.
+"Não desenvolvemos somente projetos que são de nosso interesse. Temos clientes que podem apresentar algum problema. Assim, convidamos as fintechs para nos ajudar a criar uma solução que melhor se enquadre", diz Erico Fileno, diretor-executivo de inovação da Visa.
+Uma delas, a Smarter, especializada em inteligência artificial, ajudou a criar um sistema de chat automático pelo Facebook, usado no site Shop Fácil, canal de compras on-line do banco Bradesco. O Serasa Experian, de análise de crédito, também apostou na criação de um laboratório de inovação, em 2016.
+O espaço conta com 20 cientistas de dados e profissionais de start-ups, clientes da empresa e universidades. Entre os projetos está uma plataforma que usa geolocalização para entender o comportamento do consumidor. "O objetivo é auxiliar as empresas e anunciantes em suas ações de marketing", afirma Marcelo Pimenta, diretor de inovação do Serasa Experian.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "4fc85c9fd28b508634d4506523e4050469a2a26ad32c3c079c0177d490fe0191",
+    "mention_text": "Fintechlab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "97f43b300546eefcc18131241b9012b3946535bd724123884719fffc14af267d",
+    "mention_text": "Bernardo Pascovich",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1387ae1737558821ee809fe5527ae2068e9bf6311a18c94bf3adc1f7b182076e",
+    "mention_text": "ABFintech",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a5e9c9eed9caf1a7e38e60c40573eddaf1155a9126f4a7fe004832afe624446",
+    "mention_text": "Associação Brasileira de Fintechs",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2433b0cc65ef1a524ddf735d3d4a885b58c385e8b56b0d83444c6b4dbfe1029c",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "314fc7c348a10c55ea9be6a49c6ab4f3ff06a3fb9e66d5f38dd5dfeddc43ca27",
+    "mention_text": "Rede Frete Fácil",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d861700b9cbee165ad581b3818bffc40e26cc9f12184eb3416310077fb72d1ba",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2d4804cd8e1a48b2a44ce0a48c40a0f19a79ed55de1ddb9e2222094989a1adde",
+    "mention_text": "Alphaville",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d04b75fc53d90beeabd7afb0259e353f449c9b52fd617b8381a6eeaa1fed97a",
+    "mention_text": "Grande São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "53ce3872b6fe7f80c65e1e34b301c15f026cb2cde3d48af219cc8e6b5e499e3f",
+    "mention_text": "Cisco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11e0cd63934c170be4c2c13aef99b872044055371616f34e1f5f4b12f698c4d2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "078f5569f5b766ab7d3c04a602fdda8100f501d912daecd6df54df10cdab52a6",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e55ba2b59059310624a82fb199ccf20544ba071cbf1852058f06029af5d7374",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "51f82660aba72e9fc178335ff386a77c4d049d59982748a22ce4d7460a244bd7",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "913b71547b5aee807aa456042688d28b27a101743699a1f43eec8fdeee5e08f6",
+    "mention_text": "Luca Cavalcanti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "42fc2597ee53cd6943d40ffb539f19b77bffe39f416e96e541b284116e2933cf",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "894091f203d57d2ccf9578eae1088a0712c895fd0cc5190797229c77e2e94a6d",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be9d6dd11cc6f15e3c95900f77c7bd8851aee2d434d116aa715d3df848cf0676",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65c0a0bcdf8e180845e6f338fe4e9a87a9e82921560c4bb9d9e299e0bd6ae934",
+    "mention_text": "Erico Fileno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "41dbb40ad617f761454a483c7f2de1fc91f0d9ee2de8d932aaa21a4d95b26145",
+    "mention_text": "Visa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c68ed830a0a5f2a50c2769f257ad894daf085fb4130d592a1c0ac17cc86d72cc",
+    "mention_text": "Smarter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cec49c55e85eb35d034cae6915f40d1705f8bc5c37787fb4cd856e0dec9271b",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b3dbd4b6828ef40de1f8aa54fc02e9c5bd11b4433d5a1b66f6a494accf8f8eb7",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f771d4d9464e6d7c47a357baa8a5c7eea9147c03ae331c5343b66c34b36c2565",
+    "mention_text": "Serasa Experian",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd1e054c0c67b2c08f07041a9019ceadafc307aeeaaaf6c26d0f97e1360a9912",
+    "mention_text": "Marcelo Pimenta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee433bcd5c4e317bd79601daa05690c54e7464cf215b2440911c95858b7a3201",
+    "mention_text": "Serasa Experian",
+    "categoria": "ORGANIZACAO"
+  }
+]

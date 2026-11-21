@@ -1,0 +1,540 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 574c874d7e6c1727d81ff61d2c76e5345fb4f67c41b3e407ccf54ce243b0a487
+
+TEXTO:
+40 anos depois, cofundador da Microsoft pondera sobre sua criação
+
+Se considerarmos a abrangente linha de produtos da Microsoft e seus 118 mil funcionários, é fácil esquecer que a empresa começou com um produto modesto, criado por dois sujeitos ambiciosos.
+No começo de abril, um deles, Paul Allen, ofereceu um lembrete sobre as origens humildes da Microsoft ao postar no Twitter uma foto para celebrar o 40º aniversário da empresa. A foto mostrava as primeiras linhas de código do primeiro produto de software da Microsoft, um programa de interpretação da linguagem de programação Basic, desenvolvido por Allen e Bill Gates em 1975.
+"É estranho olhar para trechos de código que você escreveu 40 anos atrás e pensar que aquilo levou ao que a Microsoft é hoje", disse Allen, 62, em uma entrevista por telefone, em uma voz que soava realmente admirada.
+Na semana passada, executivos da Microsoft ofereceram um vislumbre de diversos produtos novos, o mais novo esforço da companhia para atrair o interesse da mais recente geração de desenvolvedores de software, que a trocaram por tecnologias concorrentes como a do Google Android e Apple iOS, nos últimos anos. Por isso, o momento parecia apropriado para perguntar a Allen como ele via a Microsoft aos 40 anos.
+Ao contrário de Gates, que trabalhou em tempo integral para a Microsoft até 2008, Allen deixou a companhia no começo dos anos 80, para tratar um linfoma de Hodgkin. A fortuna dele é estimada em US$ 17 bilhões (cerca de R$ 52 bilhões) pela revista "Forbes", e o empresário diz que ainda acompanha atentamente a Microsoft e o setor de tecnologia, mas já não é um dos maiores acionistas da empresa.
+Embora a Microsoft esteja se saindo bem junto aos seus clientes empresariais, Allen diz acreditar que a mais desafiadora tarefa para a companhia, hoje, é ganhar ímpeto no mercado móvel, onde Apple e Google são muito mais influentes junto aos desenvolvedores.
+"É possível fazê-lo", diz Allen. "Mas reconquistar mercado perdido é um grande desafio".
+Allen diz ter gostado do novo sistema operacional Windows 10, que a Microsoft lançará na metade do ano e poderá ser usado em diversos tipos de aparelhos, entre os quais o console de videogame Xbox One, smartphones Microsoft e computadores pessoais. A equipe técnica que o assessora havia acabado de lhe dar um computador usando uma versão de teste do novo programa, na manhã de sexta-feira (1º).
+Allen parecia especialmente entusiástico por o Windows 10 ter abandonado, nos computadores pessoais, algumas das mudanças de design mais radicais que a Microsoft adotou em versões anteriores do software. Muitas delas provocaram protestos dos usuários do Windows, entre as quais "o modo pelo qual o tradicional menu iniciar, para o lançamento de aplicativos, ficou escondido".
+"É como a alavanca de câmbio em um carro", diz Allen. "Você quer que ela funcione de determinada maneira. A Microsoft hoje é muito melhor em ouvir o mercado".
+Perguntei a Allen que smartphone ele usava –muitos dos executivos e ex-executivos da empresa usam o Apple iPhone. "Preciso largar meu velho BlackBerry", ele disse. "Mas meus polegares voam sobre aquele teclado, e eu digito muito rápido".
+Allen diz ter visitado a Microsoft alguns meses atrás para ver uma demonstração do HoloLens , o novo headset de realidade aumentada da companhia, que combinará imagens virtuais ao que uma pessoa vê de seu ambiente físico. Mais do que outros produtos da Microsoft, o HoloLens parece ter sido teleportado do futuro.
+Será que Allen, conhecido entusiasta da ficção científica, está empolgado e pretende usá-lo?
+Ele descreve o HoloLens como "muito interessante", mas prevê que vai demorar dois a três anos até que o produto encontre público de massa, e compara a situação à demora na adoção inicial de computadores pessoais, até que começassem a surgir aplicativos fortes. "Estamos naquele período inicial, antes que a coisa se torne um produto de massa".
+O papel que ele exerce na Microsoft, segundo Allen, é o de consultor informal dos executivos. Ele disse que almoça com Satya Nadella, o presidente-executivo da empresa, a cada seis meses, mais ou menos, e que mantém contato com Steve Ballmer, o predecessor de Nadella. Ele diz que os líderes da Microsoft têm um trabalho único, porque a companhia compete em tantos mercados diferente.
+"É o que eu disse a Steve e Satya –que o trabalho deles é muito desafiador porque têm mais concorrentes do que qualquer outro presidente-executivo de uma grande empresa mundial", revela Allen.
+MUNDO ANALÓGICO
+Hoje, Allen talvez seja mais conhecido por suas empreitadas ecléticas fora da tecnologia. Ele é dono do Seattle Seahawks, um time de futebol americano, e do Portland Trail Blazers, um time de basquete, e um importante incorporador imobiliário em sua cidade, Seattle.
+Allen está desenvolvendo um sistema para lançar espaçonaves de um avião. Em março, uma equipe de pesquisadores à bordo de seu gigantesco iate encontrou os destroços de um couraçado (navio bélico) japonês da Segunda Guerra, perto das Filipinas, usando um minisubmarino.
+Quase dois anos atrás, Allen fundou um grupo privado de pesquisa em Seattle para buscar avanços na inteligência artificial. Oren Etzioni, o empreendedor e cientista da computação recrutado por Allen para comandar o grupo, disse que Allen estava muito envolvido no trabalho da equipe de 40 pessoas.
+"Bem no fundo, ele continua a ser antes de tudo engenheiro", disse Etzioni.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "1f9e0e89cdcb9ae9c7b745ed8cfa525416cbf176843bbd7788910e16f82933e9",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d06958bac6ab69e633fc61886175bd2bf2d5d7d23ddc84369b34c68df69fa4f",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3ea2076fe9319c8f223dae41fcd32191201f5eec5f054c68ced7eaa60c708d31",
+    "mention_text": "empresa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "38a5ebfd80f37d66da5646a5f2139faafeed22cfbd38530d6639f2c113361752",
+    "mention_text": "Paul Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "715b33369027b1c8f5a3c337f09bc6b946c780354a3aec5a376e43cdf673bf12",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0b76f75be92d1e5583a4dd7a8a1cc5c422fd180ed66e5aa07eacd86e6d93184c",
+    "mention_text": "Twitter",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed4855290e9e42c750f3125535435006e416051ca15cb90228db041456b7e620",
+    "mention_text": "empresa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5826d028818a3ba945df09a8a4bc64081f6d945bb0c720a27249bda17016ec5b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b67593f288094a41e62fb8e46654a675c35286b8a94b37ab34caec30d3e05e3f",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa11e86aa22fec89c923e38a76fd8951c0ca4bcc5fe4d20979f01f41ed1d6457",
+    "mention_text": "Bill Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "60ec9e340625a0fef3d5a60cb9d099721bf6488e111c0de92b72e43f2a2df8ce",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "962dde198fb22c441fffc2ed6a1eaa71a22e5609c14f32956a6f54ac229b039b",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfe1c1ef7994c96ebd05287a9bfdd41744e9d7527329f23e07fcecab727a61e6",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d08e1387585c0670ce7249d37ae5c2b3e1b28de4f6e6cd88a14f468dc5069924",
+    "mention_text": "companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e54170775a368cc9a303938918feb09e6ec554f96c752542c3ba611705e8ffa",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ccca872e6bdc3ace11d155595b1be5ca4d185961e8fd1c4a963ecb4d651cabe1",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3850d79cdc163e2302112a6cdeacba5151b6dd6559c028e1be5f80302eac1e58",
+    "mention_text": "Gates",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3d5c101f2732b61d075119219b341eca67ccdd6bbcb6723abd52eef94ebc8da",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8dc7c47b8b803f36c40532caeb06a11605d7174e1ea89083363a87ac26d25a9",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "af8d90b7f2502b4c50331bc6c6127f2995106af671bd5d0c4db555dc1019f22a",
+    "mention_text": "companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c01e55c3155f5ca97049fa76117b8c480ce34da3ede2eb1cc328a376cc5e96fd",
+    "mention_text": "Forbes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f4bd3cb3415202dfefc296db8856febf72a36bef7c794d6f2679c7da290a378",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c00e8ec8f4c3e2969b938bad6c893926774aa1ffe1eab069e0c3bfe02230b71a",
+    "mention_text": "empresa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "931e996fb48de694b28c97ea9712c5465452c1376dae1ae32fb35b2a106313c5",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "40680cde22c0e8afd3a9db0aa8a20cef21d26845dbf8cb4231f2aa15bd888c91",
+    "mention_text": "empresa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "27138c810c79f4cb961e685766c0f86b7c8f97b6cdde1efa2da2462174b9e98c",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "21213e948a6c47559df6a73266a3798177b3b7183621e80f52be1435c5890a83",
+    "mention_text": "companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "41b98323942027e2acecd6e68716562c331bd169d3dc10b602278ffc358eadeb",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84612b778f40bc24bb2a7013a1b6bc9156c244ac27fb700112e523fef5c8284f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "075430bd1f8a002895cb3ccdbe3c306a0b4aeaed570fccda21d3af296f09736e",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "27e7f974fe3c5b41d51491c3bbbb9e09e095f1f653e8856dcea9b0b9fb76aadf",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39ec59b96367eedc43c6cdfb068173b370f2a5e6be52b3214f779853cce9fb6e",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4ea0198a592272cfd1fd832ce4b99e5869466811e064252079815310c0fa35b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e9b596b6ea81f24e6ebfb08701f97cd6393e18aac9e240cfdaa677e91e7e13e",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "889fc40b0942c96301ecd71880570497426a2b00ec559b50d954922e257a1ed4",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd32e93502b1d9bbe41dea549988e26f9add814f128344175d148765405c4fe2",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a244e0199f9ba2a04ebc90f00078fd2d0c18d6922ce62bd432a62ec4694e7b15",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8bc6fe73ed25f9ac8ec80a6e16e147cbb44e4a68244e209efe806f788da6226",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f2ec8424019bc8aa30093a93dc06d1dae1dfdb3932ceb415d123b4aeb879dd6",
+    "mention_text": "empresa",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80d1d52d35a5953ac301f9f60dd51b24c5938cdd675563231cedaf778feed692",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "96638824f97c3be88e59c4070a4ce92e5372cd9d793f1c956dbf1f3f270067c7",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65630095562615e2b7f2764562f04830bcd047c655f40038c50cccf4965fec7f",
+    "mention_text": "companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "612838a7996deb6200d12fef73823257f7f65717a5d8a7f87b2371995eda39e8",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "00ab288d0b0248e4a16a63a6a67e4d4ddeb71f2938cfcf3eb02429e93a53277e",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a56412b8bcf175e1344764f1c7f04d5b214ff5e17005d2fa49d7922b6200893",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "46b38fe83c30eebb87233720c7e909648e4efe09d17c82d902a1240eefb06972",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dc41206175539457c04d4d499af6188336307e9abf3ba65f2bdf7ebfff795124",
+    "mention_text": "Satya Nadella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71618ef6e5d6cfcc1c7bf527c233ef1fae070192c30f71ae806e40f32e1e5fee",
+    "mention_text": "Steve Ballmer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd1727ef5aa966ec16605531ddecc35a668e9c39231cef38ddbfabe335374293",
+    "mention_text": "Nadella",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59605bb8afe4452fe936687117ffbaab16391361eaba43adb90b52c79013d21b",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc4abd3ca4d02a5f7289a25820d5014abb384d032cfc9ca3e86698bf94d46d43",
+    "mention_text": "companhia",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eec5a1f00397cfd66f3171de1b7fdd4044b53d321ef28af410e2909b6ebc8a48",
+    "mention_text": "Steve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "05350d9dff883414c66bbb5c36b850c2a930b662b3f1fd6449cf591157f3453d",
+    "mention_text": "Satya",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "54b983a3aa97de2d769c3ece6394976d3048f6eba1639f3d712d5badc80581af",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a3bd85fb4653c31f350817347b20d69c70ee1e292bec686d1cec87255d2b5242",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c6302900c9042cc6842ec9c97b2c20d92bf230a9cd3e1b8aaa7d499b0ba046df",
+    "mention_text": "Seattle Seahawks",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9b504b9d0cc31772412bc6ee62308df19ad7e9cf1edfc720c03dd12c61dd8241",
+    "mention_text": "Portland Trail Blazers",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "537eab920b37947607069ee3425085cbfacde21f14a6df3bd17fcd37763e4ed9",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f794ad1be58bb62b90eb75dfd6fb388f0c10fe7eebbf0eb870009856882c0b41",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9fb9621660a55b3d4abc8df6752af786b6e8c827d37420f27d403700e46054e8",
+    "mention_text": "Filipinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c04caba88174b48b423000c991d5a205ea5cfe151d89ffc456e580f8bed05ac6",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a75af180c70bffbde2e152e5680ef99697f6073012c90e89258b02e28fd4dfa",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "587399f205d073b1940e9265ddb841c66bb1fe8205532f189cc11d2bd87bfc2f",
+    "mention_text": "Oren Etzioni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7aac8f7357d8d03b3c0ebdb7f1abd871e2e1be2f0a3a3558751dc9e8448ec310",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7247dd68a17bcc60a2d32ce8f1236abca600b6171ba5994f0616a0f1fc77c41e",
+    "mention_text": "Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1f439b2ec0f2dd0d3d7ca739d8ce38f6eca137cf7c410dfe0ff23b74b5db1b10",
+    "mention_text": "Etzioni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f77b4d249581a0d7a1ca1f2842d74b160caadcb61bddd80b0e6e99b4a49f00d1",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

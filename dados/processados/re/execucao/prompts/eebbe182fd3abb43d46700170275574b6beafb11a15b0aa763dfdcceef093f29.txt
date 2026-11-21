@@ -1,0 +1,445 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: eb77fadacd22a3bb27f0609add31a8155fc19576dbc4f16c1b40a862db98be13
+
+TEXTO:
+Sindicatos precisam se reinventar para sobreviver, dizem pesquisadores
+
+O fim do financiamento obrigatório (que entidades tentam reverter) é só um dos efeitos da reforma trabalhista sobre os sindicatos —e, se bem usado, pode fortalecê-los, defendem cinco economistas que pesquisaram a atividade no país.
+"A reforma abre opções de escolhas estratégicas", diz Hélio Zylberstajn, professor da USP e coordenador do Projeto Salariômetro da Fipe.
+"Se as escolhas forem tacanhas, nada muda. Mas, se os agentes entenderem que estamos num momento de mudança de paradigma, tudo pode melhorar."
+Promulgada em julho deste ano, a lei nº 13.467 passa a valer em novembro com pelo menos quatro efeitos diretos no mundo sindical:
+MENOS VERBAS
+O fim do desconto de um dia de trabalho de todo empregado afeta as finanças das entidades de trabalhadores.
+O recurso, conhecido como imposto sindical, chegou a R$ 2,6 bilhões em 2016 (60% do descontado), e é fonte fundamental de manutenção de entidades com poucos associados.
+Estima-se que cerca da metade dos 7.000 sindicatos de trabalhadores urbanos do setor privado tenha sido criada apenas para receber o imposto, sem atuar pelos interesses de seus representados.
+A reforma trabalhista determinou que o desconto seja feito apenas dos trabalhadores que o autorizarem.
+Com a perspectiva de perder essa verba, entidades sindicais negociam com o Ministério do Trabalho outra contribuição obrigatória.
+Ela seria decidida pela categoria na assembleia que aprova a convenção coletiva. Se 10% da categoria participar da votação e o desconto for aprovado por metade deles mais um, todos os trabalhadores terão o valor descontado.
+Na prática, a nova fonte de renda pode ser até maior que o imposto sindical, se o valor aprovado em assembleia exceder o de um dia de trabalho.
+"Se forem atrás dessa migalha, não vamos avançar nada", diz Zylberstajn.
+Ele defende que trabalhadores de cada empresa decidam, por maioria, se querem contribuir.
+Para Sergio Firpo, professor do Insper, não contar com receita obrigatória levaria os sindicatos a defender melhor os trabalhadores.
+"Uma coisa é viver de mesada, outra é ter que trabalhar para se sustentar."
+CARONA
+Uma das dificuldades para os sindicatos, porém, é que suas conquistas valem para todos, e não só para os sindicalizados.
+Isso cria o que os economistas chamam de "free riders", "caroneiros" que não veem incentivo para se associar.
+Uma forma de atrair membros, diz Firpo, pode ser mostrar que as condições podem piorar se os sindicatos se enfraquecerem: "As conquistas valem para todos, mas só haverá conquistas se os sindicatos conseguirem se manter".
+"É como em um jogo: se cada um achar que o outro vai contribuir, ninguém contribui, e todos perdem", diz Naercio Menezes Filho, também do Insper.
+Ele acredita que trabalhadores podem aderir espontaneamente se perceberem que isso traz vantagens.
+Menezes Filho lembra que sindicatos como o dos bancários paulistanos, considerado um dos mais fortes do país, defendem o fim do imposto sindical e devolvem a seus membros o que foi descontado do holerite.
+"Eles entendem que a adesão voluntária fortalece a entidade. Não lutariam por algo que os prejudica."
+João Guilherme Vargas Netto, consultor de entidades de trabalhadores, discorda: "Ninguém defende a sério o fim do imposto".
+"DEFORMA TRABALHISTA"
+Vargas Netto, que chama a nova lei de "deforma trabalhista", diz que cortar as fontes de financiamento não é a melhor forma de combater sindicatos "de fachada".
+"É como jogar o bebê junto com a água. A solução correta seria apertar a fiscalização."
+Mantidas as regras da nova lei, grande parte dos sindicatos deve perecer e dar lugar a entidades mais verticais e mais representativas, dizem os cinco economistas entrevistados.
+Mas esse desaparecimento de vários sindicatos não deve provocar grande impacto na representação dos trabalhadores, segundo José Márcio Camargo, professor da PUC-Rio, porque eles já não funcionam na prática.
+"Os que hoje são fortes e mobilizam trabalhadores já se constituíram assim. Os outros, que sofrerão com as mudanças na lei, não cumprem nenhuma função", diz Camargo.
+Na avaliação do professor da UnB Jorge Arbache, secretário de Assuntos Internacionais do Ministério do Planejamento, o atual sistema sindical brasileiro não faz bem nem para os sindicatos nem para as relações de trabalho.
+No Brasil, cada categoria é representada por apenas um sindicato por município —a chamada unicidade sindical. A falta de competição, o financiamento garantido e a possibilidade de o trabalhador pegar carona desestimulam a associação. Em 2015, eram 18,4 milhões os trabalhadores com 16 anos ou mais sindicalizados, 19,5% de um total de 94,4 milhões de empregados, segundo o IBGE.
+Como comparação, as taxas variam de 50% a 80% nos países escandinavos e ficam perto de 30% na Itália, no Canadá e no Reino Unido.
+NEGOCIAÇÃO INDIVIDUAL
+A segunda mudança da lei trabalhista que afeta os sindicatos é a que permite acordos individuais de aspectos como duração diária do trabalho, horas extras, banco de horas, compensação de jornada (para trabalhadores mais qualificados).
+A lei também cria comissões de trabalhadores em empresas com mais de 200 funcionários, com poder para negociar com a empresa diretamente.
+Esses pontos são considerados graves por Vargas Netto, porque ferem a capacidade de representação dos sindicatos.
+Segundo ele, entidades de metalúrgicos de várias tendências já estão discutindo uma estratégia comum para as negociações do segundo semestre.
+"As próprias entidades vão descobrir condições de resistência."
+VALE O ACORDO
+Os acordos sem o sindicato são fortalecidos por outra mudança na lei, que dá ao que for negociado prevalência sobre o que está na legislação, impedindo que as combinações sejam desfeitas na Justiça do Trabalho.
+A prevalência dos acordos também favorece os sindicatos que conseguirem boas negociações coletivas.
+"Antes, todo o esforço de negociação ia por água abaixo, porque a Justiça do Trabalho depois determinava que as concessões contrariavam a legislação. A nova regra vai legitimar a ação dos sindicatos", diz Firpo.
+Para Arbache, essa mudança vai exigir um grau de aprendizagem de todos os lados, mas pode levar as relações de trabalho a um outro patamar.
+"É preciso criar um sistema que favoreça o compartilhamento de interesses. A economia global exige respostas mais sofisticadas, é preciso olhar para fora da porta da fábrica."
+Zylberstajn afirma que não só trabalhadores, mas empresários precisam encarar as novas opões trazidas pela reforma com um olhar diferente, que traga crescimento para os dois lados.
+ROBÔS RIVAIS
+Arbache considera fundamental que os sindicatos passem a se preocupar com interesses de médio e longo prazo, e não só os de curto prazo.
+"Robôs muito baratos, softwares gratuitos, inteligência artificial e muitas outras inovações tecnológicas vão transformar ainda mais a forma como se produzem bens e serviços."
+Segundo Arbache, se não se preparar para esse futuro, o país perderá competitividade e demandas trabalhistas ficarão inviáveis tanto para empresas quanto para governos (que não conseguirão manter benefícios como seguro desemprego ).
+O professor da UnB diz que a saída é sindicatos e empresas agirem juntos para levar seus setores à liderança, com a criação de tecnologias e novas formas de emprego.
+"A mudança pode doer agora, mas os sindicatos podem voltar com uma agenda muito mais forte que a atual."
+Hélio Zylberstajn, da USP, concorda que o país precisa se preparar para as mudanças na forma de produção, mas considera que o impacto ainda é remoto no Brasil.
+"Há muito a ser construído, muito espaço até exaurir o mercado de trabalho."
+Mudanças grandes no mercado de trabalho, como terceirização, pejotização e trabalho compartilhado também devem levar a novas revisões do sistema.
+Sindicatos - Distribuição de sindicatos por número de filiados
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "b0dfd24dad529f476c8cca586a14415b2cd1ead85b7ee9c984e146658812df40",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2efc0c05ad3a2281eac94aece473b0017253dd9fa69e8c89486f35033195c776",
+    "mention_text": "Hélio Zylberstajn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f09820a127a2f890ec0363449173160cd5e83f9c615584121f82d67cd3960ff5",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1d0e2718e8d4d2119a0745bd9aa12810bf4f51bde7df66ebd2fd0e0b66caa0e5",
+    "mention_text": "Fipe",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c2dd0cc07b9b9f9f8b7efbcdfa996bd20d7bc7588012253a0c1a8ea6fc3202d",
+    "mention_text": "Ministério do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b86bedd70d5cc54db4678d424889767eae014ce0dd98a11fd27a5de7de271741",
+    "mention_text": "Zylberstajn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9071f9646ceb677e363ba5ea64cb694956cf4b2afd5a2e74502ee99dba090493",
+    "mention_text": "Sergio Firpo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "17038f822160ad65a428044dcc39592296d0ecb465f6587b1a600f825a24e10d",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b5a0353f0465efcb0db0209035c7163dad28f12a2ef1c3f793416a4ff4d9d738",
+    "mention_text": "Firpo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84f94d98cca90f446bd6da8669a2253cc3df4e7d9e2ab71ccc9032c36b77c82f",
+    "mention_text": "Naercio Menezes Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ede11f7636941b09f7acf837b553b17cd74073a49de0f01f019da179d9b31e1c",
+    "mention_text": "Insper",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84b0e5427c07afbd4e8a3a98a72af75361b9d2aae75c692c8ac51d898ecb43a4",
+    "mention_text": "Menezes Filho",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "329e7f56df8f9410f5fd7637f7e6ab4be870f45dfc4332c3ce42ee0290da503a",
+    "mention_text": "bancários paulistanos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f6c9fe03e6691ec6a89c80ab2aa5e5807cdd573838965e363ae841fdd0c1542",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77aabeaa4f05d18cf7de3fd211c098762d747c1c951e9ae37af1420cabaa0ae9",
+    "mention_text": "João Guilherme Vargas Netto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "50f7cf85cc29c1dba06652c86636fe01e31da9e88d886332b3e7ee16dc02da06",
+    "mention_text": "Vargas Netto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dedf876528629d1188d60f50f1614bcd09b90f76f1a94f0785faa8a5e8c237b6",
+    "mention_text": "José Márcio Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a74f29a3fc37982a6cb10bc824507e14660177c00d3fb483579736caf64b9350",
+    "mention_text": "PUC-Rio",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "42aec8c8f4a9ab87de87c232dc52f87d67228e1403a8ea00c28afffaf81fe652",
+    "mention_text": "Camargo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "710df9127476acc11141b45857a834a9aebc2dbc7786fee985599f51e2931d95",
+    "mention_text": "UnB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65209d2c6d98861f9d005df21c9237d408994ebe7ae5b2841ee6dc986b4654a9",
+    "mention_text": "Jorge Arbache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2594ffb9597f0a1b9792688545f09d0a15b9378f498b60102c2e64af8e3c482d",
+    "mention_text": "Ministério do Planejamento",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1708e0f25697d7f965de2ccecb65bd7370b793cdceb7bb722fafd1c8059b3e30",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b9e1793f8579fe3d3692531a699911a688cc405ed0bd971a5c9fc2dbab978556",
+    "mention_text": "IBGE",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08727c7c70f83af819e29ddc8abba13d78b903a9214e75c2c952a1ff119821e6",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "608fb80411cd3f2501740163d1e42587368d760c8dd825f914d8aaf5bcd00607",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bdf2125d90a2cdc2ad802f768f840b7d940f06846544e9244cea7c1fe195f3e5",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1fb69ae91f20a8b676cf7af6b816e45cc7886d20397d9bf2ee6e64cdb1e39f7a",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d26b610abd0157aca595920c6030d232cee40e956db79d0a30b4904f4e96976a",
+    "mention_text": "Vargas Netto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "857e73d8b5d80a97cec9683607f85f816d35646cde917edf6f5315723ed6a8d2",
+    "mention_text": "Justiça do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e67296b8ae8947d98c9fd205262423466defcc9b865725b1bc8cd022366163c7",
+    "mention_text": "Justiça do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "37c814c0b8bf99fc78fe1f97102428a3bbcf736e1bc57f6473d7184009ac083f",
+    "mention_text": "Firpo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "89cb1af889d23b7172abe2739af240322c30b53b8a59cff1e2d1357dda726931",
+    "mention_text": "Arbache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c78d4c42c6c3a5a9ed20abe94e33a35c6f35b9a8050f1400cdb33e4e5f7c0c90",
+    "mention_text": "Zylberstajn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "604a5c4e2028a7d163f127f4f6601759ab27041d9a9099cc1c30fa694989e636",
+    "mention_text": "Arbache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "11cc4ee0317d0dc109255ebdda8eb9f6a47b74e2aae73377ba9adf89739f3494",
+    "mention_text": "Arbache",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "33ef75d9c2646c681aadebd24f8ef53a96920b19b8c3350ded1db389fe1e4253",
+    "mention_text": "país",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9fa35df975350c0b1daf376dbbfb176d8349d4447c0c275274b5273230fe3011",
+    "mention_text": "UnB",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2c2e64f91dcfd52b1595d56149fca1191937c1230dfbfb02a4e95c31be6539e",
+    "mention_text": "Hélio Zylberstajn",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d8adbd69c74c194805a24323c38b7ec9fd935e0edeb5ee3dd8518a54819df263",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5f31086a50185de5d748e0c7320b1b3a4beb17930bdbfdf1598d5f2fbbb4bb4d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  }
+]

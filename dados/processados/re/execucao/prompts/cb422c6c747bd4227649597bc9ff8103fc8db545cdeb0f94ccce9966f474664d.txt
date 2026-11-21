@@ -1,0 +1,459 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: c6761fb9d441a3d51fe5e60a7d8a977a5915f8a3cfc17ce51ebd810190ab56d2
+
+TEXTO:
+Inovação e saúde passam a ser metas para o Google
+
+O mundo não seria um lugar mais feliz se 90% das pessoas que têm empregos pudessem ficar repousando e robôs cuidassem do trabalho? Por que a última casa que você comprou não custou apenas 5% do valor que você pagou? E existe qualquer motivo para que você e seus filhos não venham um dia a desfrutar de energia barata e ilimitada propiciada pela fusão nuclear, bem como de uma longevidade muito maior?
+São perguntas desse tipo que ocorrem ao co-fundador e presidente-executivo do Google, Larry Page, 41, que está reduzindo suas responsabilidades cotidianas para poder pensar grande. Uma reorganização recente transferiu a responsabilidade por boa parte das atividades atuais da empresa a um subordinado, e deixou tempo a ele para dedicar aos seus impulsos mais ambiciosos. A mensagem: a mais poderosa companhia de Internet do planeta está pronta para trocar parte do dinheiro que seu monopólio sobre as buscas propicia por uma fatia da bonança tecnológica do próximo século.
+Page diz que, se pensarmos sobre o mundo dentro de 100 anos, muitas possibilidades se terão aberto: "Provavelmente poderíamos resolver muitas das questões que enfrentamos como seres humanos".
+Já se passou uma década desde o primeiro ímpeto de idealismo que acompanhou a abertura de capital do Google, e a mensagem da empresa –"não seja mau", "faça do mundo um lugar melhor"– agora soa um tanto antiquada.
+O poder e riqueza do Google despertaram ressentimentos e reações hostis, especialmente na Europa, onde a empresa está sob investigação em função da maneira pela qual exerce seu poder monopolista sobre as buscas de Internet.
+Page, porém, não está recuando um centímetro dos princípios altruístas ou das ambições desmedidas que ele e seu co-fundador, Sergey Brin, expuseram em tempos aparentemente mais inocentes. "O bem social é nossa meta primária", ele diz. "Sempre tentamos dizer isso com o Google. Creio que não tenhamos obtido tanto sucesso quanto queríamos."
+Até mesmo o famosamente exagerado objetivo empresarial do Google, "organizar a informação do planeta e torná-la universalmente acessível e útil", não é amplo o suficiente para o que ele agora tem em mente. O objetivo: usar o muito dinheiro que a empresa obtém com a venda de publicidade vinculada a buscas para estabelecer posições em indústrias que florescerão no futuro, da biotecnologia à robótica.
+Quando pergunto se isso significa que o Google precisa mudar de objetivo empresarial, ele diz que "creio que sim, provavelmente". E qual seria o novo objetivo? "Ainda estamos tentando descobrir."
+Quando nos encontramos recentemente para uma entrevista sem pauta definida na sede de sua empresa no Vale do Silício, Page exibiu o estilo pessoal caracteristicamente vacilante que representa um contraste acentuado para com a autoconfiança decidida que a maior parte dos líderes empresariais ostenta. Sem dúvida ciente da responsabilidade adicional que administrar uma companhia com 55 mil funcionários e que está cada vez mais sob os holofotes acarreta, ele hoje escolhe suas palavras com muito mais cuidado do que fazia no passado. Mas não houve mudança aparente na ambição e expansividade de suas ideias –mesmo que, como pai de dois filhos pequenos, ele declare mais consciente, agora, de questões de longo prazo como a educação.
+Page se vê no comando de uma das mais poderosas companhias mundiais de tecnologia em um momento da história em que o afluxo de mudanças tecnológicas ameaça produzir imensos reordenamentos sociais e de negócios. Os objetivos do Google são mais amplos do que os da maioria das empresas –no entanto, ainda que a companhia continue a despejar dinheiro em novos empreendimentos, suas reservas de caixa continuam a se acumular, e agora excedem US$ 62 bilhões.
+"Estamos percorrendo território incógnito", ele diz. "Estamos tentando descobrir as coisas. Como usar todos esses recursos com impacto muito mais positivo sobre o mundo?" Para os investidores do Google, que recentemente demonstraram preocupação quanto às dimensões das imensas apostas da empresa em um futuro de longo prazo, esse pode ser apenas o começo.
+Na visão de Page, tudo se resume a ambição –uma mercadoria da qual o mundo simplesmente não tem oferta suficiente. Em meio a um de seus periódicos booms, o Vale do Silício, ainda o epicentro do mundo dos negócios tecnológicos, se tornou míope, ele diz. Embora argumentando que o modelo do vale não está fundamentalmente quebrado, ele concorda em que existe superaquecimento –ainda que a importância ou não desse fator seja assunto diferente.
+"Existe certamente muito capital e empolgação, e essas coisas tendem a acontecer em ciclos", ele diz. "Mas dentro de 100 anos provavelmente não vamos nos incomodar com isso."
+Boa parte do dinheiro atraído pelo setor de tecnologia é obtido pela promessa de lucros fáceis com o mais recente boom de serviços ao consumidor na Internet, diz ele. "Pode-se criar uma companhia de Internet com 10 pessoas e ter bilhões de usuários. Não é preciso muito capital e a companhia propicia muito dinheiro –muito, muito dinheiro–, por isso é natural que todo mundo se concentre nesse tipo de coisa".
+INVESTIR NA INOVAÇÃO
+Page estima que apenas cerca de 50 investidores estejam apoiando as verdadeiras tecnologias inovadoras, que têm o potencial de fazer diferença material para as vidas da maioria dos habitantes do planeta. Se existe algo que dificulta a realização dessas ideias, não é a escassez de dinheiro e nem mesmo a barreira de obstáculos tecnológicos insuperáveis. Quando progressos da espécie que ele tem em mente são objeto de esforços, o que os propele realmente "não são avanços técnicos fundamentais.
+O propulsor são as pessoas que trabalham com essas coisas, e as ambições que elas têm", ele diz. Não há instituições suficientes –especialmente governos– pensando de forma expansiva sobre essas questões: "Provavelmente o mundo como um todo sofre de escassez de investimento nesse tipo de projeto".
+Quando pergunto se uma empresa privada, e não governos, deveria estar emprestando sua força a alguns dos projetos científicos de longo prazo mais ambiciosos do planeta, ele responde que "bem, alguém precisa fazê-lo".
+É aí que a mente de engenheiro de Page entra em ação. Filho de um professor de ciência da computação, de acordo com pessoas que o conhecem, Page gosta especialmente de se enfronhar em questões técnicas profundas nas reuniões internas da empresa. Ele descreve, por exemplo, como se preocupa em adquirir informações sobre a maneira pela qual as centrais de processamento de dados do Google são operadoras, acompanhando a questão do custo da energia para a empresa, o que o levou a estudar o design de redes elétricas. Com o foco e aplicação corretos, acredita Page, não há coisa alguma que não possa ser melhorada e levada a operar com mais eficiência.
+Uma recente visita a uma startup que trabalha no segmento da fusão nuclear o fez refletir sobre a possibilidade de uma inovação revolucionária na geração de energia barata. Outra empresa iniciante o surpreendeu ao se provar capaz de "ler" a mente de uma pessoa que estava contemplando uma sequência de imagens. "Um grupo de pessoas realmente inteligentes e dedicadas, com US$ 50 milhões em verba, pode produzir grande progresso quanto a algumas dessas questões. Mas isso não vem acontecendo na escala necessária", ele disse.
+Algumas das grandes apostas do Google acontecem em áreas que ele descreve como "marginais" –coisas abertas a uma solução tecnológica mas que, por alguma razão, ainda não receberam atenção coordenada. Como exemplos, ele menciona carros autodirigidos e as doenças que afligem as pessoas mais velhas –esse último um campo em que sua mulher trabalhou como pesquisadora em um laboratório da Universidade Stanford. "Não era uma coisa de alta prioridade", diz ele. Por meio de uma nova divisão de biotecnologia chamada Calico, o Google agora planeja investir centenas de milhões de dólares nessa área.
+"Beneficiamo-nos do fato de que, assim que dizemos que estaremos em dada área, as pessoas passam a acreditar que aquilo é possível, porque contamos com os recursos necessários", ele diz. "O Google ajuda, dessa forma, não existem muitos mecanismos de financiamento como esse."
+ROBÔS NO MERCADO
+Mas ao contrário do que acontecia em seus entusiásticos dias iniciais, quando todas as iniciativas ousadas eram recebidas por um público encantado e disposto a exibir diante da tecnologia a mesma indulgência de um pai que elogia os desenhos de seu filho pequeno com lápis de cera, a corrida acelerada da mudança tecnológica agora começa a despertar medo.
+"Acredito que as pessoas vejam o desordenamento, mas não vejam de fato o lado positivo", diz Page. "Não veem a mudança como algo que pode alterar suas vidas. Creio que o problema vem sendo que as pessoas não sentem estar participando do processo."
+Otimista permanente no que tange à tecnologia, Page argumenta que tudo isso mudará. Melhoras rápidas na inteligência artificial, por exemplo, tornarão os computadores e robôs mais eficazes na maioria das tarefas. Dada a chance de largar seu trabalho, nove em cada 10 pessoas "não quereriam fazer o que estão fazendo hoje".
+Mas e quanto às pessoas que podem lamentar a perda de seus empregos? Quando a tecnologia torna empregos obsoletos, não faz sentido lamentar sua perda. "A ideia de que todo mundo deve trabalhar sem prazer para produzir algo de ineficiente e assim permitir que as pessoas conservem seus empregos –isso simplesmente não faz sentido para mim. Essa não pode ser a resposta correta".
+Ele percebe outra vantagem no efeito que a tecnologia terá sobre muitos preços de bens e serviços cotidianos. Uma imensa deflação está por vir. "Mesmo que os empregos das pessoas venham a passar por desordenamento, em curto prazo é provável que isso seja compensado pela queda no custo das coisas de que precisamos, o que creio ser realmente importante e algo que não está sendo discutido."
+Novas tecnologias tornarão as empresas não 10% mais eficientes, mas 10 vezes mais eficientes, diz Page. Desde que isso se traduza em preços mais baixos: "Creio que as coisas de que uma pessoa precisa para viver uma vida confortável podem ficar muito, muito, muito mais baratas".
+Uma queda forte nos preços das casas pode ser outra parte dessa equação. Mais do que à tecnologia, ele atribui esse efeito a mudanças de política pública necessárias para tornar terrenos mais facilmente disponíveis para construção. Em lugar de custar mais de US$ 1 milhão, não há motivo para que a casa média em Palo Alto, o coração do Vale do Silício, custe mais de US$ 50 mil, ele diz.
+Para muita gente, a ideia de uma reviravolta como essa em sua situação econômica pessoal pode parecer uma miragem inatingível. A perspectiva de que milhões de empregos se tornem obsoletos, de que o valor das casas despenque e de que os preços dos bens cotidianos entrem em uma espiral deflacionária parece uma receita para o nirvana. Mas em um sistema capitalista, ele sugere, a eliminação da ineficiência por meio da tecnologia tem de ser levada à sua conclusão lógica.
+"Não se pode impedir que essas coisas aconteçam simplesmente sonhando que não acontecerão", diz Page. "Teremos algumas capacidades espantosas na economia. Quando tivermos computadores capazes de realizar mais e mais tarefas, isso mudará a forma pela qual pensamos sobre o trabalho. Não há maneira de contornar essa questão. Não há como fingir que não existe."
+Quando o assunto é a política pública, Page, como muitos tecnocratas, rapidamente parece frustrado pela dificuldade de questões que não são suscetíveis ao rigor que ele emprega em suas investigações tecnológicas. "Creio que haja muita inquietação sobre essas coisas, e que precisemos revertê-la", ele diz, ainda que tenha poucas ideias concretas sobre como fazê-lo. "Como sociedade, é muito difícil fazer algo diferentemente, e não creio que isso seja bom."
+"Algumas das questões mais fundamentais sobre as quais as pessoas não estão pensando incluem a questão de como organizar as pessoas, como motivá-las", ele diz. "É um problema realmente interessante, como organizamos nossas democracias. Se você estudar o nível de satisfação nos Estados Unidos, ele não está subindo. Isso é bastante preocupante."
+Em referência ao que entende como fraca adesão da Europa ao empreendedorismo e à tecnologia, Page acrescenta que "acredito que muitos dos problemas da Europa sejam desse tipo".
+APOSTAS NO FUTURO
+Outro obstáculo fica mais perto de casa. Ao buscar os maiores prêmios que o setor de tecnologia tem a oferecer, o Google pode já estar esbarrando nos limites do que é possível para uma companhia agindo sozinha. Page relata um debate frequente que ele conta ter mantido com Steve Jobs, o chefe da Apple, morto em 2011. "Ele sempre me dizia que estamos fazendo coisas demais, e eu respondia que não estávamos fazendo o suficiente."
+O argumento dele para Jobs: "É insatisfatório termos todas essas pessoas, e todos esses bilhões de dólares que deveríamos estar investindo para tornar melhores as vidas das pessoas, e continuarmos a fazer as coisas como no passado, sem tentar nada novo –isso me parece criminoso".
+Mas o idealismo não o cega para o problema de sua ambição pessoal. "O que Steve disse era certo –você, Larry, só pode lidar com dado volume de coisas". Se Page e o Google desejam vencer, eles terão de derrotar os problemas que impediram o avanço de grandes companhias do passado, especialmente as do setor tecnológico, no qual poucos dos líderes de uma geração de tecnologia fizeram a transição a um papel importante na geração seguinte.
+"As maiores companhias estão todas a uma ordem de magnitude do mesmo tamanho, certamente em termos de capitalização de mercado", disse Page, que parece ter um senso palpável das dificuldades contra as quais sua companhia já se debate. "É fácil dizer que vamos fazer todas essas grandes coisas, mas não existe exemplo de uma grande empresa que as tenha feito."
+Seu raciocínio sobre como romper essa barreira invisível parece estar evoluindo recentemente. O Google X, laboratório interno criado por Brin, representou uma primeira tentativa de apoiar grandes ideias, com projetos como o Google Glass e o carro autodirigível. A despeito de Brin ter se afastado do negócio principal do Google, Page ainda os descreve como aliados muito próximos. "Passamos muito tempo juntos. Há muito poucas pessoas que compartilham dessa experiência", ele diz. Sobre a constante pressão de Brin por apostas mais e mais fortes, ele acrescenta que "ele está sempre na ponta mais extrema, o que é importante".
+Agora, depois do Google X, Page está tentando estabelecer unidades de negócios separadas com lideranças semi-independentes encarregadas de criar novos negócios de grande porte sob a égide do Google. Além da Calico, o Google revelou nos últimos que elas incluirão a Nest, que fornecerá produtos para a "casa inteligente", e uma nova unidade abarcando os investimentos do grupo em acesso à Internet e tecnologia. O Google também ganhou corpo nos dois últimos anos e se tornou o maior fundo de capital para empreendimentos no Vale do Silício.
+Não existe modelo para o que uma companhia como o Google deseja se tornar, diz Page. Mas, se existe uma pessoa que representa muitas das qualidades que ele acredita necessárias para a tarefa que o aguarda, é o famoso investidor Warren Buffett.
+Em uma declaração que em nada lembra o jovem pioneiro da tecnologia que um dia falou sobre implantes cerebrais que responderiam perguntas com o poder do pensamento, ele disse que "uma coisa que estamos fazendo é fornecer capital paciente, de longo prazo".
+Ele está em uma idade na qual ainda pode pensar em longo prazo. Mas dada uma ambição que desconhece limites, a paciência talvez venha a faltar.
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ac0109f2b31b2c3e0962a0096d9cb80eb6ce199fc6c1e4fc8ee1c1444dfd568d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e0f3f5b7ce3ba7f85efca4b63534b0073173a1fc85997f54ed737f15cf6fd55e",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c076a03018fd1a7c059693a58cea7ce36e72a1dc2eb26484427111d1b673fd0f",
+    "mention_text": "Larry Page",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ee07e612bed1201e200ccf89d9ab0eb8834e1e008ab6f6fd4c7dd9c39ea8e19",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29d5b7f1cf7f9c186bca91219fe895740ba5582e9cedcf86e11fb4c93fe38da3",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5054f475d99d41bf67ce9df9bcdc49cefbd86573c86bb3d85a7436092df71525",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3e41fa3a1b1ee3195913bb4c8514c132c83e25269a6a2c06e79740b3bcd050c8",
+    "mention_text": "Sergey Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e77c442ceca1a7d04fbbf474ae20df3cb7ed182d86a543ba59f571d06dff19c2",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d18fbd13f15bc79ffaf5fd0d7c66f11628b3f0db9467211be42cc18ac0b8706",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f8ade1f7d4ff5e095835bd7055bfc4c43b398419cfcb9959a02ffea50973d6c6",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7e0240c51a6309b4a65c56fa9e393f1a8582cdda0ffcc62cb478b4e64ea3b40a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "70978fbd0e1edfcf1c29c369aaab4010d2957259db698e126b1a522f9aeed72d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eab5b09582038bec756b6a9aaceca31f226c8c35bea2a28c361f04199ccf1c3c",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8451dc6f6f47a153b5f9531b64c4cb06d24824482f3d948d44c0030aa6938c9d",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa0ab25f4fab45daa4de0d322eed473d14ff68a08a403b029b158328d487edaf",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4f606b671e7e6353d5347fd7062bf0e9c4a9360810bb00fdccc4304d62137ead",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c2a61cb1827d878d8e36a7e3350d36766c164d265656de3b3fb9562e17cd5088",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "213ea305954e3660567e8ee8c39a669da6275738a7981619fc0616a4af63fc0b",
+    "mention_text": "Calico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cf4eba8c47cc77d5850becc3a659d8b916326442eee9c24f503dee78423c81c0",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cd10e1c72add780839c97738d403457ed1ed8a6895c8fcd81ccfc31ade483bad",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de910a048632fa029306a6d04a8bffdfee8aa5bced6d37129dc175786e2f46d2",
+    "mention_text": "Palo Alto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e443e6125d1a8eaa24efb2a5f1dcc0a1ce27a485644f69b6a12f11b9786d5c4a",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "985f5e058faa284734ed33c85cd9d9c346bba2a285e77d9b0940c65c9908c340",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "047a57dea9f9d20b99c9a3e4530d5b191d54114d46afeae95343e52c8f47bddd",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd55433dc698c703d3b42e0920ca8dcebd41829cffe84e20d5f7c49d717b261f",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "86f2287ad48635444612e942e18264ca22eea478f2ae1b35d7cf1d93968ae396",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "198d81d07ba333f1fff52d4cf174b9cf7e06e7b747b92c76b24b065b60a6c741",
+    "mention_text": "Steve Jobs",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "66f4ef98ec2af5380b1034c96b588db8721fb0df3e4704c659faba74a8768d8c",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2bfb12eb406ff16938ebeaed89bb23997e8ccf006af5f0876d67f514a36304e0",
+    "mention_text": "Steve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b3ec4c6566da1ff49d5a96f2cc282c2c853accd31696a8faee4171e6b772ad3b",
+    "mention_text": "Larry",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8f4ba3b52d467011c6877e1239e9431f9fec4cfde4622cbc8b6c1ed403b43b88",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eee91d7a3c33db17459da1c3a503a5d9d3a01c15f4e852ce7fdb224de88f0729",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c4b892ffc89169f9fc76028220d47451a3d5eddbbc936422c6398ba855616690",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cac4779b7d0824a594352d885b10971f70c54fab753b3a06c8ec556a104c3aec",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c7dd72320b43d7fc3438b48e14f02925e01d34d997850e5d1f01acbad78f473",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2877c3f06fb3c35aaa42eceed2605d318679badcbce9b58e1b2ab2398854845b",
+    "mention_text": "Brin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5038ea6532cc1d4b5f641136dedc2e72a074024337bfa75099e068937fcc2689",
+    "mention_text": "Google X",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ebad0921054d1223bda8dffad190c99b32b20e8a5f9fa41db361c6925eea454",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbaec25c72a48dc094cfe899bf409f727a9d504a7b751715b5e120c1d311bf61",
+    "mention_text": "Calico",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "98a4c96935cd83361d27bd53e63f2049d16235d136aff5ea8b85c450fb98d127",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "881c1b3a63a94d8c88c863f45235202aaab735521241e03f81e8d4916d979171",
+    "mention_text": "Nest",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa0f7f8104e2164bfae8976b2c78988dd6b7ee0c89a14175b89cae73068a8f6f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "84a86763b582d1037214b3b16d5ec1d6175e2fe1e74eb6046a9f9c61ebc92946",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a0b4c88324d3301644b8493d830d9bd1574c84506ffc593090c315a876540356",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4c2a8e3a86ee2b7bd5d9cb4406f25b08c4429839f01687bfbefd088a08ef7d79",
+    "mention_text": "Warren Buffett",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "97d21d2423f490781edbae49aed447e2239bebf1506e9d0bd0c1e693087b62ed",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

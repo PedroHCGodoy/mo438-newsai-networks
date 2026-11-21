@@ -1,0 +1,2314 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: e70845a40e378a69626b0740b92d3200451d4329e93f4fe7fee4ffb200ab1c03
+
+TEXTO:
+Campinas -
+
+Cinema - Sinopses
+ESPECIAL
+EUA X ALEMANHA
+Campinas (Kinoplex Campinas 2)
+BRASIL X CHILE
+Campinas (Campinas Iguatemi Cinemark 3; Box Cinépolis 1; Kinoplex Campinas 2), São José dos Campos (Colinas Shopping Cinemark 1)
+COLÔMBIA X URUGUAI
+Campinas (Box Cinépolis 1; Kinoplex Campinas 2)
+HOLANDA X MÉXICO
+Campinas (Campinas Iguatemi Cinemark 3; Box Cinépolis 1; Kinoplex Campinas 2), São José dos Campos (Colinas Shopping Cinemark 1)
+COSTA RICA X GRÉCIA
+Campinas (Box Cinépolis 1; Kinoplex Campinas 2)
+1º DO GRUPO E X NIGÉRIA
+Campinas (Box Cinépolis 1; Kinoplex Campinas 2)
+1º DO GRUPO G X 2º DO GRUPO H
+Campinas (Campinas Iguatemi Cinemark 3; Box Cinépolis 1; Kinoplex Campinas 2), São José dos Campos (Colinas Shopping Cinemark 1)
+ARGENTINA X 2º DO GRUPO E
+Campinas (Campinas Iguatemi Cinemark 3; Box Cinépolis 1; Kinoplex Campinas 2), São José dos Campos (Colinas Shopping Cinemark 1)
+1º DO GRUPO H X 2º DO GRUPO G
+Campinas (Box Cinépolis 1; Kinoplex Campinas 2)
+BBC EARTH - O CICLO DA VIDA
+Livre.
+Campinas (Campinas Iguatemi Cinemark 3 e 5), São José dos Campos (Colinas Shopping Cinemark 4)
+ROYAL OPERA HOUSE: O CONTO DO INVERNO
+Livre.
+Campinas (Campinas Iguatemi Cinemark 7), São José dos Campos (Colinas Shopping Cinemark 6)
+MOSTRA - NELSON PEREIRA DOS SANTOS, O CINEMA DE UM PAÍS
+AZYLLO MUITO LOUCO
+Não recomendado para menores de 12 anos.
+Piracicaba (Cineclube Sesc Piracicaba)
+BOCA DE OURO
+Não recomendado para menores de 14 anos.
+Piracicaba (Cineclube Sesc Piracicaba)
+A LUZ DO TOM
+Brasil, 2002. Direção: Nelson Pereira dos Santos. 85 min. Livre.
+O documentário apresenta um retrato afetivo do músico Tom Jobim por meio de três narradoras: Helena, a irmã; Thereza, primeira grande companheira; e Ana, casada com Tom durante os últimos anos da vida do compositor. Também será exibido "Nelson Cavaquinho" (em DVD).
+Piracicaba (Cineclube Sesc Piracicaba)
+A MÚSICA SEGUNDO TOM JOBIM
+Brasil, 2011. Direção: Nelson Pereira dos Santos e Dora Jobim. 90 min. Livre.
+Documentário completamente musical, com performances de músicos como Frank Sinatra e Elis Regina, interpretando canções de Tom Jobim, um dos criadores da bossa nova.
+Piracicaba (Cineclube Sesc Piracicaba)
+TENDA DOS MILAGRES
+Brasil, 1977. Direção: Nelson Pereira dos Santos. Com: Hugo Carvana, Sônia Dias e Anecy Rocha. 148 min. Não recomendado para menores de 14 anos.
+Pesquisador norte-americano desembarca em Salvador e desperta a atenção da imprensa para um antropólogo e sociólogo negro, já morto e esquecido pela história oficial.
+Piracicaba (Cineclube Sesc Piracicaba)
+A TERCEIRA MARGEM DO RIO
+Não recomendado para menores de 14 anos.
+Piracicaba (Cineclube Sesc Piracicaba)
+PRÉ-ESTREIAS
+TRANSFORMERS - A ERA DA EXTINÇÃO
+Transformers - Age Of Extinction. EUA/China, 2014. Direção: Michael Bay. Com: Mark Wahlberg, Nicola Peltz e Jack Reynor. 165 min. Não recomendado para menores de 12 anos.
+Anos após o confronto entre Autobots e Decepticons em Chicago, os gigantescos robôs alienígenas desaparecem. Ao encontrar um caminhão abandonado, um homem descobre que o veículo é Optimus Prime, o líder sumido dos Autobots.
+Campinas (Box Cinépolis Campinas 1 e 2; Campinas Iguatemi Cinemark 3 e 4; Cine Unimart 1; Cineflix Galleria 5; Kinoplex Campinas 2), São José dos Campos (Center Vale Cinemark 6; Colinas Shopping Cinemark 8; Kinoplex Vale Sul 1), Taubaté (Via Vale Taubaté Cinemark 3; Taubaté Shopping 4)
+ESTREIAS
+AMAZÔNIA
+França/Brasil, 2013. Direção: Thierry Ragobert. 86 min. Livre.
+Após um acidente de avião, um macaco criado em cativeiro fica perdido na floresta amazônica, tendo que encontrar um meio de sobreviver.
+Campinas (Box Cinépolis Campinas 6; Campinas Iguatemi Cinemark 4), São José dos Campos (Center Vale Cinemark 5; Colinas Shopping Cinemark 5), Taubaté (Via Vale Taubaté Cinemark 6)
+UMA JUÍZA SEM JUÍZO
+9 Mois Ferme. França, 2012. Direção: Albert Dupontel. Com: Sandrine Kiberlain, Albert Dupontel e Nicolas Marié. 82 min. Não recomendado para menores de 14 anos.
+Nesta comédia, uma juíza se vê grávida e, ao investigar quem é o pai, descobre que ele é um violento agressor.
+Campinas (Topázio Shopping Parque Prado 4)
+MUPPETS 2 - PROCURADOS E AMADOS
+Muppets Most Wanted. EUA, 2014. Direção: James Bobin. Com: Ricky Gervais, Tina Fey e Ty Burrell. 108 min. Livre.
+A sequência de "Os Muppets" tem Kermit, Miss Piggy, Gonzo e amigos negociando uma turnê mundial com um novo empresário. Um sapo malvado, entretanto, sequestra Kermit e se infiltra no grupo.
+Campinas (Box Cinépolis Campinas 9; Kinoplex Campinas 6; Cine Unimart 1; Topázio Cinemas Shopping Parque Prado 3), Indaiatuba (Topázio Polo Shopping 1)
+VIOLETTA - O SHOW
+Violetta - La Emoción del Concierto. Argentina, 2014. Direção: Matthew Amos. 78 min. Livre.
+O documentário acompanha a turnê mundial do elenco da série "Violetta", que partiu de Buenos Aires para países da América Latina e da Europa.
+Campinas (Campinas Iguatemi Cinemark 1; Cineflix Galleria 5; Kinoplex Campinas 2), Indaiatuba (Topázio Polo Shopping 2)
+EM CARTAZ
+13º DISTRITO *
+Brick Mansions. França/Canadá, 2013. Direção: Camille Delamarre. Com: Paul Walker, David Belle e RZA. 91 min. Não recomendado para menores de 14 anos.
+Quando Detroit (EUA) é ameaçada por uma bomba, um policial é enviado, junto com um prisioneiro, para deter os traficantes que estão com o explosivo.
+Campinas (Box Cinépolis Campinas 6), São José dos Campos (Center Vale Cinemark 5), Taubaté (Via Vale Taubaté Cinemark 3)
+AMANTE A DOMICÍLIO ***
+Fading Gigolo. EUA, 2013. Direção: John Turturro. Com: John Turturro, Woody Allen e Sharon Stone. 90 min. Não recomendado para menores de 14 anos.
+Ao saber o quanto poderia ganhar como cafetão, Murray, um senhor de idade, tenta convencer seu amigo Fioravante a entrar no ramo da prostituição.
+Indaiatuba (Topázio Shopping Jaraguá 2)
+ANOS FELIZES ***
+Anni Felici. Itália/França, 2013. Direção: Daniele Luchetti. Com: Kim Rossi Stuart, Micaela Ramazzotti e Martina Gedeck. 106 min. Não recomendado para menores de 14 anos.
+Em Roma, nos anos 1970, dois irmãos observam os problemas no relacionamento dos pais. O pai é um artista que sente atração pelas modelos, enquanto a mulher também quer ter relações extraconjugais.
+São José dos Campos (Colinas Shopping Cinemark 8)
+ANTES DO INVERNO **
+Avant l'Hiver. França, 2012. Direção: Philippe Claudel. Com: Daniel Auteuil, Kristin Scott Thomas e Leïla Bekhti. 102 min. Não recomendado para menores de 14 anos.
+Um neurocirurgião casado de 60 anos começa a receber buquês de rosa quando uma jovem não para de cruzar o seu caminho.
+Campinas (Topázio Shopping Parque Prado 4)
+AVANTI POPOLO ****
+Brasil, 2012. Direção: Michael Wahrmann. Com: André Gatti, Carlos Reichenbach e Eduardo Valente. 72 min. Não recomendado para menores de 12 anos.
+Pai e filho voltam a morar juntos. O reencontro dos dois revela uma relação difícil e distante, em razão do desaparecimento de outro filho na época da ditadura militar.
+Campinas (Campinas Iguatemi Cinemark 4)
+COMO TREINAR O SEU DRAGÃO 2
+How to Train Your Dragon 2. EUA, 2014. Direção: Dean DeBlois. 105 min. Livre.
+Na sequência da animação, os dragões convivem pacificamente com os humanos, mas desta vez todos precisam se juntar para lutar contra Drago, vilão que deseja controlar os animais.
+Campinas (Box Cinépolis Campinas 1, 3, 5 e 8; Campinas Iguatemi Cinemark 2, 6 e 7; Cine Unimart 3 e 6; Cineflix Galleria 1 e 2; Cinesercla Spazio Ouro Verde Campinas 1 e 3; Kinoplex Campinas 7, 14 e 15; Topázio Shopping Parque Prado 2), Indaiatuba (Topázio Polo Shopping 5; Topázio Shopping Jaraguá 1 e 2), Ubatuba (Cine Porto), São José dos Campos (Center Vale Cinemark 2 e 6; Colinas Shopping Cinemark 4, 6 e 8; Kinoplex Vale Sul 3 e 4), Taubaté (Taubaté Shopping 1 e 3; Via Vale Taubaté Cinemark 1 e 3)
+A CULPA É DAS ESTRELAS **
+The Fault in Our Stars. EUA, 2014. Direção: Josh Boone. Com: Shailene Woodley, Ansel Elgort e Nat Wolff. 125 min. Não recomendado para menores de 10 anos.
+Hazel e Gus são adolescentes que se conhecem em um grupo de apoio a pacientes com câncer. Eles cvvompartilham o desdém por tudo o que é convencional.
+Campinas (Box Cinépolis Campinas 4 e 10; Campinas Iguatemi Cinemark 3 e 5; Cine Unimart 2; Cineflix Galleria 4; Cinesercla Spazio Ouro Verde Campinas 3; Kinoplex Campinas 1 e 12; Topázio Shopping Parque Prado 1 e 2), Indaiatuba (Topázio Polo Shopping 3; Topázio Shopping Jaraguá 3), Ubatuba (Cine Porto), São José dos Campos (Center Vale Cinemark 1; Colinas Shopping Cinemark 3; Kinoplex Vale Sul 6), Taubaté (Taubaté Shopping 2; Via Vale Taubaté Cinemark 2 e 5)
+O HOMEM DUPLICADO
+Enemy. Canadá/Espanha, 2013. Direção: Denis Villeneuve. Com: Jake Gyllenhaal, Mélanie Laurent e Sarah Gadon. 90 min. Não recomendado para menores de 14 anos.
+Um professor de história descobre acidentalmente a existência de um ator que é seu sósia. Ele, então, resolve ir atrás de seu duplo, envolvendo sua namorada e a mulher dele.
+Campinas (Cineflix Galleria 1)
+OS HOMENS SÃO DE MARTE... E É PRA LÁ QUE EU VOU *
+Brasil, 2014. Direção: Marcus Baldini. Com: Mônica Martelli, Paulo Gustavo e Daniele Valente. 108 min. Não recomendado para menores de 14 anos.
+Fernanda tem dificuldade de encontrar um amor. Ela se envolve com diferentes tipos de homens e, a cada tentativa, acredita ter encontrado o amor da sua vida.
+Campinas (Campinas Iguatemi Cinemark 8; Cine Unimart 5; Kinoplex Campinas 4), Indaiatuba (Topázio Shopping Jaraguá 4), São José dos Campos (Center Vale Cinemark 2; Colinas Shopping Cinemark 5; Kinoplex Vale Sul 2), Taubaté (Via Vale Taubaté Cinemark 6)
+MALÉVOLA **
+Maleficent. EUA, 2014. Direção: Robert Stromberg. Com: Angelina Jolie, Elle Fanning e Sharlto Copley. 97 min. Não recomendado para menores de 10 anos.
+Malévola é protetora do reino das fadas. Após sofrer por culpa de um ambicioso humano que quer ser rei, amaldiçoa a princesa recém-nascida. Releitura de "A Bela Adormecida".
+Campinas (Box Cinépolis Campinas 2 e 6; Campinas Iguatemi Cinemark 1; Cine Unimart 4; Cineflix Galleria 1 e 5; Cinesercla Spazio Ouro Verde Campinas 4; Kinoplex Campinas 8 e 13; Topázio Shopping Parque Prado 1), Indaiatuba (Topázio Polo Shopping 4; Topázio Shopping Jaraguá 4), São José dos Campos (Center Vale Cinemark 4; Colinas Shopping Cinemark 2 e 7; Kinoplex Vale Sul 1), Taubaté (Taubaté Shopping 1 e 4; Via Vale Taubaté Cinemark 1)
+NO LIMITE DO AMANHÃ **
+Edge of Tomorrow. EUA/Austrália, 2014. Direção: Doug Liman. Com: Tom Cruise, Emily Blunt e Bill Paxton. 113 min. Não recomendado para menores de 14 anos.
+Em um futuro próximo, um grupo alienígena atinge a Terra com um implacável ataque. O major William Cage é designado para uma missão suicida. Morto em alguns minutos, Cage agora se vê inexplicavelmente num túnel do tempo que o força a viver o mesmo combate brutal diversas vezes.
+Campinas (Kinoplex Campinas 3), São José dos Campos (Kinoplex Vale Sul 5)
+UM PLANO BRILHANTE
+Love Punch. França, 2013. Direção: Joel Hopkins. Com: Emma Thompson, Pierce Brosnan e Timothy Spall. 94 min. Não recomendado para menores de 12 anos.
+Um casal divorciado arma um plano para recuperar o dinheiro de sua aposentadoria que foi roubado por um empresário.
+Campinas (Kinoplex Campinas 5), Indaiatuba (Topázio Shopping Jaraguá 1), São José dos Campos (Colinas Shopping Cinemark 4)
+TRANSCENDENCE - A REVOLUÇÃO *
+Transcendence. EUA/Reino Unido, 2014. Direção: Wally Pfis Com: Johnny Depp, Rebecca Hall e Morgan Freeman. 88 min. Não recomendado para menores de 12 anos.
+Um famoso pesquisador sobre inteligência artificial usa seu último experimento nele mesmo, o que gera inúmeras consequências para a humanidade.
+Campinas (Box Cinépolis Campinas 8; Campinas Iguatemi Cinemark 7; Cineflix Galleria 3; Kinoplex Campinas 5), Indaiatuba (Topázio Polo Shopping 1), São José dos Campos (Colinas Shopping Cinemark 1), Taubaté (Via Vale Taubaté Cinemark 5)
+VIZINHOS ***
+Neighbors. EUA, 2014. Direção: Nicholas Stoller. Com: Seth Rogen, Rose Byrne e Zac Efron. 97 min. Não recomendado para menores de 16 anos.
+Um casal acaba de se mudar para uma casa nova com a filha recém-nascida, mas quem vai morar na residência ao lado é uma república estudantil festeira e barulhenta.
+Campinas (Box Cinépolis Campinas 7; Campinas Iguatemi Cinemark 2 e 8; Cine Unimart 1; Cinesercla Spazio Ouro Verde Campinas 2; Kinoplex Campinas 2), Indaiatuba (Topázio Polo Shopping 1, 2 e 3), São José dos Campos (Center Vale Cinemark 3), Taubaté (Via Vale Taubaté Cinemark 4)
+X-MEN - DIAS DE UM FUTURO ESQUECIDO
+X-Men - Days of Future Past. EUA, 2014. Direção: Bryan Singer. Com: Hugh Jackman, James McAvoy e Michael Fassbender. 132 min. Não recomendado para menores de 12 anos.
+No futuro, os mutantes são caçados impiedosamente pelos gigantescos robôs Sentinelas. Para evitar a total aniquilação, Wolverine tem a sua consciência enviada ao seu próprio corpo nos anos 1970. No passado, ele procura os jovens e inimigos Xavier e Magneto para impedir o futuro trágico aos mutantes.
+Campinas (Box Cinépolis Campinas 5 e 9; Campinas Iguatemi Cinemark 4; Cine Unimart 5; Cinesercla Spazio Ouro Verde Campinas 4; Kinoplex Campinas 11), Indaiatuba (Topázio Polo Shopping 1), São José dos Campos (Center Vale Cinemark 6; Colinas Shopping Cinemark 6; Kinoplex Vale Sul 5), Taubaté (Taubaté Shopping 4)
+REESTREIA
+UM CORPO QUE CAI ****
+Vertigo. EUA, 1958. Direção: Alfred Hitchcock. Com: James Stewart, Kim Novak e Barbara Bel Geddes. 129 min. Não recomendado para menores de 14 anos.
+Um detetive aposentado que sofre de um terrível medo de altura é encarregado de vigiar a mulher de seu amigo, com possíveis tendências suicidas, até que algo estranho acontece na missão.
+Indaiatuba (Topázio Shopping Jaraguá 1)
+GREASE - NOS TEMPOS DA BRILHANTINA
+Grease. EUA, 1978. Direção: Randal Kleiser. Com: John Travolta, Olivia Newton-John e Stockard Channing. 110 min. Livre.
+Nos anos 1950, um casal de estudantes apaixonados se separam já que ela irá para a Austrália. Quando os planos mudam e ela fica nos EUA, ele a esnoba, mesmo ainda amando a garota.
+Campinas (Campinas Iguatemi Cinemark 2)
+UMA RELAÇÃO DELICADA **
+Abus de Faiblesse. França, 2012. Direção: Catherine Breillat. Com: Isabelle Huppert, Kool Shen e Laurence Ursino. 104 min. Não recomendado para menores de 12 anos.
+Após um derrame, uma cineasta precisa enfrentar as limitações físicas do corpo e, ao mesmo tempo, a inevitável solidão da sua vida. Quando ela recebe em sua casa o artista Vilko, começa uma inesperada amizade entre eles.
+Campinas (Topázio Cinemas Shopping Parque Prado 3)
+AVALIAÇÃO DOS FILMES:
+**** ótimo
+*** bom
+** regular
+* ruim
+o péssimo
+s sem avaliação
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "189436e18296cb029b7155c1ed7a44b753238c14b0cfef8598db8be48c6dc6b2",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "327973cf678807ae22eb9f97d50ef1801480c49096ffec64e002148849afe63c",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f850f3877ee33a65b19453ffbee5d9ad56a096c860ba509a2d38452f40b7932d",
+    "mention_text": "ALEMANHA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46010c2124181cbe258e5d3bd35ff3d8b1413cf61a34ab643001cf05680d3dfd",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f17584821d085ab1d47b63bcf664a71bcd877c9e8178524dced59d533f45fe2a",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c65746eefa58880dc4cc80cb1b1919b0ade5e33c6e0db4151547972f9d626bc",
+    "mention_text": "BRASIL",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d7419b80b60a317c0797cd959ea91d32f1a38d3a2010855344ed08fec4167553",
+    "mention_text": "CHILE",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "93e703993548d4f45671e2c2f2358d262e4c3c979dc0797e554b131292f6a491",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4efee8ed7728fada2dd6336b1cad677ffae0565dbf0edd36310cc6b106ad02bc",
+    "mention_text": "Campinas Iguatemi Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a2f21feb7144f782edfba01c609c46705b7b4b4d2c87ab9b106ed7a378b46fef",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "15e58f63dcebfb4d6e7cb0afb8ce37b05cd1df2a992d714fb996e5289cd8aecd",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8f9b14bb2414c8903c26dd783693ee0e9b8cbe1af5cd34aefeddcf5a8f1f3ce",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bee743ee11d66cfe433d5dd94b8cb188b369ce7f68cb69c690cc2f70a7455530",
+    "mention_text": "Colinas Shopping Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e215b9dbb308a7d0d1e9519a8e5e199a4fb3f82198f0167b10f1f544265ec869",
+    "mention_text": "COLÔMBIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bbf7d4465bc22da2c0407cf866a719fbc33914d7098cef85c3b77e5679dcbd11",
+    "mention_text": "URUGUAI",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "81b769f3e3411addd6564d0d08828ad60e562ad5377edf98c86226e08038f549",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f11d49df54dc0c82b4076f59def70071a20923a4f49cbb4714da5960ce87bfe7",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d892649aacca10a3941a18dece7bc618f9c0fa552600938a2e036de987dc782",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a04177bd4cc9f17cae21dc1f5d05e67cd93c208bf116df578d8fe81a80c5ede2",
+    "mention_text": "HOLANDA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "64ccd7a2516b067c800609884e524739e332670519b91a2ac532f29525c07f5f",
+    "mention_text": "MÉXICO",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fa416c3404646b66192800973efc86816101afe31d6cc31482ba107cd991ee64",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "98934870438e65e552889f916a4a43a3a72c3be11798c8f9b1ef760f54be5f78",
+    "mention_text": "Campinas Iguatemi Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3b1f565749009b1305c347cb0fe68a72d22b630dda6522a725779236a2af4a36",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f9a3bf644d86a762c0e58e417e6170df68471e976c8dae30dc11429d39838e7c",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4985ebc7ea7e029e800b961e861c6048d1f04a7e348d80fce34a8e836fe49e0b",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56d1ca4e4a7e1e8d811fff2d093de5b87b2d606d44dd87d392728683365886e5",
+    "mention_text": "Colinas Shopping Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "52a7c17eff9d9651e4465db1759e536e84850cda57367918f3a2feed2382e9ba",
+    "mention_text": "COSTA RICA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1802de4c3f9d0bf2472eaf4530326c4c7b2998954140482bd0aa62edd3aafd8c",
+    "mention_text": "GRÉCIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "69c91307f91c46712372e368316cbe09e003ff0d3966808134d118e7a3e59865",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5dbc5765a6b1f9f5ea69a1b411397e288f8586b6bb521c621b58d4b2bc2ff888",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5b8b67ffe6a16c3cad4316dd97f27c251a84fb79c4210a5798bf3bdc0ab7ab88",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "80ddc40bd306512bd15632d08a108fc305a372e8836e64c255a90fb8241d8725",
+    "mention_text": "NIGÉRIA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ab59f0f552bfafaa7f2d3ca34c1c336ae536c772d6d5ecea183aeaa80d07dab4",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8d9b9cf5e3f9d9c350d944551017a79e82cd8f7abb92ec6d1294397943d16b0d",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1b0585191fc0e3b460b76c0b167efcc464ecdd9f5d69d47ef175061978e7921",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "08e7dfdd248ec2434c67f93bedf7a37039bf1350feea26e4b5da17d6f569f129",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "921fa7aa31fce217427f1ec02590e11a53348bd3790d820c5f7cd16e18ae3921",
+    "mention_text": "Campinas Iguatemi Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "55cf44bd6cd1b261fd38c2cfaeb8b46ab1a94c5937ae0973bab47a968fa76ab8",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1c48a0ba4503a22d5d36695f0eeda47449dc16517f4219e4ee3d7ba6e981dd56",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cdb31c7878e8754d033567f87806f35ae4e3c37cd7d7dec8172176af9547215e",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "95b35a76825a74d4f9caaafbf3093814917edcb12f4043e4476029d74bd5a4b8",
+    "mention_text": "Colinas Shopping Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7134958f4391ff1d11c1bb9a375b79a803359e995b5e6c97a683db2e58246e3b",
+    "mention_text": "ARGENTINA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "22973c86dc409bd1350f6d1a85983e7664a6dd504990c7dffd6dab7ad17a588a",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "10facbf5d849309382dde87247b2f28fc84d5dad1c5ff2da144c8f190af088fb",
+    "mention_text": "Campinas Iguatemi Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfce272b96f37de3f308b727e6bf7e99e59253e6b88d325a979268b9fca67c3d",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fd88ba48af0449c3ed7c5e09f78f40902e573bf1467db4b9adac6e29e24317f2",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "962537e35d779a3a60ccb2efaf2264bc6d85913eb71ad84333003448bcdfe3f6",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8c9f9940fa3a12c386b8df1ccccbc21ae1b2dcd3b2ad89e48b2834caaccec3f8",
+    "mention_text": "Colinas Shopping Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e4be6df24cbe898f1500dcc7fed3b23e0d13a136341cee56a431f72538a8c59d",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8dfa8e9ecd816ac90293633f4ff7c0a45a080e69aff8b777bb0c87f57dbc2eb4",
+    "mention_text": "Box Cinépolis 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2f0cc7a772b8bcf0a929ee24b9837f92fc224e52efb3d9e67ca2ba3cb2566b34",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "54aec474f4867388f6a4e885d2c45ab33394ee96d8a764e2da893b54273df637",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d14fd2f0ccbde0256fb815305a556de4d59ecf7bd1f6f27fa93f516151425b3d",
+    "mention_text": "Campinas Iguatemi Cinemark 3 e 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6eb3adaf591a3c0a3b34b296e4455a850381852cc6325781ef356e93824172f0",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6168709e619ee134016facbfe65476a038a0ed8800f74da0a6eb065ef680ec5f",
+    "mention_text": "Colinas Shopping Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "31e6b52fa99da9008e202fa7c1195825d842ee2117f290637ace999ebaf793ab",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a719965d5e013939ff23c47ea1824f63a843d36f8dc05f339a54a45f117f4c57",
+    "mention_text": "Campinas Iguatemi Cinemark 7",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "05c2c7fd3ce377f151ed94399f4c25431961dd2cb82a2377b8fba2482ff46e3a",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eab1c5a8d9301a0775dcb5239cc96a1c0d110bc1efb5d1292cc50dc7d1d3d8bb",
+    "mention_text": "Colinas Shopping Cinemark 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e58f99a558bbc3140223378074e60cfabaeb33ccff7bed4c6986c1d971b69a94",
+    "mention_text": "NELSON PEREIRA DOS SANTOS",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "59477c7f0964ef138c93316be975b6da7e075283c63cb2ebc0fcda18dc67792e",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6836924dce98e39b52e8d077e14de48a4b3952c3a6999df1d630f42862dd0473",
+    "mention_text": "Cineclube Sesc Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cff622132584f64d4395bb0b956ecd097d2dd46bbad9390f6f7991e07ecc6c9",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "262e67baebfad1fed68e6893558743a5705d12ba6c88d91a5676123630160b36",
+    "mention_text": "Cineclube Sesc Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "993df66a974267b018767522c2aa0c7fe0892b1fe1a285c8d126281edd08575c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "57fe63721640b591cbe596ebcce29370348c363d72f1122ddf6378e6ccafd2d3",
+    "mention_text": "Nelson Pereira dos Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d9ceca04b420ef3328b34c404b990092bdd9f16db56c78404ecfebb73f8014e7",
+    "mention_text": "Tom Jobim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ba233b4cf3956a5cf7244d40743af50abcc079ba691eb5fa1499d7e5304eb7e",
+    "mention_text": "Helena",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "586c34e152daa367b4ed55f52ee31851345b6f6a2999ee17ac5b937b8d6eacf1",
+    "mention_text": "Thereza",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "873b6f517bb1cdc272f3904345b4e4cce1c46082ddf87f2cecb192352476c240",
+    "mention_text": "Ana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bd03fb310449a4db7aa00729ddcae719e9e8e8341fe216f54e586857ff456379",
+    "mention_text": "Tom",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7d59448e8acf379b7d4326f59be96cdda762fb55f2cd986d590677acdd1f6e61",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "624bece978a2f525c6c12331ab990b7bb0cdc7a37be4572ce62dae9a07e55cf8",
+    "mention_text": "Cineclube Sesc Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6328f8c51dbf7eee94ac21cb7de2c9915156d7bf6eba34d3838a417a0d7cbb6d",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87d3fe4bbae95341dd2c428bbf06bf520d902c88eea1537ceab224f6d2e0ce34",
+    "mention_text": "Nelson Pereira dos Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71a947c7575c80f23eeb37764422edc9097c1ce1817d0184a285a2caac46f595",
+    "mention_text": "Dora Jobim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c22a3b6de8a4524ee81fe661150adb860f40cfb1d39955f366b1bd6fb83c3d19",
+    "mention_text": "Frank Sinatra",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb55c3c28943687ab677c57a0783ed74c45bfbe8b95bbdfdef0c3de03f6931a0",
+    "mention_text": "Elis Regina",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "91b21de761f9061596e0127268fafcfacb1631292eeb8111ab2c94daeec6edf8",
+    "mention_text": "Tom Jobim",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7239ac696d555c81488fbb70833a3da40718358f15b21a26ecf262cf02956028",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "92c54f7340beee8ab69db6ce9d2353be61a6e65f6901b57d6bfccabea32f0438",
+    "mention_text": "Cineclube Sesc Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d5211b15f4435c32f7289c5f69fc49682f3b7eeff19c04a8740df1f030fd2d9",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9d305a89c961fac9c0303ae7ab2c99b58034975d0f76eedc4a0a156108a12b25",
+    "mention_text": "Nelson Pereira dos Santos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "43019843d906159bc9746954bc39fafc139263adf50190a6dac407b4b49ec2dc",
+    "mention_text": "Hugo Carvana",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6a6339b4893d967e8ed35f737d72cb987c633c99d5c0bc98432085290489c84e",
+    "mention_text": "Sônia Dias",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "318368d7646a2db1510c16346fa7c1afbed190e4113b9efe2e1f941c8596911c",
+    "mention_text": "Anecy Rocha",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "df1ed5365820a8dfdb94af716a8ce40aefa640693ddebb3e3f0ef96f1b6cb26a",
+    "mention_text": "Salvador",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6ddb2a922c34b2eca7bdea1d8eb236ee914212d1eda4d2062bfc65b5bbe23114",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0c915553fe92de30a13e6a1816b01abb6d16b6a82f01359851b610a916c08dae",
+    "mention_text": "Cineclube Sesc Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "eabfd7071738cfe3c0c28a0b131bb119954547fba97088f274a42b8a7e704665",
+    "mention_text": "Piracicaba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ddcb6b6b825b18ab59c109c917c7edb7e2843b4fef7eb92677ce5e7ea4e3e0ec",
+    "mention_text": "Cineclube Sesc Piracicaba",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7bb55eaa754d49f0000bc0306565fd9fa508354eec7b858bb036d82c203fe9f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "130d494a72ab354333c8afe7a0a7e70513177b538a6575c6c828b14177fdf5b9",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "797bb4212f26ce974beed08a1f8bdd2025b72174637f20a063aad09291700955",
+    "mention_text": "Michael Bay",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "220c3a30c6e7d831716f1a79076d756396e790228be23a612adf5cc6e916b17b",
+    "mention_text": "Mark Wahlberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b97ca820521cd6995370a10c24f8e6573b8cf31d15238d7bff7ef3e52d4341e9",
+    "mention_text": "Nicola Peltz",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "687ddab2f29932eb8dd0960c2cd4da197b7a31b7175d50a9d23a62af81ee5def",
+    "mention_text": "Jack Reynor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "afebc74efc3ca8c58500a0000a45d345272001c96ee646f788f86d442b0d7232",
+    "mention_text": "Chicago",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d26ea05ce3c69fed0131a1a9cb621647c3615ff41fd61e07d04d0e6b5c02acec",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a9f626853bf89d4f451ee00fd9b8fd26973ec3836aac694e0eac99a7e16473a",
+    "mention_text": "Box Cinépolis Campinas 1 e 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a851d54c054b55361c3182033ccedd5de41fbe10a01167f000063be892f99d66",
+    "mention_text": "Campinas Iguatemi Cinemark 3 e 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cfa654076345406abc6568f90b4a7825bf996727dbb40c5827326c8938aa97d7",
+    "mention_text": "Cine Unimart 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "719bb4f47ba60ef7e44d78543ef29b3f03e809798ddcf06e1ca5b6acf745ce1a",
+    "mention_text": "Cineflix Galleria 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "565a8c82a28392d46ae05f9179b1ab25e00f939f2cfdf406d04c3ed42450272c",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "008cc68cece3cfb6b5b3ca39d55a7aa55081cf48aaae34eed4beccebfd12b599",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ceb12996edda4f28cdf950bcb7b5c116eddf87d4797f53cad87f437b51d6a386",
+    "mention_text": "Center Vale Cinemark 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7dd161f99435e61e340d648701851c87aec5395ff2d9b579db135f5e25f7d16",
+    "mention_text": "Colinas Shopping Cinemark 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bd6335fa5c4bf0488e59ad448682e3568f4c073a4aec7f0459ea00864c82b1dd",
+    "mention_text": "Kinoplex Vale Sul 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ba47129435929a1b302d60206b7ff31e8e6d000958cde7218b895dd98e78459d",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "964360755469bdb49e5377e81ec330fbd63cf636494ded03f355eab4fd4e87ba",
+    "mention_text": "Via Vale Taubaté Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "72acb928ef624a3f3c602daac8c1b0d0cd80097fbe45e4635f4939d4a97af37b",
+    "mention_text": "Taubaté Shopping 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d2398154eec1a3a01186a4e2bcce24d7f43a1661e867caae1724386213ae048",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "968ccae4e49b5c330860d21b6e961619ccd2722085e30f1f1dc2bcf6a2011731",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b2a58732cd28ac948891ae05fab7383ac2d871029a9c9974ecc2354833d53905",
+    "mention_text": "Thierry Ragobert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "29527acc365747552be419949ff44f2513733be85ed7ea3112c7d714193ffdc3",
+    "mention_text": "floresta amazônica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "713d39335885bda01e9bf13f55c60e947f51a924685389e06d81ff81b562e6a3",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9e78b27145fbe3c93c43ae31fe50fdf6b7eb0eb8983cf9b1de7392fc644778ab",
+    "mention_text": "Box Cinépolis Campinas 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0029171a57bcab19a3268b7039691ca9fee2f71fc5504e89ff9616bae68b6e26",
+    "mention_text": "Campinas Iguatemi Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e4a324e1184ff61804a73a754807885c1d816541cbf997d5b71079100f0baf2",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f34dd4a1e9eb827858534850881d15c20c601be7835fdf478710033740f9521f",
+    "mention_text": "Center Vale Cinemark 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "29c3b3f0deb92bd18ab037798f50c8f50c835caaf6394b8ef9608acad9e5ef8f",
+    "mention_text": "Colinas Shopping Cinemark 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "89379aea78fa8545eb1cfa9154421d59df9d27e8e1424013ed436f0eb4a9e947",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "003f0dd7c3508cde4293b6c4150e19747c0dbf9aebd94d8a27a7275a44e2369e",
+    "mention_text": "Via Vale Taubaté Cinemark 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9cf95076f4053f7eb0ceb8034cbe450355ec18767583adbdaebe910c82e4d71d",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "be8506ff720a7b6f631305468e25487267710738e57aa3a777bee90177d8d261",
+    "mention_text": "Albert Dupontel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "40a7ec689085342cc30ab386aa35b82ee2d9ddd0e58f904368230b3412a48477",
+    "mention_text": "Sandrine Kiberlain",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1927b3511a190788a17141ef17c606cf706549de79cd25fd7345b9b8554c53f0",
+    "mention_text": "Albert Dupontel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da52c89e3d49ded67d42e5ea6beb12774b316c4fc1b8061a3952041b6801fe71",
+    "mention_text": "Nicolas Marié",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8cc98c79bcdc8cd849d090bc113cd301ba8fd715c1dca9b03369b8547c703889",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "63874881166a72ba0ac6584519c24eb03967ca49b0d1545fd51486463a19e645",
+    "mention_text": "Topázio Shopping Parque Prado 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "10a090f356449e82a5a5cd53dfe63063a210b091f22442e9981517d1f0e2e5be",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9644bc29fd1a2770701fc480526e543cc0d1dcc6bb5de84bcbeb0eb7b43047a7",
+    "mention_text": "James Bobin",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ad194f045505458bb40f25c1ea95ec3df0936c69b69fc0ef30f8e4977fa31428",
+    "mention_text": "Ricky Gervais",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a49870f4b67cababf7737cc1b7d3f4d13f030df051dd300805ab44de27f5be09",
+    "mention_text": "Tina Fey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a95b90f35099d2d511fe02047c5bb25f16468c5b5a7810a85e0f52f508cd09b7",
+    "mention_text": "Ty Burrell",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1334720fc4ea618e35a4a8f3bc3b1b176419b599b6316d7473c4b47e8655f9a8",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ffc67cbaacdeb2b21616968c2b1089e84b6e70183a2c533f8b949490921d82d6",
+    "mention_text": "Box Cinépolis Campinas 9",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a5d499d26f52a7c486cc1418ad74b04aee1ecb1e5576d14eeb0a3528d4b2ee5",
+    "mention_text": "Kinoplex Campinas 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c9dca74ceea153bb617dd62542ed008330f5d599c57fd2c403b70838afaa0ecf",
+    "mention_text": "Cine Unimart 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "82e0edc2a8d49dbe5af692f51f30aa2a8bce5f4c9ffba8281a0bd0f89cf6fd31",
+    "mention_text": "Topázio Cinemas Shopping Parque Prado 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a6ee109c1b5d4e6a3cfa7b4e3a6db27405d69ed6d54980b1965f5a37a00de438",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f70ede29479d96839e104bc6a2b12e37a93dd38481ae947e07dd0373ad13c31e",
+    "mention_text": "Topázio Polo Shopping 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5488260e576980cbb91f8df01480919c0f3d204e365ecf531bbe8fbccbb86dd",
+    "mention_text": "Argentina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7f7111c8f010a878e554355cf16871f8a8af1620e2380799502aba11702b081b",
+    "mention_text": "Matthew Amos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f08cf40c808be7cfbf52a5253e5f879826639a2c59d6f2011d67ea93acc1314b",
+    "mention_text": "Buenos Aires",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cdb9ef54353bddd0e5bb6ff22f11f0c2d546565b3913791b1004ec0b3692285a",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "83c8552567810da4685ee177abbdeb0afc8365a901cb5e404c64eeccb5c96e34",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0fec4706db187b0262f10cb7e72cfe65a535411349b6d79ec583219e4e4746e1",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d1f078ba6192644ce18b04960f756fa8acf7e048ed0e29077cd4fa4506f0f246",
+    "mention_text": "Campinas Iguatemi Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e73b428e266dcc7e8db135f2d2112dc55c97687e40a90b6c5f841af0ba51a9a3",
+    "mention_text": "Cineflix Galleria 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7c7c9b1bd3d1c41eb8427d2197abff3ef2ff8b5133f7bc55bb554e1e477ebd80",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "20bd33af5c4bd826f335f29d94095df1811cf3cc41567eae7c718a9ec714f764",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "cb242fa80c90e3b08a892ddb0a470793a25440a92fc97db8f18fc3dcc1f6c1aa",
+    "mention_text": "Topázio Polo Shopping 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "372c37ff4b032909d2079602f14deb30d18017c078ee58a36c1a0cad8f4531a1",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d56548e46243e0d0a500610136927bb479d09b613289036a768c2173ca50a099",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "04a705fc07e63fddfe1a86789789fdbbf5803bbd6c760dfaf5beeedaa4a17fa1",
+    "mention_text": "Camille Delamarre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e3b636540a4066db9de7001b09f09c6bbd72a7a0f6f79c2e73eda220dde205d7",
+    "mention_text": "Paul Walker",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a105ac8ebed77ef1fda70e4832e44f631bebc4f85b3b7b38f09a102d6d81a2fa",
+    "mention_text": "David Belle",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bad821015e1c06bf4c06ddcb155d7f0a03f6cf5a71f7839d7e07e8ced12c20e5",
+    "mention_text": "RZA",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47ed93119501a960d81e8bbcfab467702e432fd03787f4c5b6f26e62517dc6e9",
+    "mention_text": "Detroit",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6525d2e59e43affdb07fb5e5c47689313fb6bd18b242c7e3148caad9bf284b20",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b3ca4b8a67126d2c416d8858bf43ff73b97b2edfce06de936dc008618d07018f",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fcc53a63c8b6e3febd6d147b650aa818a3ba9645e28314b162bbc6f9ea2e4ca8",
+    "mention_text": "Box Cinépolis Campinas 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d9a6097f3bc234d3b8f478624b674382c81f523a078748493434bf14b0a312c3",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b15fc85c3e3c6d3e303715692de1a987da0afb2ad9199d72799b809258a74087",
+    "mention_text": "Center Vale Cinemark 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33c5ec02180c15a2974a41c4470b7d4c4287059bd0c8d9f2abf31dc570403d7f",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d9295f79ad936d5274218337c66d0eac8e3a25d87f4928878a2f306a2a770350",
+    "mention_text": "Via Vale Taubaté Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33f5d873ea0f666470dda9c9cb24b2226cef0f0554be85e525cb698b7773a65f",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f155713d2659f67a3121f6cbb7ae7462407c32a819261171694b6f41b0c5bdc3",
+    "mention_text": "John Turturro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4184b136b05577db1a7d4e60f988a29c504157572eb07c7cc88efdf525262d52",
+    "mention_text": "John Turturro",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef08c74b85636a5ec6ac44afe638f2cdda41ee6a6a26912b95ebe8e4019a3d08",
+    "mention_text": "Woody Allen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d2215f7d269ca7389ee9a3d08ac7cf9c5d8b7900b9cdb6a075994e1f9f369d6a",
+    "mention_text": "Sharon Stone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5fddf16c0ac9a8d7a206a92564f1619cf95d93e5cd303c34342ee31b47db4383",
+    "mention_text": "Murray",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e73d8f9118092891fcd57ec0e5073cba342233eccfa00d54712c94128cbfa9f1",
+    "mention_text": "Fioravante",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "25012f3f2588aa6d6251c65fbc20df4f973a36eabf96d97b0ab864576865bca0",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "567401c852c0866725b711c65457fc60ae81edda1db05ea39df1e75048439df6",
+    "mention_text": "Topázio Shopping Jaraguá 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fa34c50b568945a8b160e0c03191299d350b020e5783177dd2125c67043aab6d",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8883e7adea36ebe7755d863c0714acf89be938a5af7695be868ab02b83b049b",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "835eebd57a18b67c8a306e18045d5542b01ed90a224880544d970736b3795b40",
+    "mention_text": "Daniele Luchetti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06d0a7b8f8e7e0678ddc26276eaa44b65c51cda8e9b0c2c7dd3af5207b59c765",
+    "mention_text": "Kim Rossi Stuart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0b7af621379e79c3310f72dc48043b01b8587682e0798853577401ec502a2eb4",
+    "mention_text": "Micaela Ramazzotti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "da213857cdf04a1f7e1723bff3d9477f6ca1ae990ebc75d86ec137b2938ca2b8",
+    "mention_text": "Martina Gedeck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b5c06134f4014ca8c4c386a4842e1ee9bcebe8870cb4424308f56bcf54eae22f",
+    "mention_text": "Roma",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e4f997cb70d73be76de6530eedc6c7799db3924f7548d93a58dd4ed18cef42ae",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "433ddbd3b9b63e5b49e4c26607691b5019ccd802142d038164c077e72128ad0e",
+    "mention_text": "Colinas Shopping Cinemark 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5d699555d2a4f6954187f21865eaaa796ea6ab7be91402fa6fb65bee0d1d50b5",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "549e8e3dc247d7a1d9931e580f7889cfc14851bb1d9fe49ecf176de681f430ed",
+    "mention_text": "Philippe Claudel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "06b6f6b4fd3e9d418fb44eceea8d8afa797279bc20700fbac8b295dae359b6a5",
+    "mention_text": "Daniel Auteuil",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b43a23b8e32c6b0290b6a5598756e22b9b04b9dcc9acbf53ef229839a08df23",
+    "mention_text": "Kristin Scott Thomas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8bb06d8d13b3f8ce29c4db16fcdc9032335cc22b23a39637875a2106ea56e695",
+    "mention_text": "Leïla Bekhti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "be0a1a0922aff542b927043f7415fff1c019029ffb0671872ab08e071c25edea",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "32d3e60ca0a0faea596969603c6e716bb404fb14788a23bc33936e5df35a920f",
+    "mention_text": "Topázio Shopping Parque Prado 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3702d2bb786ae31ac7902a94d7c477ae61027ad46f5a3489bb9c1d7150e27ff2",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b412ef29284451f2f3c6b139df0e88c8dcdb0c8a0be92160fc0f3bc427422469",
+    "mention_text": "Michael Wahrmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c2e3cb5a3867b88f4312b9b09c20971b4a68f19f68279a1a0ebc17eaee32dbe",
+    "mention_text": "André Gatti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "086d0367629d8e959e94cff696b17bdfa980e2b5bd5fce20537f552017ab3282",
+    "mention_text": "Carlos Reichenbach",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e0ee1701e225ae19222856c48f3c8d3d8e8660498dc1dc3237879085a75e6a08",
+    "mention_text": "Eduardo Valente",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb07b95e57d6656854fb097ad7bd8a4c5bd16505cb7bdff6b2a658f37e9bcd32",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5cbaf34a3be705303ca78d56b757c6de55509b78dbd0152b542707876d0c874d",
+    "mention_text": "Campinas Iguatemi Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "358534a06f4065eaa9d3749dfe16b3a756c52face4f132795950d14bd8a99f87",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "895db05e07938587b1752684af8ed0b852d26005724862eb44ba98aa9ab956df",
+    "mention_text": "Dean DeBlois",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1abb16032c53608c6eaac6c758bfdd72915504ad5f1f99c42db8afe3655b27ac",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "77725409509194c85980014a2015e7d25686734e8c96cfbc48e2ba3ea2caf6bf",
+    "mention_text": "Box Cinépolis Campinas 1, 3, 5 e 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4e906a5998c4cc394bb5c24a3e2faa22064faac7464b93bbc8ed81bd98cf60c7",
+    "mention_text": "Campinas Iguatemi Cinemark 2, 6 e 7",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b96c595e7c314a5c0fd74b62d922ffde75cc534952b89e759bb485196b447b79",
+    "mention_text": "Cine Unimart 3 e 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e932213b6a4408539cb5504a9695478013870e830137954f8235df8f14991877",
+    "mention_text": "Cineflix Galleria 1 e 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9e6b09f19af4450a63fa2ef98f9bae662824749ac3349cffdfdc40e29bc1fac8",
+    "mention_text": "Cinesercla Spazio Ouro Verde Campinas 1 e 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6c54c520ec53ef88e4e8058726cd8f6c956698d51c329a29cf8c73a1f2b5ab02",
+    "mention_text": "Kinoplex Campinas 7, 14 e 15",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1da8a4ab5df3688bc4dc56bf0dd9108c9c4507ebea1f641e04d671ece56c5d9",
+    "mention_text": "Topázio Shopping Parque Prado 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "68057022569544e4b6a35433b71302d65ceb8e9803efb663c2ef0bae112daa3d",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dcb1a00fb247627f341ea3cb2fb4e76cf5f9886a5f008916797b512900d393d4",
+    "mention_text": "Topázio Polo Shopping 5; Topázio Shopping Jaraguá 1 e 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "865d010b5e5ffe7ad2448ef40e30e057fe4406bbb45f8d3ca941618de68219e2",
+    "mention_text": "Ubatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2035be93556dee238c57b12212933c196dd048067b95a0f5da51fa96a48fe34d",
+    "mention_text": "Cine Porto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "62474669075406cf1f51a32ab7ce16b563b3aa5d56df6b0c54d31c98eb14d7c7",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "56049bc722efdbe826e7fe80d42268dacc778eb6f4db9d6f5fc3ab6c58d91c9d",
+    "mention_text": "Center Vale Cinemark 2 e 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fc05b108c5fa2cb565ca32147f5ffd1db9a6ead0c4cd61548c294971190e9082",
+    "mention_text": "Colinas Shopping Cinemark 4, 6 e 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e02531f8cb9a1ca4f445068146b17cc361013fe629f744f4c7c33938ee40d1b6",
+    "mention_text": "Kinoplex Vale Sul 3 e 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7cc78d27286cb6c62dd1a6ecef0e7e64ed3449f8f4123e3c7529f916ef09d0e",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "342fcde0221a66f444ff5ec16e6e6464cbda4b757e54a95ab49e411627e4dc03",
+    "mention_text": "Taubaté Shopping 1 e 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "933b9cd23ef04e6b9ed1ffe76903bda23659d89094086c181436c26053e41393",
+    "mention_text": "Via Vale Taubaté Cinemark 1 e 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "219e081d451beeec452383c7bd9394c64829aa5fdf12ce8b8816059fc46b7a62",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "1c64f70cd7e5b275e6a626bc52ba0fb303ead1fdbdf6f152db5768b890073c0c",
+    "mention_text": "Josh Boone",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5abb63ae0834704a2fc09711f4a898ed2a4c47e3f232e6444bfc41aa82e77c26",
+    "mention_text": "Shailene Woodley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "391811ba7303f12032b8d26bc43d9f6c6add13ffcb256b47d091d6300e7d4c1c",
+    "mention_text": "Ansel Elgort",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ab2784b0b27f79f1cf64f06acfcfdae8bf8133e29c8c64c52076f7d9a4b9f322",
+    "mention_text": "Nat Wolff",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7c0615a514814735969339bf9aea288b284870a0f028df57f4fe3deb14168074",
+    "mention_text": "Hazel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c3a6ea8d7f92b2b920b8b9a2e9d93c19e94ce9b3586bb9a0e60fe1ece1999e3d",
+    "mention_text": "Gus",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "109075f242d79b40efe6768e871e88675cecb3241e195af4400a6159bc41af43",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f8a24e389b3cb7b927b8d2e1a80e4c94c09fefd4bfdc0af7f12464d4c7cafaa9",
+    "mention_text": "Box Cinépolis Campinas 4 e 10",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d4a14fbb41d18d6abf1dfbbaee0591ffc0b57a7b1c12c041b7a6045c8114fdd",
+    "mention_text": "Campinas Iguatemi Cinemark 3 e 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "284b3834e06d397949c34d199df4c23b31f76ac4fc87ab88bf93b714bbee5631",
+    "mention_text": "Cine Unimart 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "078588745ca7617d9ce0fc7139d6fa4a3f52e515afe88016503b0371e7a2f258",
+    "mention_text": "Cineflix Galleria 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86fb81202e847c274a0e1417b4d565033304cb067b08b5e64c4e82bc7098dd14",
+    "mention_text": "Cinesercla Spazio Ouro Verde Campinas 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ad9d9d51a0e839136bdccdf272ce128146d977d21b4e6da8290f5424cbb8e9b0",
+    "mention_text": "Kinoplex Campinas 1 e 12",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "44e40c404781a201fa49c51cf8befaca22670ac51ccd6369e74a38c8d22cb407",
+    "mention_text": "Topázio Shopping Parque Prado 1 e 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e7319f38f18f17116517b694190bfafc421a0a664d22e0397fe2d1a5fa244110",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6898f8269b2645282f9d9cebb18b682278f518bd64dc3ee49f3e25f5cc7db73e",
+    "mention_text": "Topázio Polo Shopping 3; Topázio Shopping Jaraguá 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "646b59b8f4711a921668810476dca32f77dca0346ca187147f71d52b86d182b6",
+    "mention_text": "Ubatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6239edc7efed315d45c1e30759b801f1d2b13b2afd7203de21f3e54a2d479685",
+    "mention_text": "Cine Porto",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7089fff1310c962352dec7e60c0a5a78e0934b1cc3701322431f4291ec3ce3d",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3db67a904f732dad23db37f8b85aa39fa9aabae52256a3031899d735e9b32cb7",
+    "mention_text": "Center Vale Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "73ea8b404e7b0c884484b7e1a06deb21e95a2b881f01e027b001204e25c41667",
+    "mention_text": "Colinas Shopping Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c28874b0deaab130966a07d045e104733415473bf05ee3f75dbbe798e701fecc",
+    "mention_text": "Kinoplex Vale Sul 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "048417a9167a73ccb73a27542ff6aebded0f6b5df621d1f40a472287a59e09ca",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6bea225e4baba1cf92fc616328ebeba8de5fe005d9fa86c83a61bd608e2918d",
+    "mention_text": "Taubaté Shopping 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "357d0b4c02436ed43c850cea97a20224099ef989593c6f3e660ede6978462774",
+    "mention_text": "Via Vale Taubaté Cinemark 2 e 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a675d45735c377d0617ddbb7fdb33709815dc852b7198fc316401c532d90a0ae",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "33c090d9bbcf3f34f93af5c9f99b8046f0445ddbe810252ee6ec7bb6186034aa",
+    "mention_text": "Espanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6121f53b6d3cf071c40952aeb8227e7a57ea866db083d26d4c000030e0e76f46",
+    "mention_text": "Denis Villeneuve",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "84693cb892478cc28c16f5de3474d3f8dac62a7d73734e67ec144601a636efd8",
+    "mention_text": "Jake Gyllenhaal",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1bf539479a0923c18fe54752b067c08e7aac7666f60c466aca55715e6249e6e5",
+    "mention_text": "Mélanie Laurent",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e85943591b466800ab33da48345236ba455a5c18699739b6c573b606422985e",
+    "mention_text": "Sarah Gadon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6e88a4c532d73473aa39d5535be5ea8f32313acf18d8041e23338a9b40a4b39c",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0f5cde1c1bcd18bf594bce44a33cd204a8d6f184c3eb80029102056a136aa360",
+    "mention_text": "Cineflix Galleria 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f072dac8ac5c608b65c5bd67715c6c9f691fcaf204345fa29aaab913bbd5d7d8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "35334b6888efe8323ccc20d260e4e4e85f61445c4a32b6d6c19c615721b7fe3c",
+    "mention_text": "Marcus Baldini",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "083069fdb14d86cc2149bdb79685f293ab5ac7be6b655625d2a5a09c2ce7e204",
+    "mention_text": "Mônica Martelli",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "153cc4ccb9de68d7b7379ac30f401f619a75948265e0533b0cd466a31bf905bf",
+    "mention_text": "Paulo Gustavo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9749c820758618c56ff5cbf3405b73fa567d4497a2d45047f741eb88d49ea180",
+    "mention_text": "Daniele Valente",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "20f6e2aeefbda52fb03420ad06ed4d4c1e9229207cca3bca514c5ed13328dd20",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b97ce3f8f69ce63366e7ded7fb2d4b77a4c8895ce9af665efdbae67f3acd6dd0",
+    "mention_text": "Campinas Iguatemi Cinemark 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d01155f5212a149fd8d83dab722e1464a54d031d581622c5b92550dff83125bb",
+    "mention_text": "Cine Unimart 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a9760c29dd521ceb31d4b7040b07e766516ee1b4cb9c11404a8d778ed2414f02",
+    "mention_text": "Kinoplex Campinas 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5219a32e28fc3ddc68f1c9fb6e5d8527ed66d3fc86c74ec27deac13127582a32",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5cce2b1fc00e2e0cde81570292d52a9c2904fb40889a71d7feb355e547e368a4",
+    "mention_text": "Topázio Shopping Jaraguá 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f324ed2189154316e2670fa1b11b381cc02cf0120413abb714becd9664079a7f",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ee8119a55a09c76555dd52a941ac005de04bb122dc7cb2003e896aefea378569",
+    "mention_text": "Center Vale Cinemark 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc5bd09ef1cbf093db677bda69884b43da3afb68c6af02292de04547a627c324",
+    "mention_text": "Colinas Shopping Cinemark 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "67a7289fe002c5f3b61c3010f1e91e294dbb50e3dc23877b4bafc6e31f09aa03",
+    "mention_text": "Kinoplex Vale Sul 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5bd1a20becce2d01fb97da852d65c654853be52b4883c2435a714c3c6224eb99",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "47fdc883632c162af9a000fb7203bfe7d65e9a3921f01e7403394702f5eb2288",
+    "mention_text": "Via Vale Taubaté Cinemark 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7459c30dd830361e3dc23b5a958d04460549cab78425ba0859e6d0be4d83391",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fc46dd2457447764476cb9edaaab70ea6bfbd8449c2701038174673c1c859327",
+    "mention_text": "Robert Stromberg",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b19f4328844425d07e90a733b9b945b421089217594ecfd2d623489afc33b51",
+    "mention_text": "Angelina Jolie",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c39cf4ebd1ca2f1ee16dcd44e2bcd01fc0f24d9b271aa96c89b8c57f1422be2",
+    "mention_text": "Elle Fanning",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c7e48bf85ed40b87f0c35828d1b61b09579093e0f24897d105ff496fc7cb48b7",
+    "mention_text": "Sharlto Copley",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5ff44a9c0ad569e448573f410de674735babe9821d137bae47d3062ff8c1907e",
+    "mention_text": "Malévola",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "913ac4c42bdc34828232f952bd45d866cb11c5d0294a30738d091bf3f872e0a4",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed81a86b3b7f2fd144cbe882d88f7f5562b14675ae1455eff12c19313ddf5d28",
+    "mention_text": "Box Cinépolis Campinas 2 e 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "65fd8ab627e6dc8871d8ff584b9077c0597f294add3034d9d3be6b1947777e82",
+    "mention_text": "Campinas Iguatemi Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96008599ef78f0e798f2f32e6a9c675ef23c6ca0d918f50ecff1dd6781c7863c",
+    "mention_text": "Cine Unimart 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "da01c2edf5554d15312e342205e477fa51a4f63192f0b8fff85544af9f68ac24",
+    "mention_text": "Cineflix Galleria 1 e 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b90bde577d1798141e23148953907d117540cf91e93c80878a519096319f5fe2",
+    "mention_text": "Cinesercla Spazio Ouro Verde Campinas 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3df0aff6908e84c6c9c777e4942b63d7856c73921a9807035b685df2c0be0ac8",
+    "mention_text": "Kinoplex Campinas 8 e 13",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "11a56f9f1d46f58378d85c672ae65169a045e7b3280f6e45880374e8168e30ca",
+    "mention_text": "Topázio Shopping Parque Prado 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c997b146711ba29f4620ed9606d4ab9dcb173b7cad6159fb8df991f84a8fd2cf",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "46b21d3902ee2342a6baeebc5226bc150a96c24a0f04f0ab28a36c9a9b4b089d",
+    "mention_text": "Topázio Polo Shopping 4; Topázio Shopping Jaraguá 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f18609cc5b1a11990729d3e252059e57b3b2429ecd3b231845686c7c9a0f1355",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b8178c6a467ef2d6f09604f1a5be42db889ca2322dc23ada97da0a3acbe212fa",
+    "mention_text": "Center Vale Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e5820fc3fe06d88d3d63974cbe96c532c51d90f4b73a38551a7ee0b43811a3cc",
+    "mention_text": "Colinas Shopping Cinemark 2 e 7",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "48ae637339f1010ed834ca0fcb476b8cae0212034a770e4dc50cc46f041e6e3a",
+    "mention_text": "Kinoplex Vale Sul 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b9a452a9103519250b112292769884e40d13b6ee1851178e39cf0f8409eaeef7",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "b1b6b549b9be25a189c6858e39fb2d8dcffc331be41c38554530521203288e56",
+    "mention_text": "Taubaté Shopping 1 e 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8d4e2a6bf6577e3ad0a70d93abe6d54b8d36700e36ca07308a3149ec5620bb1f",
+    "mention_text": "Via Vale Taubaté Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "158b359d8f720149a66cba6bf6877e9abfb9e67142e4910d88704c70e63fe9f1",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89759286a2e5700c26878eb5ec1750d5c7765d9b82a3149b47353e73d106c1b2",
+    "mention_text": "Austrália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "48aaae4fcee47b06ced641b9399715e26ead8d0b9f490c8a61bf04c67715a2b8",
+    "mention_text": "Doug Liman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2c93c6453d1a91ea5971a450bb7d78b918b38c8cf2c2fdce637c077ea8918495",
+    "mention_text": "Tom Cruise",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "83e81e2189bcdce94f85eba074d4f65303069640653ab7dd38a798755f187849",
+    "mention_text": "Emily Blunt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b37c0c92d05a176adf1cec7471cd7e965c1085f06c750110fda5a5093031af83",
+    "mention_text": "Bill Paxton",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4b4ce69a6630cb4da453e33703082f59877bc403827c09c18893d8ac57b362e5",
+    "mention_text": "William Cage",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e330615c6d3a53dde8b6efd439b666cadef4ae5fcacd682849e2c9dadeeedb64",
+    "mention_text": "Cage",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b7de6d11fbc663618b242c70895ce5d8c61bb19266e0ed69e11f6ea34d6d3fd5",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "99144774329f2c8b9e3756b306f4fcf6a78c77b0277cb822db96f95c99183928",
+    "mention_text": "Kinoplex Campinas 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5aa1e0282bd72c4de8445f856b84519159cc0ba9e29b008044134241abef3f54",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ec198a8053000541f2b1396abf6b7e09836bf159b5217926fefb6853c3c743e",
+    "mention_text": "Kinoplex Vale Sul 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "086ce24c6f694b8ddb2a1f57adbd42f74a7f3e3c2572f204dc386b576bc89189",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1d55d17ee806bccf33e00fe3e27d1aa2f4dc2c1b974e2c65495ba8db6256969",
+    "mention_text": "Joel Hopkins",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3b8e928e75f7e0ff96f849e6264cfae6aabadce750f45d42689e50aa801f90d0",
+    "mention_text": "Emma Thompson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc889c0174714ce0ed295a8977f3c67ddccbb11d2b398fb86440546b7ba70c7d",
+    "mention_text": "Pierce Brosnan",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bb0eeaa5f8909063b7cedd6566dca210821b9df7f7597b38c7de6ae26a323315",
+    "mention_text": "Timothy Spall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9b62ec0513dbc5cb61478125790e61946bfa16da70340673dcce112a403d4649",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8ab8dc8acf7d50d5a8e1d656a0e775244b848be68492705338e842a67850af06",
+    "mention_text": "Kinoplex Campinas 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "32e750b6b9a6df3334ec5eba0a2fc4bc22977de1bd2d0782f66ea7e3f7ffa26f",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fd4e0d257f3a908019d6b7d2b9948b9fdcc40067c4745b3261d43bbb1d1d44e4",
+    "mention_text": "Topázio Shopping Jaraguá 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "77acae313927109b7c87356b77210859ba98f99d0f5143e45a373133aa0bb8b6",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65aec932db0b28daee788fb577bf8f3a419c838b24cdcaea15a2a6488a0f213b",
+    "mention_text": "Colinas Shopping Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6cf8ef5cc8b1fd8891b98f0e4d45bf76b4848a30eb7432f8dbe10b3643d480b3",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "198be58ba5c781bc5a22ddd3c9f6e15d56f145895a1947ff45d775de77a84f67",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36abe4507c2210e7b7dc9ed64c71fa6a8af07b283d65b11f2cfbe96706f237ab",
+    "mention_text": "Wally Pfis",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "946672fcc2a8394856b6fed2302ebc8421869321301d502a9fe2b12e4b6c0722",
+    "mention_text": "Johnny Depp",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "886066f388d890dde9f7ffc076be2d7f48ce7abeb5cb460d9ea38d068628139f",
+    "mention_text": "Rebecca Hall",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6d9d27204844570d3577510e67f98fdbc16699a73dd3e9a57c4290e67e944688",
+    "mention_text": "Morgan Freeman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3f00c4a28c9f585d0b27588fdc33d5a5d9791e8d729529dd3e1e1aebb3eedec1",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "eeb9c0ba6de4c04b2f4d0024269ce61a9a29774bdf66bef88d852c7231a5d97b",
+    "mention_text": "Box Cinépolis Campinas 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0bb31bb01b57c840b80c0d31734aed44d5d1ae6c8cf10511126cef26624cd26",
+    "mention_text": "Campinas Iguatemi Cinemark 7",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3e3a91e89a2d3d1217f18be1559c739c547033b02dabe4e8d557e1ea8aa54368",
+    "mention_text": "Cineflix Galleria 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b431f6a096dc40c17f0246571460baffce9c612b7a2407c1b60c854f0ba2e4b0",
+    "mention_text": "Kinoplex Campinas 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e462a51f5411b68449518bffd4eedf0484f244e61531028e6f7875068782e0e",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5a8463f2c5e4e046f86951f02131f583b05230b06d2b3eacc9d741570535a7ee",
+    "mention_text": "Topázio Polo Shopping 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5437e4ab2f81120612bf2dace3a1e87085bb8571894588c9bc00f7ce847e64f2",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7ff427d34eac8847c987ebdef0b5b935b97667b40c4a4a8c9eb301d227c05e73",
+    "mention_text": "Colinas Shopping Cinemark 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "427af832f45c2af709db9143d29f543f9e7978ef51ce156f446313cbb57a2ce3",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c468b81bbe2c898d5d29497f18093d35b9a218a0243ab313372ff11a9611fcfb",
+    "mention_text": "Via Vale Taubaté Cinemark 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bfe59358327ef5a37aedc9c8e322f7862538b3223260ef98d67078cf4434b777",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "269713b6008d4fd47927425564b1c418deb8448cc4838684b6da6fc71181de02",
+    "mention_text": "Nicholas Stoller",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "613d63394a581f52f0f0f3985dbb63d695d2ca02edb7c2300a1b8641b1e7b13c",
+    "mention_text": "Seth Rogen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9ecf7b3be29b413d4d6d7eb76027cefb0821cbc89a9c7e383742083cbca74a89",
+    "mention_text": "Rose Byrne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0e33c435746dad3b2a301041f48466f7ecef9ada7f75011729abe4ea5bd99b3a",
+    "mention_text": "Zac Efron",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8b001dded7243cc08db796bb9c5dbd144080b8c7e041576dda79acf2d6482772",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89a8a4fd492040dec81e703fe490e983e9ae4dd0742f13734e1a6e8dfc81f128",
+    "mention_text": "Box Cinépolis Campinas 7",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "124035d4d318c8f957abe2366def27d2e194d379135beb0107f63871db561934",
+    "mention_text": "Campinas Iguatemi Cinemark 2 e 8",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9f20aceb0a7edd403436b14831a538bf168264eb3633a452c1c2671768795735",
+    "mention_text": "Cine Unimart 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4fc0ec7b41360a2d3d387952890490bd4a47a1edb9ff3d15ab7762b3f61350cf",
+    "mention_text": "Cinesercla Spazio Ouro Verde Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d295bc7d05dd7f2df448f04609d6bc12af3e1665d4e34a4f8818050a1cc83e37",
+    "mention_text": "Kinoplex Campinas 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "43c3a65b10384f700aadd374e6630230d369888b67d1bf44f24a0baa1564c386",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40ced59fc4066218145850e7a2699f983e3f2fbb562b60ce86ff65d571919941",
+    "mention_text": "Topázio Polo Shopping 1, 2 e 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c8e4c070681b2c3a29f133c21e9e4f52fecb05a87866aaf29ecc16debc65f51",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9ab41e0b375508a1bf0e74fe02c9d77b46c262a7c0d83f2237d33c8445bd2521",
+    "mention_text": "Center Vale Cinemark 3",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2c5b6d16574cf2a6d6c2142c7014e4310deafc37b22c762a47b2bb6600388344",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "edcadb08871896cf090a6bfe277ce4e712273d1d5d3d7aed7ad33e829763c921",
+    "mention_text": "Via Vale Taubaté Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "01c38276fa0921716661889a3148d37a2fe9d472a9cb00e8c1ffdcec01d17c43",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "942c5f3f6177fc78e1f192e4d00f463e8bc7b6fe49425de6ec36f50e5f56c287",
+    "mention_text": "Bryan Singer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a34d8e1999093afa410174c8934b2f3b9d5e3351d60f7bd3a86c1c60a9e04fac",
+    "mention_text": "Hugh Jackman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "39b3730afb131bef4ee66c24371280fdebb211cadeb57fc03ad6bf9a1826fd65",
+    "mention_text": "James McAvoy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c22e032efcbb14a94d7e151f6af2bdab51d6f2b40828b5d2c891fc410b7747ef",
+    "mention_text": "Michael Fassbender",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "51be42a862056c9ec2a502d160030c32f7eeeedbfef2f84f5afb4f28c5f427e3",
+    "mention_text": "Wolverine",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cf085c84583a1dc0ab3a2735a7ebbd8c0f79102f194c81493c3d8db4637866e9",
+    "mention_text": "Xavier",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8208dd8e243ef2db7ec0e4613ba281286d442b8464503a466572ba161e017f99",
+    "mention_text": "Magneto",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "affc7cb3775170987fb3cb3c77a1a58adf331eaaa98b3bcf9959e4f592aeae3f",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ef441cb6eb4e18d13c2beeb6d2453db4c0fec89c219a6333a3e9b71df30d6967",
+    "mention_text": "Box Cinépolis Campinas 5 e 9",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "823cd3704e9853c2d7a262d1166e30e39bf4164da03a00ac6bea55f827c5c66f",
+    "mention_text": "Campinas Iguatemi Cinemark 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a8a76db8b3309562dc9351dc9afc754aff665ee55241cd26a98f79acd99848fb",
+    "mention_text": "Cine Unimart 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "381a17bf9bc0cbe5dcd97214497a9b61ccefefc3056ab03f20dbac2444e3b257",
+    "mention_text": "Cinesercla Spazio Ouro Verde Campinas 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9c5be6e9d8bed85347d9fc355edefe3c9113193f48c1961826981cfe5fd82799",
+    "mention_text": "Kinoplex Campinas 11",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0f2d42c71b7cd534875c4bca1da0f2a9d8389d57c2853f43dcb5d6906e2ff16f",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "9cfcf6414c2571b2898760cbb77228a9f7568c567d57e8a488b55efaa97651e3",
+    "mention_text": "Topázio Polo Shopping 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a8a190cfc0b890dc92f4913efb08fa51225ea1bff5501b3da9ee21dc8004b0d",
+    "mention_text": "São José dos Campos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "87e5bda9dc728d394e38145744e3ecb9a2910e4e563dba85760035a93d4510fb",
+    "mention_text": "Center Vale Cinemark 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "123a3288a98ba3a7d68196c8755764f196dd47ba758dc2dff5a4c2784ee2d1a1",
+    "mention_text": "Colinas Shopping Cinemark 6",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e36d38639660972adb3d817d2c47d5e879b57bd8d64a1cec51e6c559e71c9de5",
+    "mention_text": "Kinoplex Vale Sul 5",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c7201fcf6b30a70cf43f165bcdc76ede9449df689907ea7875c7474d5b364980",
+    "mention_text": "Taubaté",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9b0442cfd8b10f427e0b51219e7aa12c33cbf8aa55ccb37757985274ead9385",
+    "mention_text": "Taubaté Shopping 4",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "adf7f4ef6b2ff8e9bdfcdc3226c7ab380b65a75ecbb5266d1aeb64adbfe1b68a",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f0217c2684766d7e5d6989c9903c87fed335a773100605d13de1c7e6054dbcce",
+    "mention_text": "Alfred Hitchcock",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "36f0867bb787a59c43f28a174324d5030f05eadc9e4d49a9f66214a4d7e87b81",
+    "mention_text": "James Stewart",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d7b7b2ff20c353dd6a441a2e20bde9c76a63007d873ad03ffec6189b81914412",
+    "mention_text": "Kim Novak",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8d7af2b0de073629373899c947c2f0cc85e39189eff60a68f6961112aa719485",
+    "mention_text": "Barbara Bel Geddes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3997426c9e545bed2df0b0b9c995a41c7d966187a27e33ca8e0809da0e8d27c7",
+    "mention_text": "Indaiatuba",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "295ee1534aa98cd247df242d03a4f34e5ec23e1b12ee79463d905afb79d27798",
+    "mention_text": "Topázio Shopping Jaraguá 1",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6da413f3d9f8845b5c7a8d583fd5491e7c931350ea58e3ca6ffe833356bc30ed",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7acc040f5071cf8e203bb5682555d24cc2cd24cddc6f2831826122600cad998a",
+    "mention_text": "Randal Kleiser",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "71c0ebdecc039417941c114c2f6251e9d83c9642055f46a974690df0afbe5903",
+    "mention_text": "John Travolta",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7143a9d76428e9d6d7222b5e549adb9bdbb00ee2b86caffca17096c4ccc093f6",
+    "mention_text": "Olivia Newton-John",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8cba0790c7e3a4b05d2a3c02de505df72990245b6c22d4dcca5e56dc2a018f92",
+    "mention_text": "Stockard Channing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0ca8515235765aec8a08b6737efdc8b3db08d0a4984ee2b7a76c3aba2afe76e2",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0eb5cc375c550b7a9e501a757831d25cc08e372eff3649002d9af190aa330801",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bee4db49623cbdc969d8da61d5bac7841718838a612328ee74dc0842e095c156",
+    "mention_text": "Campinas Iguatemi Cinemark 2",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "22ecbee84cc671814e3fdb7db0edb4e2561e719bd3e095f0517c0c31d12557a8",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "08dd19ff44fcd83d2d57b2582af11a73dfb2d362bc2784e439270d1d16140cce",
+    "mention_text": "Catherine Breillat",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "832e37f5ed64eaf82931ffe0d598353e22cb6500489b1263cb34e6d44fbe36fa",
+    "mention_text": "Isabelle Huppert",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c45fb00129afcfbdaeb2ee124da67f2aa65d43147d56d88fd4bab479910bb91",
+    "mention_text": "Kool Shen",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ac9e9358e0312acfe1104625634daaf04bd642f87e1c4cdb375428f73c285923",
+    "mention_text": "Laurence Ursino",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c80a04925f8ce919f444814406ea2b05c47da7c9d92f97540a62cfd425a74d7",
+    "mention_text": "Vilko",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ec4eb60a64d883d0e8b06bcef7ee784f67eedde022c61b36a97422af130bd7f9",
+    "mention_text": "Campinas",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a6a5e07d15d84195620f9d4d43e80e125c45543cc4f1594efc03a7d437ca6a59",
+    "mention_text": "Topázio Cinemas Shopping Parque Prado 3",
+    "categoria": "ORGANIZACAO"
+  }
+]

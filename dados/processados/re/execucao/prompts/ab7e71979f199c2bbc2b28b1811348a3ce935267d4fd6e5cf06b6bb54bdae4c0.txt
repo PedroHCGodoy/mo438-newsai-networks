@@ -1,0 +1,463 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 25d84e040c1785fb632526f14482c5548b4884b768aefdde9cc71158255d32ba
+
+TEXTO:
+Call centers, TI, máquinas e mais 17 setores devem ficar de fora de reoneração
+
+Os setores de call centers, tecnologia da informação, têxtil, calçadista, couro, transporte de cargas e máquinas e equipamentos deverão permanecer com a desoneração da folha de pagamentos.
+Esses são os principais, diz o relator da medida no Congresso, o deputado Orlando Silva (PC do B-SP), mas serão 20 os contemplados no total.
+O deputado enviou ao Ministério da Fazenda uma minuta com a lista que ele entende que precisa manter no regime de tributação.
+A pasta pretendia reduzir para três os segmentos beneficiados. Hoje, são 56.
+O ministério, no entanto, já considera que terá de excluir da mudança um número próximo ao que o relator incluiu na minuta.
+A política de desoneração teve início em 2011. Os setores autorizados podem deixar de pagar a contribuição à Previdência de 20% sobre a folha de pagamentos e recolher de 1% a 4,5% do faturamento.
+A Fazenda ainda não recebeu da Receita Federal uma projeção de qual seria o efeito da exclusão desses 20 setores da reoneração no caixa da Previdência, apurou a coluna.
+O Tesouro gastou R$ 16 bilhões para compensar a queda de arrecadação em 2017.
+O governo estudou diversas maneiras de como fazer para voltar a cobrar a contribuição sobre a folha de pagamentos.
+Já pensou em incluir dez setores a cada ano, a começar com os que empregam pouca gente para terminar com os intensivos em mão de obra.
+O deputado Silva afirma ter usado em sua minuta os critérios de forte competição externa, possibilidade de realocação para outro país (data centers, por exemplo) e intensidade do uso de mão de obra.
+Timing dos pontos
+A marca de moda masculina Aramis planeja chegar a 90 lojas até o fim deste ano, sendo 47 próprias. Hoje, já em todos os Estados, são 79 unidades —a rede inaugura nesta quarta-feira (16) uma loja em Brasília, onde abriu outra unidade na semana passada.
+Entre pontos de vendas e tecnologia, o investimento previsto para este ano será de R$ 12 milhões. Em 2017, foram seis lojas novas próprias e oito franquias.
+Em 2014, a empresa vendeu 47,8% do capital ao 2B Capital, gestora de private equity do Bradesco. De lá para cá, somaram quase 50 novas lojas.
+“O desafio da expansão é ponto certo e time. Estivemos em pontos médios para aprender a disciplina [dessa escolha]”, afirma Richard Stad, CEO da empresa.
+“Compramos pontos bons, bem negociados. Às vezes, esperamos um ano para conseguir no lugar que queremos.”
+Cerca de 30% dos artigos da Aramis são importados. O restante é confeccionado em São Paulo, Sul e Nordeste.
+“A marca desenha tudo, mas não fabrica nada”, diz Stad.
+A expectativa da empresa é fechar 2018 com faturamento de R$ 294 milhões.
+Além das lojas, a companhia tem também 700 pontos multimarcas.
+R$ 252 milhões foi o faturamento da Aramis em 2017
+673 são os funcionários nas lojas e escritórios da marca
+Indústria ainda analógica
+Apenas 10% das indústrias globais de manufatura têm tecnologia de ponta em suas operações, segundo estudo da PwC em 26 países, inclusive o Brasil.
+As companhias da Ásia são as mais avançadas no quesito: 19% delas são consideradas “campeãs digitais” e adotam ferramentas de inteligência artificial, robótica avançada ou internet das coisas em seus processos.
+No Brasil, 6% das empresas estão nesse estágio, média maior que a da América Latina (9%), mas inferior à de México (17%) e EUA (25%).
+“Cerca de 72% das atividades de manufatura podem ser digitalizadas, segundo os executivos brasileiros, ainda há muito espaço para inovar”, diz Sérgio Alexandre, chefe da consultoria.
+As indústrias automotiva e eletrônica são as que mais inovam globalmente. Cerca de 20% e 14% delas, respectivamente, usam alta tecnologia de maneira sistemática.
+Greve da Receita levará espera em aeroportos a 70 dias, diz sindicato
+A greve de auditores da Receita Federal, iniciada na última segunda-feira (14), deverá elevar o tempo de liberação de mercadorias nos aeroportos para até 70 dias, segundo o Sindasp (sindicato dos despachantes aduaneiros).
+A entidade impetrou um mandado de segurança para evitar que as importadoras sejam afetadas, mas teve o pedido negado.
+Só no aeroporto de Cumbica, onde hoje o prazo é de 45 dias, há cerca de 500 despachos de importação que aguardam análise, e a fila deverá aumentar, afirma Marcos Farneze, presidente da entidade.
+Os fiscais da Receita já não têm trabalhado às terças, quartas e quintas desde novembro.
+A principal reivindicação é a regulamentação do pagamento de bônus por produtividade, indefinida desde julho de 2017, diz Cláudio Damasceno, presidente do Sindifisco (sindicato da categoria).
+“Nas aduanas, teremos 30% do contingente de fiscais em ação. Haverá um controle mais rígido das mercadorias, e, portanto, um atraso nas liberações, com exceção de medicamentos e perecíveis.”
+Centro Pequenas empresas da cidade de São Paulo tiveram alta de receita de 19% em março deste ano, na comparação com 2017. Foi maior que as da região metropolitana e do interior, segundo o Sebrae-SP.
+Sentimentos A confiança dos comerciantes de São Paulo teve alta de 2,3%, aponta a Fecap. O levantamento, no entanto, notou uma piora da expectativa sobre o futuro em 3,5%.
+Supermercados A rede carioca Mundial comprou terrenos e vai inaugurar duas unidades, no Rio e em Niterói (RJ), até o primeiro bimestre de 2019.
+com Felipe Gutierrez, Igor Utsumi e Ivan Martínez-Vargas
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "6a57be1d6247f3e84ab756b763ba23169d345f72c0f2c51101e4e4eb952787e2",
+    "mention_text": "Congresso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7d2c4f6326a55a6910f1e4bd6760015decfb0bf2e745bdb6604fa493375ea2a8",
+    "mention_text": "Orlando Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9a6018ca22fde1a94d613d4697ea9d670b996012e6aafab51a0ffa59f93d75c8",
+    "mention_text": "PC do B-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "be7b44bb9ef53d34db03ce7a0d037bf76ef83b3cc6cb8efc240213bd62bb1b64",
+    "mention_text": "Ministério da Fazenda",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a32fecbdf3518e98b82a8c7276c98784159f6df36ef8cfad13c0ed46ef96cf68",
+    "mention_text": "Previdência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2270b319dd235ac659f3143221a5ef143d552239f843e24a37673629b8b84d8f",
+    "mention_text": "Fazenda",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8e2129623fe4285dda8a4775660a521da3075b3bc06d3d30fff246313253d89c",
+    "mention_text": "Receita Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f193f155d56b7a4114c1a511cd1f98164b9d33361227e77d38c567f28a5347a3",
+    "mention_text": "Previdência",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e8af6ea60c56cbc97b7f69aa2597eba02c3ba1b1ca3a6047c7a7dee8f7fc9916",
+    "mention_text": "Tesouro",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "168214fa0ebf6504c0b1cf615853673ee2608d245bec67ba50c281dc0ab9266a",
+    "mention_text": "governo",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "45209cf84f21541559e2a7725bebb7191939748f76304089bcb126d93f4fbfb5",
+    "mention_text": "Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cb941178e90862a5a092411cff4e57f0c1839dbcdc1020cd489c85a1e90ada86",
+    "mention_text": "Aramis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "93459176545143c01dfb7fa2ce87f06d1444a43e6ec4e68db3015a7f4913e465",
+    "mention_text": "Brasília",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6bd1879c20291be3dbc89b651b400b3bffcbd883dbeb860fd1842b55ffb647d6",
+    "mention_text": "2B Capital",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7b444416d1d1f39aaa4e3eb30a603601f53b8c134799b0b0ccf7064b0bed4d0b",
+    "mention_text": "Bradesco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69a7a52c9a50a0a3b025d4588d378384c141ab141c986a1c16792686c1c19752",
+    "mention_text": "Richard Stad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8947be18819231611a64ffc2e475977a42e2cd07351f52b584d0984f7c909396",
+    "mention_text": "Aramis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d453f4cff111c5b8935df5ef519089a33ffe14188fdd7a2ab357ba9825c4c256",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "bf6ca3c9d44c2cb36c610e495ea682686a76af799be1f7cec58ae0681d923d6b",
+    "mention_text": "Sul",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "d8e9b4b6e6415f8ea3cf85c4d816b2c3c21d3a5725b476789db4f793811b4134",
+    "mention_text": "Nordeste",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "524028258c92160858831c40cc4d978fe1f15fb6b6fb4117a66c357b587a2850",
+    "mention_text": "Stad",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f67eecf964d4820a109cb8d8f859271f8e0da1c2df99c988ab6b9499696da2e5",
+    "mention_text": "Aramis",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bdb9e8685bc2fbd8f6f842be5bb911582a246dd7c8cf3023b24e1eff786097cd",
+    "mention_text": "PwC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "53a9f8641015f403f40172930578407ed4a7bda139b921a9324234f24fe0829c",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2b34ddac3b93a977ca7a919b2e733274b19f2ef0070771fbb022991d86f0d718",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "0d1f9f09d6fbf50b690b398f223a2f86a534837c3ebdb073adba6e99adddcd3e",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f68a6129b95f84cc781078647efa6a3f1d5c97e97b53dff8afcef1951c22774f",
+    "mention_text": "América Latina",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "36a1d2b2e19da200508d5bc1a22a3026b102f1e0e4d6a8d40f4070fc42816c00",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7ea192df954e495b7abc156d34c2bc61a48fadec552d0885490f20d6958643b4",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6bde1eaa553954c5cf322688ddad3228615ebbbdaaa114e7a0f8139198b9a8e",
+    "mention_text": "Sérgio Alexandre",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3aad1fba1f48878b53a5dde976e1d3905ed516f452373f90df8003c5cd189b4d",
+    "mention_text": "Receita",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d1a333bf47c8cf6dde917b7ea2fbcf288982d9f33709d014e75568155132e009",
+    "mention_text": "Receita Federal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a0dc2986570c47bd31c471b87afb83e979fa2617c1c759e153b0e9d7480d0952",
+    "mention_text": "Sindasp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a5047d43f450c79e58f3127c9639723e83023e5b55b9a371b3cd89b8ecc6ccc9",
+    "mention_text": "Cumbica",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f01b00880b6085198447f5acf15a63b9ddea3ee32e2785d250174a8d6e4fbab1",
+    "mention_text": "Marcos Farneze",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5837cff06a33ac3b8743f8856bcc1ed0c7e2815402e7c30bdde2affab20582e",
+    "mention_text": "Cláudio Damasceno",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb58b9ac6a9aa1fedb41c9c69bb3ebcf1b8f0b64ae6010b33fd7ce26268c6bfa",
+    "mention_text": "Sindifisco",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e1997309af913d70f410b91ed538da673c06e8989fc2efdf1e57acbd226b9a61",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e9076a4f642f671e4ff31a744d38ffdec076561d67c373271d99e7a153518148",
+    "mention_text": "Sebrae-SP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "cbc826fc2d2ee1792bc0732ab1cc4b47c870981b9a563c86ce4f90ffe44cd35b",
+    "mention_text": "São Paulo",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "22585adc205648baac0f9072c4abf9b183d6b268b54d7f6ac2b463afafb089cf",
+    "mention_text": "Fecap",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "196ab3cb744f53645234de51a053fa5f16e45f06f4bf54546fe3c4458dfe71f7",
+    "mention_text": "Mundial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6f7245e0c665a571daa6a832ade12326d37d47fd7352dd6cbf050f915d863d2b",
+    "mention_text": "Rio",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "a78dd741a26a84996ef4dff099cfeb9152e452f867f69ef7087189ec0a51a4e3",
+    "mention_text": "Niterói",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c0831d8e15c64b0a5f5d8cbf1499c825948abbfd12906d5aac3d4b46fc396a5a",
+    "mention_text": "RJ",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43861cce9816d8544a9b677f1b84dd10d06b06c27433a6c0df2fcd492fc37ff2",
+    "mention_text": "Felipe Gutierrez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "37d3c6bb74980bf0dfcf0cef40f63b3c810c628741ea8b3669e01a321f128440",
+    "mention_text": "Igor Utsumi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d54f936b908c87864d42953be2339276ad11f72cd1bf83feb164d24b123b3d68",
+    "mention_text": "Ivan Martínez-Vargas",
+    "categoria": "PESSOA"
+  }
+]

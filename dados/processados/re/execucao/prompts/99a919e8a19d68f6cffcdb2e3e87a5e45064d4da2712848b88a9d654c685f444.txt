@@ -1,0 +1,536 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: a157a3f94d0a98ce1fc9ff05379ab913fb75892808c7a4c5b097d710cc8c86ba
+
+TEXTO:
+Especialistas em inteligência artificial faturam milhões no Vale do Silício
+
+As empresas iniciantes do Vale do Silício sempre tiveram vantagem no recrutamento sobre os gigantes do setor: se você apostar em nós, receberá participação nas ações que o tornará rico caso a companhia consiga sucesso.
+Agora, a corrida do setor de tecnologia para incorporar a inteligência artificial aos seus produtos e serviços pode tornar esse argumento irrelevante —ao menos para os poucos profissionais que sabem muito sobre inteligência artificial.
+As maiores empresas de tecnologia estão fazendo grandes apostas na inteligência artificial, em áreas como reconhecimento facial em smartphones, aparelhos capazes de manter conversas, serviços de saúde computadorizados e veículos autônomos. E ao buscar esse futuro, elas vêm oferecendo salários espantosos até mesmo pelos padrões de um setor que nunca hesitou em pagar fortunas pelos melhores talentos.
+Os especialistas em inteligência artificial típicos incluem tanto pessoas que acabam de concluir seus doutorados quanto profissionais com grau inferior de educação mas dotados de alguns anos de experiência, e eles podem obter remuneração anual de entre US$ 300 mil e US$ 500 mil, em salários e ações das companhias que os contratam, de acordo com nove pessoas que trabalham para empresas importantes de tecnologia ou receberam propostas de emprego delas. Todos os entrevistados pediram que seus nomes não fossem revelados, porque não desejam prejudicar suas perspectivas profissionais.
+Nomes conhecidos no ramo da inteligência artificial recebem remuneração da ordem de milhões ou dezenas de milhões de dólares, em salários e ações de empresas, por contratos de quatro ou cinco anos. E alguns deles renegociam seus contratos periodicamente, como se fossem atletas profissionais.
+No topo da escala estão executivos experientes na gestão de projetos de inteligência artificial. Em documentos apresentados à Justiça este ano, o Google revelou que um dos líderes de sua divisão de carros autoguiados, Anthony Levandowski, que havia começado na empresa em 2007, faturou US$ 120 milhões em salários e incentivos antes que a start-up que ele criou ao deixar o Google fosse adquirida pela Uber, o que causou uma disputa judicial entre as duas empresas sobre propriedade intelectual.
+Os salários estão disparando tão rápido que há quem brinque que o setor de tecnologia talvez precise impor um teto salarial para os especialistas em inteligência artificial, como o que existe para os jogadores de futebol americano da NFL. "Isso facilitaria as coisas", disse Christopher Fernandez, um dos executivos de recursos humanos da Microsoft. "Facilitaria muito".
+Há alguns catalisadores para os grandes salários. O setor automobilístico está concorrendo com o Vale do Silício pelos mesmos especialistas capazes de ajudar a construir carros autoguiados. Empresas de tecnologia gigantescas como o Facebook e o Google também têm muito dinheiro para gastar, e problemas que, em sua opinião, a inteligência artificial pode resolver, como a criação de assistentes digitais para uso em smartphones, o desenvolvimento de aparelhos domésticos "inteligentes", e a implementação de sistemas que permitem identificar e remover conteúdo ofensivo.
+Acima de tudo, há uma escassez de talentos e as grandes empresas estão tentando obter o máximo possível deles. Resolver problemas complicados de inteligência artificial não é como criar um app de sucesso para um smartphone. No mundo inteiro, menos de 10 mil pessoas têm a capacitação necessária para conduzir pesquisas sérias de inteligência artificial, de acordo com o Element AI, um laboratório independente de pesquisa em Montreal.
+"O que estamos vendo não é necessariamente bom para a sociedade, mas representa comportamento racional para essas empresas", disse Andrew Moore, diretor de ciência da computação na Universidade Carnegie Mellon e antigo executivo do Google. "Elas estão ansiosas por garantir a contratação dessa pequena categoria de pessoas" capazes de trabalhar com a tecnologia de que necessitam.
+Os custos de um laboratório de inteligência artificial chamado DeepMind, adquirido pelo Google supostamente por US$ 650 milhões em 2014, quando a organização empregava cerca de 50 pessoas, servem para ilustrar a questão. No ano passado, de acordo com os resultados financeiros recentemente divulgados pelo Google no Reino Unido, os "custos de pessoal" do laboratório, que hoje tem 400 funcionários, haviam subido a US$ 138 milhões. Isso representa remuneração média de US$ 345 mil por trabalhador.
+"É difícil concorrer com isso, especialmente para as empresas menores", disse Jessica Cataneo, que trabalha em recrutamento de executivos na CyberCoders, uma empresa de recursos humanos.
+A vanguarda da pesquisa de inteligência artificial se baseia em um conjunto de técnicas matemáticas conhecidas como redes neurais profundas. Essas redes são algoritmos matemáticos capazes de aprender tarefas por conta própria ao analisar dados. Ao observar milhões de padrões em fotos de cachorros, por exemplo, uma rede neural pode aprender a reconhecer um cachorro. Essa ideia matemática remonta aos anos 50, mas tinha posição subalterna na academia e na indústria até cerca de cinco anos atrás.
+Em 2013, Google, Facebook e algumas outras empresas começaram a recrutar os relativamente poucos pesquisadores especializados nesse tipo de técnica. As redes neurais agora podem ajudar a reconhecer rostos em fotos postadas no Facebook, identificar comandos de voz dados a um assistente digital como o do sistema Amazon Echo, e traduzir idiomas estrangeiros automaticamente no serviço telefônico Skype, da Microsoft.
+Usando as mesmas técnicas matemáticas, pesquisadores estão melhorando os carros autoguiados e desenvolvendo serviços hospitalares capazes de identificar doenças e problemas de saúde em exames médicos, assistentes digitais que não só reconhecem palavras faladas mas as compreendem, sistemas automatizados de operação de ações, e robôs capazes de manipular objetos que nunca viram antes.
+Já que existem tão poucos especialistas em inteligência artificial disponíveis, as grandes empresas de tecnologia também estão contratando os melhores profissionais do mundo acadêmico, e no processo limitam o número de professores disponíveis para ensinar essas tecnologias.
+A Uber contratou 40 pessoas do inovador programa de inteligência artificial da Carnegie Mellon em 2015, para trabalhar em seu projeto de carros autoguiados. Ao longo dos últimos anos, quatro dos melhores pesquisadores de inteligência artificial do mundo acadêmico deixaram seus postos ou se licenciaram, na Universidade Stanford. Na Universidade de Washington, seis dos 20 professores de inteligência artificial agora estão de licença ou licença parcial a fim de trabalhar para empresas externas.
+"Há uma sucção gigantesca de acadêmicos para esse setor", disse Oren Etzioni, que está de licença de seu posto como professor da Universidade de Washington a fim de comandar o Instituto Allen de Inteligência Artificial, uma organização sem fins lucrativos.
+Alguns professores estão conseguindo encontrar um meio-termo. Luke Zettlemoyer, da Universidade do Washington, recusou emprego em um laboratório do Google em Seattle, que segundo ele lhe valeria salário mais de três vezes superior ao atual (cerca de US$ 180 mil por ano, de acordo com registros oficiais). Em lugar disso, ele optou por aceitar um posto no Instituto Allen que permite que continue a lecionar.
+"Há muitos professores que fazem isso, dividindo seu tempo entre a indústria e academia, em proporções diferentes", disse Zettlemoyer. "Os salários são muito mais altos na indústria, e as pessoas só fazem isso porque realmente se importam com o trabalho acadêmico".
+Para encontrar novos engenheiros de inteligência artificial, companhias como o Google e o Facebook estão conduzindo aulas para ensinar "aprendizado profundo" e técnicas relacionadas aos seus atuais funcionários. E organizações sem fins lucrativos como a Fast.ai e empresas como a Deeplearning.ai, fundada por um antigo professor de Stanford que ajudou a criar o Brain Lab do Google, oferecem cursos online.
+Os conceitos básicos do aprendizado profundo não são difíceis de apreender, e requerem pouco mais do que matemática em nível de segundo grau. Mas o conhecimento verdadeiramente especializado requer capacidade matemática mais significativa e um talento intuitivo que há quem defina como "arte obscura". E conhecimentos específicos são requeridos para áreas como carros autoguiados, robótica e saúde.
+Para manter o ritmo, empresas menores estão em busca de talentos em lugares incomuns. Algumas estão contratando físicos e astrônomos, que dispõem dos conhecimentos matemáticos necessários. Outras startups norte-americanas estão buscando profissionais na Ásia, Europa Oriental e outros lugares onde os salários são menores.
+"Não posso, e não quero, concorrer com o Google", disse Chris Nicholson, presidente-executivo e cofundador da Skymind, uma start-up de San Francisco que contratou engenheiros de oito países. "Por isso ofereço salários atraentes em países que subvalorizam seus talentos na engenharia".
+Mas os gigantes do setor estão fazendo o mesmo. Google, Facebook, Microsoft e outras empresas abriram laboratórios de inteligência artificial em Montreal e Toronto, onde estão realizando boa parte de suas pesquisas fora dos Estados Unidos. O Google também está contratando na China, onde a Microsoft tem forte presença há muito tempo.
+Não é surpresa que, na opinião de muitos, essa escassez de talentos deva persistir por anos.
+"É claro que a procura excede a oferta. E as coisas não vão melhorar em curto prazo", disse Yoshua Bengio, professor da Universidade de Montreal e renomado pesquisador de inteligência artificial. "São precisos muitos anos para obter um doutorado".
+Tradução de PAULO MIGLIACCI
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "76d6e4ad4eed1e9f5a4e70f8a21d38415620ba2c91cb2db03209c16fd5e1beaa",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "67a74cfbacb05352c7a96465bb3c782a027c0949a69399ffa531d5e9f0602ea9",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "13fe83f749b7dd14d07f063a72ab2a8d753762f319ceeb778b5023d6c0ef2a06",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8f18adc2c3478e2e374db6b2f19f433ac70d8c5ad757aef47b031237bd36baba",
+    "mention_text": "Anthony Levandowski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "23f66fdae4326cb66ad7a9e9608a0a4fd114edd05dfc1eda2acb90e6362b6350",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d41aefbfe985ae2321ebc277a15ac8eccd4fc371cfbf3581af3e6cffc2fe5ad",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "f88371bef0b4ea9ee6fcdf538e4bf7f9cb7e62e17a6a4771f1e13f8f61c83e85",
+    "mention_text": "NFL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75a043f2d929db7751016090c764de2671cc94599b55770cc8a2a9c3ee429a80",
+    "mention_text": "Christopher Fernandez",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "3210541a95f30615354714cb5e17345500570172f3f64dff7372ecb279911cb5",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b42c7f2fa7148001a38a0451a3aeb4730b84160b4c52df2cab077fda17b3c984",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6db8aa5e396b86e76b7fd54222c1218fa4a161b0d19ff8fdb33a65a6ecf3f91",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dd281f435a1bcd715995223291e28f9d26cf56a1290d0a70c4a4ec03efca9d03",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9ae927877ea03dc2f51e6e888b520330178d9e885b2ab8b898e309dacdc11a29",
+    "mention_text": "Element AI",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3aa2193462e439d4e98dbff9ae313de9af18870ac0ae52895ee8655b9a97b0db",
+    "mention_text": "Montreal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "65c5a3dd8734640fbbfc75eb655aae65d71b53fcd50fa25bfe7d36283c2a76af",
+    "mention_text": "Andrew Moore",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "7ee709810b222555c5c860abe272adf8bfd4dad6019ce228ee5364f033fde069",
+    "mention_text": "Universidade Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "90168df4d45d80b75e3b6c69f1c7a8d45c3e3244ceae8dec7bbb339719e9c044",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3d60d98216adca839cdc24dbf93757b2ea81803bc8126565681742efa9dc3cb2",
+    "mention_text": "DeepMind",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ce80d6369ad1357541eb069e8d97fd183031c2a29d84a6a62666f8c4e401d46d",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0335bdf600af621a7f0a167e0bd3aa6c63968e0d202fdf926db88ac5e3aa2871",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0d828b02e3937e0d96c5da45accb6203f436febbbf78e0f58b1b45ffca462305",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c4cf5e43cd3a929155ce1e6e3a90a78a5ce0094c3ab0277b4a5a352fa51d76bd",
+    "mention_text": "Jessica Cataneo",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a65e5f31a39babf2ffbdef4aca8cb621ef61051df0e54d52a57bc4805ae4b695",
+    "mention_text": "CyberCoders",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b7910868d2f9bdf862edebf4e8ef0f6482abf2713e1e995088506333a583750a",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ed7a2a8a29c8a2836f450a14b41b7b1a561b76a9a32b630ac2a5ca2a22daf31c",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c5565feeae7d69e49508fa3f9fbdec7f2e231661b5800163f04f485fb36cfb61",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3cac839c096102620e2d8e8c64302b539c87ae0637cb51cbfebb1e90f2f1aaac",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3aefd8bd8a18f7ccc7c4eb12286b97b101749735174b453537dece693a30c2ce",
+    "mention_text": "Uber",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bf8eb1c42c820c2da497de65684a4cc33288019ee47e5ac3743d3d39c8605abb",
+    "mention_text": "Carnegie Mellon",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b387944df6895e4b666778b0a3725e6921a78a6f0788cf9a1c7b681f0b3957b6",
+    "mention_text": "Universidade Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d0e83bb928b5132ae086329511f6b8db9a53b380ec4c9e921017456b3c62fc6a",
+    "mention_text": "Universidade de Washington",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "58b09abc258736b481b71fa3c4a48147c2cad8349017c69eeb0b7b3192d37102",
+    "mention_text": "Oren Etzioni",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f9c364376cd69f2d521f567af34a07f7e03b080cf5ff87f737afaff0c98ec5ce",
+    "mention_text": "Universidade de Washington",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6be3df4c0925ca7d897e88591aab2da87013c1140fbd3e19c6439aa6dbb9b756",
+    "mention_text": "Instituto Allen de Inteligência Artificial",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "74d7e5c2ed871a9c1e69c3adef0d9806d5d99151646a728564ed1f9c66625abe",
+    "mention_text": "Luke Zettlemoyer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfc7182034a940457004ca08246debfa21c5e11466d0df0857b901e3f76bc119",
+    "mention_text": "Universidade do Washington",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aaeb61bbe079bc03c75a5a57e97589d890ec78a2b00dfcbc91ce61a1eac7ec5f",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5e23d5c8063cf28a37447b65856d4b982394886f6ae530a55b97d44a793670d2",
+    "mention_text": "Seattle",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "28aebae56d7a956dae44e8edbdf78e553b13420c9430c036ecad8116ae0e361a",
+    "mention_text": "Instituto Allen",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c0ff2271928c55950877196c38748cf551f8e6f006b37661530f7674de973a41",
+    "mention_text": "Zettlemoyer",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "bfd7d24b56d933253f429db392f6eb8a99438e54b08a87284fb0cd4249263662",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d7d1cc7345fef042a139cbc62e18d4113ea18b89302f22bdd4759632a09e287e",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "9a6f88424e506daa82609be92ef2e5abdfb06fa637af0bfe01d36db605c95af7",
+    "mention_text": "Fast.ai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2fd3720d65034e983927a76846dac2ec8e6934ca901e47e4f42a3a8b010f4592",
+    "mention_text": "Deeplearning.ai",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ef0e8080692b33eeafeb5890f4b5314c9c373e807ec9c3a0efa24146aa1e2615",
+    "mention_text": "Stanford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "de224fc9cdb402ca414632852a6e268e505544f7a3bf41b32b2148b9bfc739e5",
+    "mention_text": "Brain Lab",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d71c99c52a7291741447c3dfcca4e87212173c17eacc7688b1e47733d3080ff8",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "e2305383f07f37790a312bbad433089387ad656ad03ff417c190e5056e372df4",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8537e24940b120a5e79645d2fa86f0a6a8833583473f9aace9b95f1978c9a538",
+    "mention_text": "Europa Oriental",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "34269ddbaf3ba2dfef374a6ae436dc4a0901f72df3a36276e02c134eea48ab1b",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "baab54a03d625a8757ac0c183be369a0c31f98895dc2c5869de6294d68c786ea",
+    "mention_text": "Chris Nicholson",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4c733b0caaf7ad4320d032b26541acca504bf9f8f61efdeae0f8e8ea09d018a2",
+    "mention_text": "Skymind",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "257f73b3414b9f19c0c56a205fe7bf63b4f93dddf1d93194668aecad21f348ec",
+    "mention_text": "San Francisco",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed91435e3bc1f6ae4f7f868e5f346fa9606dc8c50a1bf6b549b62ae44eb11470",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6e29e80d58aa2c02a514ff2a45d15e1f606f06f5120b71e4a8892016803d9def",
+    "mention_text": "Facebook",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "135d8afe83d40f6aa3017b2adc69595fdbc6a90c23fa8dc185d640030fd6309e",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fbbb057f38313db731032a124e3dbfd7312e8a09257f4f6eef18a3697fac25b9",
+    "mention_text": "Montreal",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "c00777c1e459b33fa5a28a4e873a0fc24b731e87d22dcc2388f4e789b61ad178",
+    "mention_text": "Toronto",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6d747c6064ab5ce070340c576169db337caba15e1691f23a8f896aef9a11f2d9",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5b134b87473493be45420de183a21800b2033cd6e040edbb1e317580ba5bc139",
+    "mention_text": "Google",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5a039b56edc66dcda0ce6188d1a151b496df376a93fdcb0425b74338889219a4",
+    "mention_text": "China",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3ad4b3d37eac59d95fd438ae34a900c148771eaccb0cf15661d4d4a530f00cc5",
+    "mention_text": "Microsoft",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5071b91b8e8016d2bda0fca8b32934f35c58fbc906ce820cf0b6b74f1f9cdf3e",
+    "mention_text": "Yoshua Bengio",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "69652c5d941cb49e01afba65299388afa3f60a848d9b70f6c487e9538922c7bb",
+    "mention_text": "Universidade de Montreal",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "78389372016a10d33fe2d60b04f996801751af6b3e8a386dbd4a027254f191e4",
+    "mention_text": "PAULO MIGLIACCI",
+    "categoria": "PESSOA"
+  }
+]

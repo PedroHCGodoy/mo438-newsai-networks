@@ -1,0 +1,494 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 07d1fce891e9c02d42070ed7b99283996a462b970cc2a0b4b34fe6937ef034b2
+
+TEXTO:
+O que os manuais de instruções revelam sobre você
+
+BBC BRASIL
+Pode ser que você leia o manual de instruções de cabo a rabo antes mesmo de ligar um aparelho novo. Ou ser daqueles que simplesmente "guardam" o tutorial na gaveta da cozinha para nunca mais ser encontrado - preferindo confiar no instinto (e possivelmente num certo grau de teimosia) na hora de montar um móvel novo.
+De uma forma ou de outra, haverá quase sempre uma ocasião em que o manual será útil - mesmo que seja meses após a compra do produto.
+No imaginário popular, eles costumam ser associados a folhetos ou livretos que surgem em meio ao plástico-bolha na caixa de papelão, quando desembalamos uma recém-comprada televisão ou mesinha de cabeceira. Mas, na verdade, são muito mais do que isso.
+Os manuais de instrução possuem diversas finalidades e assumem as mais variadas formas. Se engana quem pensa que são uma invenção moderna: eles existem há pelo menos dois séculos.
+"Em qualquer fase na vida, sempre haverá um manual escondido em algum lugar", diz Paul Ballard, diretor administrativo da 3di, empresa especializada em redação técnica.
+Mais do que um guia prático de instruções, os manuais podem revelar muito sobre a sociedade e a época em que foram escritos. E a forma como evoluíram mostra como mudamos também.
+De acordo com Roger Bridgman, ex-curador do Museu de Ciências de Londres, "as instruções existem para compensar as incapacidades das máquinas ao empregar as habilidades dos usuários e, portanto, dizem algo sobre a situação de ambos na época em que foram produzidos".
+O manual mais antigo encontrado por Bridgman estava junto a uma das invenções do célebre engenheiro escocês James Watt (1736-1819). Não era a máquina a vapor (tecnologia que ele aprimorou) - mas uma copiadora de escritório.
+Ao perceber que seria muito útil fazer cópias de suas cartas, ele inventou uma máquina que transferia tinta úmida de uma correspondência recém-escrita para outra folha de papel, criando uma cópia do original.
+A instrução para usar a engenhoca era bem básica. Dizia apenas para pegar uma folha de papel e botar em cima da outra, colocar o cobertor de feltro por cima e passar o rolo de pressão.
+"Como James Watt era um homem muito prático, as instruções não estavam em forma de livreto", conta Bridgman no documentário de rádio How to Write an Instruction Manual ("Como escrever um manual de instrução", em tradução livre), produzido pela BBC em 2009.
+"(O manual) é, na verdade, uma folha de papel colada à máquina para que você não perca - uma regra que os fabricantes modernos poderiam seguir", acrescenta.
+Para Ballard, as instruções de Watt simbolizam os princípios fundamentais de um manual de sucesso.
+O primeiro se refere à usabilidade: fazer com que as pessoas encontrem com facilidade as informações que precisam - seja achar o manual propriamente dito, colocando as orientações em um local óbvio, ou estruturá-lo de forma intuitiva, antecipando a maneira como o leitor pensa a respeito do problema. O segundo é tornar as instruções didáticas , fáceis de entender.
+"Clareza vai ganhar sempre", lembra.
+Simplicidade e objetividade, no que se refere à linguagem e ao design, são fundamentais. A regra final? "Saia do caminho", diz Ballard. O que significa se certificar de que o usuário saiba o que fazer na sequência, depois que sua necessidade específica tiver sido atendida - pode ser descobrir mais alguma informação ou continuar usando o produto.
+O diretor da 3di brinca que é por isso que os manuais de instrução vivem uma "crise existencial".
+"O ponto principal é o produto, não o manual; quanto mais tempo você passar olhando para o manual, menos você estará usufruindo do produto", avalia.
+Dicas
+Nem todo manual hoje em dia é tão simples e elegante quanto o de Watt. Mas há fabricantes resgatando a ideia de integrar as instruções ao próprio produto. Pode ser, por exemplo, na forma de uma grande etiqueta colada na lateral do equipamento ou por meio de um ícone de ajuda disponível no painel de controle do mesmo.
+Outro manual pioneiro considerado exemplar é o da Kodak Box Brownie, uma das primeiras câmeras fotográficas fabricadas.
+"O documento é muito bonito. Ele diz como você deve carregar o filme, mas também dá conselhos sobre como tirar uma foto", explicou Mark Miodownik, diretor do Instituto de Criação da University College London (UCL), à BBC em 2009.
+Junto com informações técnicas detalhadas para operar a câmera, há orientações sobre como tirar boas fotografias - desde capturar o retrato ideal até considerar o efeito das condições meteorológicas (do "sol brilhante" ao "nublado opaco").
+Fixação da marca
+A Harry's, por sua vez, é um exemplo de marca contemporânea que adota a mesma abordagem de conversar com os clientes, não apenas sobre como usar os produtos, mas também como obter o máximo deles - neste caso, oferecendo dicas sobre o barbear perfeito.
+Criar essa conexão mais pessoal por meio do manual de instruções também é um bom negócio. Se os consumidores se sentem bem com o produto que compraram, provavelmente terão uma percepção positiva em relação à marca no futuro.
+Enquanto isso, os manuais de carro da editora Haynes - visualmente marcantes - são instantaneamente reconhecidos. Mesmo para quem nunca sujou as mãos de graxa ou óleo de motor, os livretos remetem a uma certa época (para mim, aos anos 80 e ao manual do Ford Cortina do meu pai, um pouco sujo, que ficava em uma prateleira da garagem).
+Como diz o slogan da empresa: Haynes shows you how ("Haynes mostra a você como", em tradução livre).
+Mais amigável
+Há mais de 50 anos, a editora fornece consultoria técnica de alta qualidade de forma didática e prática de usar. Seus manuais são "como um guia de viagem para uma terra estrangeira - tornam o desconhecido amigável", descreve Martin Love, editor de automobilismo do jornal britânico Observer.
+Mas o que faz os manuais da Haynes serem tão eficientes? A empresa utiliza uma combinação de desenhos técnicos altamente detalhados e instruções aprofundadas sobre testes, reparos e manutenção, acompanhados de fotografias.
+A editora foi fundada em 1960, depois que John Haynes escreveu e publicou seu primeiro livro sobre a fabricação de um Austin 7 Special. O primeiro manual da série Owners Workshop Manual, propriamente dito, foi lançado em 1966, para o modelo Austin Healey "Frogeye" Sprite.
+Naquela época, os manuais eram formais e redigidos pelos fabricantes em linguagem muito técnica.
+"Eu dei muita sorte de identificar, como dizem, uma lacuna no mercado. Uma grande lacuna, descobri mais tarde", contou Haynes à BBC em 2009.
+Apesar de se manter fiel ao estilo original, a Haynes se modernizou com o passar do tempo e publica atualmente quase 2 mil manuais sobre os mais variados temas: de cuidados com animais de estimação a computadores, passando por música e ficção científica.
+Informação visual
+Alguns manuais abriram mão das palavras quase por completo - é o caso da Ikea, a gigante sueca de artigos domésticos. Há quem diga que as instruções sem texto facilitam a montagem dos móveis, enquanto outros usuários ficam confusos diante dos famosos pictogramas da empresa.
+Mas, no mínimo, eles ajudam a companhia a economizar com o custo da tradução para vários idiomas.
+Em 2015, os manuais da Ikea foram reconhecidos internacionalmente ao ganhar o prêmio Paul Mijksenaar de design para funcionalidade.
+"A Ikea conseguiu criar uma obra quase incomparável, consistente e lindamente executada. Uma obra que, em vez de ser meramente reconhecível, provou ser eficaz há mais de 30 anos", disse Paul Mijksenaar, especialista em design visual que dá nome ao prêmio.
+Então, por que algumas pessoas às vezes têm tanta dificuldade com seus manuais? Segundo Ballard, "não é porque o manual propriamente dito é ruim. É porque o produto em si é muito complexo".
+"Os manuais da Ikea começam fundamentalmente com o produto. Os manuais menos populares são aqueles em que o produto não foi, antes de tudo, projetado da melhor maneira", acrescenta.
+A limitação dos manuais da Ikea - ilustrações bidimensionais simples em preto e branco - força os móveis a serem melhor arquitetados a fim de garantir uma montagem direta.
+Fora da Ikea, muitos produtos estão ficando mais complicados de montar ou usar - o que significa manuais mais complexos. Mas isso também pode estar mudando.
+Melhorias
+"As habilidades das máquinas aumentaram tanto que os usuários podem se conectar a elas sem muita instrução - e muito do que é necessário pode ser fornecido em tempo real pelas próprias máquinas", avalia Bridgman.
+"Muitas vezes, os produtos não têm manual - seja porque foram projetados tão bem, de modo que você nunca vai precisar saber como fazer nada com ele, ou porque 'não é permitido' olhar as engrenagens e fazer qualquer coisa com ele", diz Ballard.
+"Acho que é uma grande mudança: as pessoas não esperam mais ter que fazer nada com o produto", completa.
+O iPhone da Apple, por exemplo, é, em termos de hardware, propositadamente difícil de explorar.
+Um aspecto inerente aos manuais que parece improvável de desaparecer é a inclusão de diretrizes de saúde e segurança. Para alguns usuários, pode soar como orientações supérfluas, mas reflete a responsabilidade do fabricante de manter as pessoas seguras ao utilizar o produto.
+Outro fator que afeta a evolução dos manuais é a globalização. As empresas distribuem com frequência seus produtos para mercados em diferentes partes do mundo, o que prevê a tradução das instruções para algumas dezenas de idiomas.
+A menos que seja muito bem feita, essa adaptação pode resultar em dúvidas ou frustração para o usuário final - gerando um retorno negativo para a marca.
+A forma como os consumidores utilizam os manuais também mudou. Eles costumavam ser apenas guias de referência que vinham com o produto adquirido.
+Mas, cada vez mais, as pessoas consultam as instruções de um determinado equipamento para checar especificações técnicas antes da compra: ou seja, o manual agora faz parte do processo de decisão do consumidor.
+E, é claro, os formatos se diversificaram ao longo do tempo. Hoje, os manuais podem ser simplesmente um vídeo do YouTube demonstrando as diferentes funções de um carrinho de bebê; um site dedicado a ajudar as empresas a entenderem um novo sistema telefônico complexo; ou um guia online gerado pelos usuários para corrigir falhas em smartphones.
+A internet, sem dúvida, possibilitou um avanço: que os próprios usuários criem e compartilhem manuais de instrução.
+O Ifixit.com, por exemplo, é "um guia de reparo gratuito para tudo, escrito por todos". Em março de 2018, o site oferecia 37.192 manuais de graça e 122.145 soluções para mais de 10.570 dispositivos.
+Neste contexto, os manuais produzidos pelo fabricante têm de se esforçar mais do que nunca para justificar o valor de suas especificações.
+As empresas estão começando a explorar ferramentas, como o Google Analytics, para calcular como o investimento em manuais pode ajudar a economizar em outras áreas. Por exemplo, se milhares de pessoas usarem o livreto que acompanha o produto, talvez não precisem consultar a assistência técnica.
+"Os manuais de instrução desempenham uma função muito mais ampla do que uma mera formalidade, as expectativas são muito maiores", diz Ballard.
+Porém, por mais intuitivos que sejam os novos produtos, as instruções são necessárias em muitas situações, como no caso de um equipamento usado para analisar com precisão amostras de sangue.
+Tendências
+Os bancos de dados e a linguagem de marcação XML já são usados amplamente para organizar a forma como os manuais são criados e gerenciados. Os códigos QR (códigos de barra bidimensionais que podem ser escaneados por smartphones) estão sendo adotados, por sua vez, para facilitar o acesso rápido às instruções.
+Novas tecnologias - como inteligência artificial e realidade aumentada - também estão começando a ser utilizadas. A inteligência artificial permite acelerar o processo de busca por informações, antecipando as perguntas dos usuários. E, à medida que nosso entendimento sobre o comportamento do consumidor aumentar, essa tecnologia pode substituir as tags e os metadados.
+Já a realidade aumentada possibilita que as instruções sejam colocadas em camadas para que os usuários interajam com o produto enquanto aprendem a usá-lo.
+Independentemente de como serão os futuros manuais de instrução, Ballard está otimista sobre sua existência.
+"Os requisitos básicos que as pessoas têm em relação à compra de um produto complexo não mudaram", diz ele.
+"Essa lacuna entre o produto e o que o usuário espera por ter comprado o produto sempre existirá - e a lacuna terá que ser preenchida de alguma forma."
+E conforme os próprios produtos são aprimorados, os manuais de instrução precisarão se desenvolver também.
+"Novos requisitos surgirão que não podemos prever agora", aposta Ballard.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "f0db2c5607f006080947ba71b0833511cccf3fd0a3405b4291f21c2f34025641",
+    "mention_text": "BBC BRASIL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4422aeeaa5de774d65254bbcdfcb28d56e296fc91822a31aac92e3717321aab2",
+    "mention_text": "Paul Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8c39fa5ddb96419a2fb94b83d215272564e19d0b8bbe6bc66ca2d5d6bf54364d",
+    "mention_text": "3di",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "5c27394dc727b83cd4fb97b272ea29af638bc6ec101f36d74ff94c5e6114a86f",
+    "mention_text": "Roger Bridgman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "872aadbeeb6dbb3600e10a7a31da2dfa74000be6c27c01fa50a1250c539ce3bd",
+    "mention_text": "Museu de Ciências de Londres",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "722735da6c5979144e5ac7197ea56d09b33d97e50f65bab107d0769e54f4b58a",
+    "mention_text": "Londres",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "39840e25bfe12120dac006cd811998ec4282de9a797aa65a04b9c581a4213aa1",
+    "mention_text": "Bridgman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c28a3e77f621d9c8a6aa03d47221ee20bb0d183ca1c0145f272ceafef91a960",
+    "mention_text": "James Watt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c5f07a987f13bc891345f740fd354111383765879e1d2716eca8e0456457b3b5",
+    "mention_text": "James Watt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "62fde82e25a3f159be27878a968ac0a047c33600aa51c7ab6d226c72aaadda06",
+    "mention_text": "Bridgman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6b012daaa711bafb20f78f9ea3a6e5598fe069a4f00c9ade7769a4767f09cfb0",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c90e56b55fa090550dba4ecfbca7b7d1db151d8368894782174589bdb1f89dbe",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1d452344925059366fc64c13cb3e3814458faf858add08a414f0d12dcc70b535",
+    "mention_text": "Watt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6282f06a1e3ee397a1b4eb3f7acf67985bc9d3af1dad79486f9adf425c52be66",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fe38ca2f160a8c239fcf3ae6a489c7ddc85fa57555d33ae16804f49fb7fc9b9e",
+    "mention_text": "3di",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2575c93bb6e373ff3e771fc763d3b62965a621750f02077e9b6a16a2c7a3a5d1",
+    "mention_text": "Watt",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a9a01b145f8f51776c3bf0cfaf9b53f6e0d2ea811927d5228505ccc335991b3b",
+    "mention_text": "Mark Miodownik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2b79965d74c8b646e526fecfea2e3a82d5513438ef4296162f9d7fb8e180e2ac",
+    "mention_text": "Instituto de Criação da University College London",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2b027a50a104bad2a5644d6480fc254a38a435ce91574d8fc25e39cf61c9d113",
+    "mention_text": "UCL",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "7fbcad3f739eab7aa8793d21692bf74ce9c191373f1c2874801026ee8200f97f",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "49372d0041d7631dcbad6d11d6eb704773172573b6899da22acd4977bf7e0122",
+    "mention_text": "Harry's",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fb5b63cf8e65b2c90528c55611a5bfa77ccf848431bdc12a0cf91c391a5e705b",
+    "mention_text": "Haynes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4d4b913cb11e17b2e4a2f4af0d0090a9183ea7d555781e67f090ca0a6f7d173d",
+    "mention_text": "Haynes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a7f2b3d11c8e0f12b7eec58ad65ca60ad3a1550c25bda6f5b67a63414492f64d",
+    "mention_text": "Martin Love",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8a62eed993d050d3aa3c036aa5462cd4a412eba6c510cf5bfdaa62e05129afa3",
+    "mention_text": "Observer",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "33d7cd80b7f25836dc38d93b86fea50abf9ccd6d0b88a475197bc54cc51774ab",
+    "mention_text": "Haynes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "bc62a3bedd18b94b6243ba2afc58e553e3a432c27fc95ae42d8cb5647326b59a",
+    "mention_text": "John Haynes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "f1bfe55832db10d59111513dfa523845371751d632ccbc907a9f4bca26915646",
+    "mention_text": "Haynes",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "939be1551586557a4fd0567a3b37e14de0050fde0d67524d3bea6bfcedcc69be",
+    "mention_text": "BBC",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "86e1c6e6f01df7ad08cb038fd6914221e8dd7fa7c4bc7e9d2b0b0acc4f605321",
+    "mention_text": "Haynes",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "36bf9b7ecf541a1d1518cdd3cd2ac024cdae3c3c7cb716093fa01d4549205f10",
+    "mention_text": "Ikea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c927715d83aba9fab476d42b02320886a9b89450589c6ac2871df78110b5fddc",
+    "mention_text": "Ikea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "13947d80f7d17efefedfefbc707f1f2fe7f2015d3cc028cbea78b7a9dc31b865",
+    "mention_text": "Paul Mijksenaar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "47ec5352b5b97d8517db30711a75a2487c6618cf59d35baa50b6a6dcd7a2a54d",
+    "mention_text": "Ikea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8fbcf9cdb8969cd21a83001313b3e6c9b7489345e2bceaf118f666b535d7df35",
+    "mention_text": "Paul Mijksenaar",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cef27eec2a0833ab47e273c85154e28e073367749287ada1afab58e6f15a5034",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "8e6ff8da982d7464ad262c052760d40292973afb604a68837c61a407fb16069b",
+    "mention_text": "Ikea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b31386b46888c1c27fd92f93bb38d118e489bd978cb64f48f51bc9f3a4b5492e",
+    "mention_text": "Ikea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "8565c475b0333dbf82ecdb2991546e2cec57f1ab5d3cfa1effbcc88e579e5219",
+    "mention_text": "Ikea",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d415f04ce62954c1beb5ebef39471d1ee828ca18f8755c5ab5b9d1419f6f6f96",
+    "mention_text": "Bridgman",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eb445d780dcdcf2c760375c3207f7c1ea912da6922e5e0f3964df55d0933fc14",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7fe25f4229d4002bb3523962f0fe3d7d40491968cc46eef81baca3b82be19b5",
+    "mention_text": "Apple",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d50905a8b5dcfffccdbd7b96df8a486a73690c32aa94b4200129eda6546f7870",
+    "mention_text": "YouTube",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "96623fb2b57f4f63b44881bbba86b1470ed6d27bc2633dc5a273ce84dbde6c45",
+    "mention_text": "Ifixit.com",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "803512ecaa99880338e063bb7773cb25a96fc7a1cb0f6f4fdb1d5f4afce42246",
+    "mention_text": "Google Analytics",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6134f40275e75ead92bbcf82d0fbdd3835a3be12d3e70d86443e109e5dbf735c",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "885256a77c79dc6954eae731022c3fefed3a78de2ed7c45738fdc4e79154b6da",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4f5d53fd04ae8b055f2bff3db4943b541f3cbb33a6c530cde5335833e5192555",
+    "mention_text": "Ballard",
+    "categoria": "PESSOA"
+  }
+]

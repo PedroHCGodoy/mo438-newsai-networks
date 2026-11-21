@@ -1,0 +1,428 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 6f48032e5727d85238152859631388c33eb2e54f56a3f426675918c444b014ac
+
+TEXTO:
++ciência: As máquinas em xeque
+
++ciência
+AS MÁQUINAS EM XEQUE
+Ali Fraidoon/Associated Press - 19.out.2002 - Stan Honda/France Presse - 11.mai.1997
+Vladimir Kramnik joga com o computador Deep Fritz, em partida que terminou empatada; ao lado, Gary Kasparov após a derrota para o Deep Blue, em 1997
+Apesar dos resultados contra mestres enxadristas, é difícil dizer que 
+computadores atingiram o sonho da inteligência artificial
+Pierre Barthélémy
+do "Le Monde"
+Ao enfrentar o campeão mundial Vladimir 
+Kramnik, a informática confirmou sua vitória 
+histórica sobre Gary Kasparov, em 1997. De 
+agora em diante, ela já pode afirmar que joga 
+em pé de igualdade com o homem e até ousar passar no 
+célebre teste de Turing. 
+Após a derrocada de Gary Kasparov, o novo campeão 
+mundial, Vladimir Kramnik, conseguiu apenas empatar com o Deep Fritz. Será que devemos deduzir que a 
+máquina teve acesso a algum tipo de inteligência artificial? Com certeza não. O computador utiliza o método 
+da força do cálculo bruto para fazer frente ao enxadrista, cujo cérebro utiliza diversas faculdades. Dentro em 
+breve, por exemplo, técnicas de criação de imagens funcionais poderão registrar a totalidade da atividade cerebral de um ser humano, o que permitirá a visualização 
+dos recursos que ele explora. Os enxadristas artificiais já 
+conferem à máquina a capacidade de passar no teste de 
+Turing, que constata a presença de inteligência. Mas, 
+para Douglas Hofstadter, a complexidade do cérebro 
+continua distante dos programas de informática. 
+"Dentro de mais ou menos cinco anos, nenhum ser 
+humano será capaz de derrotar os melhores softwares 
+de xadrez." A previsão é do alemão Base, criador do 
+programa Deep Fritz. Ele acaba de enfrentar o campeão 
+mundial, o russo Vladimir Kramnik, na partida em oito 
+partes que aconteceu em 19 de outubro em Bahrein. 
+Após a histórica vitória do Deep Blue, o supercomputador de xadrez da IBM, sobre Gary Kasparov, em 1997, 
+este novo resultado positivo, desta vez obtido por uma 
+máquina bem menos potente, comprova o nível excepcional atingido no xadrez pelos jogadores artificiais, capazes de derrotar 99,9999% dos jogadores humanos no 
+planeta. Para Frederic Friedel, o 0,0001% restante não 
+vai resistir por muito tempo, devido à progressão mecânica que leva ao aperfeiçoamento dos programas e, sobretudo, ao aumento regular da velocidade dos processadores.
+Debate falso
+O sucesso dos softwares nessa área se 
+explica também pela relativa simplicidade das regras do 
+xadrez e pela soma de pesquisas efetuadas há várias décadas. Foi o matemático britânico Alan Turing, "pai" da 
+inteligência artificial, que, em seu artigo seminal datado 
+de 1950, propôs o desenvolvimento de programas que 
+jogassem xadrez, já que essa atividade abstrata tinha a 
+reputação elogiosa de ser um jogo "intelectual". Mas 
+uma questão se colocou desde o início: as máquinas que 
+praticam o jogo dos reis com o nível de grão-mestre podem, algum dia, pretender atingir algum grau de inteligência?
+Como observava o matemático americano John Casti 
+em seu livro "Paradigmes Perdus" (Paradigmas Perdidos, InterEditions, 1991), "programas de software (...) 
+podem produzir resultados de aparência inteligente 
+num campo muito limitado, mas, fora desse campo, 
+um abismo os separa de qualquer coisa que se pudesse 
+descrever como pensamento".
+Para Frederic Friedel, que trabalha nessa área há 20 
+anos, a discussão em torno da inteligência artificial que 
+os softwares teriam ou não é uma discussão falsa. "Uma 
+das coisas mais importantes que aprendemos com o xadrez eletrônico", diz ele, "é que a idéia segundo a qual os 
+programas pensariam como um ser humano é falsa. 
+Eles jamais o farão. Não obstante, vão se tornar inteligentes de outra maneira. É um erro tentar fazer um 
+computador pensar como um ser humano ou tentar fazê-lo utilizar as mesmas estratégias que nós. Um computador é uma entidade diferente de um cérebro humano. Se você quiser bons resultados no xadrez, terá de 
+produzir uma máquina que jogue xadrez, não uma que 
+imite o raciocínio humano. Os programadores descobriram uma segunda maneira de jogar xadrez no planeta. A primeira consiste em utilizar a massa cinzenta 
+contida em nossas cabeças, explorar seus bilhões de 
+processadores, que são muitos, mas extremamente lentos. A segunda consiste em usar um processador rapidíssimo, que fará alguma coisa de diferente."
+Assim, os softwares não raciocinam, não elaboram 
+planos. Eles somam, subtraem e comparam números, 
+milhões e milhões de vezes. Exploram laboriosamente 
+todos os recursos da posição, sendo que um grão-mestre tenta analisar apenas algumas sequências de movimentos que sua experiência faz crer que seriam os mais 
+promissores.
+A abordagem da inteligência artificial que procura 
+modelar e reproduzir o raciocínio humano foi explorada no xadrez, "mas não teve bons resultados", recorda 
+Frederic Friedel. Um exemplo: a fabricação de um avião 
+capaz de atravessar o oceano Atlântico. Em lugar de se 
+esforçar em vão para fazer a aeronave bater as asas, por 
+que não simplesmente aceitar que, para o avião, o melhor é ter asas rígidas?
+Existem certos inconvenientes, é verdade. Por exemplo, não é possível aterrissar um avião de asas fixas 
+sobre uma árvore. Mas, em contrapartida, pode-se 
+atravessar o oceano em questão de horas.
+Determinar a inteligência
+Assim, a abordagem 
+do cálculo puro saiu vitoriosa, a ponto de, pelo menos no xadrez, os softwares terem passado com sucesso no teste de Turing. Para determinar se uma 
+máquina é inteligente ou não, Turing imaginou um 
+teste ao qual chamou de "jogo da imitação" e que utiliza dois jogadores: um humano e um programa de 
+conversa. Um segundo humano atua como juiz. Isolado numa sala, o segundo humano formula perguntas diversas aos dois jogadores, sem saber qual é homem e qual é máquina.
+Turing dizia que, se em pelo menos 50% dos casos 
+o juiz fosse incapaz de distinguir o homem do computador, então esse último poderia ser considerado 
+uma entidade inteligente.
+Na partida disputada em Bahrein, o grão-mestre 
+inglês Daniel King explicou que "basta olhar as partidas para saber quem era Kramnik e quem era Deep 
+Fritz". Em compensação, "se tivessem me dado uma 
+série de partidas anônimas, sem que eu soubesse se 
+elas tinham sido jogadas por dois humanos, um humano e um computador ou dois computadores, eu 
+provavelmente teria dificuldade em fazer a identificação".
+Tradução de
+Clara Allain
+Próximo Texto:
+Continuação
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "ee89adce71a5b99bcbe361a6d87f0283bede307c9fef7bf7a6253230683638bd",
+    "mention_text": "Ali Fraidoon",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "5e18be432232c16dcc6e12b9b9551205981f36840bb562757d6d372c1b759303",
+    "mention_text": "Associated Press",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3463b4788b4e67e7960031293632bc5641342fca9973a1227bc2dc0aea9d3083",
+    "mention_text": "Stan Honda",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cde1f806968a10114633eb6f4ba85ccf5b344265ccd872a59815f938d20f1651",
+    "mention_text": "France Presse",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6006203282ea5db6819661cdfa52c7e10d4b94a66158f3c14cc7b5e3e18a5a30",
+    "mention_text": "Vladimir Kramnik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "689ad5ceac0a9775bcacff43787583c502d27857b3ce41d44dceeef857e93fca",
+    "mention_text": "Gary Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbe920087ba66b6919c335baa90531d22de403f1fbf0fefecb61c3aba84afcab",
+    "mention_text": "Pierre Barthélémy",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d0a2c125d312b9503b71f12d0ac3281adc943cea1671206d0bffa7caaa5f2f78",
+    "mention_text": "Le Monde",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4edfc373b661ac4dcf8025f3e62e1f2f8f719e7438044968a3c880c9c278f167",
+    "mention_text": "Kramnik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ea2aee2d9d2eaa1263c7a74828f784f03866cf6aa61affdc96752731f45f1b39",
+    "mention_text": "Gary Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "c990733d1ed98d51f2ffbcb5fce69cf427170016f19ffcee6448d5cd5a8e2ce6",
+    "mention_text": "Gary Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "edc1177a8b984099007e607abf579887fc9f66af1169b70e75ff00bfa0f70e1b",
+    "mention_text": "Vladimir Kramnik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "615a616efa3bf7a3e7b78f64db9e7b22da8977d2efcea2e0d9bb2ff8d5f6607d",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "92b3f568b63174b2a80942b2a5a81cd1df6ae36316cde023f3b0dee84560d11b",
+    "mention_text": "Douglas Hofstadter",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "68b2756186a76499db8bfe49805aa8d19033e735804eae239980348c1353db91",
+    "mention_text": "Base",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "14c1e9435f75def9227aefa6400953db2aba299365903259164428013a69bbc2",
+    "mention_text": "Vladimir Kramnik",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cc5beddabca4a4632bac60baaed7ce7be981facf4898cc9f662c84d5dc35da63",
+    "mention_text": "Bahrein",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f1d9b88dac0b1782f2d6f638a8612996bd22cb9d36046b43d3b4cc539db964d4",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "042d97811421e2b9f6ecf0287c73b31b1d5750a24a5e03c66235158867942710",
+    "mention_text": "Gary Kasparov",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e681b8a881514b02b28b41b49db5f601cef4f9bdccaab85f19faf1648ac82494",
+    "mention_text": "Frederic Friedel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "75a580b7b0397448013f68f4a8062e138734f4417a113ebe6f3425d165308de1",
+    "mention_text": "Alan Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "27b10b320b017ebb675759660a471c35a5587793e33940222915201557f5f241",
+    "mention_text": "John Casti",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6237311d74f5d7431c05eb6b45745b9b11dac89a2a8189ea396bccee1a54b544",
+    "mention_text": "InterEditions",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "a4a9fbf4b8282e067a9487d1442a3a42dad44ebe790729b6b82ee23e05c9cb2f",
+    "mention_text": "Frederic Friedel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "1e8230b36a643098fc005c47229a3c6abc5adb4ef461ef7a627b3c4e8cfd6031",
+    "mention_text": "Frederic Friedel",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "2460f3f3a79479441b457cb9073f4fd29b4f09fd4e17fa67c39560171c4306d7",
+    "mention_text": "oceano Atlântico",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e6843b808ace0a501fead3144089e7134189047f068b7e43788283f18939a5ad",
+    "mention_text": "Turing",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "e427bf91858d126f8e5e4d552c97343e92c523727891659fd194e451cb57d38a",
+    "mention_text": "Bahrein",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6f845fba60a802cf40307052a0bf445085207dfaf841a1b0bbb1e7fc7fc161f0",
+    "mention_text": "Daniel King",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "87b3bf96a4d16fab970263fe3855affdc1ae9fc950fb7beb95462bd9ef022527",
+    "mention_text": "Clara Allain",
+    "categoria": "PESSOA"
+  }
+]

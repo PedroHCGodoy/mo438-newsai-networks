@@ -1,0 +1,584 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: 0664c40001d1112c88104b45d1a0656f3bf98aaf8e4290a036b5b1f33045455a
+
+TEXTO:
+Era dos robôs está chegando e vai eliminar milhões de empregos
+
+[RESUMO] Professor de economia chama a atenção para os avanços tecnológicos que alteram de modo radical as perspectivas do mercado de trabalho. Empregos serão extintos em diversos setores, em um processo que afeta todas as classes.
+Em breve um robô vai lhe entregar a pizza de domingo. Talvez seu condomínio não exija que você desça até a portaria para apanhá-la, pois não vão suspeitar que possa ser um assalto. Na Alemanha, esse serviço já está funcionando —e a pizzaria é uma rede que atua no Brasil.
+Mas isso é pouco: logo essa pizza será resultado de um processo totalmente automatizado. Se você acha que esse cenário pertence à ficção, ou que vai demorar muitos anos até ele se tornar realidade, pesquise sobre a americana Zume Pizza. Situada no Vale do Silício, a casa entrega comida feita por robôs. E o pior é que os consumidores da Califórnia têm adorado a novidade.
+Pior por quê? Porque é enorme a quantidade de empregos que será eliminada. Alguns poderão afirmar que esses postos de trabalho demandam baixa qualificação e que o importante é aumentar a produtividade ——no caso, a das pizzarias.
+O argumento perde metade de sua força quando se sabe que, na mesma Califórnia da pizza robotizada, quem se envolve em problemas de trânsito não depende mais de advogados para apresentar recursos. Um dos maiores fabricantes de computadores criou um robô, baseado em inteligência artificial, capaz de elaborar petições para quem quiser recorrer de uma multa, por exemplo. O interessado não precisa dar um único telefonema, nem para o despachante, nem para o defensor.
+Exemplos como esses se reproduzem em todos os setores da economia mundial. Eles ilustram um processo novo e muito importante: as empresas se automatizam cada vez mais, com softwares poderosos e inteligência artificial, de tal modo que se expandem empregando número muito menor de trabalhadores.
+É o que os americanos chamam de "jobless growth", crescimento sem empregos. Há muitos anos se previa que isso poderia acontecer —e agora a previsão virou realidade. Diante desse cenário, como a humanidade vai reagir?
+Rebeliões contra a mecanização ou a automação dos processos produtivos não são inéditas. Quando o arado passou a ser utilizado na agricultura e muitos trabalhadores perderam seus empregos, foi grande a oposição ao novo instrumento. Na Inglaterra do século 19, os ludistas destruíam os teares em sua revolta contra a substituição da mão de obra humana pelas máquinas. Nos Estados Unidos do século 20, Henry Ford foi considerado um grande inimigo dos manobristas de charretes.
+A tecnologia, contudo, sempre venceu. Por um lado, pois aumentava a produtividade da economia como um todo; por outro, e não se pode ignorar este fator, porque só afetava empregos de baixa qualificação.
+Aí está a diferença desta vez: agora os empregos de alta qualificação também são afetados —e muito. O mesmo robô que faz as vezes de advogado consegue ler mil tomografias por hora; os médicos que avaliaram seus diagnósticos e resultados concluíram que estavam certos em 99% das ocasiões. Ou seja, uma das profissões mais valorizadas e intelectualizadas hoje em dia está sob ameaça. Em suma, a classe média está saindo do paraíso.
+Mais
+Wolfgang Streeck entra fundo nesse tema em seu livro "How Will Capitalism End?" (como o capitalismo vai terminar?), editado pela Verso e lançado em 2016. Para o autor, a inteligência artificial e a robotização vão fazer com a classe média o que a mecanização fez com a classe trabalhadora nos séculos 19 e 20. Ele afirma que os únicos beneficiados serão os donos dos robôs.
+Assim como foi chamado de mecanização o processo de substituição da mão de obra menos qualificada por máquinas, que se desenrolou no final do século 19 e durante praticamente todo o século 20, Streeck cunhou o termo "eletronização" para denominar essa nova fase, na qual computadores e robôs passam a ser dotados de competência para criar e desenvolver tarefas cognitivas simplificadas, além de tomar algumas decisões. No século 21, a eletronização deve afetar a maior parte das atividades profissionais. A maior parte, mas não todas. Ao que tudo indica, algumas profissões nos extremos estão a salvo.
+Estudos mostram que pessoas em funções no topo da pirâmide, que em geral demandam criatividade e capacidade de solucionar problemas, não têm o que temer. As máquinas ainda não conseguem desempenhar tais tarefas com a mesma eficácia. Estão nessa categoria certos ramos da engenharia e das ciências , por exemplo.
+Algo semelhante se passa na outra ponta. Trabalhadores manuais sem qualificação nenhuma, como faxineiros ou pedreiros, tampouco serão afetados —não porque a tecnologia não os tenha alcançado, mas por não valer a pena economicamente.
+Entre os extremos, as funções mais sujeitas a serem eliminadas são as que exigem repetição. Importa pouco que seja uma atividade fabril ou de serviços, que envolva operários ou profissionais liberais. A questão é: quanto mais rotineira for uma profissão, maior a chance de ela desaparecer —mesmo que demande algum brilho cognitivo.
+Um dos livros mais importantes sobre o tema é "Rise of The Robots: Technology and Threat of a Jobless Future" (ascensão dos robôs: tecnologia e a ameaça de um futuro sem emprego), de 2015. Seu autor, Martin Ford, também sustenta que há uma grande diferença entre o que aconteceu no passado e o que vai acontecer agora.
+Antigamente, diz Ford, quando um setor se modernizava e com isso eliminava empregos, restava ao trabalhador se mudar para outra atividade econômica. Hoje, contudo, esse caminho não é uma opção sempre válida, pois inúmeros setores estão se modernizando ao mesmo tempo. Ou seja, trata-se agora de fugir das atividades rotineiras e repetitivas e procurar abrigo naquelas que exijam habilidades (ainda) não dominadas pelos robôs.
+Questões tributárias e regulatórias podem retardar a utilização desses equipamentos no Brasil, mas nem por isso os brasileiros deveriam estar menos preocupados. Na medida em que o avanço tecnológico e os ganhos de escala tornarem a produção de robôs mais barata, multinacionais tenderão a repensar suas estratégias. Se hoje companhias dos países mais desenvolvidos instalam-se em nações menos avançadas a fim de aproveitar a mão de obra barata, talvez em breve elas considerem mais vantajoso manter uma fábrica quase 100% automatizada em território americano ou europeu.
+Muita gente acha que as empresas norte-americanas que operavam na Ásia e no México estão voltando aos Estados Unidos por causa dos pedidos de Donald Trump . Ledo engano. A nova tendência corporativa, que já vem sendo adotada por muitas multinacionais, beneficia-se dos avanços tecnológicos, aqui incluído também outro equipamento revolucionário —as chamadas impressoras 3D, ou impressoras aditivas. Com elas, tornou-se possível fabricar peças e componentes nos próprios locais onde eles são necessários.
+Ou seja, um dos princípios básicos da globalização —o uso de cadeias de valores espalhadas pelo mundo— pode estar em xeque. Montadores de automóveis, por exemplo, recorrem à dispersão geográfica da produção, fabricando cada parte ou peça dos veículos na região ou país que ofereça as maiores vantagens competitivas. Isso deixará de existir. Graças às impressoras 3D, esses componentes poderão ser feitos onde se situa a matriz da empresa.
+Não surpreende, assim, que toda essa parafernália tecnológica venha sendo chamada por muitos de indústria 4.0, ou que a renovação que ela possibilita seja classificada como a quarta Revolução Industrial. Robôs, inteligência artificial e impressoras 3D são apenas uma parte desse fenômeno, que inclui ainda a internet das coisas (IoT), a computação na nuvem, a nanotecnologia etc.
+Todos esses avanços destinam-se a aumentar a produtividade das fábricas; nenhum leva em conta a possibilidade de preservar empregos.
+Economistas têm procurado calcular o tamanho do impacto da revolução em curso. Larry Summers, ex-secretário do Tesouro dos Estados Unidos e ex-presidente da Universidade Harvard, chama a atenção para uma grande diferença entre a automatização de agora e aquela promovida nos anos 1960 e 1970 (ele fez uma síntese interessante num painel de 2015, "The future of work", o futuro do trabalho).
+Naquelas décadas, a intensa modernização da maioria dos setores afetou 5% dos empregos. Desta vez, segundo cálculos de Summers, as novas tecnologias sacrificarão algo entre 15% e 20% dos postos de trabalho.
+São estimavas modestas se comparadas com as dos economistas Michael Osborne e Carl Frey, ambos da Universidade Oxford, no Reino Unido. Em um célebre estudo de 2013, eles afirmaram que, até 2030, cerca de 45% dos empregos americanos poderão ser eliminados ("The future of employment: How susceptible are jobs to computerisation?", o futuro do emprego: quão suscetíveis à informatização são os empregos?).
+Uma das variáveis dessa equação é o espantoso barateamento dos preços de robôs, softwares de inteligência artificial e outros equipamentos de alta tecnologia. Há dez anos, muitos desses dispositivos eram impensáveis para companhias médias ou mesmo grandes; hoje, até pequenas empresas conseguem comprá-los.
+Outra variável é a frustração das expectativas quanto à substituição dos empregos. Imaginava-se que a sociedade pós-industrial geraria ocupações em novos setores, sobretudo ligados à área de serviços, para absorver os trabalhadores deslocados da indústria. Essa perspectiva foi descartada; os equipamentos de ponta são mais utilizados justamente no setor de serviços, onde mais se estão eliminando funções.
+Ao mesmo tempo, as ocupações criadas como decorrência dessas tecnologias são em quantidade diminuta. Estudo de 2017 feito no Canadá mostra que, na hipótese mais otimista, os novos empregos não chegam a 4% do total de postos de trabalho existentes naquele país ("Future Shock? - The Impact of Automation on Canada's Labour Market", choque futuro - o impacto da automação no mercado de trabalho do Canadá, de Matthias Oschinski e Rosalie Wyonch).
+Sem contar que é praticamente impossível prever hoje quais empregos vão surgir nos próximos 40 anos. Para exemplificar, Joel Mokyr, um renomado professor de história da economia na Universidade Northwestern (EUA), afirmou em entrevista à revista The Economist que há 40 anos ninguém teria adivinhado que profissões como projetista de videogame ou especialista em cybersegurança seriam importantes.
+Mas uma coisa é certa: é muito pequena a probabilidade de que surjam novas atividades e profissões nas quais a presença de seres humanos seja imprescindível. Robôs e equipamentos de automação mostram-se cada vez mais sofisticados, aptos a desempenhar mais e mais funções. Ou seja, não se deve apostar que a criação de postos de trabalho não previstos poderá resolver o problema do desemprego.
+De acordo com a Organização Internacional do Trabalho (OIT), existem 194 milhões de pessoas desempregadas no mundo, quase um Brasil inteiro. O que poderá acontecer com as taxas de desemprego nos próximos anos? Como a tendência implicada pela automação é certa e irreversível, a geração de empregos vai cair. Não se sabe para qual patamar, mas será uma situação dramática —e a sociedade precisa agir.
+A situação embute um paradoxo. Por um lado, a solução deveria envolver as grandes empresas, principalmente as que mais estão se beneficiando das novas tecnologias. Assim como questões de ética concorrencial e proteção do meio ambiente, a preservação de postos de trabalho precisa entrar na pauta da responsabilidade social corporativa. Além disso, se, por hipótese, todas as companhias dispensarem seus empregados ou a maior parte deles, não haverá mercado consumidor.
+Por outro, essas companhias não podem abrir mão da automação; ganhar produtividade é crucial para quem quer se manter vivo num mercado competitivo. Como consequência, investem em robôs, inteligência artificial, drones etc., contribuindo para o desemprego.
+Uma das maiores dificuldades está na própria teoria econômica, que ainda não avançou o suficiente para perceber que nem sempre o mercado resolve tudo: se deixarmos para o mercado, vamos assistir ao crescimento cada vez maior das empresas gigantes, o que significará menos emprego e menos consumidores.
+Por que as empresas gigantes? Porque só vence uma competição acirradíssima quem tem capacidade de fazer investimentos em robôs cada vez mais poderosos. Com isso, as já muito grandes se tornam ainda mais produtivas e acabam adquirindo ou eliminando concorrentes menores, num processo de oligopolização em curso nos mais diversos setores, mas sobretudo onde há maior demanda por tecnologia de ponta.
+O problema vem sendo pensado e discutido à exaustão em alguns países, com destaque para Alemanha, França e Itália. A recomendação mais importante é a de que haja redução na jornada de trabalho. Na França e na Itália, a jornada semanal já é de 34 horas, contra 40 no Brasil.
+Embora a medida tenha sido bem-sucedida no início, ainda nas décadas de 1980 e 1990, após alguns anos se percebe que ela só será efetiva se for adotada por todos países. É que, com as facilidades da globalização —e com as novas possibilidades oferecidas pelas tecnologias de ponta—, as empresas que querem aumentar sua produtividade simplesmente evitam lugares onde a jornada de trabalhado tenha sido reduzida.
+De qualquer forma, a própria OIT prioriza essa iniciativa, e a frase "trabalhar menos para que todos trabalhem" virou um lema muito utilizado na Europa.
+Outra medida bastante polêmica vem sendo alardeada por sindicatos britânicos: eles defendem uma atuação conjunta de governos, empresários e organizações de trabalhadores para estabelecer um imposto sobre ganhos de produtividade decorrentes do uso de robôs ou outras tecnologias de automação.
+A alíquota do tributo seria diferenciada por segmentos da economia. Assim, sobre o setor bancário, incidiria uma taxa maior do que sobre a construção civil, pois neste último os impactos da automação são menores. Esses impostos, além disso, teriam destinação específica, qual seja, a criação de empregos públicos nas áreas de educação e saúde.
+Como sempre, os países mais avançados nessa discussão são os escandinavos. Por lá, predomina a ideia de introduzir um programa de renda mínima nacional . Todo cidadão receberia um valor mensal que lhe garantiria a subsistência, independentemente de ele estar ou não trabalhando. O pressuposto por trás desse tipo de ação é que o desemprego vai crescer de forma assustadora nos próximos anos e toda a sociedade precisa estar protegida.
+Nesse debate, há ainda a considerar as questões filosóficas suscitadas pelas novas tecnologias. Computadores e robôs sabem ler textos e fazer cálculos há bastante tempo, mas só recentemente passaram a enxergar, ouvir e falar. Devido ao avanço da inteligência artificial, também passaram a ter... inteligência. A humanidade deveria se preocupar com esse fato, na linha do que sugerem filmes como "O Exterminador do Futuro" e "Matrix"?
+Existem diversos grupos de cientistas, futurólogos e filósofos que especulam cenários apocalípticos. Vernor Vinge é um deles. Respeitado professor de matemática e computação da Universidade de San Diego na Califórnia, escreveu livros de ficção sobre a era em que os computadores e robôs serão equivalentes aos seres humanos —como "The Children of The Sky" (as crianças do céu) e "Rainbows End" (o fim do arco-íris). Para ele, isso deve começar a acontecer em menos de 15 anos e será a maior mudança no planeta após o surgimento da vida humana.
+O recém-falecido cientista Stephen Hawking era um dos estudiosos da inteligência artificial que mais se preocupavam com as consequências negativas dessa tecnologia. Ele chegou a antever o fim da raça humana como decorrência do poder incontrolável que as máquinas passarão a deter.
+A mesma posição vem sendo manifestada pelo visionário Elon Musk, fundador da Tesla (uma das maiores fabricantes de carros elétricos do mundo) e da SpaceX, empresa que pretende pôr um homem em Marte nos próximos dez anos. Musk defende a criação de uma espécie de órgão regulador com a função de prevenir situações futuras em que equipamentos dotados de inteligência artificial poderiam ameaçar a sobrevivência de humanos.
+Quanto a isso, assim como em relação à ameaça do crescimento sem empregos, a situação também termina em paradoxo. Uma empresa ou um país que resolver frear o desenvolvimento tecnológico para evitar uma catástrofe —tanto quanto para evitar a extinção de postos de trabalho— acabará perdendo competitividade nacional e internacional.
+Como consequência, essa empresa ou esse país se verá às voltas com o desemprego (fruto da diminuição da fatia de mercado decorrente da menor competitividade) e não terá interrompido a escalada tecnológica de outras empresas ou outros países.
+Apesar de todos estes aspectos assustadores, o que há de pior para um país é não discutir o assunto. E é justamente isso o que acontece no Brasil, mesmo neste ano eleitoral.
+Paulo Feldmann é professor da Faculdade de Economia e Administração da USP, professor visitante da Pécs University (Hungria) e autor do livro “Robô: Ruim com ele, pior sem ele”.
+Ricardo Cammarota é Ilustrador.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "a8d54012cdb549803dcc942a84b32c8a65c49a6ec144571a747f03c2a8e4bc07",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "8c671fad16de8fe099c5390522ec81c9338e3941ad0bd0666a082e0d1272a093",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "31fac1f0e6f7b5044a9873239c1e0ab7b400af910fefe8c9c99694779d53c823",
+    "mention_text": "Zume Pizza",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "0ae5c3367dbcef861408d7eb5ee00ee8dff4e119b7884b01fc6b0e48a7507397",
+    "mention_text": "Vale do Silício",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "40891c8a95682f1ffd46420ea5aed46d4227613458aaf87c6094ac9f06b37208",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "41d5a4fef1dcacfac1a56b77c3d8be84e656eb4c895b9da939da08751137efaf",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "afc3f7ff07c6e975e798bc8866046f03a6848b25b460389cd711fd802d82e963",
+    "mention_text": "americanos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cbe9a71c09d2112a402145dc282cf18950ddb4b581124408f6f12bc46e4c75e2",
+    "mention_text": "Inglaterra",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e59fa06f610176d4ca684623ab3b40b9aa4df05e39b7eeb06a06840b61f34a68",
+    "mention_text": "ludistas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fa09c834c215d439c9bdb93d7d06bbb833b8b9c6ac62a68f0abc55418d23a933",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "493c90935b58b7c86340ac358ef4145567bf0fa3f1f663062db423f5bfd196ae",
+    "mention_text": "Henry Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6403867b3c27e143912a8c831725f416712d33e3c38339a9289bb40d8d3e9816",
+    "mention_text": "Wolfgang Streeck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "551c15eb3272e8da60c017e829996712614d64533c415f9366565c56f4b748f4",
+    "mention_text": "Verso",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "d8ac499a266c743329893dba27e624f5c3f5f9cfa364722dadbdc181c26c1116",
+    "mention_text": "Streeck",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6afb708f22309c0b67e7d1d4c1739ce5962cc1832a4b8a1b885d5f9e0c1004f",
+    "mention_text": "Martin Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "840617df08e8aeb2a840cf8f2988401d2c6c6e323e656fa3ac2c8c70dbb34337",
+    "mention_text": "Ford",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "475ce62a4cfbc12ccde8dc2f1e44ba263f8d774913bb9684da53d0dfe1a7de1b",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "30ac1e2c66136eef58cce52f0a1b7815e110fbbcba68b8cf2914111bb9984916",
+    "mention_text": "americano",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a7653863f69a97cf1d4f2d8b983f54a743bfde9b19957dadcf52914d22990c80",
+    "mention_text": "europeu",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f09098659aba7305421c68368055f5ba0dd4183a36930e5eb776a07de1392eed",
+    "mention_text": "norte-americanas",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "aa773039cef846c15a078f1c033b9094f5ea5ede42c8711c09affcb0e8687cea",
+    "mention_text": "Ásia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "981d555171a1e583f29f9b75aca4753583557aaa79ec319b2dbd801a3e9c9b0a",
+    "mention_text": "México",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "89ae1ce4a004324d7f490a836cf3bb35f8a1cbe690f331003cbd08bc7c9f6785",
+    "mention_text": "Estados Unidos",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e79afc3b12b9d38ea86f7fe13c8ff08fe212752275ac49831d0592455c41542f",
+    "mention_text": "Donald Trump",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "64fcd20ee943e2115047f5ba2d0d004162cb77168184af866bb6f53e099e4116",
+    "mention_text": "Larry Summers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ef89864d7227fc4bcd485337e4823c880cc6cc04db6c6f2dd999732d76f40b97",
+    "mention_text": "Tesouro dos Estados Unidos",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "aa90941ba2c349f3cd12b097123f40c663cb8aadb76d3d0e7ce6d6e00be75211",
+    "mention_text": "Universidade Harvard",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "dc468621e14d03f6d0b57cda16c1bf532bcbb86da76b93dfd8c789e181f97dbd",
+    "mention_text": "Summers",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "eab259df499ba8ec762a60dfb5e9b2a68d9201a84f31a281bd0bad143b24d22a",
+    "mention_text": "Michael Osborne",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "9f390a1cba05f2225e74ed3a7ad728e1d1083f986d2822ca9fe3cc34adcb2a58",
+    "mention_text": "Carl Frey",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ced3e9c5988ed23a7ea4bab629bf386ee7e9959c80db05576495620ec5f2fcdb",
+    "mention_text": "Universidade Oxford",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "2cdd73af8ec9c3257f2913b1dd5342152e861f1aeada2ec598ee1d173a9f2592",
+    "mention_text": "Reino Unido",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "974c16df15309e03e971351b4d6c31d491d0a88ee57aa1c8c3cd258478c0b4f0",
+    "mention_text": "americanos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b60beb0d8e7f85af0cc25b579b0e1453e4315981f02a71e7ba999d520d6dbce9",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6a6204e5f3112c5f59e2419932dc224f9182bf8fc30469e3c4b4f7f2bffef171",
+    "mention_text": "Canadá",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "06fb0f9655a2f3040f0dc94540c1cd73f13dd2e0d8f5ed5648c6596c0f6ffec4",
+    "mention_text": "Matthias Oschinski",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "4d91acc963a22424d40615881ce229747cc504989b0285ad08fcdbf157821aa5",
+    "mention_text": "Rosalie Wyonch",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "190ebdad7b87881901eb9c8fba8f0807fd01b0d2c41b76118f9d62e0cf626805",
+    "mention_text": "Joel Mokyr",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "de89fe1bdcca263611baff25b184fb68bc879ab0a82ae448b67bdd3418f381c1",
+    "mention_text": "Universidade Northwestern",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "99aac727d93c16ca6b34f376e823a628db1ec91fe889b5e3409a366b328ebccd",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "6b59c7abf3b764318f4ae163377dba68491b3ff780aca45fa30e451bfb92082a",
+    "mention_text": "The Economist",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "b11ca98c6614f6736e5eef2624d4ceb5d38c237573370fb95e66097a3349b567",
+    "mention_text": "Organização Internacional do Trabalho",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "75d0a4a9a3de5d29d1677465167cad4179c3aca91f96907141932fd4425608b2",
+    "mention_text": "OIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "023bd69fba228a2014dca42206599002a232989ca9082bbde52e5b68a028bf56",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "201cd43696bedfc336809f0752e9d8ef18cf5c23cbb069d962ffe1325662fe6a",
+    "mention_text": "Alemanha",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "e278208439d6cbcd2d61c9ccbcacf9c7bb77b8e23811aeca6895171404ceae60",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2fd8437637ecd5dd0cd46b0aab6c358fb3181eae4b38f9cdb593acb852bb8ba1",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "4ab00e7eef8e56c72457de4b8619202a1532979538c19b0cb7eb039978b6bc2d",
+    "mention_text": "França",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "5e891d52f9ea5fc4d8a1dd4ad658bc0a8622b581c7a081e128272d8d34aa469c",
+    "mention_text": "Itália",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "43cf713c8571e462fae0292468a377485d63f839e7cac0fa1ccaaa674c7a3691",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7b92452fb8e63532af09de72c5e0d72e659158bc23de0f9cbafe8d4b47ac3994",
+    "mention_text": "OIT",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "c64f7df42d1dc70bf8ff2ffab994b035e5bd9db5bdae2905e863e40ddfcbcf45",
+    "mention_text": "Europa",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "3c3e0b2a8aee490c6d173b3176482c208f3f3443bb2338bbef8334b24ac1b08e",
+    "mention_text": "britânicos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cd111b2d769048b4e2829a6a885789c320b7ab4aeb100d9312a5be140bf1dec6",
+    "mention_text": "escandinavos",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "cfa5ce007890027849be312879819c312bb42096aa6d648bba6b35eebdda5060",
+    "mention_text": "Vernor Vinge",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "456c3eed9df04924e915ee60f1d61373d725b5d20b9a34a9736faa1a7af9f1f3",
+    "mention_text": "Universidade de San Diego",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "6d9de6c051bc676a294c56ea0af8ef9871e098f944fed400b67d570370d9e4e4",
+    "mention_text": "Califórnia",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "ed87eb98161c1d6c4366eb9d85f683c9a21a36ce09d9f184be07dd89a5da26b2",
+    "mention_text": "Stephen Hawking",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "0f21464b1b978dffda95407f613c478cbf5f37601f6fee2762c2439816f6cfe4",
+    "mention_text": "Elon Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "117d09c20afc0bc449eca43a267c16f468c7b86f387ef1499e2e26aa4f1d3db9",
+    "mention_text": "Tesla",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "4ab6e5306df82e2395f3a81be24ef93c2de52ddab7a820f53301d06369fcaabb",
+    "mention_text": "SpaceX",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "69b7181b46d6dc3a521addb863a0def5bb1f06a92e45723c4b57d73d165f031b",
+    "mention_text": "Marte",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "f93a4c8f108fd2a87d23492b0863d4d69ee0e6adccd8712c109db6f6d07a3293",
+    "mention_text": "Musk",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "61abd2ceff6c5f3ff0bb2ad52ace3bb35c30591edd8a3512abd26eaa8b414b06",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "dffcc6921a247b90962b344500f86b6ac14dd995a3364547cedacee52149141a",
+    "mention_text": "Paulo Feldmann",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "b6ebca2fd758113eb3788ff6f31d9e81da0f422417eadddf20b8186ba3d87fc0",
+    "mention_text": "Faculdade de Economia e Administração da USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "21ff9a6a1b6591b99bfff6d232aeea4db9e13acb8d9b25d3e1e5de894ab8f006",
+    "mention_text": "USP",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "ea8058e3412b8a763a094741756cc7d11c19980990da886e1510119fd43d0541",
+    "mention_text": "Pécs University",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "fca1a43ab91c78e1e2bcf3d805522e89b5f90728e1b4822e55489e516d8d48d8",
+    "mention_text": "Hungria",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "2f8d2c3678272a723be97eb930407b8f87cf62101bc9172f9fbb63438386c6c3",
+    "mention_text": "Ricardo Cammarota",
+    "categoria": "PESSOA"
+  }
+]

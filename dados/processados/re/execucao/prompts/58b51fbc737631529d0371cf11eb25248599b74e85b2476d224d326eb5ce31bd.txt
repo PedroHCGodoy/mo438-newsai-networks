@@ -1,0 +1,308 @@
+Você é um sistema de Extração de Relações Semânticas (Relation Extraction) entre Entidades Nomeadas em textos em português.
+
+TAREFA
+Dado um TEXTO e uma LISTA DE ENTIDADES (com IDs):
+
+1) para cada entidade em LISTA DE ENTIDADES, identifique relações semânticas entre ela e outras entidades dentro do TEXTO;
+2) para cada par, classifique a relação usando UM dos rótulos da LISTA DE RÓTULOS.
+
+LISTA DE RÓTULOS
+[ident, vinculo_inst, incluido, inclui, sede_de, ocorre_em, autor_de, obra_de, relacao_familiar, local_nascimento_de, natural_de, propriedade_de, proprietario_de, produtor_de, produzido_por]
+
+DEFINIÇÃO DOS RÓTULOS
+ident
+Definição: Relação de identidade ou correferência. As duas entidades referem-se à mesma entidade real.
+Exemplo:
+Banco Central Europeu IDENT BCE
+Estados Unidos IDENT EUA
+Organização das Nações Unidas IDENT ONU
+União Europeia IDENT UE
+Fundo Monetário Internacional IDENT FMI
+
+
+vinculo_inst
+Definição: Relaciona uma pessoa a uma organização com a qual possui vínculo institucional.
+Exemplo:
+USP VINCULO_INST Professor
+ONU VINCULO_INST Diplomata
+Google VINCULO_INST Engenheiro
+NASA VINCULO_INST Cientista
+Exército VINCULO_INST Soldado
+
+
+incluido
+Definição: A entidade head está contida ou faz parte da entidade tail.
+Exemplo:
+São Paulo INCLUIDO Brasil
+Alemanha INCLUIDO Europa
+UNESCO INCLUIDO ONU
+Japão INCLUIDO Ásia
+Paris INCLUIDO França
+
+
+inclui
+Definição: Uma entidade contém ou abrange outra entidade da mesma categoria.
+Exemplo:
+Brasil INCLUI São Paulo
+Europa INCLUI Alemanha
+ONU INCLUI UNESCO
+Ásia INCLUI Japão
+França INCLUI Paris
+
+
+sede_de
+Definição: Relaciona um local ao acontecimento ou organização sediado nele.
+Exemplo:
+Rio de Janeiro SEDE_DE Rock in Rio
+Munique SEDE_DE Oktoberfest
+Salvador SEDE_DE Carnaval
+Mônaco SEDE_DE Fórmula 1
+Cannes SEDE_DE Festival de Cannes
+
+
+ocorre_em
+Definição: Relaciona um acontecimento, entidade ou ocorrência ao local onde acontece.
+Exemplo:
+Rock in Rio OCORRE_EM Rio de Janeiro
+Oktoberfest OCORRE_EM Munique
+Carnaval OCORRE_EM Salvador
+Fórmula 1 OCORRE_EM Mônaco
+Festival de Cannes OCORRE_EM Cannes
+
+
+autor_de
+Definição: Relaciona um autor a uma obra que ele criou.
+Exemplo:
+Machado de Assis AUTOR_DE Dom Casmurro
+George Orwell AUTOR_DE 1984
+J. K. Rowling AUTOR_DE Harry Potter
+José Saramago AUTOR_DE Ensaio sobre a cegueira
+Clarice Lispector AUTOR_DE A Hora da Estrela
+
+
+obra_de
+Definição: Relaciona uma obra ao seu autor.
+Exemplo:
+Dom Casmurro OBRA_DE Machado de Assis
+1984 OBRA_DE George Orwell
+Harry Potter OBRA_DE J. K. Rowling
+Ensaio sobre a cegueira OBRA_DE José Saramago
+A Hora da Estrela OBRA_DE Clarice Lispector
+
+
+relacao_familiar
+Definição: Relaciona duas pessoas com vínculo familiar.
+Exemplo:
+Pai RELACAO_FAMILIAR Filho
+Irmã RELACAO_FAMILIAR Irmão
+Mãe RELACAO_FAMILIAR Filha
+Avô RELACAO_FAMILIAR Neto
+Tio RELACAO_FAMILIAR Sobrinho
+
+
+local_nascimento_de
+Definição: Relaciona um local à pessoa que nasceu ali.
+Exemplo:
+Três Corações LOCAL_NASCIMENTO_DE Pelé
+Ulm LOCAL_NASCIMENTO_DE Einstein
+Mogi das Cruzes LOCAL_NASCIMENTO_DE Neymar
+Bonn LOCAL_NASCIMENTO_DE Beethoven
+Funchal LOCAL_NASCIMENTO_DE Cristiano Ronaldo
+
+
+natural_de
+Definição: Relaciona uma pessoa ao local onde nasceu.
+Exemplo:
+Pelé NATURAL_DE Três Corações
+Einstein NATURAL_DE Ulm
+Neymar NATURAL_DE Mogi das Cruzes
+Beethoven NATURAL_DE Bonn
+Cristiano Ronaldo NATURAL_DE Funchal
+
+
+propriedade_de
+Definição: Relaciona algo ao seu proprietário.
+Exemplo:
+Corolla PROPRIEDADE_DE Toyota
+YouTube PROPRIEDADE_DE Google
+Instagram PROPRIEDADE_DE Meta
+Twitch PROPRIEDADE_DE Amazon
+Pixar PROPRIEDADE_DE Disney
+
+
+proprietario_de
+Definição: Relaciona uma pessoa ou organização com algo que possui.
+Exemplo:
+Toyota PROPRIETARIO_DE Corolla
+Google PROPRIETARIO_DE YouTube
+Meta PROPRIETARIO_DE Instagram
+Amazon PROPRIETARIO_DE Twitch
+Disney PROPRIETARIO_DE Pixar
+
+
+produtor_de
+Definição: Relaciona quem produziu, organizou ou realizou algo com aquilo que foi produzido.
+Exemplo:
+Apple PRODUTOR_DE iPhone
+Pixar PRODUTOR_DE Toy Story
+Netflix PRODUTOR_DE Stranger Things
+Marvel PRODUTOR_DE Avengers
+Sony PRODUTOR_DE PlayStation
+
+
+produzido_por
+Definição: Relaciona algo ao seu produtor ou realizador.
+Exemplo:
+iPhone PRODUZIDO_POR Apple
+Toy Story PRODUZIDO_POR Pixar
+Stranger Things PRODUZIDO_POR Netflix
+Avengers PRODUZIDO_POR Marvel
+PlayStation PRODUZIDO_POR Sony
+
+SAÍDA ESPERADA
+Uma LISTA JSON. Exemplo:
+
+[
+  {"head_id":"123","tail_id":"456","label":"ident"},
+  {"head_id":"789","tail_id":"790","label":"ocorre_em"}
+]
+
+Se não houver nenhuma relação, retorne:
+
+[]
+
+DOCUMENTO
+DOCID: ef20467bdea0ef5514806f48f84914aa6a764d0ebe2d2b15123505d448ab4e4e
+
+TEXTO:
+Depois de avanços tecnológicos, medicina deve mirar na empatia
+
+Médicos sempre ocuparam uma posição de prestígio na sociedade. Afinal, cuidar do maior bem de indivíduo —a vida— não é algo trivial. Embora a finalidade do ofício permaneça essencialmente a mesma, o modus operandi mudou drasticamente com o tempo.
+Nos dias que antecederam o Dia do Médico (18 de outubro), a Folha conversou com profissionais para coletar suas impressões sobre a carreira, as mudanças nela e o futuro da profissão.
+O que se pode afirmar é que o foco da atuação médica deve ser cada vez menos o controle sobre o destino do paciente e mais a mediação, o desenvolvimento e a interpretação de tecnologias, incluindo a famigerada inteligência artificial. Já o lado humanístico, que perdeu espaço para os exames e as máquinas, tende a recuperar cada vez mais sua importância.
+De meados do século 20 até agora, concomitantemente à proliferação das especialidades e subespecialidades médicas, houve grande avanço tecnológico e a proliferação de modalidades de exames , para ver, por exemplo, as células potencialmente cancerígenas do colo de útero no exame de Papanicolau, cálculos renais em tomografias ou ainda aferir a presença de anticorpos anti-HIV no sangue, indicando infecção pelo vírus —entre tantos outros.
+Crescia o catálogo dos laboratórios e também a dependência do médico em relação a esses exames. A impressão dos pacientes passou a ser a de que o cuidado é ruim se o médico não solicita exames. Isso num contexto em que o tempo de interação entre paciente e médico é diminuto —tudo para aumentar a eficiência, ou seja, o número de consultas por período.
+O tema é caro a Jayme Murahovschi, 86, uma das maiores referências em pediatria no país. “Tem que haver progressão tecnológica, claro, mas mais importante que isso é a ligação emocional com o paciente. Hoje médicos pedem muitos exames e os pacientes também demandam. Eu peço o básico às vezes só para não dizer que é só a minha opinião.”
+Mais
+Murahovschi está entre os que acreditam que a profissão está sofrendo uma nova reviravolta, quase que voltando às origens clássicas, hipocráticas: “Os médicos do futuro, os que sobrarem, vão ter que ter que conhecer o paciente a fundo, dar toda a atenção que ele precisa, usando muita tecnologia, mas com foco no paciente.”
+Mas vai faltar médico no futuro? Alguns profissionais poderiam migrar para uma medicina mais técnica, preveem analistas.
+Esses doutores teriam uma função diferente, atuando na interface entre conhecimento biomédico e a tecnologia por trás de plataformas de diagnóstico por imagem e reabilitação (já há um curso com esse desenho na Holanda). Ou ainda atuariam alimentando uma plataforma de inteligência artificial com dados e/ou reformulando seus algoritmos, tornando-a mais esperta.
+Um exemplo já vigente de inteligência artificial é a plataforma Watson, da IBM. Apesar de ter vocação em múltiplas áreas, a entidade tem se mostrado ágil no processamento de informação médica e na seleção de tratamentos para pacientes com câncer.
+“Alguns médicos não vão ter nem que interpretar o resultado, que vem de uma caixa preta, mas traduzir a consequência para o paciente e ajudá-lo, com empatia, a buscar uma ou outra alternativa para lidar com o problema”, diz o professor de oftalmologia da Unifesp Paulo Schor, 53, entusiasta de novas tecnologias.
+Para Schor esse protagonismo retomado pelos pacientes é sinal para a prática médica voltar às suas raízes. “É uma razão para explicar o raciocínio clínico e para que serve cada exame que ele está pedindo e de tratar o paciente como um ser pensante.”
+Na medicina privada, afirma ele, nunca esteve tão evidente a necessidade que os pacientes têm de serem ouvidos.
+Outra tecnologia do futuro já presente, lembram Schor e Murahovschi, é a telemedicina , que descentraliza a realização de consultas e exames. Clínicas pequenas e médicos generalistas podem contar com laudos de especialistas de locais distantes, rapidamente, pela internet; uma junta médica pode discutir, remotamente, diversos casos de pacientes; seria possível até realizar algumas consultas propriamente ditas a distância, embora haja restrições do CFM nesse sentido.
+Até cirurgias podem ser feitas a distância,com o advento da cirurgia robótica. O tema continua fascinando médicos e pacientes, mas, por enquanto, nada de droides médicos à la Star Wars —quem controla o robô ainda é uma pessoa.
+“A laparoscopia, uns 30 anos atrás, já havia sido um grande avanço. Com furos no tórax, abdome e pelve era possível fazer uma cirurgia com invasão mínima e o paciente já podia ir pra casa no dia seguinte. O problema é quando ela dá errado e tem que abrir o paciente. Poucos entre os novos cirurgiões fazem isso bem”, afirma o psiquiatra Jorge da Costa e Silva, 76, presidente da Academia Nacional de Medicina.
+Segundo o psiquiatra, quase nenhum profissional de 65, 70 anos quer aprender a cirurgia robótica. “Quando eles dominam a técnica, precisam passar outros 20 anos se aperfeiçoando . Costumo dizer que aquilo é uma espécie de videogame.”
+Mas, pensando no futuro, o papel que esses médicos podem exercer é o de “ponte” entre o conhecimento do passado e a inteligência artificial, que, segundo profetiza Costa e Silva, será onipresente na medicina.
+Hoje as UTIs e até os consultórios têm recebido equipamentos ligados a uma inteligência artificial, sugerindo condutas e analisando exames baseado nas montanhas de dados que produzimos (o chamado big data), diz Costa e Silva. “Nos EUA e em outros lugares do mundo, o prontuário eletrônico é realidade. A receita também vai ser, e vai estar num cartão que pode ser lido na farmácia. O banco de dados registra se o paciente comprou ou não o remédio”, afirma. Um porém: “O sigilo médico não existe mais”, diz o psiquiatra.
+Mais
+Costa e Silva (que não tem parentesco com o marechal Arthur, 27º presidente do Brasil ) gosta de um outro tema futurológico em particular: o transumanismo —área de estudo que, essencialmente, avalia possibilidades de a condição humana se alterar por meio da tecnologia. “É bom poder falar sem compromisso de dar respostas definitivas”, brinca.
+Entre as hipóteses aventadas está a de fazer download de informações diretamente para a mente (“Eu sei kung fu”, uma coisa meio “Matrix”) ou fazer o upload da própria mente para dispositivos externos , como robôs ou mesmo na nuvem, alternando-se entre dispositivos (algo parecido acontece no filme “Ela”).
+“Hoje já são dezenas de milhares de dispositivos que podem substituir diversas partes do corpo, como um olho, uma mão, um rim ou um pâncreas. Já o cérebro, apesar de ser um órgão maravilhoso e altamente complexo, sofre com alzheimer, parkinson e a deterioração pela idade … Não tenho nada contra, se a mente encontrar um material melhor, que ela continue evoluindo fora do cérebro. Ela talvez seja um fenômeno cósmico”, diz Costa e Silva.
+Essa caminhada transgressora já teria começado, afirma o psiquiatra: dificilmente alguém chega aos 70, 80, anos sem uma prótese de joelho, de quadril, um marcapasso, um stent … Esses dispositivos são só o prenúncio. “O futuro está aí, só não sabemos a velocidade em que ele vai chegar”, diz.
+
+LISTA DE ENTIDADES
+[
+  {
+    "em_id": "08ccf8afbe432b4af405f6c52c0cb6679d85c3850513b55ffaa2a5507c919c6f",
+    "mention_text": "Folha",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "3bc564a64bf41559581ce9df5b30bd635355d24fb1de4cd843bcff2915c9e32b",
+    "mention_text": "Murahovschi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "dd4853cd3dbaf14b5a3b7644dd05cc029dfb177d1feba02c50e8d961edb76367",
+    "mention_text": "Murahovschi",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a5cb4fffb0ad1090aaa7846a55fbe161d6de171d5c86f7f952d5d5155f6293f4",
+    "mention_text": "Holanda",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "85d686033c24b4159c202c14c0ab03cbb6262b2addf0f3b32a2c098f4a89f714",
+    "mention_text": "IBM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1569c4658c434ec869a97824693702aabb8b8b48dfe66fdd38b4391daf4dabb7",
+    "mention_text": "Unifesp",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "81fabe807e2c69ee439b00f1f4dec6f73d026c80c8cf5dd13bdae04fdbe2c733",
+    "mention_text": "Paulo Schor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "390d7fcd69a82a5b5a41944d1113fde8a11ab304312f6ad90cf42e59b2f27140",
+    "mention_text": "Schor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "271ddd8307ae99696f2d7ac5fc8849331bbfaed4071f2bb8341868615b410ee6",
+    "mention_text": "Schor",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6ec6bac3d11a15b4e8e1c596683e041fb5703d8561e1fbcbf3a8bf90ab0fab5a",
+    "mention_text": "CFM",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "71de7ab9658326ec904dbfc8b05d3a4e3b6818f977bb194f9536b971868a39ca",
+    "mention_text": "Jorge da Costa e Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "a061b1625afd7456cebba8ac917e246648a6d227e7b4f4040418df97514cc79d",
+    "mention_text": "Costa e Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "522f1c7102a0116ac9cf56212247c2a399cea9aa568ceda2aefd6479ac5d8f9d",
+    "mention_text": "Academia Nacional de Medicina",
+    "categoria": "ORGANIZACAO"
+  },
+  {
+    "em_id": "1f9e779f958f6d0fea6fb2e0637e13927c22155a40c2f2d0d209b4114b9a1745",
+    "mention_text": "Costa e Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "fb9704c365d94aeac6eef78336de3b25b8eff96fb53ae91b223e60bfc00333a8",
+    "mention_text": "Costa e Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "ee8971131df97f0928c25c3ec454f2a2855e0aff590acfc70fe57f72e7564a96",
+    "mention_text": "EUA",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "fef81d8c75d4bc3a2cef4383454f4972caf87f92b8448381626c00739ab404cc",
+    "mention_text": "Costa e Silva",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "d719a4d90ee99709350976753ac1f74a624efd0f3f9518b6000359b00f895619",
+    "mention_text": "Arthur",
+    "categoria": "PESSOA"
+  },
+  {
+    "em_id": "6c70934a59268b398a38674cc2bdb321e6c9876831ae7e309ebd50a4d6060ff8",
+    "mention_text": "Brasil",
+    "categoria": "LOCAL"
+  },
+  {
+    "em_id": "7e8c70e7fb9912276ca798b4254e2c27c6a9156ed563177e67b2092af7848dda",
+    "mention_text": "Costa e Silva",
+    "categoria": "PESSOA"
+  }
+]
